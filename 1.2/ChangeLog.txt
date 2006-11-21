@@ -4,7 +4,9 @@ ChangeLog
 							[+] 		- Feature/Enhancement
 							[!] 		- Critical warning or note
 							{<component>}	- Component/Group that changed
-1.2.2   {all}		[*] Added support for Real datatype
+
+1.2.2   {all}		[+] Added simple support (based on String mapping) for UTCTime/GeneralizedTime
+1.2.2   {all}		[+] Added support for Real datatype
 -
 1.2.1 	{all}		[*] Fixed encoding the anonymous BoxedTypes
 1.2.1 	{comp}		[+] Added constructor definition when generating some BoxedTypes
