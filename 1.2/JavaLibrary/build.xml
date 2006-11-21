@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<project name="BinaryNotesLibrary" default="all" basedir=".">
+  <property file="build.properties"/>
+  <path id="library.JUnit">
+    <pathelement location="${depends.libs.path}/junit.jar"/>
+  </path>
+  <path id="classpath">
+    <path refid="library.JUnit"/>
+  </path>
+  <target name="init">
+    <tstamp/>
+    <mkdir dir="${output.dir}"/>
+  </target>
+  <target name="all" description="Build the project" depends="compile,copy, buildjar"/>
+  <target name="clean" description="Clean the project">
+    <delete includeemptydirs="true" quiet="true">
+      <fileset dir="${output.dir}" includes="**/*"/>
+    </delete>
+  </target>
+  <target name="compile" description="Compile Java source files" depends="init">
+    <javac destdir="${output.dir}" classpathref="classpath"
+           debug="${javac.debug}" nowarn="${javac.nowarn}"
+           deprecation="${javac.deprecation}" encoding="Cp1251" source="1.5"
+           target="1.5">
+      <src path="src"/>
+      <compilerarg line="${javac.compilerargs}"/>
+    </javac>
+  </target>
+  <target name="copy" description="Copy files to output directory"
+          depends="init">
+    <patternset id="copy.patterns">
+      <include name="**/*.gif"/>
+      <include name="**/*.jpg"/>
+      <include name="**/*.jpeg"/>
+      <include name="**/*.png"/>
+      <include name="**/*.properties"/>
+      <include name="**/*.xml"/>
+      <include name="**/*-apf.xml"/>
+      <include name="**/*.ejx"/>
+      <include name="**/*.xcfg"/>
+      <include name="**/*.cpx"/>
+      <include name="**/*.dcx"/>
+      <include name="**/*.wsdl"/>
+      <include name="**/*.ini"/>
+      <include name="**/*.tld"/>
+      <include name="**/*.tag"/>
+    </patternset>
+    <copy todir="${output.dir}">
+      <fileset dir="src">
+        <patternset refid="copy.patterns"/>
+      </fileset>
+    </copy>
+  </target>
+  <target name="buildjar" description="Building jar file" depends="init">
+        <jar destfile="${dist.path.lib}/binarynotes.jar" compress="yes">
+            <fileset dir="${output.dir}"/>
+	    <manifest>
+		<attribute name="Implementation-Vendor" value="Abdulla G. Abdurakhmanov"/>
+		<attribute name="Implementation-URL" value="http://bnotes.sourceforge.net"/>
+		<attribute name="Implementation-Mail" value="abdulla.abdurakhmanov@gmail.com"/>
+		<attribute name="Implementation-Title" value="BinaryNotes Library"/>
+		<attribute name="Version" value="1.2.2"/>
+	    </manifest>
+        </jar>  
+  </target>
+</project>
