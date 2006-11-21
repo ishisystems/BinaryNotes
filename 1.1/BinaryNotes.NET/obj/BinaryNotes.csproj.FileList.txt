@@ -1,0 +1,8 @@
+obj\Debug\ResolveAssemblyReference.cache
+obj\Debug\BinaryNotes.dll
+obj\Debug\BinaryNotes.pdb
+.\BinaryNotes.dll
+.\BinaryNotes.pdb
+obj\Release\ResolveAssemblyReference.cache
+obj\Release\BinaryNotes.dll
+obj\Release\BinaryNotes.pdb

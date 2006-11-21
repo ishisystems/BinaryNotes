@@ -1,0 +1,25 @@
+ChangeLog
+							Labels:
+							[*] 		- Bug fixed
+							[+] 		- Feature added
+							[!] 		- Critical warning or note
+							{<component>}	- Component/Group that changed
+
+1.1.0b2 {lib}		[*] Fixed incorrect BER SequenceOf tag generation 
+1.1.0b2 {lib}		[*] Fixed incorrect BER/PER encoding/decoding for a negative integer
+1.1.0b2 {comp}		[*] Fixed generation bug for the value range constraint with negative integer
+1.1.0b2 {lib}		[*] Fixed memory corruption bug for packets > 1Kb (Thanks to John Finley)
+-
+1.1.0b 	{lib}		[*] Fixed the bug for optional field encoding for unset variables (only for C#/.NET)
+1.1.0b 	{comp}		[*] Removed unnecessary variable (_ispresent) for C#
+1.1.0b 	{doc}		[+] Added a small API documentation
+1.1.0b 	{comp} 		[*] Fixed the sequence of element type annotation generating
+1.1.0b 	{lib} 		[*] Fixed the bug when decoding length (thanks to John Finley)
+1.1.0b 	{lib} 		[!] Fixed the bug when encoding/decoding for SequenceOf element
+1.1.0b 	{comp} 		[*] Fixed incorrect the ASN1String type that generates by BNCompiler for boxed types
+1.1.0b 	{comp} 		[*] Fixed incorrect URL location to BinaryNotes site for all generating files
+1.1.0b 	{comp/lib}	[+] The PER encoding is supported now
+1.1.0b 	{lib} 		[*] Unit tests is refactored for use with another encodings
+1.1.0b 	{all} 		[*] Fixed the version information & distribution package
+-
+1.0.0b {all} 		[+] The first public release.

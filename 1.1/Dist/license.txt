@@ -1,0 +1,15 @@
+-- License --
+
+* The BinaryNotes library licensed under LGPL (Lesser GPL) v2 
+	(see to licenses\lgpl.txt for details).
+
+* The BinaryNotes compiler  licensed under GPL v2 
+		(see to licenses\gpl.txt for details).
+
+* 3RD-PARTY licenses
+The BinaryNotes compiler uses JAXB Reference implementation (http://jaxb.dev.java.net) 
+licensed under COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0
+(see to licenses\3rdyparty\cddl.txt for details)
+
+(á) 2006 Abdulla G. Abdurakhmanov (abdulla.abdurakhmanov@gmail.com)
+http://bnotes.sourceforge.net
