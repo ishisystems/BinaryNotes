@@ -36,7 +36,7 @@ public class MainTest extends TestCase {
         Main compiler = new Main();
 
         compiler.start(new String[] {
-            "--modulesPath", "testworkdir" + File.separator + "modules",
+            "--modulesPath", "xslsrc" + File.separator + "modules",
             "--moduleName", "java", 
             "--outputDir", "testworkdir" + File.separator + "output", 
             "--fileName", "testworkdir" + File.separator + "test.asn",
@@ -48,7 +48,7 @@ public class MainTest extends TestCase {
         Main compiler = new Main();
 
         compiler.start(new String[] {
-            "--modulesPath", "testworkdir" + File.separator + "modules",
+            "--modulesPath", "xslsrc" + File.separator + "modules",
             "--moduleName", "cs", 
             "--outputDir", "testworkdir" + File.separator + "output-cs", 
             "--fileName", "testworkdir" + File.separator + "test.asn",
