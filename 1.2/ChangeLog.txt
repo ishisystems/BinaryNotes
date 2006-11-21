@@ -4,7 +4,8 @@ ChangeLog
 							[+] 		- Feature/Enhancement
 							[!] 		- Critical warning or note
 							{<component>}	- Component/Group that changed
-
+1.2.2   {all}		[*] Added support for Real datatype
+-
 1.2.1 	{all}		[*] Fixed encoding the anonymous BoxedTypes
 1.2.1 	{comp}		[+] Added constructor definition when generating some BoxedTypes
 1.2.1   {lib}		[*] Fixed choice in choice encoding
