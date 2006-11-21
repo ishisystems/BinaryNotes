@@ -31,7 +31,7 @@
     <tstamp/>
     <mkdir dir="${output.dir}"/>
   </target>
-  <target name="all" description="Build the project" depends="compile,copy, buildjar"/>
+  <target name="all" description="Build the project" depends="compile,copy,copy-xsls, buildjar"/>
   <target name="clean" description="Clean the project">
     <delete includeemptydirs="true" quiet="true">
       <fileset dir="${output.dir}" includes="**/*"/>
@@ -85,4 +85,11 @@
 	    </manifest>
         </jar>  
   </target>
+  <target name="copy-xsls" description="Copy XSL templates to Dist"
+          depends="init">
+    <copy todir="${dist.path.modules}">
+      <fileset dir="xslsrc"/>
+    </copy>
+  </target>
+
 </project>

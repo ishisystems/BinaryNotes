@@ -213,7 +213,7 @@ public class BERDecoder extends Decoder {
 
     protected DecodedObject<Integer> decodeIntegerValue(InputStream stream) throws Exception {
         DecodedObject<Long> lVal = decodeLongValue(stream);
-        DecodedObject<Integer> result = new DecodedObject<Integer>( (int)lVal.getValue(), lVal.getSize() );
+        DecodedObject<Integer> result = new DecodedObject<Integer>( (int)((long)lVal.getValue()), lVal.getSize() );
         return result;    
     }
     
