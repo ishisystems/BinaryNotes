@@ -57,6 +57,7 @@ namespace Tests
             test.testEncodeVersion1_2();
             test.testEncodeChoiceInChoice();
             test.testEncodeTaggedSeqInSeq();
+            test.testEncodeReals();
         }
 
         static void runDecoderTest(DecoderTest test)
@@ -80,6 +81,7 @@ namespace Tests
             test.testDecodeVersion1_2();
             test.testDecodeChoiceInChoice();
             test.testDecodeTaggedSeqInSeq();
+            test.testDecodeReal();
         }
 
         [STAThread]

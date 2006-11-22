@@ -76,6 +76,11 @@ namespace org.bn.coders
 			{
 				return decodeInteger(decodedTag, objectClass, elementInfo, stream);
 			}
+            else
+            if (elementInfo.isAttributePresent<ASN1Real>())
+            {
+                return decodeReal(decodedTag, objectClass, elementInfo, stream);
+            }
 			else
             if (elementInfo.isAttributePresent<ASN1OctetString>())
 			{
@@ -115,6 +120,10 @@ namespace org.bn.coders
 			{
 				return decodeInteger(decodedTag, objectClass, elementInfo, stream);
 			}
+            else if (elementInfo.AnnotatedClass.Equals(typeof(double)))
+            {
+                return decodeReal(decodedTag, objectClass, elementInfo, stream);
+            }
 			else if (elementInfo.AnnotatedClass.Equals(typeof(bool)))
 			{
 				return decodeBoolean(decodedTag, objectClass, elementInfo, stream);
@@ -354,6 +363,8 @@ namespace org.bn.coders
         protected abstract DecodedObject<object> decodeNull(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream);
 
         protected abstract DecodedObject<object> decodeInteger(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream);
+
+        protected abstract DecodedObject<object> decodeReal(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream);
 
         protected abstract DecodedObject<object> decodeOctetString(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream);
 

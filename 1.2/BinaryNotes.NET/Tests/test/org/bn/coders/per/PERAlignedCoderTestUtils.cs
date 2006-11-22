@@ -200,5 +200,25 @@ namespace test.org.bn.coders.per
             return new byte[] { 0x04, 0x61, 0x61, 0x61, 0x61, 0x04, 0x62, 0x62, 0x62, 0x62 };
         }
 
+        public override byte[] createTestReal0_5Bytes()
+        {
+            return new byte[] { 0x03, (byte)0x80, (byte)0xFF, 0x01 };
+        }
+
+        public override byte[] createTestReal1_5Bytes()
+        {
+            return new byte[] { 0x03, (byte)0x80, (byte)0xFF, 0x03 };
+        }
+
+        public override byte[] createTestReal2Bytes()
+        {
+            return new byte[] { 0x03, (byte)0x80, (byte)0x01, 0x01 };
+        }
+
+        public override byte[] createTestRealBigBytes()
+        {
+            return new byte[] { 0x05, (byte)0x80, (byte)0xFD, 0x18, 0x6D, 0x21 };
+        }
+
 	}
 }

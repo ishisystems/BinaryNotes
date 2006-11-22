@@ -165,30 +165,112 @@ namespace org.bn.coders
             CoderUtils.checkConstraints((int)result.Value, elementInfo);
             return result;
 		}
-		
-		protected internal virtual DecodedObject<object> decodeIntegerValue(System.IO.Stream stream)
-		{
-			DecodedObject<object> result = new DecodedObject<object>();
-			DecodedObject<int> len = decodeLength(stream);
-			int val = 0;
-			for (int i = 0; i < len.Value; i++)
-			{
-				int bt = stream.ReadByte();
-				if (bt == - 1)
-				{
-					throw new System.ArgumentException("Unexpected EOF when encoding!");
-				}
+
+        protected override DecodedObject<object> decodeReal(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
+        {
+            if (!checkTagForObject(decodedTag, TagClasses.Universal, ElementType.Primitive, UniversalTags.Real, elementInfo))
+                return null;
+            DecodedObject<int> len = decodeLength(stream);
+            int realPreamble = stream.ReadByte();
+
+            Double result = 0.0D;
+            int szResult = len.Value;
+            if ((realPreamble & 0x40) == 1)
+            {
+                // 01000000 Value is PLUS-INFINITY
+                result = Double.PositiveInfinity;
+            }
+            if ((realPreamble & 0x41) == 1)
+            {
+                // 01000001 Value is MINUS-INFINITY
+                result = Double.NegativeInfinity;
+                szResult += 1;
+            }
+            else
+                if (len.Value > 0)
+                {
+                    int szOfExp = 1 + (realPreamble & 0x3);
+                    int sign = realPreamble & 0x40;
+                    int ff = (realPreamble & 0x0C) >> 2;
+                    DecodedObject<object> exponentEncFrm = decodeLongValue(stream, new DecodedObject<int>(szOfExp));
+                    long exponent = (long)exponentEncFrm.Value;
+                    DecodedObject<object> mantissaEncFrm = decodeLongValue(stream, new DecodedObject<int>(szResult - szOfExp - 1));
+                    // Unpack mantissa & decrement exponent for base 2
+                    long mantissa = (long)mantissaEncFrm.Value << ff;
+                    while ((mantissa & 0x000ff00000000000L) == 0x0)
+                    {
+                        exponent -= 8;
+                        mantissa <<= 8;
+                    }
+                    while ((mantissa & 0x0010000000000000L) == 0x0)
+                    {
+                        exponent -= 1;
+                        mantissa <<= 1;
+                    }
+                    mantissa &= 0x0FFFFFFFFFFFFFL;
+                    long lValue = (exponent + 1023 + 52) << 52;
+                    lValue |= mantissa;
+                    if (sign == 1)
+                    {
+                        lValue = (long)((ulong)lValue | 0x8000000000000000L);
+                    }
+                    result = System.BitConverter.Int64BitsToDouble(lValue);
+                }
+            return new DecodedObject<object>(result, len.Value + len.Size);
+        }
+
+        protected DecodedObject<object> decodeLongValue(System.IO.Stream stream)
+        {
+            DecodedObject<int> len =  decodeLength(stream);
+            return decodeLongValue(stream,len);    
+        }
+
+        protected DecodedObject<object> decodeIntegerValue(System.IO.Stream stream)
+        {
+            DecodedObject<object> result = new DecodedObject<object>();
+            DecodedObject<int> len = decodeLength(stream);
+            int val = 0;
+            for (int i = 0; i < len.Value; i++)
+            {
+                int bt = stream.ReadByte();
+                if (bt == -1)
+                {
+                    throw new System.ArgumentException("Unexpected EOF when encoding!");
+                }
                 if (i == 0 && (bt & (byte)0x80) != 0)
                 {
                     bt = bt - 256;
                 }
 
-				val = (val << 8) | bt;
-			}
-			result.Value = val;
-			result.Size = len.Value + len.Size;
-			return result;
-		}
+                val = (val << 8) | bt;
+            }
+            result.Value = val;
+            result.Size = len.Value + len.Size;
+            return result;  
+        }
+
+		protected internal virtual DecodedObject<object> decodeLongValue(System.IO.Stream stream, DecodedObject<int> len)
+        {
+            DecodedObject<object> result = new DecodedObject<object>();
+            long val = 0;
+            for (int i = 0; i < len.Value; i++)
+            {
+                long bt = stream.ReadByte();
+                if (bt == -1)
+                {
+                    throw new System.ArgumentException("Unexpected EOF when encoding!");
+                }
+                if (i == 0 && (bt & (byte)0x80) != 0)
+                {
+                    bt = bt - 256;
+                }
+
+                val = (val << 8) | bt;
+            }
+            result.Value = val;
+            result.Size = len.Value + len.Size;
+            return result;
+        }
 		
 		protected override DecodedObject<object> decodeOctetString(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
 		{

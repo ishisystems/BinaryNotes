@@ -357,5 +357,29 @@ namespace test.org.bn.coders
         }
         public abstract byte[] createTaggedSeqInSeqBytes();
 
+        public TestReal createTestReal0_5()
+        {
+            return new TestReal(0.5);
+        }
+        public abstract byte[] createTestReal0_5Bytes();
+
+        public TestReal createTestReal1_5()
+        {
+            return new TestReal(1.5);
+        }
+        public abstract byte[] createTestReal1_5Bytes();
+
+        public TestReal createTestReal2()
+        {
+            return new TestReal(2D);
+        }
+        public abstract byte[] createTestReal2Bytes();
+
+        public TestReal createTestRealBig()
+        {
+            return new TestReal(200100.125);
+        }
+        public abstract byte[] createTestRealBigBytes();    
+
 	}
 }

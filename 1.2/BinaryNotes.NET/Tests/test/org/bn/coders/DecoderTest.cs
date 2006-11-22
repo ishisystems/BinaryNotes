@@ -369,5 +369,30 @@ namespace test.org.bn.coders
             Assert.Equals(val.Value.Field.Param_value, coderTestUtils.createTaggedSeqInSeq().Value.Field.Param_value);
         }
 
+        public void testDecodeReal() {
+            IDecoder decoder = newDecoder();
+            System.IO.MemoryStream stream =
+               new System.IO.MemoryStream(coderTestUtils.createTestReal1_5Bytes());
+            TestReal val = decoder.decode<TestReal>(stream);
+            Assert.Equals(val.Value, coderTestUtils.createTestReal1_5().Value);
+            
+            stream = 
+                new System.IO.MemoryStream(coderTestUtils.createTestReal0_5Bytes());
+            val = decoder.decode<TestReal>(stream);
+            Assert.Equals(val.Value, coderTestUtils.createTestReal0_5().Value);
+            
+            stream = 
+                new System.IO.MemoryStream(coderTestUtils.createTestReal2Bytes());
+            val = decoder.decode<TestReal>(stream);
+            Assert.Equals(val.Value, coderTestUtils.createTestReal2().Value);
+
+            stream = 
+                new System.IO.MemoryStream(coderTestUtils.createTestRealBigBytes());
+            val = decoder.decode<TestReal>(stream);
+            Assert.Equals(val.Value, coderTestUtils.createTestRealBig().Value);
+            
+        }
+
+
 	}
 }

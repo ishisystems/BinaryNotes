@@ -84,7 +84,12 @@ namespace org.bn.coders
 			{
 				resultSize += encodeInteger(obj, stream, elementInfo);
 			}
-			else 
+            else
+            if (elementInfo.isAttributePresent<ASN1Real>())
+            {
+                resultSize += encodeReal(obj, stream, elementInfo);
+            }
+            else 
             if (elementInfo.isAttributePresent<ASN1OctetString>())
 			{
 				resultSize += encodeOctetString(obj, stream, elementInfo);
@@ -121,12 +126,17 @@ namespace org.bn.coders
 				return encodeString(obj, stream, info);
 			}
 			else 
-            if (obj.GetType().Equals(typeof(System.Int32)))
+            if (obj.GetType().Equals(typeof(int)))
 			{
 				return encodeInteger(obj, stream, info);
 			}
+            else
+            if (obj.GetType().Equals(typeof(double)))
+            {
+                return encodeReal(obj, stream, info);
+            }
 			else 
-            if (obj.GetType().Equals(typeof(System.Boolean)))
+            if (obj.GetType().Equals(typeof(bool)))
 			{
 				return encodeBoolean(obj, stream, info);
 			}
@@ -312,7 +322,9 @@ namespace org.bn.coders
 		protected abstract int encodeNull(object obj, System.IO.Stream stream, ElementInfo elementInfo);
 		
 		protected abstract int encodeInteger(object obj, System.IO.Stream steam, ElementInfo elementInfo);
-		
+
+        protected abstract int encodeReal(object obj, System.IO.Stream steam, ElementInfo elementInfo);
+
 		protected abstract int encodeOctetString(object obj, System.IO.Stream steam, ElementInfo elementInfo);
 
         protected abstract int encodeBitString(object obj, System.IO.Stream steam, ElementInfo elementInfo);

@@ -54,11 +54,51 @@ namespace org.bn.coders
             return sizeOfInt;
         }
 
+        public static int getIntegerLength(long val)
+        {
+            long mask = 0x7f80000000000000;
+            int sizeOfInt = 8;
+            if (val < 0)
+            {
+                while (((mask & val) == mask) && (sizeOfInt > 1))
+                {
+                    mask = mask >> 8;
+                    sizeOfInt--;
+                }
+            }
+            else
+            {
+                while (((mask & val) == 0) && (sizeOfInt > 1))
+                {
+                    mask = mask >> 8;
+                    sizeOfInt--;
+                }
+            }
+            return sizeOfInt;
+        }
+
         public static int getPositiveIntegerLength(int val)
         {
             if (val < 0)
             {
                 int mask = 0x7f800000;
+                int sizeOfInt = 4;
+                while (((mask & ~val) == mask) && (sizeOfInt > 1))
+                {
+                    mask = mask >> 8;
+                    sizeOfInt--;
+                }
+                return sizeOfInt;
+            }
+            else
+                return getIntegerLength(val);
+        }
+
+        public static int getPositiveIntegerLength(long val)
+        {
+            if (val < 0)
+            {
+                long mask = 0x7f80000000000000L;
                 int sizeOfInt = 4;
                 while (((mask & ~val) == mask) && (sizeOfInt > 1))
                 {

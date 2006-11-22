@@ -41,14 +41,31 @@ namespace org.bn.coders
 			((BitArrayInputStream) stream).skipUnreadedBits();
 		}
 		
-		protected virtual int decodeIntegerValueAsBytes(int intLen, System.IO.Stream stream)
+		protected virtual long decodeIntegerValueAsBytes(int intLen, System.IO.Stream stream)
 		{
-			int result = 0;
+            long result = 0;
+            for (int i = 0; i < intLen; i++)
+            {
+                long bt = stream.ReadByte();
+                if (bt == -1)
+                {
+                    throw new System.ArgumentException("Unexpected EOF when encoding!");
+                }
+                if (i == 0 && (bt & (byte)0x80) != 0)
+                {
+                    bt = bt - 256;
+                }
+
+                result = (result << 8) | bt;
+            }
+            return result;
+
+			/*int result = 0;
 			for (int i = intLen - 1; i >= 0; i--)
 			{
 				result |= stream.ReadByte() << 8 * i;
 			}
-			return result;
+			return result;*/
 		}
 		
 		/// <summary> Decode the constraint length determinant.
@@ -156,7 +173,7 @@ namespace org.bn.coders
 				*/
 				int intLen = decodeConstraintLengthDeterminant(1, CoderUtils.getPositiveIntegerLength(valueRange), stream);
 				skipAlignedBits(stream);
-				result = decodeIntegerValueAsBytes(intLen, stream);
+				result = (int)decodeIntegerValueAsBytes(intLen, stream);
 				result += min;
 			}
 			
@@ -176,7 +193,7 @@ namespace org.bn.coders
 			int result = 0;
 			int intLen = decodeLengthDeterminant(stream);
 			skipAlignedBits(stream);
-			result = decodeIntegerValueAsBytes(intLen, stream);
+			result = (int)decodeIntegerValueAsBytes(intLen, stream);
 			result += min;
 			return result;
 		}
@@ -229,7 +246,7 @@ namespace org.bn.coders
 			int result = 0;
 			int numLen = decodeLengthDeterminant(stream);
 			skipAlignedBits(stream);
-			result += decodeIntegerValueAsBytes(numLen, stream);
+			result += (int)decodeIntegerValueAsBytes(numLen, stream);
 			return result;
 		}
 
@@ -414,6 +431,58 @@ namespace org.bn.coders
 			result.Value = val;
 			return result;
 		}
+
+        protected override DecodedObject<object> decodeReal(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
+        {
+            BitArrayInputStream bitStream = (BitArrayInputStream)stream;
+            int len = decodeLengthDeterminant(bitStream);
+            int realPreamble = stream.ReadByte();
+            skipAlignedBits(stream);
+
+            Double result = 0.0D;
+            int szResult = len;
+            if ((realPreamble & 0x40) == 1)
+            {
+                // 01000000 Value is PLUS-INFINITY
+                result = Double.PositiveInfinity;
+            }
+            if ((realPreamble & 0x41) == 1)
+            {
+                // 01000001 Value is MINUS-INFINITY
+                result = Double.NegativeInfinity;
+                szResult += 1;
+            }
+            else
+                if (len > 0)
+                {
+                    int szOfExp = 1 + (realPreamble & 0x3);
+                    int sign = realPreamble & 0x40;
+                    int ff = (realPreamble & 0x0C) >> 2;
+                    long exponent = decodeIntegerValueAsBytes(szOfExp, stream);
+                    long mantissaEncFrm = decodeIntegerValueAsBytes(szResult - szOfExp - 1, stream);
+                    // Unpack mantissa & decrement exponent for base 2
+                    long mantissa = mantissaEncFrm << ff;
+                    while ((mantissa & 0x000ff00000000000L) == 0x0)
+                    {
+                        exponent -= 8;
+                        mantissa <<= 8;
+                    }
+                    while ((mantissa & 0x0010000000000000L) == 0x0)
+                    {
+                        exponent -= 1;
+                        mantissa <<= 1;
+                    }
+                    mantissa &= 0x0FFFFFFFFFFFFFL;
+                    long lValue = (exponent + 1023 + 52) << 52;
+                    lValue |= mantissa;
+                    if (sign == 1)
+                    {
+                        lValue = (long)((ulong)lValue | 0x8000000000000000L);
+                    }
+                    result = System.BitConverter.Int64BitsToDouble(lValue);
+                }
+            return new DecodedObject<object>(result, szResult);
+        }
 		
 		
 		protected override DecodedObject<object> decodeOctetString(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)

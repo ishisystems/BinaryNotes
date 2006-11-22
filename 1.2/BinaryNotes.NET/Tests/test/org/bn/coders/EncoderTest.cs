@@ -275,5 +275,18 @@ namespace test.org.bn.coders
             checkEncoded(encoder, coderTestUtils.createTaggedSeqInSeq(), coderTestUtils.createTaggedSeqInSeqBytes());        
         }
 
+        public void testEncodeReals() {
+            IEncoder encoder = newEncoder();
+            Assert.NotNull(encoder);
+            printEncoded("EncodeTestReal1.5: ",encoder, coderTestUtils.createTestReal1_5());            
+            checkEncoded(encoder, coderTestUtils.createTestReal1_5(), coderTestUtils.createTestReal1_5Bytes());        
+            printEncoded("EncodeTestReal0.5: ",encoder, coderTestUtils.createTestReal0_5());            
+            checkEncoded(encoder, coderTestUtils.createTestReal0_5(), coderTestUtils.createTestReal0_5Bytes());                
+            printEncoded("EncodeTestReal2: ",encoder, coderTestUtils.createTestReal2());            
+            checkEncoded(encoder, coderTestUtils.createTestReal2(), coderTestUtils.createTestReal2Bytes());        
+            printEncoded("EncodeTestRealBig: ",encoder, coderTestUtils.createTestRealBig());            
+            checkEncoded(encoder, coderTestUtils.createTestRealBig(), coderTestUtils.createTestRealBigBytes());            
+        }
+
 	}
 }

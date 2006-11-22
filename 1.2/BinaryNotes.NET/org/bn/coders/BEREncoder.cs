@@ -119,7 +119,7 @@ namespace org.bn.coders
 			return resultSize;
 		}
 		
-		protected internal int encodeIntegerValue(int val, System.IO.Stream stream)
+		protected internal int encodeIntegerValue(long val, System.IO.Stream stream)
 		{            
 			int resultSize = CoderUtils.getIntegerLength(val);
 			for (int i = 0; i < resultSize; i++)
@@ -141,6 +141,56 @@ namespace org.bn.coders
 			resultSize += encodeTag(BERCoderUtils.getTagValueForElement(elementInfo, TagClasses.Universal, ElementType.Primitive, UniversalTags.Integer), stream);
 			return resultSize;
 		}
+
+        protected override int encodeReal(object obj, System.IO.Stream stream, ElementInfo elementInfo)
+        {
+            int resultSize = 0;
+            Double value = (Double) obj;
+            //CoderUtils.checkConstraints(value,elementInfo);
+            int szOfInt = 0;
+            long asLong = System.BitConverter.DoubleToInt64Bits(value);
+            if (value == Double.PositiveInfinity)
+            { // positive infinity
+                stream.WriteByte(0x40); // 01000000 Value is PLUS-INFINITY
+            }
+            else
+            if(value == Double.NegativeInfinity) 
+            { // negative infinity            
+                stream.WriteByte(0x41); // 01000001 Value is MINUS-INFINITY
+            }        
+            else 
+            if(asLong!=0x0) {
+                long exponent = ((0x7ff0000000000000L & asLong) >> 52) - 1023 - 52;
+                long mantissa = 0x000fffffffffffffL & asLong;
+                mantissa |= 0x10000000000000L; // set virtual delimeter
+                
+                // pack mantissa for base 2
+                while((mantissa & 0xFFL) == 0x0) {
+                    mantissa >>= 8;
+                    exponent += 8; //increment exponent to 8 (base 2)
+                }        
+                while((mantissa & 0x01L) == 0x0) {
+                    mantissa >>= 1;
+                    exponent+=1; //increment exponent to 1
+                }
+                 
+                 szOfInt+= encodeIntegerValue(mantissa,stream);
+                 int szOfExp = CoderUtils.getIntegerLength(exponent);
+                 szOfInt+= encodeIntegerValue(exponent,stream);
+                 
+                 byte realPreamble = 0x80;
+                 realPreamble |= (byte)(szOfExp - 1);
+                 if( ((ulong)asLong & 0x8000000000000000L) == 1) {
+                     realPreamble|= 0x40; // Sign
+                 }
+                 stream.WriteByte(realPreamble );
+                 szOfInt+=1;
+            }
+            resultSize += szOfInt;
+            resultSize += encodeLength(szOfInt, stream);
+            resultSize += encodeTag(BERCoderUtils.getTagValueForElement(elementInfo, TagClasses.Universal, ElementType.Primitive, UniversalTags.Real), stream);
+            return resultSize;
+        }
 				
 		protected override int encodeOctetString(object obj, System.IO.Stream stream, ElementInfo elementInfo)
 		{

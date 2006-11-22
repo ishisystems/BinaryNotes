@@ -40,12 +40,12 @@ namespace org.bn.coders
 			bitStream.WriteTo(stream);
 		}
 		
-		protected virtual int encodeIntegerValueAsBytes(int val, System.IO.Stream stream)
+		protected virtual int encodeIntegerValueAsBytes(long val, System.IO.Stream stream)
 		{
 			int integerSize = CoderUtils.getIntegerLength(val);
 			for (int i = integerSize - 1; i >= 0; i--)
 			{
-				int valueTmp = val >> (8 * i);
+				long valueTmp = val >> (8 * i);
 				stream.WriteByte((byte) valueTmp);
 			}
 			return integerSize;
@@ -263,6 +263,61 @@ namespace org.bn.coders
 				result += encodeUnconstraintNumber(val, bitStream);
 			return result;
 		}
+
+        protected override int encodeReal(object obj, System.IO.Stream stream, ElementInfo elementInfo)
+        {
+            int result = 0;
+            BitArrayOutputStream bitStream = (BitArrayOutputStream)stream;
+            Double value = (Double) obj;
+            //CoderUtils.checkConstraints(value,elementInfo);
+            long asLong = System.BitConverter.DoubleToInt64Bits(value);
+            if(value == Double.PositiveInfinity ) { // positive infinity
+                result+=encodeLengthDeterminant(1,bitStream);
+                doAlign(stream);
+                stream.WriteByte(0x40); // 01000000 Value is PLUS-INFINITY
+                result+=1;
+            }
+            else
+            if(value == Double.NegativeInfinity) { // negative infinity
+                result+=encodeLengthDeterminant(1,bitStream);
+                doAlign(stream);
+                stream.WriteByte(0x41); // 01000001 Value is MINUS-INFINITY
+                result+=1;
+            }        
+            else 
+            if(asLong!=0x0) {
+                long exponent = ((0x7ff0000000000000L & asLong) >> 52) - 1023 - 52;
+                long mantissa = 0x000fffffffffffffL & asLong;
+                mantissa |= 0x10000000000000L; // set virtual delimeter
+                
+                // pack mantissa for base 2
+                while((mantissa & 0xFFL) == 0x0) {
+                    mantissa >>= 8;
+                    exponent += 8; //increment exponent to 8 (base 2)
+                }        
+                while((mantissa & 0x01L) == 0x0) {
+                    mantissa >>= 1;
+                    exponent+=1; //increment exponent to 1
+                }
+
+                int szOfExp = CoderUtils.getIntegerLength(exponent);
+                encodeLengthDeterminant(CoderUtils.getIntegerLength(mantissa)+szOfExp+1,bitStream);            
+                doAlign(stream);
+                byte realPreamble = 0x80;
+                
+                realPreamble |= (byte)(szOfExp - 1);
+                if( (((ulong)asLong) & 0x8000000000000000L) == 1) {
+                    realPreamble|= 0x40; // Sign
+                }
+                stream.WriteByte(realPreamble);
+                result+=1;
+
+                
+                result+= encodeIntegerValueAsBytes(exponent,stream);
+                result+= encodeIntegerValueAsBytes(mantissa,stream);            
+            }
+            return result;
+        }
 
         protected int encodeLength(int val, ElementInfo elementInfo, System.IO.Stream stream)
         {
