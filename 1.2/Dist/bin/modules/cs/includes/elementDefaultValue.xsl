@@ -37,7 +37,7 @@
                 <xsl:if test="$instElementType!='null' and $instElementType!='string'">new <xsl:value-of select="$instElementType"/> (</xsl:if> <xsl:value-of select="cStr"/> <xsl:if test="$instElementType!='null' and $instElementType!='string' ">)</xsl:if>
             </xsl:when>
             <xsl:when test="isSignedNumber = 'true'">
-                <xsl:if test="$instElementType!='null' and $instElementType!='int'">new <xsl:value-of select="$instElementType"/> ( </xsl:if> <xsl:if test="signedNumber/positive != 'true'">-</xsl:if><xsl:value-of select="signedNumber/num"/> <xsl:if test="$instElementType!='null' and $instElementType!='int'">)</xsl:if>
+                <xsl:if test="$instElementType!='null' and $instElementType!='int' and $instElementType!='long'">new <xsl:value-of select="$instElementType"/> ( </xsl:if> <xsl:if test="signedNumber/positive != 'true'">-</xsl:if><xsl:value-of select="signedNumber/num"/> <xsl:if test="$instElementType!='null' and $instElementType!='int' and $instElementType!='long'">)</xsl:if>
             </xsl:when>        
             <xsl:when test="isCStrValue = 'true'">            
                 <xsl:if test="$instElementType != 'byte[]' and $instElementType != 'null'">new <xsl:value-of select="$instElementType"/> (</xsl:if>CoderUtils.defStringToOctetString("<xsl:value-of select="bStrValue/bhStr"/>")<xsl:if test="$instElementType = 'byte[]'">.Value</xsl:if><xsl:if test="$instElementType != 'byte[]' and $instElementType != 'null'">)</xsl:if>

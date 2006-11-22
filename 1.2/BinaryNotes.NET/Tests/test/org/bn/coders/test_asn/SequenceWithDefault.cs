@@ -18,12 +18,12 @@ namespace test.org.bn.coders.test_asn {
     public class SequenceWithDefault {
             
         
-	private int nodefault_ ;
+	private long nodefault_ ;
 	[ASN1Integer( Name = "" )]
     
         [ASN1Element ( Name = "nodefault", IsOptional =  false , HasTag =  true, Tag = 0 , HasDefaultValue =  false )  ]
     
-        public int Nodefault
+        public long Nodefault
         {
             get { return nodefault_; }
             set { nodefault_ = value;  }
@@ -46,12 +46,12 @@ namespace test.org.bn.coders.test_asn {
                 
   
         
-	private int withIntDef_ ;
+	private long withIntDef_ ;
 	[ASN1Integer( Name = "" )]
     
         [ASN1Element ( Name = "withIntDef", IsOptional =  false , HasTag =  true, Tag = 2 , HasDefaultValue =  true )  ]
     
-        public int WithIntDef
+        public long WithIntDef
         {
             get { return withIntDef_; }
             set { withIntDef_ = value;  }
@@ -188,7 +188,7 @@ namespace test.org.bn.coders.test_asn {
                 string param_WithDefault =         
             "dd";
         WithDefault = param_WithDefault;
-    int param_WithIntDef =         
+    long param_WithIntDef =         
             120;
         WithIntDef = param_WithIntDef;
     WithSeqDefSequenceType param_WithSeqDef =         

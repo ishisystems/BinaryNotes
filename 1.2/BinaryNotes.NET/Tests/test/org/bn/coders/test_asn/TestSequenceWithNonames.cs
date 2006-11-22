@@ -24,14 +24,14 @@ namespace test.org.bn.coders.test_asn {
        public class SeqSequenceType {
                 
         
-	private int it1_ ;
+	private long it1_ ;
 	
         private bool  it1_present = false ;
 	[ASN1Integer( Name = "" )]
     
         [ASN1Element ( Name = "it1", IsOptional =  true , HasTag =  false  , HasDefaultValue =  false )  ]
     
-        public int It1
+        public long It1
         {
             get { return it1_; }
             set { it1_ = value; it1_present = true;  }
@@ -68,7 +68,7 @@ namespace test.org.bn.coders.test_asn {
     public class ChChoiceType {
             
         
-	private int it1_ ;
+	private long it1_ ;
         private bool  it1_selected = false ;
         
         
@@ -76,7 +76,7 @@ namespace test.org.bn.coders.test_asn {
         [ASN1Element ( Name = "it1", IsOptional =  false , HasTag =  true, Tag = 0 , HasDefaultValue =  false )  ]
     [ASN1Integer( Name = "" )]
     
-        public int It1
+        public long It1
         {
             get { return it1_; }
             set { selectIt1(value); }
@@ -106,7 +106,7 @@ namespace test.org.bn.coders.test_asn {
             return this.it1_selected ;
         }
 
-        public void selectIt1 (int val) {
+        public void selectIt1 (long val) {
             this.it1_ = val;
             this.it1_selected = true;
             
@@ -150,14 +150,14 @@ namespace test.org.bn.coders.test_asn {
        public class SequenceType {
                 
         
-	private int it1_ ;
+	private long it1_ ;
 	
         private bool  it1_present = false ;
 	[ASN1Integer( Name = "" )]
     
         [ASN1Element ( Name = "it1", IsOptional =  true , HasTag =  false  , HasDefaultValue =  false )  ]
     
-        public int It1
+        public long It1
         {
             get { return it1_; }
             set { it1_ = value; it1_present = true;  }

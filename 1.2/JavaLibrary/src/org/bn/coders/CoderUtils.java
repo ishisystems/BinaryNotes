@@ -170,7 +170,7 @@ public class CoderUtils {
         return result;
     }
     
-    public static void checkConstraints(int value, ElementInfo elementInfo) throws Exception {
+    public static void checkConstraints(long value, ElementInfo elementInfo) throws Exception {
         if(elementInfo.getAnnotatedClass().isAnnotationPresent(ASN1ValueRangeConstraint.class)) {
             ASN1ValueRangeConstraint constraint = elementInfo.getAnnotatedClass().getAnnotation(ASN1ValueRangeConstraint.class);
             if(value> constraint.max() || value<constraint.min() )

@@ -20,20 +20,20 @@ import org.bn.types.*;
     
             @ASN1Integer( name = "TestI" )
             
-            private Integer value;
+            private Long value;
             
             public TestI() {
             }
 
-            public TestI(Integer value) {
+            public TestI(Long value) {
                 this.value = value;
             }
             
-            public void setValue(Integer value) {
+            public void setValue(Long value) {
                 this.value = value;
             }
             
-            public Integer getValue() {
+            public Long getValue() {
                 return this.value;
             }
     }

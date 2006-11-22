@@ -148,9 +148,17 @@ public class BERDecoder extends Decoder {
                                    InputStream stream) throws Exception {
         if(!checkTagForObject(decodedTag, TagClass.Universal, ElementType.Primitive,UniversalTag.Integer, elementInfo))
             return null;
-        DecodedObject<Integer> result =  decodeIntegerValue(stream);
-        CoderUtils.checkConstraints(result.getValue(),elementInfo);
-        return result;
+        if(objectClass.equals(Integer.class)) {
+            DecodedObject<Integer> result =  decodeIntegerValue(stream);
+            CoderUtils.checkConstraints(result.getValue(),elementInfo);
+            return result;
+        }
+        else {
+            DecodedObject<Long> result =  decodeLongValue(stream);
+            CoderUtils.checkConstraints(result.getValue(),elementInfo);
+            return result;
+        }        
+
     }
 
     protected DecodedObject decodeReal(DecodedObject decodedTag, Class objectClass, ElementInfo elementInfo, 

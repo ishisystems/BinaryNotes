@@ -35,7 +35,7 @@ namespace test.org.bn.coders.test_asn {
                 
   
         
-	private int bugInteger_ ;
+	private long bugInteger_ ;
         private bool  bugInteger_selected = false ;
         
         
@@ -43,7 +43,7 @@ namespace test.org.bn.coders.test_asn {
         [ASN1Element ( Name = "bugInteger", IsOptional =  false , HasTag =  true, Tag = 1 , HasDefaultValue =  false )  ]
     [ASN1Integer( Name = "" )]
     
-        public int BugInteger
+        public long BugInteger
         {
             get { return bugInteger_; }
             set { selectBugInteger(value); }
@@ -71,7 +71,7 @@ namespace test.org.bn.coders.test_asn {
             return this.bugInteger_selected ;
         }
 
-        public void selectBugInteger (int val) {
+        public void selectBugInteger (long val) {
             this.bugInteger_ = val;
             this.bugInteger_selected = true;
             

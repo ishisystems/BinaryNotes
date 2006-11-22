@@ -190,7 +190,7 @@ namespace org.bn.coders
             return result;
         }
 
-        public static void checkConstraints(int val, ElementInfo elementInfo)
+        public static void checkConstraints(long val, ElementInfo elementInfo)
         {
             if (elementInfo.isAttributePresent<ASN1ValueRangeConstraint>())
             {

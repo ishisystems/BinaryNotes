@@ -33,9 +33,9 @@ public class PERUnalignedDecoder extends PERAlignedDecoder {
         // Do nothing! Unaligned encoding ;)
     }
     
-    protected int decodeConstraintNumber(int min, int max, BitArrayInputStream stream) throws Exception {
+    protected long decodeConstraintNumber(long min, long max, BitArrayInputStream stream) throws Exception {
      int result = 0;
-     int valueRange = max - min;
+     long valueRange = max - min;
      // !!! int narrowedVal = value - min; !!!
      int maxBitLen = PERCoderUtils.getMaxBitLength(valueRange);
     

@@ -242,4 +242,24 @@ EXPORTS TestOCT,TestPRN,TestI32,TestI16,TestI8,ContentType,ValueWithParams,Param
 		field [0] PlainParamsMap
 	}
 
+	TestReal ::= REAL
+
+	TestGT ::= GeneralizedTime
+
+	TestUTC ::= UTCTime
+
+	TestLong ::= INTEGER(1 .. 2247483648)
+
+
+	TestSeqV13 ::= SEQUENCE 
+	{
+		field1 [0] REAL,
+		fieldI INTEGER,
+		field2 TestReal,
+		field3 REAL OPTIONAL,
+		field4 [1] REAL,
+		field5 GeneralizedTime,
+		field6 UTCTime,
+		field7 TestLong
+	}
 END

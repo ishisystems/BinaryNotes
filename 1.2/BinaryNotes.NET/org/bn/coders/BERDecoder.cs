@@ -161,9 +161,18 @@ namespace org.bn.coders
 		{
 			if (!checkTagForObject(decodedTag, TagClasses.Universal, ElementType.Primitive, UniversalTags.Integer, elementInfo))
 				return null;
-			DecodedObject<object> result = decodeIntegerValue(stream);
-            CoderUtils.checkConstraints((int)result.Value, elementInfo);
-            return result;
+            if (objectClass.Equals(typeof(int)))
+            {
+                DecodedObject<object> result = decodeIntegerValue(stream);
+                CoderUtils.checkConstraints((int)result.Value, elementInfo);
+                return result;
+            }
+            else
+            {
+                DecodedObject<object> result = decodeLongValue(stream);
+                CoderUtils.checkConstraints((long)result.Value, elementInfo);
+                return result;
+            }
 		}
 
         protected override DecodedObject<object> decodeReal(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)

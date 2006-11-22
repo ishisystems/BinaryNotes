@@ -32,11 +32,11 @@ namespace org.bn.coders
 		{
 		}
 		
-		protected override int encodeConstraintNumber(int val, int min, int max, BitArrayOutputStream stream)
+		protected override int encodeConstraintNumber(long val, long min, long max, BitArrayOutputStream stream)
 		{
 			int result = 0;
-			int valueRange = max - min;
-			int narrowedVal = val - min;
+			long valueRange = max - min;
+            long narrowedVal = val - min;
 			int maxBitLen = PERCoderUtils.getMaxBitLength(valueRange);
 			
 			if (valueRange == 0)
@@ -51,13 +51,13 @@ namespace org.bn.coders
 			{
 				currentBit -= 8;
 				result++;
-				stream.WriteByte(narrowedVal >> currentBit);
+				stream.WriteByte((byte) (narrowedVal >> currentBit));
 			}
 			if (currentBit > 0)
 			{
 				for (int i = currentBit - 1; i >= 0; i--)
 				{
-					int bitValue = (narrowedVal >> i) & 0x1;
+					int bitValue = (int) ((narrowedVal >> i) & 0x1);
 					stream.writeBit(bitValue);
 				}
 				result += 1;

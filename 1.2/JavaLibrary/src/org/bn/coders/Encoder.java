@@ -125,6 +125,10 @@ public abstract class Encoder<T> implements IEncoder<T> {
             return encodeInteger(object,stream,info);
         }
         else
+        if(object.getClass().equals(Long.class)) {
+            return encodeInteger(object,stream,info);
+        }
+        else
         if(object.getClass().equals(Double.class)) {
             return encodeReal(object,stream,info);
         }

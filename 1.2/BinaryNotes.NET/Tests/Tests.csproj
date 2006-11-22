@@ -90,12 +90,14 @@
     <Compile Include="test\org\bn\coders\test_asn\TaggedSequence.cs" />
     <Compile Include="test\org\bn\coders\test_asn\TestBitStr.cs" />
     <Compile Include="test\org\bn\coders\test_asn\TestBitStrBnd.cs" />
+    <Compile Include="test\org\bn\coders\test_asn\TestGT.cs" />
     <Compile Include="test\org\bn\coders\test_asn\TestI.cs" />
     <Compile Include="test\org\bn\coders\test_asn\TestI14.cs" />
     <Compile Include="test\org\bn\coders\test_asn\TestI16.cs" />
     <Compile Include="test\org\bn\coders\test_asn\TestI32.cs" />
     <Compile Include="test\org\bn\coders\test_asn\TestI8.cs" />
     <Compile Include="test\org\bn\coders\test_asn\TestIR.cs" />
+    <Compile Include="test\org\bn\coders\test_asn\TestLong.cs" />
     <Compile Include="test\org\bn\coders\test_asn\TestNI.cs" />
     <Compile Include="test\org\bn\coders\test_asn\TestNI2.cs" />
     <Compile Include="test\org\bn\coders\test_asn\TestOCT.cs" />
@@ -105,8 +107,10 @@
     <Compile Include="test\org\bn\coders\test_asn\TestRecursiveDefinetion.cs" />
     <Compile Include="test\org\bn\coders\test_asn\TestSequenceV12.cs" />
     <Compile Include="test\org\bn\coders\test_asn\TestSequenceWithNonames.cs" />
+    <Compile Include="test\org\bn\coders\test_asn\TestSeqV13.cs" />
     <Compile Include="test\org\bn\coders\test_asn\TestUnicodeStr.cs" />
     <Compile Include="test\org\bn\coders\test_asn\TestUnicodeStrBnd.cs" />
+    <Compile Include="test\org\bn\coders\test_asn\TestUTC.cs" />
     <Compile Include="test\org\bn\coders\test_asn\TEST_ASN.cs" />
     <Compile Include="test\org\bn\coders\test_asn\ValueWithParams.cs" />
     <Compile Include="test\org\bn\performance\DummyPerformanceTest.cs" />

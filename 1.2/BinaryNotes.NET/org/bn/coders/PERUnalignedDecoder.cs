@@ -34,10 +34,10 @@ namespace org.bn.coders
 			// Do nothing! Unaligned encoding ;)
 		}
 		
-		protected override int decodeConstraintNumber(int min, int max, BitArrayInputStream stream)
+		protected override long decodeConstraintNumber(long min, long max, BitArrayInputStream stream)
 		{
-			int result = 0;
-			int valueRange = max - min;
+            long result = 0;
+			long valueRange = max - min;
 			// !!! int narrowedVal = value - min; !!!
 			int maxBitLen = PERCoderUtils.getMaxBitLength(valueRange);
 			

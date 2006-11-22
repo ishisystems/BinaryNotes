@@ -21,7 +21,7 @@ import org.bn.types.*;
     
         @ASN1Element ( name = "nodefault", isOptional =  false , hasTag =  true, tag = 0 , hasDefaultValue =  false  )
     
-	private Integer nodefault = null;
+	private Long nodefault = null;
                 
   
     @ASN1String( name = "", 
@@ -35,7 +35,7 @@ import org.bn.types.*;
     
         @ASN1Element ( name = "withIntDef", isOptional =  false , hasTag =  true, tag = 2 , hasDefaultValue =  true  )
     
-	private Integer withIntDef = null;
+	private Long withIntDef = null;
                 
   
        @ASN1Sequence ( name = "withSeqDef" , isSet = false )
@@ -131,13 +131,13 @@ import org.bn.types.*;
                 
   
         
-        public Integer getNodefault () {
+        public Long getNodefault () {
             return this.nodefault;
         }
 
         
 
-        public void setNodefault (Integer value) {
+        public void setNodefault (Long value) {
             this.nodefault = value;
         }
         
@@ -155,13 +155,13 @@ import org.bn.types.*;
         
   
         
-        public Integer getWithIntDef () {
+        public Long getWithIntDef () {
             return this.withIntDef;
         }
 
         
 
-        public void setWithIntDef (Integer value) {
+        public void setWithIntDef (Long value) {
             this.withIntDef = value;
         }
         
@@ -245,8 +245,8 @@ import org.bn.types.*;
             String param_WithDefault =         
             new String ("dd");
         setWithDefault(param_WithDefault);
-    Integer param_WithIntDef =         
-            new Integer ( 120);
+    Long param_WithIntDef =         
+            new Long ( 120);
         setWithIntDef(param_WithIntDef);
     WithSeqDefSequenceType param_WithSeqDef =         
             

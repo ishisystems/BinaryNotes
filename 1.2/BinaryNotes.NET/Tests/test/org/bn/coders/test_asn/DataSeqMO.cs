@@ -107,14 +107,14 @@ namespace test.org.bn.coders.test_asn {
                 
   
         
-	private int intType_ ;
+	private long intType_ ;
 	
         private bool  intType_present = false ;
 	[ASN1Integer( Name = "" )]
     
         [ASN1Element ( Name = "intType", IsOptional =  true , HasTag =  true, Tag = 6 , HasDefaultValue =  false )  ]
     
-        public int IntType
+        public long IntType
         {
             get { return intType_; }
             set { intType_ = value; intType_present = true;  }
@@ -272,14 +272,14 @@ namespace test.org.bn.coders.test_asn {
                 
   
         
-	private int intType2_ ;
+	private long intType2_ ;
 	
         private bool  intType2_present = false ;
 	[ASN1Integer( Name = "" )]
     
         [ASN1Element ( Name = "intType2", IsOptional =  true , HasTag =  true, Tag = 19 , HasDefaultValue =  false )  ]
     
-        public int IntType2
+        public long IntType2
         {
             get { return intType2_; }
             set { intType2_ = value; intType2_present = true;  }

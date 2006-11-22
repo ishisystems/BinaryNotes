@@ -120,6 +120,10 @@ namespace org.bn.coders
 			{
 				return decodeInteger(decodedTag, objectClass, elementInfo, stream);
 			}
+            else if (elementInfo.AnnotatedClass.Equals(typeof(long)))
+            {
+                return decodeInteger(decodedTag, objectClass, elementInfo, stream);
+            }
             else if (elementInfo.AnnotatedClass.Equals(typeof(double)))
             {
                 return decodeReal(decodedTag, objectClass, elementInfo, stream);

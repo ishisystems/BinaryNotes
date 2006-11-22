@@ -121,9 +121,18 @@ public class BEREncoder<T> extends Encoder<T> {
 
     protected int encodeInteger(Object object, OutputStream stream, ElementInfo elementInfo) throws Exception {
         int resultSize = 0;
-        Integer value = (Integer) object;
-        CoderUtils.checkConstraints(value,elementInfo);
-        int szOfInt = encodeIntegerValue(value,stream);
+        int szOfInt = 0;
+        if(object instanceof Integer) {
+            Integer value = (Integer) object;
+            CoderUtils.checkConstraints(value,elementInfo);
+            szOfInt = encodeIntegerValue(value,stream);
+        }
+        else 
+        if(object instanceof Long) {
+            Long value = (Long) object;
+            CoderUtils.checkConstraints(value,elementInfo);
+            szOfInt = encodeIntegerValue(value,stream);            
+        }
         resultSize += szOfInt;        
         resultSize += encodeLength(szOfInt, stream);
         resultSize += encodeTag( 

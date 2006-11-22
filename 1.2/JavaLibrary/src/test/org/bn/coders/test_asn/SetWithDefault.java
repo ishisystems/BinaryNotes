@@ -21,7 +21,7 @@ import org.bn.types.*;
     
         @ASN1Element ( name = "nodefault", isOptional =  false , hasTag =  true, tag = 2 , hasDefaultValue =  false  )
     
-	private Integer nodefault = null;
+	private Long nodefault = null;
                 
   
         @ASN1Element ( name = "nodefault2", isOptional =  false , hasTag =  true, tag = 1 , hasDefaultValue =  false  )
@@ -38,13 +38,13 @@ import org.bn.types.*;
                 
   
         
-        public Integer getNodefault () {
+        public Long getNodefault () {
             return this.nodefault;
         }
 
         
 
-        public void setNodefault (Integer value) {
+        public void setNodefault (Long value) {
             this.nodefault = value;
         }
         

@@ -28,7 +28,7 @@ import java.util.TreeMap;
 import org.bn.annotations.ASN1Element;
 
 public class PERCoderUtils {
-    public static int getMaxBitLength(int value) {
+    public static int getMaxBitLength(long value) {
         int bitCnt = 0;
         while( value !=0 ) {
             value >>>= 1;

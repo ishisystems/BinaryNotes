@@ -18,12 +18,12 @@ namespace test.org.bn.coders.test_asn {
     public class SetWithDefault {
             
         
-	private int nodefault_ ;
+	private long nodefault_ ;
 	[ASN1Integer( Name = "" )]
     
         [ASN1Element ( Name = "nodefault", IsOptional =  false , HasTag =  true, Tag = 2 , HasDefaultValue =  false )  ]
     
-        public int Nodefault
+        public long Nodefault
         {
             get { return nodefault_; }
             set { nodefault_ = value;  }

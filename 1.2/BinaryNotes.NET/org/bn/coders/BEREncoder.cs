@@ -133,9 +133,19 @@ namespace org.bn.coders
 		protected override int encodeInteger(object obj, System.IO.Stream stream, ElementInfo elementInfo)
 		{
 			int resultSize = 0;
-			int val = (int) obj;
-            CoderUtils.checkConstraints(val, elementInfo);
-			int szOfInt = encodeIntegerValue(val, stream);
+            int szOfInt = 0;
+            if (obj.GetType().Equals(typeof(int)))
+            {
+                int val = (int)obj;
+                CoderUtils.checkConstraints(val, elementInfo);
+                szOfInt = encodeIntegerValue(val, stream);
+            }
+            else
+            {
+                long val = (long)obj;
+                CoderUtils.checkConstraints(val, elementInfo);
+                szOfInt = encodeIntegerValue(val, stream);
+            }
 			resultSize += szOfInt;
 			resultSize += encodeLength(szOfInt, stream);
 			resultSize += encodeTag(BERCoderUtils.getTagValueForElement(elementInfo, TagClasses.Universal, ElementType.Primitive, UniversalTags.Integer), stream);

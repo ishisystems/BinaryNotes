@@ -118,7 +118,7 @@ public abstract class CoderTestUtilities {
         seq.setIntBndType(0x44);
         seq.setPlain(new TestPRN(""));
         seq.setSimpleOctType(new byte[] { (byte)0xBA });
-        seq.setIntType(0);
+        seq.setIntType(0L);
         List<String> list = new LinkedList<String>();
         list.add("bbbbbb");
         list.add("ccccc");
@@ -146,7 +146,7 @@ public abstract class CoderTestUtilities {
         seq.setIntBndType(0);
         seq.setPlain(new TestPRN(""));
         seq.setSimpleOctType(new byte[] { (byte)0xAB });
-        seq.setIntType(0);
+        seq.setIntType(0L);
         
         List<String> list = new LinkedList<String>();
         list.add("bbbbbb");
@@ -211,7 +211,7 @@ public abstract class CoderTestUtilities {
     
     public TestI32 createTestInteger4() {
         TestI32 value = new TestI32();
-        value.setValue(new Integer(0xF0F0F0));
+        value.setValue(new Long(0xF0F0F0L));
         return value;
     }
     public abstract byte[] createTestInteger4Bytes();        
@@ -237,7 +237,7 @@ public abstract class CoderTestUtilities {
 
     public TestI createUnboundedTestInteger() {
         TestI value = new TestI();
-        value.setValue(new Integer(0xFAFBFC));
+        value.setValue(new Long(0xFAFBFC));
         return value;    
     }
     public abstract byte[] createUnboundedTestIntegerBytes();
@@ -289,7 +289,7 @@ public abstract class CoderTestUtilities {
     
     public SetWithDefault createSet() {
         SetWithDefault result = new SetWithDefault();
-        result.setNodefault(0xAA);
+        result.setNodefault(0xAAL);
         result.setNodefault2(new TestPRN("aaaa"));
         result.setDefault3("bbbb");    
         return result;
@@ -346,7 +346,7 @@ public abstract class CoderTestUtilities {
 
     public BugValueType createChoiceInChoice() {
         BugPrimitive primitive = new BugPrimitive();
-        primitive.selectBugInteger(5);
+        primitive.selectBugInteger(5L);
 
         BugValueType valueType = new BugValueType();
         valueType.selectBugPrimitive(primitive);

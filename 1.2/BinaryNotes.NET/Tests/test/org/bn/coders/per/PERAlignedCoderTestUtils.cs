@@ -74,7 +74,7 @@ namespace test.org.bn.coders.per
 		
 		public override byte[] createTestInteger4Bytes()
 		{
-			return new byte[]{(byte) (0xC0), (byte) (0x00), (byte) (0xF0), (byte) (0xF0), (byte) (0xF0)};
+			return new byte[]{(byte) (0x60), (byte) (0x00), (byte) (0xF0), (byte) (0xF0), (byte) (0xF0)};
 		}
 		
 		public override byte[] createSeqWithNullBytes()

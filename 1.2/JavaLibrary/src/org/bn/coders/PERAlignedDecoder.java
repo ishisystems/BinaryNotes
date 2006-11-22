@@ -85,7 +85,7 @@ public class PERAlignedDecoder extends Decoder {
             // if the length count is bounded above by an upper bound that is 
             // less than 64K, then the constrained whole number encoding 
             // is used for the length.
-            return decodeConstraintNumber(min, max, stream); // encoding as constraint integer
+            return (int)decodeConstraintNumber(min, max, stream); // encoding as constraint integer
         }
         else
             return decodeLengthDeterminant(stream);
@@ -127,9 +127,9 @@ public class PERAlignedDecoder extends Decoder {
      * and itself references earlier clauses for the production of 
      * a nonnegative-binary-integer or a 2's-complement-binary-integer encoding.
      */
-    protected int decodeConstraintNumber(int min, int max, BitArrayInputStream stream) throws Exception {
-        int result = 0;
-        int valueRange = max - min;
+    protected long decodeConstraintNumber(long min, long max, BitArrayInputStream stream) throws Exception {
+        long result = 0;
+        long valueRange = max - min;
         //!!!! int narrowedVal = value - min; !!!
         int maxBitLen = PERCoderUtils.getMaxBitLength(valueRange);
         
@@ -277,7 +277,7 @@ public class PERAlignedDecoder extends Decoder {
         Object choice = createInstanceForElement(objectClass,elementInfo);
         skipAlignedBits(stream);
         Field[] fields = PERCoderUtils.getRealFields(objectClass).toArray( new Field[0]);
-        int elementIndex = decodeConstraintNumber(1, fields.length , (BitArrayInputStream)stream);
+        int elementIndex = (int)decodeConstraintNumber(1, fields.length , (BitArrayInputStream)stream);
         DecodedObject value = null;
         for (int i=0;i<elementIndex && i<fields.length;i++) { 
             if(i+1 == elementIndex) {
@@ -348,7 +348,7 @@ public class PERAlignedDecoder extends Decoder {
                                     InputStream stream) throws Exception {
         //ASN1EnumItem enumObj = elementInfo.getAnnotatedClass().getAnnotation(ASN1EnumItem.class);
         int min = 0, max = enumClass.getDeclaredFields().length;
-        int enumItemIdx = decodeConstraintNumber(min,max,(BitArrayInputStream)stream);
+        int enumItemIdx = (int)decodeConstraintNumber(min,max,(BitArrayInputStream)stream);
         DecodedObject<Integer> result = new DecodedObject<Integer>();
         int idx=0;
         for(Field enumItem: enumClass.getDeclaredFields()) {             
@@ -383,17 +383,32 @@ public class PERAlignedDecoder extends Decoder {
 
     protected DecodedObject decodeInteger(DecodedObject decodedTag, Class objectClass, ElementInfo elementInfo, 
                                    InputStream stream) throws Exception {
-        DecodedObject<Integer> result = new DecodedObject<Integer> ();
-        BitArrayInputStream bitStream = (BitArrayInputStream)stream;
-        int value = 0;
-        if(elementInfo.getAnnotatedClass().isAnnotationPresent(ASN1ValueRangeConstraint.class)) {
-            ASN1ValueRangeConstraint constraint = elementInfo.getAnnotatedClass().getAnnotation(ASN1ValueRangeConstraint.class);
-            value = decodeConstraintNumber((int)constraint.min(), (int)constraint.max(), bitStream);
+        if(objectClass.equals(Integer.class)) {
+            DecodedObject<Integer> result = new DecodedObject<Integer> ();
+            BitArrayInputStream bitStream = (BitArrayInputStream)stream;
+            int value = 0;
+            if(elementInfo.getAnnotatedClass().isAnnotationPresent(ASN1ValueRangeConstraint.class)) {
+                ASN1ValueRangeConstraint constraint = elementInfo.getAnnotatedClass().getAnnotation(ASN1ValueRangeConstraint.class);
+                value = (int)decodeConstraintNumber((int)constraint.min(), (int)constraint.max(), bitStream);
+            }
+            else
+                value = decodeUnconstraintNumber(bitStream);
+            result.setValue(value);
+            return result;
         }
-        else
-            value = decodeUnconstraintNumber(bitStream);
-        result.setValue(value);
-        return result;
+        else {
+            DecodedObject<Long> result = new DecodedObject<Long> ();
+            BitArrayInputStream bitStream = (BitArrayInputStream)stream;
+            long value = 0;
+            if(elementInfo.getAnnotatedClass().isAnnotationPresent(ASN1ValueRangeConstraint.class)) {
+                ASN1ValueRangeConstraint constraint = elementInfo.getAnnotatedClass().getAnnotation(ASN1ValueRangeConstraint.class);
+                value = decodeConstraintNumber(constraint.min(), constraint.max(), bitStream);
+            }
+            else
+                value = decodeUnconstraintNumber(bitStream);
+            result.setValue(value);
+            return result;            
+        }
     }
 
     protected DecodedObject decodeReal(DecodedObject decodedTag, Class objectClass, ElementInfo elementInfo, 

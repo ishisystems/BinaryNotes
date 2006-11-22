@@ -28,10 +28,10 @@ public class PERUnalignedEncoder<T> extends PERAlignedEncoder<T> {
     public PERUnalignedEncoder() {
     }
     
-    protected int encodeConstraintNumber(int value, int min, int max, BitArrayOutputStream stream) throws Exception {
+    protected int encodeConstraintNumber(long value, long min, long max, BitArrayOutputStream stream) throws Exception {
         int result = 0;
-        int valueRange = max - min;
-        int narrowedVal = value - min;
+        long valueRange = max - min;
+        long narrowedVal = value - min;
         int maxBitLen = PERCoderUtils.getMaxBitLength(valueRange);
 
         if(valueRange == 0) {
@@ -49,7 +49,7 @@ public class PERUnalignedEncoder<T> extends PERAlignedEncoder<T> {
         }
         if(currentBit > 0) {
             for (int i=currentBit-1; i>=0; i--) {
-                int bitValue = (narrowedVal >> i) & 0x1;
+                int bitValue = (int)((narrowedVal >> i) & 0x1);
                 stream.writeBit( bitValue );
             }
             result +=1;

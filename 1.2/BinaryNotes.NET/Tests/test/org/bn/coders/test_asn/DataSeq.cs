@@ -101,12 +101,12 @@ namespace test.org.bn.coders.test_asn {
                 
   
         
-	private int intType_ ;
+	private long intType_ ;
 	[ASN1Integer( Name = "" )]
     
         [ASN1Element ( Name = "intType", IsOptional =  false , HasTag =  true, Tag = 6 , HasDefaultValue =  false )  ]
     
-        public int IntType
+        public long IntType
         {
             get { return intType_; }
             set { intType_ = value;  }

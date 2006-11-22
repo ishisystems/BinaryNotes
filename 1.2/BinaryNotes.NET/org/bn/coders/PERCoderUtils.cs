@@ -27,7 +27,7 @@ namespace org.bn.coders
 	
 	public class PERCoderUtils
 	{
-		public static int getMaxBitLength(int val)
+		public static int getMaxBitLength(long val)
 		{
 			int bitCnt = 0;
 			while (val != 0)

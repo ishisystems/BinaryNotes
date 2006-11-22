@@ -23,20 +23,20 @@ import org.bn.types.*;
 		min = 0L, 
 		max = 4294967295L ) 
 	   
-            private Integer value;
+            private Long value;
             
             public TestI32() {
             }
 
-            public TestI32(Integer value) {
+            public TestI32(Long value) {
                 this.value = value;
             }
             
-            public void setValue(Integer value) {
+            public void setValue(Long value) {
                 this.value = value;
             }
             
-            public Integer getValue() {
+            public Long getValue() {
                 return this.value;
             }
     }

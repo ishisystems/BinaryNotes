@@ -131,6 +131,11 @@ namespace org.bn.coders
 				return encodeInteger(obj, stream, info);
 			}
             else
+            if (obj.GetType().Equals(typeof(long)))
+            {
+                return encodeInteger(obj, stream, info);
+            }
+            else
             if (obj.GetType().Equals(typeof(double)))
             {
                 return encodeReal(obj, stream, info);

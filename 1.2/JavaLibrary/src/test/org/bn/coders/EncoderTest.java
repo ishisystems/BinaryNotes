@@ -81,7 +81,7 @@ public abstract class EncoderTest extends TestCase {
         
         choice.selectSimpleOctType(new byte[10] );
         printEncoded("Choice simple octet",encoder,choice);
-        choice.selectIntType(7);
+        choice.selectIntType(7L);
         printEncoded("Choice simple int",encoder,choice);
     }
         

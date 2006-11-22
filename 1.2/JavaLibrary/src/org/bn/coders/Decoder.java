@@ -114,6 +114,10 @@ public abstract class Decoder implements IDecoder {
             return decodeInteger(decodedTag, objectClass,elementInfo, stream);
         }
         else
+        if(elementInfo.getAnnotatedClass().equals(Long.class)) {
+            return decodeInteger(decodedTag, objectClass,elementInfo, stream);
+        }
+        else
         if(elementInfo.getAnnotatedClass().equals(Double.class)) {
             return decodeReal(decodedTag, objectClass,elementInfo, stream);
         }

@@ -17,11 +17,11 @@ namespace test.org.bn.coders.test_asn {
     [ASN1BoxedType ( Name = "BugEnum" )]
     public class BugEnum {
     
-            private int val;
+            private long val;
             
             [ASN1Integer( Name = "BugEnum" )]
             
-            public int Value
+            public long Value
             {
                 get { return val; }
                 set { val = value; }
@@ -30,7 +30,7 @@ namespace test.org.bn.coders.test_asn {
             public BugEnum() {
             }
 
-            public BugEnum(int value) {
+            public BugEnum(long value) {
                 this.Value = value;
             }            
     }

@@ -110,11 +110,11 @@ namespace org.bn.coders
 		/// and itself references earlier clauses for the production of 
 		/// a nonnegative-binary-integer or a 2's-complement-binary-integer encoding.
 		/// </summary>
-		protected virtual int encodeConstraintNumber(int val, int min, int max, BitArrayOutputStream stream)
+		protected virtual int encodeConstraintNumber(long val, long min, long max, BitArrayOutputStream stream)
 		{
 			int result = 0;
-			int valueRange = max - min;
-			int narrowedVal = val - min;
+			long valueRange = max - min;
+            long narrowedVal = val - min;
 			int maxBitLen = PERCoderUtils.getMaxBitLength(valueRange);
 			
 			if (valueRange == 0)
@@ -134,7 +134,7 @@ namespace org.bn.coders
 				doAlign(stream);
 				for (int i = maxBitLen - 1; i >= 0; i--)
 				{
-					int bitValue = (narrowedVal >> i) & 0x1;
+					int bitValue = (int) ((narrowedVal >> i) & 0x1);
 					stream.writeBit(bitValue);
 				}
 				result = 1;
@@ -146,8 +146,8 @@ namespace org.bn.coders
 				* a two octet octet-aligned bit-field. 
 				*/
 				doAlign(stream);
-				stream.WriteByte(narrowedVal >> 8 );
-				stream.WriteByte(narrowedVal & 0xFF);
+				stream.WriteByte((byte) (narrowedVal >> 8) );
+				stream.WriteByte( (byte) (narrowedVal & 0xFF));
 				result = 2;
 			}
 			else
@@ -239,7 +239,7 @@ namespace org.bn.coders
 		/// and requires an explicit length encoding (typically a single octet) 
 		/// as specified in later procedures.
 		/// </summary>
-		protected virtual int encodeUnconstraintNumber(int val, BitArrayOutputStream stream)
+		protected virtual int encodeUnconstraintNumber(long val, BitArrayOutputStream stream)
 		{
 			int result = 0;
 			int intLen = CoderUtils.getIntegerLength(val);
@@ -252,15 +252,30 @@ namespace org.bn.coders
 		protected override int encodeInteger(object obj, System.IO.Stream stream, ElementInfo elementInfo)
 		{
 			int result = 0;
-			System.Int32 val = (System.Int32) obj;
-			BitArrayOutputStream bitStream = (BitArrayOutputStream) stream;
-			if (elementInfo.isAttributePresent<ASN1ValueRangeConstraint>())
-			{
-				ASN1ValueRangeConstraint constraint = elementInfo.getAttribute<ASN1ValueRangeConstraint>();
-				result += encodeConstraintNumber(val, (int) constraint.Min, (int) constraint.Max, bitStream);
-			}
-			else
-				result += encodeUnconstraintNumber(val, bitStream);
+            if (obj.GetType().Equals(typeof(int)))
+            {
+                int val = (int)obj;
+                BitArrayOutputStream bitStream = (BitArrayOutputStream)stream;
+                if (elementInfo.isAttributePresent<ASN1ValueRangeConstraint>())
+                {
+                    ASN1ValueRangeConstraint constraint = elementInfo.getAttribute<ASN1ValueRangeConstraint>();
+                    result += encodeConstraintNumber(val, constraint.Min, constraint.Max, bitStream);
+                }
+                else
+                    result += encodeUnconstraintNumber(val, bitStream);
+            }
+            else
+            {
+                long val = (long)obj;
+                BitArrayOutputStream bitStream = (BitArrayOutputStream)stream;
+                if (elementInfo.isAttributePresent<ASN1ValueRangeConstraint>())
+                {
+                    ASN1ValueRangeConstraint constraint = elementInfo.getAttribute<ASN1ValueRangeConstraint>();
+                    result += encodeConstraintNumber(val, constraint.Min, constraint.Max, bitStream);
+                }
+                else
+                    result += encodeUnconstraintNumber(val, bitStream);
+            }
 			return result;
 		}
 

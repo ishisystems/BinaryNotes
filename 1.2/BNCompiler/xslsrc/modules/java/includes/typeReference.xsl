@@ -25,8 +25,8 @@
     xmlns:redirect="http://xml.apache.org/xalan/redirect"
     extension-element-prefixes="xsltc redirect"
 >
+    <xsl:import href="integerTypeDecl.xsl"/>
     <xsl:output method="text" encoding="UTF-8" indent="no"/>
-    
 
     <xsl:template name="typeReference">
         <xsl:param name="elementName"/>
@@ -36,7 +36,7 @@
             <xsl:when test="typeReference/BUILTINTYPE = 'OCTET STRING'">byte[]</xsl:when>
 	    <xsl:when test="typeReference/BUILTINTYPE = 'BIT STRING'">BitString</xsl:when>
             <xsl:when test="typeReference/BUILTINTYPE = 'BOOLEAN'">Boolean</xsl:when>
-            <xsl:when test="typeReference/BUILTINTYPE = 'INTEGER'">Integer</xsl:when>
+            <xsl:when test="typeReference/BUILTINTYPE = 'INTEGER'"><xsl:for-each select="typeReference"><xsl:call-template name="integerTypeDecl"/></xsl:for-each></xsl:when>
             <xsl:when test="typeReference/BUILTINTYPE = 'REAL'">Double</xsl:when>
             <xsl:when test="typeReference/isSequenceOf = 'true'"><xsl:if test="$instanceable != 'yes'">java.util.Collection</xsl:if><xsl:if test="$instanceable = 'yes'">java.util.LinkedList</xsl:if>&lt;<xsl:for-each select="typeReference"><xsl:call-template name="elementType"/></xsl:for-each>&gt; </xsl:when>
             <xsl:when test="typeReference/isSequence = 'true'"><xsl:call-template name="toUpperFirstLetter"><xsl:with-param name="input" select="$elementName"/></xsl:call-template>SequenceType</xsl:when>

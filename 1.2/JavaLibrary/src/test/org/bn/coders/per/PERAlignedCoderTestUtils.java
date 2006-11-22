@@ -65,7 +65,7 @@ public class PERAlignedCoderTestUtils extends CoderTestUtilities {
 
     public byte[] createTestInteger4Bytes() {
         return new byte[] {
-            (byte)0xC0,0x00,(byte)0xF0,(byte)0xF0,(byte)0xF0
+            (byte)0x60,0x00,(byte)0xF0,(byte)0xF0,(byte)0xF0
         };
     }
 

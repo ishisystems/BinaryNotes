@@ -24,11 +24,11 @@ import org.bn.types.*;
     
         @ASN1Element ( name = "it1", isOptional =  true , hasTag =  false  , hasDefaultValue =  false  )
     
-	private Integer it1 = null;
+	private Long it1 = null;
                 
   
         
-        public Integer getIt1 () {
+        public Long getIt1 () {
             return this.it1;
         }
 
@@ -38,7 +38,7 @@ import org.bn.types.*;
         }
         
 
-        public void setIt1 (Integer value) {
+        public void setIt1 (Long value) {
             this.it1 = value;
         }
         
@@ -65,7 +65,7 @@ import org.bn.types.*;
     
         @ASN1Element ( name = "it1", isOptional =  false , hasTag =  true, tag = 0 , hasDefaultValue =  false  )
     
-	private Integer it1 = null;
+	private Long it1 = null;
                 
   @ASN1OctetString( name = "" )
     
@@ -75,7 +75,7 @@ import org.bn.types.*;
                 
   
         
-        public Integer getIt1 () {
+        public Long getIt1 () {
             return this.it1;
         }
 
@@ -83,11 +83,11 @@ import org.bn.types.*;
             return this.it1 != null;
         }
 
-        private void setIt1 (Integer value) {
+        private void setIt1 (Long value) {
             this.it1 = value;
         }
 
-        public void selectIt1 (Integer value) {
+        public void selectIt1 (Long value) {
             this.it1 = value;
             
                     setIt2(null);
@@ -129,11 +129,11 @@ import org.bn.types.*;
     
         @ASN1Element ( name = "it1", isOptional =  true , hasTag =  false  , hasDefaultValue =  false  )
     
-	private Integer it1 = null;
+	private Long it1 = null;
                 
   
         
-        public Integer getIt1 () {
+        public Long getIt1 () {
             return this.it1;
         }
 
@@ -143,7 +143,7 @@ import org.bn.types.*;
         }
         
 
-        public void setIt1 (Integer value) {
+        public void setIt1 (Long value) {
             this.it1 = value;
         }
         

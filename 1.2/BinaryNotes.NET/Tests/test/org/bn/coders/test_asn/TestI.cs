@@ -17,11 +17,11 @@ namespace test.org.bn.coders.test_asn {
     [ASN1BoxedType ( Name = "TestI" )]
     public class TestI {
     
-            private int val;
+            private long val;
             
             [ASN1Integer( Name = "TestI" )]
             
-            public int Value
+            public long Value
             {
                 get { return val; }
                 set { val = value; }
@@ -30,7 +30,7 @@ namespace test.org.bn.coders.test_asn {
             public TestI() {
             }
 
-            public TestI(int value) {
+            public TestI(long value) {
                 this.Value = value;
             }            
     }

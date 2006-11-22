@@ -117,7 +117,7 @@ namespace test.org.bn.coders.test_asn {
                 
   
         
-	private int intType_ ;
+	private long intType_ ;
         private bool  intType_selected = false ;
         
         
@@ -125,7 +125,7 @@ namespace test.org.bn.coders.test_asn {
         [ASN1Element ( Name = "intType", IsOptional =  false , HasTag =  true, Tag = 6 , HasDefaultValue =  false )  ]
     [ASN1Integer( Name = "" )]
     
-        public int IntType
+        public long IntType
         {
             get { return intType_; }
             set { selectIntType(value); }
@@ -320,7 +320,7 @@ namespace test.org.bn.coders.test_asn {
             return this.intType_selected ;
         }
 
-        public void selectIntType (int val) {
+        public void selectIntType (long val) {
             this.intType_ = val;
             this.intType_selected = true;
             

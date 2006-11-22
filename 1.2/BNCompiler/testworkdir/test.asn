@@ -248,6 +248,9 @@ EXPORTS TestOCT,TestPRN,TestI32,TestI16,TestI8,ContentType,ValueWithParams,Param
 
 	TestUTC ::= UTCTime
 
+	TestLong ::= INTEGER(1 .. 2247483648)
+
+
 	TestSeqV13 ::= SEQUENCE 
 	{
 		field1 [0] REAL,
@@ -256,6 +259,7 @@ EXPORTS TestOCT,TestPRN,TestI32,TestI16,TestI8,ContentType,ValueWithParams,Param
 		field3 REAL OPTIONAL,
 		field4 [1] REAL,
 		field5 GeneralizedTime,
-		field6 UTCTime
+		field6 UTCTime,
+		field7 TestLong
 	}
 END

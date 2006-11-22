@@ -80,7 +80,7 @@ namespace org.bn.coders
 				// if the length count is bounded above by an upper bound that is 
 				// less than 64K, then the constrained whole number encoding 
 				// is used for the length.
-				return decodeConstraintNumber(min, max, stream); // encoding as constraint integer
+				return (int)decodeConstraintNumber(min, max, stream); // encoding as constraint integer
 			}
 			else
 				return decodeLengthDeterminant(stream);
@@ -123,10 +123,10 @@ namespace org.bn.coders
 		/// and itself references earlier clauses for the production of 
 		/// a nonnegative-binary-integer or a 2's-complement-binary-integer encoding.
 		/// </summary>
-		protected virtual int decodeConstraintNumber(int min, int max, BitArrayInputStream stream)
+		protected virtual long decodeConstraintNumber(long min, long max, BitArrayInputStream stream)
 		{
-			int result = 0;
-			int valueRange = max - min;
+            long result = 0;
+            long valueRange = max - min;
 			//!!!! int narrowedVal = value - min; !!!
 			int maxBitLen = PERCoderUtils.getMaxBitLength(valueRange);
 			
@@ -156,7 +156,7 @@ namespace org.bn.coders
 				*/
 				skipAlignedBits(stream);
 				result = stream.ReadByte() << 8;
-				result |= stream.ReadByte();
+                result = (int)result | stream.ReadByte();
 				result += min;
 			}
 			else
@@ -276,7 +276,7 @@ namespace org.bn.coders
 			object choice = System.Activator.CreateInstance(objectClass);
 			skipAlignedBits(stream);
 			System.Reflection.PropertyInfo[] fields = objectClass.GetProperties();
-			int elementIndex = decodeConstraintNumber(1, fields.Length, (BitArrayInputStream) stream);
+			int elementIndex = (int)decodeConstraintNumber(1, fields.Length, (BitArrayInputStream) stream);
 			DecodedObject<object> val = null;
 			for (int i = 0; i < elementIndex && i < fields.Length; i++)
 			{
@@ -380,7 +380,7 @@ namespace org.bn.coders
 		protected override DecodedObject<object> decodeEnumItem(DecodedObject<object> decodedTag, System.Type objectClass, System.Type enumClass, ElementInfo elementInfo, System.IO.Stream stream)
 		{			
 			int min = 0, max = enumClass.GetFields().Length;
-			int enumItemIdx = decodeConstraintNumber(min, max, (BitArrayInputStream) stream);
+			int enumItemIdx = (int)decodeConstraintNumber(min, max, (BitArrayInputStream) stream);
 			DecodedObject<object> result = new DecodedObject<object>();
 			int idx = 0;
             foreach (FieldInfo enumItem in enumClass.GetFields())
@@ -424,7 +424,7 @@ namespace org.bn.coders
             if (elementInfo.isAttributePresent<ASN1ValueRangeConstraint>())
             {
                 ASN1ValueRangeConstraint constraint = elementInfo.getAttribute<ASN1ValueRangeConstraint>();
-                val = decodeConstraintNumber((int)constraint.Min, (int)constraint.Max, bitStream);
+                val = (int)decodeConstraintNumber(constraint.Min, constraint.Max, bitStream);
 			}
 			else
 				val = decodeUnconstraintNumber(bitStream);

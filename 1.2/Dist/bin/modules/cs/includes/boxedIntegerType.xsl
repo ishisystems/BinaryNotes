@@ -26,6 +26,7 @@
 >
     <xsl:import href="header.xsl"/>
     <xsl:import href="footer.xsl"/>
+    <xsl:import href="integerTypeDecl.xsl"/>
 
     <xsl:output method="text" encoding="UTF-8" indent="no"/>
 
@@ -37,13 +38,13 @@
     [ASN1BoxedType ( Name = "<xsl:value-of select='$boxedName'/>" )]
     public class <xsl:value-of select="$boxedName"/> {
     
-            private int val;
+            private <xsl:call-template name="integerTypeDecl"/> val;
             
             [ASN1Integer( Name = "<xsl:value-of select='name'/>" )]
             <xsl:for-each select="constraint">
                 <xsl:call-template name="constraint"/>
             </xsl:for-each>
-            public int Value
+            public <xsl:call-template name="integerTypeDecl"/> Value
             {
                 get { return val; }
                 set { val = value; }
@@ -52,7 +53,7 @@
             public <xsl:value-of select="$boxedName"/>() {
             }
 
-            public <xsl:value-of select="$boxedName"/>(int value) {
+            public <xsl:value-of select="$boxedName"/>(<xsl:call-template name="integerTypeDecl"/> value) {
                 this.Value = value;
             }            
     }

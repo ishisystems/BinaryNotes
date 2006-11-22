@@ -104,6 +104,7 @@ public class PERAlignedEncoder<T> extends Encoder<T> {
         }
         return result;
     }
+    
             
     /**
      * Encoding of a constrained whole number
@@ -112,10 +113,10 @@ public class PERAlignedEncoder<T> extends Encoder<T> {
      * and itself references earlier clauses for the production of 
      * a nonnegative-binary-integer or a 2's-complement-binary-integer encoding.
      */
-    protected int encodeConstraintNumber(int value, int min, int max, BitArrayOutputStream stream) throws Exception {
+    protected int encodeConstraintNumber(long value, long min, long max, BitArrayOutputStream stream) throws Exception {
         int result = 0;
-        int valueRange = max - min;
-        int narrowedVal = value - min;
+        long valueRange = max - min;
+        long narrowedVal = value - min;
         int maxBitLen = PERCoderUtils.getMaxBitLength(valueRange);
         
         if(valueRange == 0) {
@@ -132,7 +133,7 @@ public class PERAlignedEncoder<T> extends Encoder<T> {
             */            
             doAlign(stream);
             for(int i=maxBitLen-1;i>=0;i--) {
-                int bitValue = (narrowedVal >> i) & 0x1;
+                int bitValue = (int)((narrowedVal >> i) & 0x1L);
                 stream.writeBit(bitValue);
             }
             result = 1;            
@@ -144,8 +145,8 @@ public class PERAlignedEncoder<T> extends Encoder<T> {
             * a two octet octet-aligned bit-field. 
             */
             doAlign(stream);
-            stream.write((narrowedVal >>> 8));
-            stream.write(narrowedVal & 0xFF);
+            stream.write((int)(narrowedVal >>> 8));
+            stream.write((int) (narrowedVal & 0xFF));
             result = 2;
         }
         else {
@@ -236,7 +237,7 @@ public class PERAlignedEncoder<T> extends Encoder<T> {
      * and requires an explicit length encoding (typically a single octet) 
      * as specified in later procedures.
      */
-    protected int encodeUnconstraintNumber(int value, BitArrayOutputStream stream) throws Exception {
+    protected int encodeUnconstraintNumber(long value, BitArrayOutputStream stream) throws Exception {
         int result = 0;
         int intLen = CoderUtils.getIntegerLength(value);
         result += encodeLengthDeterminant(intLen, stream);
@@ -247,14 +248,27 @@ public class PERAlignedEncoder<T> extends Encoder<T> {
     
     protected int encodeInteger(Object object, OutputStream stream, ElementInfo elementInfo) throws Exception {
         int result = 0;
-        Integer value = (Integer) object;
-        BitArrayOutputStream bitStream = (BitArrayOutputStream)stream;
-        if(elementInfo.getAnnotatedClass().isAnnotationPresent(ASN1ValueRangeConstraint.class)) {
-            ASN1ValueRangeConstraint constraint = elementInfo.getAnnotatedClass().getAnnotation(ASN1ValueRangeConstraint.class);
-            result += encodeConstraintNumber(value, (int)constraint.min(), (int)constraint.max(), bitStream);
+        
+        if(object instanceof Integer) {
+            Integer value = (Integer) object;
+            BitArrayOutputStream bitStream = (BitArrayOutputStream)stream;
+            if(elementInfo.getAnnotatedClass().isAnnotationPresent(ASN1ValueRangeConstraint.class)) {
+                ASN1ValueRangeConstraint constraint = elementInfo.getAnnotatedClass().getAnnotation(ASN1ValueRangeConstraint.class);
+                result += encodeConstraintNumber(value, constraint.min(), constraint.max(), bitStream);
+            }
+            else
+                result += encodeUnconstraintNumber(value, bitStream);        
         }
-        else
-            result += encodeUnconstraintNumber(value, bitStream);        
+        else {
+            Long value = (Long) object;
+            BitArrayOutputStream bitStream = (BitArrayOutputStream)stream;
+            if(elementInfo.getAnnotatedClass().isAnnotationPresent(ASN1ValueRangeConstraint.class)) {
+                ASN1ValueRangeConstraint constraint = elementInfo.getAnnotatedClass().getAnnotation(ASN1ValueRangeConstraint.class);
+                result += encodeConstraintNumber(value, constraint.min(), constraint.max(), bitStream);
+            }
+            else
+                result += encodeUnconstraintNumber(value, bitStream);                  
+        }
         return result;
     }
 

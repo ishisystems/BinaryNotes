@@ -56,7 +56,7 @@ import org.bn.types.*;
     
         @ASN1Element ( name = "intType", isOptional =  false , hasTag =  true, tag = 6 , hasDefaultValue =  false  )
     
-	private Integer intType = null;
+	private Long intType = null;
                 
   @ASN1Integer( name = "" )
     @ASN1ValueRangeConstraint ( 
@@ -170,13 +170,13 @@ import org.bn.types.*;
         
   
         
-        public Integer getIntType () {
+        public Long getIntType () {
             return this.intType;
         }
 
         
 
-        public void setIntType (Integer value) {
+        public void setIntType (Long value) {
             this.intType = value;
         }
         

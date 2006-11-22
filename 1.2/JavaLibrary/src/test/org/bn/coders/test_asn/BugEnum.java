@@ -20,20 +20,20 @@ import org.bn.types.*;
     
             @ASN1Integer( name = "BugEnum" )
             
-            private Integer value;
+            private Long value;
             
             public BugEnum() {
             }
 
-            public BugEnum(Integer value) {
+            public BugEnum(Long value) {
                 this.value = value;
             }
             
-            public void setValue(Integer value) {
+            public void setValue(Long value) {
                 this.value = value;
             }
             
-            public Integer getValue() {
+            public Long getValue() {
                 return this.value;
             }
     }

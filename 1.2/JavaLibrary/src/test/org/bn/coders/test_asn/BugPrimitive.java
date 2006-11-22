@@ -27,7 +27,7 @@ import org.bn.types.*;
     
         @ASN1Element ( name = "bugInteger", isOptional =  false , hasTag =  true, tag = 1 , hasDefaultValue =  false  )
     
-	private Integer bugInteger = null;
+	private Long bugInteger = null;
                 
   
         
@@ -52,7 +52,7 @@ import org.bn.types.*;
         
   
         
-        public Integer getBugInteger () {
+        public Long getBugInteger () {
             return this.bugInteger;
         }
 
@@ -60,11 +60,11 @@ import org.bn.types.*;
             return this.bugInteger != null;
         }
 
-        private void setBugInteger (Integer value) {
+        private void setBugInteger (Long value) {
             this.bugInteger = value;
         }
 
-        public void selectBugInteger (Integer value) {
+        public void selectBugInteger (Long value) {
             this.bugInteger = value;
             
                     setBugBoolean(null);

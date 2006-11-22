@@ -26,6 +26,7 @@
 >
     <xsl:import href="header.xsl"/>
     <xsl:import href="footer.xsl"/>
+    <xsl:import href="integerTypeDecl.xsl"/>
 
     <xsl:output method="text" encoding="UTF-8" indent="no"/>
 
@@ -41,20 +42,20 @@
             <xsl:for-each select="constraint">
                 <xsl:call-template name="constraint"/>
             </xsl:for-each>
-            private Integer value;
+            private <xsl:call-template name="integerTypeDecl"/> value;
             
             public <xsl:value-of select="$boxedName"/>() {
             }
 
-            public <xsl:value-of select="$boxedName"/>(Integer value) {
+            public <xsl:value-of select="$boxedName"/>(<xsl:call-template name="integerTypeDecl"/> value) {
                 this.value = value;
             }
             
-            public void setValue(Integer value) {
+            public void setValue(<xsl:call-template name="integerTypeDecl"/> value) {
                 this.value = value;
             }
             
-            public Integer getValue() {
+            public <xsl:call-template name="integerTypeDecl"/> getValue() {
                 return this.value;
             }
     }

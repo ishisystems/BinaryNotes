@@ -17,14 +17,14 @@ namespace test.org.bn.coders.test_asn {
     [ASN1BoxedType ( Name = "TestI32" )]
     public class TestI32 {
     
-            private int val;
+            private long val;
             
             [ASN1Integer( Name = "TestI32" )]
             [ASN1ValueRangeConstraint ( 
 		Min = 0L, 
 		Max = 4294967295L ) ]
 	    
-            public int Value
+            public long Value
             {
                 get { return val; }
                 set { val = value; }
@@ -33,7 +33,7 @@ namespace test.org.bn.coders.test_asn {
             public TestI32() {
             }
 
-            public TestI32(int value) {
+            public TestI32(long value) {
                 this.Value = value;
             }            
     }
