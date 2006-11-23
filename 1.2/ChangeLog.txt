@@ -5,6 +5,7 @@ ChangeLog
 							[!] 		- Critical warning or note
 							{<component>}	- Component/Group that changed
 
+1.2.3   {comp}		[*] Long integer range is incorrect defined
 1.2.3   {comp}		[*] Fixed Boolean boxed type declaration
 -
 1.2.2   {all}		[+] Added support for long data type (range)

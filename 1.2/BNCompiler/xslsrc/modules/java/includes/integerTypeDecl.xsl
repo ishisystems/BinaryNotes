@@ -35,7 +35,7 @@
                         <xsl:variable name="min"><xsl:if test= "constraint/elemSetSpec/intersectionList/cnsElemList/lEndValue/signedNumber/positive = 'false'">-</xsl:if><xsl:value-of select="constraint/elemSetSpec/intersectionList/cnsElemList/lEndValue/signedNumber/num"/></xsl:variable>
                         <xsl:variable name="max"><xsl:if test= "constraint/elemSetSpec/intersectionList/cnsElemList/uEndValue/signedNumber/positive = 'false'">-</xsl:if><xsl:value-of select="constraint/elemSetSpec/intersectionList/cnsElemList/uEndValue/signedNumber/num"/></xsl:variable>
                         <xsl:choose>
-                            <xsl:when test ="number($min) &gt; number(-2147483647) and number($max) &lt; number(2147483648)">Integer</xsl:when>
+                            <xsl:when test ="number($min) &gt; number(-2147483649) and number($max) &lt; number(2147483648)">Integer</xsl:when>
                             <xsl:otherwise>Long</xsl:otherwise>                            
                         </xsl:choose>
                    </xsl:if>
