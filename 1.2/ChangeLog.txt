@@ -5,6 +5,8 @@ ChangeLog
 							[!] 		- Critical warning or note
 							{<component>}	- Component/Group that changed
 
+1.2.3   {comp}		[*] Fixed Boolean boxed type declaration
+-
 1.2.2   {all}		[+] Added support for long data type (range)
 1.2.2   {all}		[+] Added simple support (based on String mapping) for UTCTime/GeneralizedTime
 1.2.2   {all}		[+] Added support for Real datatype
