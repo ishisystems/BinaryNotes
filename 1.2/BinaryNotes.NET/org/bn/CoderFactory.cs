@@ -40,12 +40,14 @@ namespace org.bn
             }
             else
             if (encodingSchema.Equals("PER", StringComparison.CurrentCultureIgnoreCase) || 
-                encodingSchema.Equals("PER/Aligned", StringComparison.CurrentCultureIgnoreCase) )
+                encodingSchema.Equals("PER/Aligned", StringComparison.CurrentCultureIgnoreCase) ||
+                encodingSchema.Equals("PER/A", StringComparison.CurrentCultureIgnoreCase))
             {
                 return new PERAlignedEncoder();
             }
             else
-            if (encodingSchema.Equals("PER/Unaligned", StringComparison.CurrentCultureIgnoreCase))
+            if (encodingSchema.Equals("PER/Unaligned", StringComparison.CurrentCultureIgnoreCase)||
+                encodingSchema.Equals("PER/U", StringComparison.CurrentCultureIgnoreCase))
             {
                 return new PERUnalignedEncoder();
             }
@@ -68,12 +70,14 @@ namespace org.bn
             }
             else
             if (encodingSchema.Equals("PER", StringComparison.CurrentCultureIgnoreCase) || 
-                encodingSchema.Equals("PER/Aligned", StringComparison.CurrentCultureIgnoreCase) )
+                encodingSchema.Equals("PER/Aligned", StringComparison.CurrentCultureIgnoreCase)||
+                encodingSchema.Equals("PER/A", StringComparison.CurrentCultureIgnoreCase))
             {
                 return new PERAlignedDecoder();
             }
             else
-            if (encodingSchema.Equals("PER/Unaligned", StringComparison.CurrentCultureIgnoreCase))
+            if (encodingSchema.Equals("PER/Unaligned", StringComparison.CurrentCultureIgnoreCase)||
+                encodingSchema.Equals("PER/U", StringComparison.CurrentCultureIgnoreCase))
             {
                 return new PERUnalignedDecoder();
             }

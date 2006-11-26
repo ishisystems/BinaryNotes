@@ -24,7 +24,7 @@ package org.bn;
 
 /**
 * @mainpage BinaryNotes.
-* @version 1.1
+* @version 1.2
 * @author Abdulla G. Abdurakhmanov (abdulla.abdurakhmanov\@gmail.com).
 * @date (c) 2006
 *
@@ -152,11 +152,11 @@ public class CoderFactory {
             return new BEREncoder<T>();
         }
         else
-        if(encodingSchema.equalsIgnoreCase("PER")||encodingSchema.equalsIgnoreCase("PER/Aligned")) {
+        if(encodingSchema.equalsIgnoreCase("PER")||encodingSchema.equalsIgnoreCase("PER/Aligned")||encodingSchema.equalsIgnoreCase("PER/A")) {
             return new PERAlignedEncoder<T>();
         }        
         else
-        if(encodingSchema.equalsIgnoreCase("PER/Unaligned")) {
+        if(encodingSchema.equalsIgnoreCase("PER/Unaligned")||encodingSchema.equalsIgnoreCase("PER/U")) {
             return new PERUnalignedEncoder<T>();
         }        
         else        
@@ -187,11 +187,11 @@ public class CoderFactory {
             return new BERDecoder();
         }
         else
-        if(encodingSchema.equalsIgnoreCase("PER")||encodingSchema.equalsIgnoreCase("PER/Aligned")) {
+        if(encodingSchema.equalsIgnoreCase("PER")||encodingSchema.equalsIgnoreCase("PER/Aligned")||encodingSchema.equalsIgnoreCase("PER/A")) {
             return new PERAlignedDecoder();
         }        
         else
-        if(encodingSchema.equalsIgnoreCase("PER")||encodingSchema.equalsIgnoreCase("PER/Unaligned")) {
+        if(encodingSchema.equalsIgnoreCase("PER")||encodingSchema.equalsIgnoreCase("PER/Unaligned")||encodingSchema.equalsIgnoreCase("PER/U")) {
             return new PERUnalignedDecoder();
         }        
         else
