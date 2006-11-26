@@ -125,6 +125,13 @@ namespace org.bn.utils
 			}
 		}
 
+        public void writeBits(int bt, int count) {        
+            for(int i=count-1;i>=0;i--) {
+                writeBit ( (bt >> i) & 0x1);
+            }
+        }
+
+
         public byte[] ToArray()
         {
             byte[] newbuf = new byte[count];

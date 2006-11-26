@@ -95,33 +95,11 @@ namespace org.bn.coders
 
 
 				BitArrayOutputStream bitStream = (BitArrayOutputStream) stream;
-				// 7-bit encoding of string
-				int currentBit = 1;
-				for (int i = 0; i < val.Length; i++)
-				{
-					int bt = (val[i] << currentBit) & 0xFF;
-					resultSize++;
-					if (i < val.Length - 1)
-					{
-						bt = bt | ((val[i + 1] >> 7 - currentBit));
-					}
-					else
-					{
-						// Need to fill the last bits (no more bytes is available)
-						for (int j = 0; j < 8 - currentBit; j++)
-						{
-							bitStream.writeBit(bt & (0x80 >> j));
-						}
-						break;
-					}
-					bitStream.WriteByte(bt);
-					if (currentBit == 7)
-					{
-						currentBit = 1;
-					}
-					else
-						currentBit++;
-				}
+                // 7-bit encoding of string
+                for (int i = 0; i < val.Length; i++)
+                {
+                    bitStream.writeBits(val[i], 7);
+                }
                 return resultSize;
 			}
 			

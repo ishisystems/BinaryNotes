@@ -88,28 +88,9 @@ public class PERUnalignedEncoder<T> extends PERAlignedEncoder<T> {
         
             BitArrayOutputStream bitStream = (BitArrayOutputStream)stream;
             // 7-bit encoding of string
-            int currentBit = 1;
             for(int i=0;i<value.length;i++) {
-                int bt =  ( value[i] << currentBit) & 0xFF;
-                resultSize++;                 
-                if(i<value.length-1) {
-                    bt = bt | ( (value[i+1] >> 7-currentBit));
-                }
-                else {
-                   // Need to fill the last bits (no more bytes is available)
-                   for(int j=0; j<8-currentBit;j++) {
-                       bitStream.writeBit(  bt & (0x80 >> j) );
-                   }
-                   break;
-                }
-                bitStream.write ( bt );
-                if(currentBit == 7) {
-                   currentBit = 1;
-                }
-                else
-                   currentBit++;
-            }             
-            
+                bitStream.writeBits(value[i],7);
+            }           
         }
         return resultSize;
         

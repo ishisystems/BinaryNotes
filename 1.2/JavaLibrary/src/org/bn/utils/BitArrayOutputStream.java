@@ -88,7 +88,13 @@ public class BitArrayOutputStream extends ByteArrayOutputStream {
         if(currentBit>=8) {
             currentBit = 0;
         }
-    }            
+    }
+
+    public synchronized void writeBits(int bt, int count) {        
+        for(int i=count-1;i>=0;i--) {
+            writeBit ( (bt >> i) & 0x1);
+        }
+    }
     
     public void reset() {
         currentBit = 0;
