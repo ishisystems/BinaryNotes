@@ -209,14 +209,18 @@ public class BERDecoder extends Decoder {
     }
     
     protected DecodedObject decodeChoice(DecodedObject decodedTag, Class objectClass, ElementInfo elementInfo, 
-                                   InputStream stream) throws Exception {
-        if(elementInfo.getElement()!=null) {
+                                   InputStream stream) throws Exception {        
+        if(elementInfo.getElement()!=null) {            
             if(!checkTagForObject(decodedTag, TagClass.ContextSpecific, ElementType.Constructed,UniversalTag.LastUniversal, elementInfo))
                 return null;
-            decodeLength(stream);
-            decodedTag = decodeTag(stream);
+            DecodedObject<Integer> lenOfChild = decodeLength(stream);
+            DecodedObject childDecodedTag = decodeTag(stream);
+            DecodedObject<Object> result =  super.decodeChoice(childDecodedTag, objectClass, elementInfo, stream);
+            result.setSize(result.getSize()+decodedTag.getSize()+lenOfChild.getSize());
+            return result;
         }
-        return super.decodeChoice(decodedTag, objectClass, elementInfo, stream);
+        else
+            return super.decodeChoice(decodedTag, objectClass, elementInfo, stream);
     }
 
     protected DecodedObject<Integer> decodeIntegerValue(InputStream stream) throws Exception {
@@ -309,7 +313,7 @@ public class BERDecoder extends Decoder {
             elementInfo.setAnnotatedClass(paramType);
             elementInfo.setElement(null);
             do {                
-                DecodedObject itemTag = decodeTag(stream);                
+                DecodedObject itemTag = decodeTag(stream);
                 DecodedObject item=decodeClassType(itemTag,paramType,elementInfo,stream);
                 if(item!=null) {
                     lenOfItems+=item.getSize()+itemTag.getSize();

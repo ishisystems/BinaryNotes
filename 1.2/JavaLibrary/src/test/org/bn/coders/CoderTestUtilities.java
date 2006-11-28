@@ -359,6 +359,22 @@ public abstract class CoderTestUtilities {
         return valueType;
     }
     public abstract byte[] createChoiceInChoiceBytes();
+
+    public BugList createChoiceInChoice2() {
+        BugPrimitive primitive = new BugPrimitive();
+        primitive.selectBugInteger(Long.valueOf(5));
+
+        BugValueType valueType = new BugValueType();
+        valueType.selectBugPrimitive(primitive);
+
+        List<BugValueType> list = new ArrayList<BugValueType>();
+        list.add(valueType);
+
+        BugList bugList = new BugList();
+        bugList.setValue(list);
+        return bugList;
+    }
+    public abstract byte[] createChoiceInChoice2Bytes();
     
     
     public TaggedSeqInSeq createTaggedSeqInSeq() {

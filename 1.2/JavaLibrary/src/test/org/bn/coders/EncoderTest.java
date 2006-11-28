@@ -262,6 +262,13 @@ public abstract class EncoderTest extends TestCase {
         checkEncoded(encoder, coderTestUtils.createChoiceInChoice(), coderTestUtils.createChoiceInChoiceBytes());        
     }
 
+    public void testEncodeChoiceInChoice2() throws Exception {
+        IEncoder encoder = newEncoder();
+        assertNotNull(encoder);
+        printEncoded("EncodeChoiceInChoice2: ",encoder, coderTestUtils.createChoiceInChoice2());            
+        checkEncoded(encoder, coderTestUtils.createChoiceInChoice2(), coderTestUtils.createChoiceInChoice2Bytes());        
+    }
+
     public void testEncodeTaggedSeqInSeq() throws Exception {
         IEncoder encoder = newEncoder();
         assertNotNull(encoder);

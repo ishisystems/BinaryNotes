@@ -244,4 +244,8 @@ public class BERCoderTestUtils extends CoderTestUtilities {
     public byte[] createTestRealBigBytes() {
         return new byte[] { 0x09,0x05, (byte)0x80, (byte)0xFD, 0x18,0x6D,0x21};
     }
+
+    public byte[] createChoiceInChoice2Bytes() {
+        return new byte[] { 0x30,0x05, (byte)0xA0, 0x03, (byte)0x81, 0x01,0x05};
+    }
 }

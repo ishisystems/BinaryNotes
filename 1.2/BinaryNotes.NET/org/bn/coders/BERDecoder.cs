@@ -103,10 +103,14 @@ namespace org.bn.coders
             {
                 if (!checkTagForObject(decodedTag, TagClasses.ContextSpecific, ElementType.Constructed, UniversalTags.LastUniversal, elementInfo))
                     return null;
-                decodeLength(stream);
-                decodedTag = decodeTag(stream);
+                DecodedObject<int> len =  decodeLength(stream);
+                DecodedObject<object> childDecodedTag = decodeTag(stream);
+                DecodedObject<object> result = base.decodeChoice(childDecodedTag, objectClass, elementInfo, stream);
+                result.Size += len.Size + decodedTag.Size;
+                return result;
             }
-            return base.decodeChoice(decodedTag, objectClass, elementInfo, stream);
+            else
+                return base.decodeChoice(decodedTag, objectClass, elementInfo, stream);
         }
 
 		

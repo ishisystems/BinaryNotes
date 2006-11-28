@@ -375,6 +375,16 @@ public abstract class DecoderTest extends TestCase {
         assertEquals(val.getBugPrimitive().isBugIntegerSelected(), coderTestUtils.createChoiceInChoice().getBugPrimitive().isBugIntegerSelected());
         assertEquals(val.getBugPrimitive().getBugInteger(), coderTestUtils.createChoiceInChoice().getBugPrimitive().getBugInteger());
     }
+
+    public void testDecodeChoiceInChoice2() throws Exception {
+        IDecoder decoder = newDecoder();
+        ByteArrayInputStream stream = 
+            new ByteArrayInputStream(coderTestUtils.createChoiceInChoice2Bytes());
+        BugList val = decoder.decode(stream, BugList.class);        
+        //assertEquals(val.getAttrInt(), coderTestUtils.createTestSequenceV12().getAttrInt());        
+        assertNotNull(val.getValue());
+        assertTrue("Is not empty",!val.getValue().isEmpty());
+    }
     
     public void testDecodeTaggedSeqInSeq() throws Exception {
         IDecoder decoder = newDecoder();

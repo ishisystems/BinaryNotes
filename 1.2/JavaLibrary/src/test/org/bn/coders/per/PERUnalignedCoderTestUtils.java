@@ -198,4 +198,8 @@ public class PERUnalignedCoderTestUtils extends CoderTestUtilities {
     public byte[] createTestRealBigBytes() {
         return new byte[] { 0x05, (byte)0x80, (byte)0xFD, 0x18, 0x6D, 0x21};
     }
+
+    public byte[] createChoiceInChoice2Bytes() {
+        return new byte[] { 0x01,0x40,0x41,0x40 };
+    }
 }
