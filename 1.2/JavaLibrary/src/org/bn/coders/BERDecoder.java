@@ -216,7 +216,7 @@ public class BERDecoder extends Decoder {
             DecodedObject<Integer> lenOfChild = decodeLength(stream);
             DecodedObject childDecodedTag = decodeTag(stream);
             DecodedObject<Object> result =  super.decodeChoice(childDecodedTag, objectClass, elementInfo, stream);
-            result.setSize(result.getSize()+decodedTag.getSize()+lenOfChild.getSize());
+            result.setSize(result.getSize()+ childDecodedTag.getSize()+lenOfChild.getSize());
             return result;
         }
         else

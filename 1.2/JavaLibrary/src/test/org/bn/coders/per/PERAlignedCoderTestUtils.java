@@ -194,4 +194,9 @@ public class PERAlignedCoderTestUtils extends CoderTestUtilities {
     public byte[] createChoiceInChoice2Bytes() {
         return new byte[] { 0x01,0x00, (byte)0x80, 0x01,0x05 };
     }
+
+    public byte[] createChoiceInChoice3Bytes() {
+        return new byte[] { 0x02, (byte)0x80, 0x00,0x01,0x00, (byte)0x80, 
+                0x00,0x01,0x64};
+    }
 }

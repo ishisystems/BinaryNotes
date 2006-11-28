@@ -229,11 +229,13 @@ public abstract class Decoder implements IDecoder {
                 if(i!=fields.length-1 && fields[i+1].isAnnotationPresent(ASN1Any.class)) {
                 }
                 else {
-                    fieldTag = decodeTag(stream);
-                    if(fieldTag!=null)
-                        sizeOfSequence+=fieldTag.getSize();
-                    else {
-                        break;
+                    if(i<fields.length-1) {
+                        fieldTag = decodeTag(stream);
+                        if(fieldTag!=null) {                        
+                            sizeOfSequence+=fieldTag.getSize();
+                        }
+                        else
+                            break;
                     }
                 }
             };

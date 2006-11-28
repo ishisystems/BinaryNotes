@@ -58,6 +58,7 @@
     <Compile Include="test\org\bn\coders\test_asn\BugEnum.cs" />
     <Compile Include="test\org\bn\coders\test_asn\BugList.cs" />
     <Compile Include="test\org\bn\coders\test_asn\BugPrimitive.cs" />
+    <Compile Include="test\org\bn\coders\test_asn\BugSequenceType.cs" />
     <Compile Include="test\org\bn\coders\test_asn\BugValueType.cs" />
     <Compile Include="test\org\bn\coders\test_asn\ContentPartHeader.cs" />
     <Compile Include="test\org\bn\coders\test_asn\ContentPartHeaders.cs" />

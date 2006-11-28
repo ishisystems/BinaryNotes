@@ -210,14 +210,17 @@ namespace org.bn.coders
 					}
 					else
 					{
-						fieldTag = decodeTag(stream);
-						if (fieldTag != null)
-							sizeOfSequence += fieldTag.Size;
-						else
-						{
-							break;
-						}
-					}
+                        if (i < fields.Length - 1)
+                        {
+                            fieldTag = decodeTag(stream);
+                            if (fieldTag != null)
+                            {
+                                sizeOfSequence += fieldTag.Size;
+                            }
+                            else
+                                break;
+                        }
+                    }
 				}
 				;
 			}

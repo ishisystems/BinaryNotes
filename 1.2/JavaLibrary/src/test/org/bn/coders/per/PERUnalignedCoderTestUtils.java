@@ -176,7 +176,7 @@ public class PERUnalignedCoderTestUtils extends CoderTestUtilities {
     }
 
     public byte[] createChoiceInChoiceBytes() {
-        return new byte[] { 0x40,0x41,0x40};
+        return new byte[] { 0x20,0x20, (byte)0xA0 }; 
     }
 
     public byte[] createTaggedSeqInSeqBytes() {
@@ -200,6 +200,10 @@ public class PERUnalignedCoderTestUtils extends CoderTestUtilities {
     }
 
     public byte[] createChoiceInChoice2Bytes() {
-        return new byte[] { 0x01,0x40,0x41,0x40 };
+        return new byte[] { 0x01,0x20,0x20, (byte)0xA0 };
+    }
+
+    public byte[] createChoiceInChoice3Bytes() {
+        return new byte[] {0x02, (byte)0x80, 0x20,0x10,0x05, (byte)0x90 };
     }
 }

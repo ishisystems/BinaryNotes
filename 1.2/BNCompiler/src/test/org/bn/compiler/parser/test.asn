@@ -237,6 +237,12 @@ EXPORTS TestOCT,TestPRN,TestI32,TestI16,TestI8,ContentType,ValueWithParams,Param
 
 	BugList ::= SEQUENCE OF BugValueType
 
+    	BugSequenceType ::= SEQUENCE
+    	{
+      		booleanField [0] BOOLEAN,
+      		integerField [0] INTEGER
+    	}
+
 	TaggedSeqInSeq ::= [APPLICATION 4] SEQUENCE 
 	{
 		field [0] PlainParamsMap

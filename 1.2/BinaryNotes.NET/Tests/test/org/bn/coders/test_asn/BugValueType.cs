@@ -50,6 +50,22 @@ namespace test.org.bn.coders.test_asn {
                 
   
         
+	private BugSequenceType bugSequence_ ;
+        private bool  bugSequence_selected = false ;
+        
+        
+        
+        [ASN1Element ( Name = "bugSequence", IsOptional =  false , HasTag =  true, Tag = 2 , HasDefaultValue =  false )  ]
+    
+        public BugSequenceType BugSequence
+        {
+            get { return bugSequence_; }
+            set { selectBugSequence(value); }
+        }
+        
+                
+  
+        
         public bool isBugPrimitiveSelected () {
             return this.bugPrimitive_selected ;
         }
@@ -60,6 +76,8 @@ namespace test.org.bn.coders.test_asn {
             
             
                     this.bugEnum_selected = false;
+                
+                    this.bugSequence_selected = false;
                             
         }
         
@@ -75,6 +93,25 @@ namespace test.org.bn.coders.test_asn {
             
             
                     this.bugPrimitive_selected = false;
+                
+                    this.bugSequence_selected = false;
+                            
+        }
+        
+  
+        
+        public bool isBugSequenceSelected () {
+            return this.bugSequence_selected ;
+        }
+
+        public void selectBugSequence (BugSequenceType val) {
+            this.bugSequence_ = val;
+            this.bugSequence_selected = true;
+            
+            
+                    this.bugPrimitive_selected = false;
+                
+                    this.bugEnum_selected = false;
                             
         }
         

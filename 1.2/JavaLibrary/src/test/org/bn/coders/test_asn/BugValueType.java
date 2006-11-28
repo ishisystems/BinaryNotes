@@ -28,6 +28,11 @@ import org.bn.types.*;
 	private BugEnum bugEnum = null;
                 
   
+        @ASN1Element ( name = "bugSequence", isOptional =  false , hasTag =  true, tag = 2 , hasDefaultValue =  false  )
+    
+	private BugSequenceType bugSequence = null;
+                
+  
         
         public BugPrimitive getBugPrimitive () {
             return this.bugPrimitive;
@@ -45,6 +50,8 @@ import org.bn.types.*;
             this.bugPrimitive = value;
             
                     setBugEnum(null);
+                
+                    setBugSequence(null);
                             
         }
         
@@ -66,6 +73,31 @@ import org.bn.types.*;
             this.bugEnum = value;
             
                     setBugPrimitive(null);
+                
+                    setBugSequence(null);
+                            
+        }
+        
+  
+        
+        public BugSequenceType getBugSequence () {
+            return this.bugSequence;
+        }
+
+        public boolean isBugSequenceSelected () {
+            return this.bugSequence != null;
+        }
+
+        private void setBugSequence (BugSequenceType value) {
+            this.bugSequence = value;
+        }
+
+        public void selectBugSequence (BugSequenceType value) {
+            this.bugSequence = value;
+            
+                    setBugPrimitive(null);
+                
+                    setBugEnum(null);
                             
         }
         

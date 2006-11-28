@@ -26,6 +26,7 @@ import org.bn.types.BitString;
 
 import test.org.bn.coders.test_asn.BugList;
 import test.org.bn.coders.test_asn.BugPrimitive;
+import test.org.bn.coders.test_asn.BugSequenceType;
 import test.org.bn.coders.test_asn.BugValueType;
 import test.org.bn.coders.test_asn.ContentSchema;
 import test.org.bn.coders.test_asn.Data;
@@ -375,7 +376,45 @@ public abstract class CoderTestUtilities {
         return bugList;
     }
     public abstract byte[] createChoiceInChoice2Bytes();
+
+    private BugSequenceType makeSequence(boolean booleanValue,
+                                         long    integerValue)
+    {
+        BugSequenceType sequenceType = new BugSequenceType();
+        sequenceType.setBooleanField(booleanValue);
+        sequenceType.setIntegerField(integerValue);
+
+        return sequenceType;
+    }
+
+
+    private BugValueType makeValueType(BugSequenceType sequenceType)
+    {
+        BugValueType valueType = new BugValueType();
+        valueType.selectBugSequence(sequenceType);
+
+        return valueType;
+    }
     
+    public BugList createChoiceInChoice3() {
+        BugValueType[] valueTypes =
+        {
+            makeValueType(makeSequence(false, Long.valueOf(0))),
+            //makeValueType(makeSequence(false, Long.MAX_VALUE)),
+            makeValueType(makeSequence(false, 100L)),
+        };
+
+        List<BugValueType> list = new ArrayList<BugValueType>();
+        for (int index = 0; index < valueTypes.length; index++)
+        {
+            list.add(valueTypes[index]);
+        }
+
+        BugList bugList = new BugList();
+        bugList.setValue(list);
+        return bugList;
+    }
+    public abstract byte[] createChoiceInChoice3Bytes();    
     
     public TaggedSeqInSeq createTaggedSeqInSeq() {
         TaggedSeqInSeq result = new TaggedSeqInSeq();
@@ -388,6 +427,7 @@ public abstract class CoderTestUtilities {
         return result;
     }
     public abstract byte[] createTaggedSeqInSeqBytes();
+        
     
     public TestReal createTestReal0_5() {
         return new TestReal(0.5);

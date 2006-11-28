@@ -193,7 +193,7 @@ namespace test.org.bn.coders.per
 
         public override byte[] createChoiceInChoiceBytes()
         {
-            return new byte[] { 0x40, 0x41, 0x40 };
+            return new byte[] { 0x20, 0x20, (byte)0xA0 }; 
         }
 
         public override byte[] createTaggedSeqInSeqBytes()

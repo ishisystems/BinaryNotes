@@ -221,21 +221,28 @@ EXPORTS TestOCT,TestPRN,TestI32,TestI16,TestI8,ContentType,ValueWithParams,Param
 		attrStrict	[7] OCTET STRING(SIZE(4))
 	}
 
-	BugPrimitive ::= CHOICE
-	{
-		bugBoolean [0] BOOLEAN,
-		bugInteger [1] INTEGER
-	}
+    	BugPrimitive ::= CHOICE
+    	{
+      		bugBoolean [0] BOOLEAN,
+      		bugInteger [1] INTEGER
+    	}
 
-	BugEnum ::= INTEGER
+    	BugEnum ::= INTEGER
 
-	BugValueType ::= CHOICE
-	{
-		bugPrimitive [0] BugPrimitive,
-		bugEnum      [1] BugEnum
-	}
+    	BugSequenceType ::= SEQUENCE
+    	{
+      		booleanField [0] BOOLEAN,
+      		integerField [0] INTEGER
+    	}
 
-	BugList ::= SEQUENCE OF BugValueType
+    	BugValueType ::= CHOICE
+    	{
+      		bugPrimitive [0] BugPrimitive,
+      		bugEnum      [1] BugEnum,
+      		bugSequence  [2] BugSequenceType
+    	}
+
+    	BugList ::= SEQUENCE OF BugValueType
 
 	TaggedSeqInSeq ::= [APPLICATION 4] SEQUENCE 
 	{

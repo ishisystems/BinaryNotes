@@ -385,16 +385,7 @@ public abstract class DecoderTest extends TestCase {
         assertNotNull(val.getValue());
         assertTrue("Is not empty",!val.getValue().isEmpty());
     }
-    
-    public void testDecodeTaggedSeqInSeq() throws Exception {
-        IDecoder decoder = newDecoder();
-        ByteArrayInputStream stream = 
-            new ByteArrayInputStream(coderTestUtils.createTaggedSeqInSeqBytes());
-        TaggedSeqInSeq val = decoder.decode(stream, TaggedSeqInSeq.class);
-        assertEquals(val.getValue().getField().getParam_name(), coderTestUtils.createTaggedSeqInSeq().getValue().getField().getParam_name());
-        assertEquals(val.getValue().getField().getParam_value(), coderTestUtils.createTaggedSeqInSeq().getValue().getField().getParam_value());
-    }
-
+   
     public void testDecodeReal() throws Exception {
         IDecoder decoder = newDecoder();
         ByteArrayInputStream stream = 
@@ -417,6 +408,25 @@ public abstract class DecoderTest extends TestCase {
         val = decoder.decode(stream, TestReal.class);
         assertEquals(val.getValue(), coderTestUtils.createTestRealBig().getValue());
         
+    }
+
+    public void testDecodeChoiceInChoice3() throws Exception {
+        IDecoder decoder = newDecoder();
+        ByteArrayInputStream stream = 
+            new ByteArrayInputStream(coderTestUtils.createChoiceInChoice3Bytes());
+        BugList val = decoder.decode(stream, BugList.class);        
+        //assertEquals(val.getAttrInt(), coderTestUtils.createTestSequenceV12().getAttrInt());        
+        assertNotNull(val.getValue());
+        assertTrue("Is not empty",!val.getValue().isEmpty());
+    }    
+    
+    public void testDecodeTaggedSeqInSeq() throws Exception {
+        IDecoder decoder = newDecoder();
+        ByteArrayInputStream stream = 
+            new ByteArrayInputStream(coderTestUtils.createTaggedSeqInSeqBytes());
+        TaggedSeqInSeq val = decoder.decode(stream, TaggedSeqInSeq.class);
+        assertEquals(val.getValue().getField().getParam_name(), coderTestUtils.createTaggedSeqInSeq().getValue().getField().getParam_name());
+        assertEquals(val.getValue().getField().getParam_value(), coderTestUtils.createTaggedSeqInSeq().getValue().getField().getParam_value());
     }
     
 }
