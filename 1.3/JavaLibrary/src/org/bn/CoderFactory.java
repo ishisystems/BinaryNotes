@@ -24,7 +24,7 @@ package org.bn;
 
 /**
 * @mainpage BinaryNotes.
-* @version 1.2
+* @version 1.3
 * @author Abdulla G. Abdurakhmanov (abdulla.abdurakhmanov\@gmail.com).
 * @date (c) 2006
 *
