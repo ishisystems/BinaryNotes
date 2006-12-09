@@ -69,7 +69,7 @@
 		<attribute name="Implementation-URL" value="http://bnotes.sourceforge.net"/>
 		<attribute name="Implementation-Mail" value="abdulla.abdurakhmanov@gmail.com"/>
 		<attribute name="Implementation-Title" value="BinaryNotes Library"/>
-		<attribute name="Version" value="1.2.3"/>
+		<attribute name="Version" value="${version}"/>
 	    </manifest>
         </jar>  
   </target>
@@ -81,7 +81,7 @@
 		<attribute name="Implementation-URL" value="http://bnotes.sourceforge.net"/>
 		<attribute name="Implementation-Mail" value="abdulla.abdurakhmanov@gmail.com"/>
 		<attribute name="Implementation-Title" value="BinaryNotes Library (Debug)"/>
-		<attribute name="Version" value="1.2.3"/>
+		<attribute name="Version" value="${version}"/>
 	    </manifest>
         </jar>  
   </target>
