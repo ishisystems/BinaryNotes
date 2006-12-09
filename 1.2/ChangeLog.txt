@@ -5,6 +5,7 @@ ChangeLog
 							[!] 		- Critical warning or note
 							{<component>}	- Component/Group that changed
 
+
 1.2.3	{lib}		[*] Fixed BER sequence decoder problem
 1.2.3	{lib}		[*] Fixed NullPointerException when decoding choice in choice
 1.2.3   {dist}		[+] Added BinaryNotes debug library for Java (dist)
