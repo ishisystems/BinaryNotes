@@ -13,5 +13,9 @@
          <value n="nodeClass" v="oracle.ide.model.Project"/>
          <url n="URL" path="BNCompiler/BNCompiler.jpr"/>
       </hash>
+      <hash>
+         <value n="nodeClass" v="oracle.ide.model.Project"/>
+         <url n="URL" path="BinaryNotesMQ/java/BNMQJava.jpr"/>
+      </hash>
    </list>
 </jws:workspace>
