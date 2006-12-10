@@ -31,17 +31,17 @@ public class PriorityQueue<T> implements IQueue<T> {
             return msg1.getPriority()-msg2.getPriority();
         }
     }
-    protected java.util.Queue< IMessage<T> > simpleQueue = new java.util.PriorityQueue< IMessage<T> >(1024, new MessageComparator());
+    protected java.util.Queue< IMessage<T> > priorityQueue = new java.util.PriorityQueue< IMessage<T> >(1024, new MessageComparator());
     
     public void push(IMessage<T> message) {
-        synchronized(simpleQueue) {
-            simpleQueue.add(message);
+        synchronized(priorityQueue) {
+            priorityQueue.add(message);
         }
     }
 
     public IMessage<T> getNext() {
-        synchronized(simpleQueue) {
-            return simpleQueue.poll();
+        synchronized(priorityQueue) {
+            return priorityQueue.poll();
         }
     }
 }
