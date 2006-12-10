@@ -2,9 +2,10 @@ ChangeLog
 							Labels:
 							[*] 		- Bug fixed
 							[+] 		- Feature/Enhancement
-							[!] 		- Critical warning or note
+							[!] 		- Important warning or note
 							{<component>}	- Component/Group that changed
 
+1.3.0	{all}		[!] Started the new project - BinaryNotes Message Queues (BNMQ). The more details will be available later at bnotes.sf.net.
 1.3.0 	{comp}		[*] Fixed incorrect default value generation for BOOLEAN
 1.3.0	{all}		[+] Updated version info & distribution package
 -
