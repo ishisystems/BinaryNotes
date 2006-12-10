@@ -18,14 +18,30 @@
  */
 package org.bn.mq.impl;
 
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.Queue;
+
 import org.bn.mq.IMessage;
 import org.bn.mq.IQueue;
 
 public class PriorityQueue<T> implements IQueue<T> {
+    private class MessageComparator implements Comparator< IMessage<T> > {
+        public int compare(IMessage<T> msg1, IMessage<T> msg2) {
+            return msg1.getPriority()-msg2.getPriority();
+        }
+    }
+    protected java.util.Queue< IMessage<T> > simpleQueue = new java.util.PriorityQueue< IMessage<T> >(1024, new MessageComparator());
+    
     public void push(IMessage<T> message) {
+        synchronized(simpleQueue) {
+            simpleQueue.add(message);
+        }
     }
 
     public IMessage<T> getNext() {
-        return null;
+        synchronized(simpleQueue) {
+            return simpleQueue.poll();
+        }
     }
 }

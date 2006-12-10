@@ -19,14 +19,24 @@
 
 package org.bn.mq.impl;
 
+import java.util.LinkedList;
+
 import org.bn.mq.IMessage;
 import org.bn.mq.IQueue;
+import org.bn.mq.protocol.MessageEnvelope;
 
 public class Queue<T> implements IQueue<T> {
+    protected java.util.Queue< IMessage<T> > simpleQueue = new LinkedList< IMessage<T> >();
+    
     public void push(IMessage<T> message) {
+        synchronized(simpleQueue) {
+            simpleQueue.add(message);
+        }
     }
 
     public IMessage<T> getNext() {
-        return null;
+        synchronized(simpleQueue) {
+            return simpleQueue.poll();
+        }
     }
 }
