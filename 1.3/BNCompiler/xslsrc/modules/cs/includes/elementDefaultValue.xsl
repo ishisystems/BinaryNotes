@@ -36,6 +36,9 @@
             <xsl:when test="isCString = 'true'">
                 <xsl:if test="$instElementType!='null' and $instElementType!='string'">new <xsl:value-of select="$instElementType"/> (</xsl:if> <xsl:value-of select="cStr"/> <xsl:if test="$instElementType!='null' and $instElementType!='string' ">)</xsl:if>
             </xsl:when>
+            <xsl:when test="isDefinedValue = 'true'">
+                <xsl:if test="$instElementType!='null' and $instElementType!='bool'">new <xsl:value-of select="$instElementType"/> (</xsl:if> <xsl:value-of select="definedValue/name"/> <xsl:if test="$instElementType!='null' and $instElementType!='bool' ">)</xsl:if>
+            </xsl:when>
             <xsl:when test="isSignedNumber = 'true'">
                 <xsl:if test="$instElementType!='null' and $instElementType!='int' and $instElementType!='long'">new <xsl:value-of select="$instElementType"/> ( </xsl:if> <xsl:if test="signedNumber/positive != 'true'">-</xsl:if><xsl:value-of select="signedNumber/num"/> <xsl:if test="$instElementType!='null' and $instElementType!='int' and $instElementType!='long'">)</xsl:if>
             </xsl:when>        
