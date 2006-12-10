@@ -27,7 +27,11 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.bn.mq.IMessage;
 
@@ -45,6 +49,10 @@ public abstract class Transport implements ITransport {
     protected SocketFactory socketFactory;
     protected ByteBuffer tempReceiveBuffer = ByteBuffer.allocate(64*1024);
     protected ITransportMessageCoder messageCoder;
+    protected final Lock callLock = new ReentrantLock();
+    protected final Condition callLockEvent  = callLock.newCondition();    
+    protected String currentCallMessageId = "-none-";
+    protected MessageEnvelope currentCallMessage = null;
     
     public Transport(URI addr, SocketFactory factory) {
         setAddr(addr);
@@ -108,8 +116,13 @@ public abstract class Transport implements ITransport {
     }
     
     public void sendAsync(ByteBuffer buffer) throws IOException {
-        if(socketFactory.getWriterStorage()!=null)
-            socketFactory.getWriterStorage().pushPacket(this, buffer);
+        if(socketFactory.getWriterStorage()!=null) {
+            if(isAvailable()) {
+                socketFactory.getWriterStorage().pushPacket(this, buffer);
+            }
+            else
+                throw new IOException("Transport is not connected!");
+        }
         else
             throw new IOException("Unable to write readonly transport!");
     }
@@ -174,16 +187,41 @@ public abstract class Transport implements ITransport {
     
     protected void fireReceivedData(ByteBuffer packet) throws Exception {
         synchronized(listeners) {
-            for(ITransportListener listener: listeners) {
-                MessageEnvelope message = messageCoder.decode(packet);
-                if(message!=null)
-                    listener.onReceive(message,this);
+            MessageEnvelope message = messageCoder.decode(packet);
+            boolean doProcessListeners = true;            
+            if(message!=null) {
+                callLock.lock();
+                if(currentCallMessageId.equals(message.getId())) {
+                    currentCallMessage = message;
+                    callLockEvent.signal();
+                    doProcessListeners = false;
+                }
+                callLock.unlock();
+            }
+            if(doProcessListeners) {
+                for(ITransportListener listener: listeners) {                    
+                            
+                                listener.onReceive(message,this);
+                }
             }
         }
     }
     
-    public MessageEnvelope call(MessageEnvelope message) throws Exception {
-        return null;
+    public synchronized MessageEnvelope call(MessageEnvelope message) throws Exception {
+        MessageEnvelope result = null;
+        callLock.lock();
+        currentCallMessage = null;
+        currentCallMessageId = message.getId();        
+        try {
+            sendAsync(message);
+            callLockEvent.await(120,TimeUnit.SECONDS);
+            result = currentCallMessage;
+            currentCallMessageId = "";
+        }
+        finally {
+            callLock.unlock();
+        }
+        return result;
     }
 
     public URI getAddr() {

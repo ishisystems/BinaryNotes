@@ -19,11 +19,22 @@
 
 package org.bn.mq.impl;
 
+import org.bn.mq.IMQConnection;
 import org.bn.mq.IRemoteMessageQueue;
 import org.bn.mq.IRemoteSupplier;
 
 public class RemoteSupplier implements IRemoteSupplier{
+    private IMQConnection connection;
+    
+    public RemoteSupplier(IMQConnection connection) {
+        this.connection = connection;
+    }
+    
     public <T> IRemoteMessageQueue<T> lookupQueue(String queuePath, Class<T> messageBodyClass) {
         return null;
+    }
+    
+    public IMQConnection getConnection() {
+        return this.connection;
     }
 }

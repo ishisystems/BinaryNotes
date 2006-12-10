@@ -44,9 +44,6 @@ public class MessageDecoderThreadTest extends TestCase {
         return message;
     }
 
-    /**
-     * @see MessageDecoderThread#takeMessage()
-     */
     public void testTakeMessage() throws Exception {
         final String connectionString = "siberia://localhost:3333";
         TransportFactory conFactory = new TransportFactory();
@@ -66,6 +63,22 @@ public class MessageDecoderThreadTest extends TestCase {
         conFactory.finalize();
         
     }
+    
+    public void testCall() throws Exception {
+        final String connectionString = "siberia://localhost:3333";
+        TransportFactory conFactory = new TransportFactory();
+        conFactory.setTransportMessageCoderFactory(new TransportMessageCoderFactory());
+        
+        ITransport server = conFactory.getServerTransport(new URI(connectionString));
+        assertNotNull(server);
+        server.addListener(new CallMessageListener(this));
+        
+        ITransport client = conFactory.getClientTransport(new URI(connectionString));
+        assertNotNull(client);
+        MessageEnvelope result = client.call(createMessage("Call"));
+        System.out.println("Result call received with Id:"+result.getId()+" has been received successfully");
+        conFactory.finalize();        
+    }    
 
     private class MessageListener implements ITransportListener {         
         private MessageDecoderThreadTest parent;
@@ -87,4 +100,23 @@ public class MessageDecoderThreadTest extends TestCase {
             }
         }
     }
+    
+    private class CallMessageListener implements ITransportListener {         
+        private MessageDecoderThreadTest parent;
+        private int counter = 0;
+        public CallMessageListener(MessageDecoderThreadTest parent) {
+            this.parent = parent;
+        }
+        public void onReceive(MessageEnvelope message, ITransport transport) {
+            System.out.println("Call from "+transport+" with Id:"+message.getId()+" has been received successfully");
+            try {
+                MessageEnvelope result = createMessage("result");
+                result.setId(message.getId());
+                transport.sendAsync(result);
+            }
+            catch (Exception e) {
+                System.err.println(e);
+            }
+        }
+    }    
 }

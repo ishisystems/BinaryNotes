@@ -20,10 +20,17 @@
 package org.bn.mq.impl;
 
 import org.bn.mq.IConsumer;
+import org.bn.mq.IMQConnection;
 import org.bn.mq.IMessage;
 import org.bn.mq.IRemoteMessageQueue;
+import org.bn.mq.IRemoteSupplier;
 
 public class RemoteMessageQueue<T> implements IRemoteMessageQueue<T>{
+    private RemoteSupplier supplier;
+    
+    public RemoteMessageQueue(RemoteSupplier supplier) {
+        this.supplier = supplier;
+    }
 
     public void addConsumer(IConsumer<T> consumer) {
     }

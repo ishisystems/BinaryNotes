@@ -84,6 +84,5 @@ public class TransportFactoryTest extends TestCase {
         }
         Thread.sleep(1000);
         conFactory.finalize();
-    }
-    
+    }    
 }
