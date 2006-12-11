@@ -16,7 +16,6 @@
  * With any your questions welcome to my e-mail 
  * or blog at http://abdulla-a.blogspot.com.
  */
-
 package org.bn.mq.impl;
 
 import org.bn.mq.IConsumer;

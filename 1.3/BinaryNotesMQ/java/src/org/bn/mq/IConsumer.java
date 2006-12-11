@@ -16,10 +16,7 @@
  * With any your questions welcome to my e-mail 
  * or blog at http://abdulla-a.blogspot.com.
  */
-
 package org.bn.mq;
 
-public interface IConsumer<T> {
-    String getId();
-    void onMessage(IMessage<T> message);
+public interface IConsumer<T> extends IRemoteConsumer<T> {
 }

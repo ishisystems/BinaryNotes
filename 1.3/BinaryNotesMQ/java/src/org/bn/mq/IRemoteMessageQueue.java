@@ -20,11 +20,11 @@
 package org.bn.mq;
 
 public interface IRemoteMessageQueue<T> {
-    void addConsumer(IConsumer<T> consumer) throws Exception;
-    void addConsumer(IConsumer<T> consumer, String filter) throws Exception;
-    void addPersistenceConsumer(IConsumer<T> consumer) throws Exception;
-    void addPersistenceConsumer(IConsumer<T> consumer, String filter) throws Exception;
-    void delConsumer(IConsumer<T> consumer) throws Exception;
+    void addConsumer(IRemoteConsumer<T> consumer) throws Exception;
+    void addConsumer(IRemoteConsumer<T> consumer, String filter) throws Exception;
+    void addPersistenceConsumer(IRemoteConsumer<T> consumer) throws Exception;
+    void addPersistenceConsumer(IRemoteConsumer<T> consumer, String filter) throws Exception;
+    void delConsumer(IRemoteConsumer<T> consumer) throws Exception;
     IMessage<T> call(IMessage<T> message) throws Exception;
     String getQueuePath();    
 }

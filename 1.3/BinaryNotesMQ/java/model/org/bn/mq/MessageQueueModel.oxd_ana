@@ -17,6 +17,14 @@
             class="o:b:JID"/>
       </shape>
       <shape
+         name="IConsumer extends IRemoteConsumer">
+         <elemRef
+            name=""
+            value="org.bn.mq.IConsumer extends org.bn.mq.IRemoteConsumer"
+            type="JavaExtends"
+            class="j:l:String"/>
+      </shape>
+      <shape
          name="IMQConnection">
          <elemRef
             name=""
@@ -57,10 +65,26 @@
             class="o:b:JID"/>
       </shape>
       <shape
+         name="IPersistenceStorage">
+         <elemRef
+            name=""
+            value="JID;;org/bn/mq;;###;;IPersistenceStorage"
+            type="JavaInterface"
+            class="o:b:JID"/>
+      </shape>
+      <shape
          name="IQueue">
          <elemRef
             name=""
             value="JID;;org/bn/mq;;###;;IQueue"
+            type="JavaInterface"
+            class="o:b:JID"/>
+      </shape>
+      <shape
+         name="IRemoteConsumer">
+         <elemRef
+            name=""
+            value="JID;;org/bn/mq;;###;;IRemoteConsumer"
             type="JavaInterface"
             class="o:b:JID"/>
       </shape>
@@ -191,7 +215,7 @@
       <dimension
          name="pageXY"
          width="2.0"
-         height="1.0"/>
+         height="2.0"/>
       <insets
          name="paperMargins"
          top="98.42514"
@@ -1119,7 +1143,7 @@
                      <point
                         name="elementPosition"
                         x="0.0"
-                        y="84.20332"/>
+                        y="84.20334"/>
                      <string
                         name="shapeState">symbolic</string>
                      <boolean
@@ -1328,7 +1352,7 @@
             </infoMap>
             <elemRef
                name="elementReference"
-               value="JID;;org/bn/mq;;###;;IConsumer"
+               value="JID;;org/bn/mq;;###;;IRemoteConsumer"
                type="JavaInterface"
                class="o:b:JID"/>
             <infoMap
@@ -1369,7 +1393,7 @@
                <point
                   name="elementPosition"
                   x="359.4604"
-                  y="200.7201"/>
+                  y="680.7201"/>
                <graphicalProperties
                   name="graphicalProperties">
                   <color
@@ -1763,7 +1787,7 @@
                <point
                   name="elementPosition"
                   x="14.460388"
-                  y="635.7201"/>
+                  y="590.7201"/>
                <graphicalProperties
                   name="graphicalProperties">
                   <color
@@ -3115,7 +3139,7 @@
                            <dimension
                               name="elementSize"
                               width="330.0"
-                              height="57.34375"/>
+                              height="57.343746"/>
                         </infoMap>
                      </infoMap>
                      <point
@@ -3803,7 +3827,135 @@
          <shapeMap>
             <long
                name="DrUID"
-               value="-8734315667192426723"/>
+               value="-4333536085725109973"/>
+            <infoMap
+               name="containedShapes"/>
+            <long
+               name="destinationShapeDrUID"
+               value="3273300710159972314"/>
+            <elemRef
+               name="destinationShapeRef"
+               value="JID;;org/bn/mq;;###;;IRemoteMessageQueue"
+               type="JavaInterface"
+               class="o:b:JID"/>
+            <infoMap
+               name="displayPreference">
+               <integer
+                  name="edgeType"
+                  value="1"/>
+               <boolean
+                  name="starbordName"
+                  value="false"/>
+            </infoMap>
+            <elemRef
+               name="elementReference"
+               value="org.bn.mq.IMessageQueue extends org.bn.mq.IRemoteMessageQueue"
+               type="JavaExtends"
+               class="j:l:String"/>
+            <infoMap
+               name="graphicalData">
+               <infoMap
+                  name="diagramStateProperties">
+                  <infoMap
+                     name="symbolic">
+                     <dimension
+                        name="elementSize"
+                        width="0.0"
+                        height="0.0"/>
+                     <infoMap
+                        name="layoutConstraints"/>
+                  </infoMap>
+               </infoMap>
+               <array
+                  name="elementPoints">
+                  <point
+                     name=""
+                     x="854.4604"
+                     y="335.7201"/>
+                  <point
+                     name=""
+                     x="854.4604"
+                     y="275.7201"/>
+               </array>
+               <point
+                  name="elementPosition"
+                  x="314.4604"
+                  y="485.7201"/>
+               <graphicalProperties
+                  name="graphicalProperties">
+                  <color
+                     name="lineColor"
+                     rgb="0x646464"
+                     alpha="0xff"/>
+                  <float
+                     name="lineWidth"
+                     value="1.0"/>
+                  <integer
+                     name="lineStyle"
+                     value="0"/>
+                  <font
+                     name="fontType"
+                     fontFamily="SansSerif"
+                     fontSize="11.0"
+                     fontWeight="normal"
+                     fontStyle="normal"/>
+                  <color
+                     name="fontColor"
+                     rgb="0x0"
+                     alpha="0xff"/>
+               </graphicalProperties>
+               <array
+                  name="lastGlyph">
+                  <integer
+                     name=""
+                     value="2"
+                     scalar="true"/>
+                  <integer
+                     name=""
+                     value="536870913"
+                     scalar="true"/>
+                  <integer
+                     name=""
+                     value="1086324736"
+                     scalar="true"/>
+                  <integer
+                     name=""
+                     value="1086324736"
+                     scalar="true"/>
+                  <integer
+                     name=""
+                     value="1120403456"
+                     scalar="true"/>
+               </array>
+               <string
+                  name="shapeState">symbolic</string>
+               <elemRef
+                  name="surrogateOriginalDstRef"
+                  value="JID;;org/bn/mq;;###;;IRemoteMessageQueue"
+                  type="JavaInterface"
+                  class="o:b:JID"/>
+               <elemRef
+                  name="surrogateOriginalSrcRef"
+                  value="JID;;org/bn/mq;;###;;IMessageQueue"
+                  type="JavaInterface"
+                  class="o:b:JID"/>
+               <boolean
+                  name="visibility"
+                  value="true"/>
+            </infoMap>
+            <long
+               name="sourceShapeDrUID"
+               value="-4166379072998750977"/>
+            <elemRef
+               name="sourceShapeRef"
+               value="JID;;org/bn/mq;;###;;IMessageQueue"
+               type="JavaInterface"
+               class="o:b:JID"/>
+         </shapeMap>
+         <shapeMap>
+            <long
+               name="DrUID"
+               value="-481409554629079955"/>
             <infoMap
                name="containedShapes"/>
             <long
@@ -3931,15 +4083,803 @@
          <shapeMap>
             <long
                name="DrUID"
-               value="2466631653016778508"/>
+               value="-3330103259837818342"/>
+            <infoMap
+               name="containedShapes">
+               <infoMap
+                  name="attributesOfClass">
+                  <long
+                     name="DrUID"
+                     value="176802627064815332"/>
+                  <infoMap
+                     name="containedShapes"/>
+                  <infoMap
+                     name="displayPreference"/>
+                  <elemRef
+                     name="elementReference"
+                     value="ListShape"
+                     type="LIST"
+                     class="j:l:String"/>
+                  <infoMap
+                     name="graphicalData">
+                     <infoMap
+                        name="diagramStateProperties">
+                        <infoMap
+                           name="symbolic">
+                           <dimension
+                              name="elementSize"
+                              width="135.0"
+                              height="42.164062"/>
+                        </infoMap>
+                     </infoMap>
+                     <point
+                        name="elementPosition"
+                        x="0.0"
+                        y="35.671875"/>
+                     <string
+                        name="shapeState">symbolic</string>
+                     <boolean
+                        name="visibility"
+                        value="true"/>
+                  </infoMap>
+               </infoMap>
+               <infoMap
+                  name="nameOfShape">
+                  <long
+                     name="DrUID"
+                     value="4648736451316483451"/>
+                  <infoMap
+                     name="containedShapes"/>
+                  <infoMap
+                     name="displayPreference"/>
+                  <elemRef
+                     name="elementReference"
+                     value="TextShape"
+                     type="TEXT"
+                     class="j:l:String"/>
+                  <infoMap
+                     name="graphicalData">
+                     <infoMap
+                        name="diagramStateProperties">
+                        <infoMap
+                           name="symbolic">
+                           <dimension
+                              name="elementSize"
+                              width="135.0"
+                              height="19.835938"/>
+                        </infoMap>
+                     </infoMap>
+                     <point
+                        name="elementPosition"
+                        x="0.0"
+                        y="15.8359375"/>
+                     <string
+                        name="shapeState">symbolic</string>
+                     <boolean
+                        name="visibility"
+                        value="true"/>
+                  </infoMap>
+               </infoMap>
+               <infoMap
+                  name="operationsOfClass">
+                  <long
+                     name="DrUID"
+                     value="4967925668696812615"/>
+                  <infoMap
+                     name="containedShapes"/>
+                  <infoMap
+                     name="displayPreference"/>
+                  <elemRef
+                     name="elementReference"
+                     value="ListShape"
+                     type="LIST"
+                     class="j:l:String"/>
+                  <infoMap
+                     name="graphicalData">
+                     <infoMap
+                        name="diagramStateProperties">
+                        <infoMap
+                           name="symbolic">
+                           <dimension
+                              name="elementSize"
+                              width="135.0"
+                              height="42.164062"/>
+                        </infoMap>
+                     </infoMap>
+                     <point
+                        name="elementPosition"
+                        x="0.0"
+                        y="77.83594"/>
+                     <string
+                        name="shapeState">symbolic</string>
+                     <boolean
+                        name="visibility"
+                        value="true"/>
+                  </infoMap>
+               </infoMap>
+               <infoMap
+                  name="otherInfoOfClass">
+                  <long
+                     name="DrUID"
+                     value="6589456999910090187"/>
+                  <infoMap
+                     name="containedShapes"/>
+                  <infoMap
+                     name="displayPreference"/>
+                  <elemRef
+                     name="elementReference"
+                     value="ListShape"
+                     type="LIST"
+                     class="j:l:String"/>
+                  <infoMap
+                     name="graphicalData">
+                     <infoMap
+                        name="diagramStateProperties">
+                        <infoMap
+                           name="symbolic">
+                           <dimension
+                              name="elementSize"
+                              width="135.0"
+                              height="120.0"/>
+                        </infoMap>
+                     </infoMap>
+                     <point
+                        name="elementPosition"
+                        x="0.0"
+                        y="0.0"/>
+                     <string
+                        name="shapeState">symbolic</string>
+                     <boolean
+                        name="visibility"
+                        value="false"/>
+                  </infoMap>
+               </infoMap>
+               <infoMap
+                  name="pathOfClass">
+                  <long
+                     name="DrUID"
+                     value="-1255296902825906883"/>
+                  <infoMap
+                     name="containedShapes"/>
+                  <infoMap
+                     name="displayPreference"/>
+                  <elemRef
+                     name="elementReference"
+                     value="TextShape"
+                     type="TEXT"
+                     class="j:l:String"/>
+                  <infoMap
+                     name="graphicalData">
+                     <infoMap
+                        name="diagramStateProperties">
+                        <infoMap
+                           name="symbolic">
+                           <dimension
+                              name="elementSize"
+                              width="135.0"
+                              height="120.0"/>
+                        </infoMap>
+                     </infoMap>
+                     <point
+                        name="elementPosition"
+                        x="0.0"
+                        y="0.0"/>
+                     <string
+                        name="shapeState">symbolic</string>
+                     <boolean
+                        name="visibility"
+                        value="false"/>
+                  </infoMap>
+               </infoMap>
+               <infoMap
+                  name="stereotypeOfClass">
+                  <long
+                     name="DrUID"
+                     value="2756458168599199418"/>
+                  <infoMap
+                     name="containedShapes"/>
+                  <infoMap
+                     name="displayPreference"/>
+                  <elemRef
+                     name="elementReference"
+                     value="TextShape"
+                     type="TEXT"
+                     class="j:l:String"/>
+                  <infoMap
+                     name="graphicalData">
+                     <infoMap
+                        name="diagramStateProperties">
+                        <infoMap
+                           name="symbolic">
+                           <dimension
+                              name="elementSize"
+                              width="101.0"
+                              height="15.8359375"/>
+                        </infoMap>
+                     </infoMap>
+                     <point
+                        name="elementPosition"
+                        x="17.0"
+                        y="0.0"/>
+                     <string
+                        name="shapeState">symbolic</string>
+                     <boolean
+                        name="visibility"
+                        value="true"/>
+                  </infoMap>
+               </infoMap>
+               <infoMap
+                  name="typeParamsOfClass">
+                  <long
+                     name="DrUID"
+                     value="-2814353823548423918"/>
+                  <infoMap
+                     name="containedShapes"/>
+                  <infoMap
+                     name="displayPreference"/>
+                  <elemRef
+                     name="elementReference"
+                     value="ListShape"
+                     type="LIST"
+                     class="j:l:String"/>
+                  <infoMap
+                     name="graphicalData">
+                     <infoMap
+                        name="diagramStateProperties">
+                        <infoMap
+                           name="symbolic">
+                           <dimension
+                              name="elementSize"
+                              width="135.0"
+                              height="120.0"/>
+                        </infoMap>
+                     </infoMap>
+                     <point
+                        name="elementPosition"
+                        x="0.0"
+                        y="0.0"/>
+                     <string
+                        name="shapeState">symbolic</string>
+                     <boolean
+                        name="visibility"
+                        value="false"/>
+                  </infoMap>
+               </infoMap>
+            </infoMap>
+            <infoMap
+               name="displayPreference">
+               <null
+                  name="attributeFilterName"/>
+               <string
+                  name="attributeFilterVisibility">PUBLIC PROTECTED PACKAGE PRIVATE</string>
+               <boolean
+                  name="attributeShowStatic"
+                  value="true"/>
+               <boolean
+                  name="attributeShowType"
+                  value="true"/>
+               <boolean
+                  name="attributeShowVisibility"
+                  value="true"/>
+               <boolean
+                  name="attributesOfClass"
+                  value="true"/>
+               <null
+                  name="operationFilterName"/>
+               <string
+                  name="operationFilterVisibility">PUBLIC PROTECTED PACKAGE PRIVATE</string>
+               <integer
+                  name="operationShowParameters"
+                  value="0"/>
+               <boolean
+                  name="operationShowReturnType"
+                  value="true"/>
+               <boolean
+                  name="operationShowStatic"
+                  value="true"/>
+               <boolean
+                  name="operationShowVisibility"
+                  value="true"/>
+               <boolean
+                  name="operationsOfClass"
+                  value="true"/>
+               <boolean
+                  name="otherInfoOfClass"
+                  value="false"/>
+               <boolean
+                  name="pathOfClass"
+                  value="false"/>
+               <boolean
+                  name="stereotypeOfClass"
+                  value="true"/>
+               <boolean
+                  name="typeParamsOfClass"
+                  value="false"/>
+            </infoMap>
+            <elemRef
+               name="elementReference"
+               value="JID;;org/bn/mq;;###;;IPersistenceStorage"
+               type="JavaInterface"
+               class="o:b:JID"/>
+            <infoMap
+               name="graphicalData">
+               <infoMap
+                  name="diagramStateProperties">
+                  <infoMap
+                     name="symbolic">
+                     <insets
+                        name="containerInsets"
+                        top="0.0"
+                        left="0.0"
+                        bottom="0.0"
+                        right="0.0"/>
+                     <dimension
+                        name="elementSize"
+                        width="135.0"
+                        height="120.0"/>
+                     <infoMap
+                        name="layoutConstraints">
+                        <float
+                           name="attributesOfClass"
+                           value="0.5"/>
+                        <float
+                           name="nameOfShape"
+                           value="-2.0"/>
+                        <float
+                           name="operationsOfClass"
+                           value="0.5"/>
+                        <float
+                           name="stereotypeOfClass"
+                           value="-2.0"/>
+                     </infoMap>
+                     <infoList
+                        name="shapesUsed"/>
+                  </infoMap>
+               </infoMap>
+               <point
+                  name="elementPosition"
+                  x="659.4604"
+                  y="515.7201"/>
+               <graphicalProperties
+                  name="graphicalProperties">
+                  <color
+                     name="lineColor"
+                     rgb="0xa5a5a5"
+                     alpha="0xff"/>
+                  <float
+                     name="lineWidth"
+                     value="1.0"/>
+                  <integer
+                     name="lineStyle"
+                     value="0"/>
+                  <color
+                     name="fillColor"
+                     rgb="0xc6d6ff"
+                     alpha="0xff"/>
+                  <font
+                     name="fontType"
+                     fontFamily="SansSerif"
+                     fontSize="11.0"
+                     fontWeight="normal"
+                     fontStyle="normal"/>
+                  <color
+                     name="fontColor"
+                     rgb="0x0"
+                     alpha="0xff"/>
+               </graphicalProperties>
+               <string
+                  name="shapeState">symbolic</string>
+               <boolean
+                  name="visibility"
+                  value="true"/>
+            </infoMap>
+         </shapeMap>
+         <shapeMap>
+            <long
+               name="DrUID"
+               value="7263072027682632326"/>
+            <infoMap
+               name="containedShapes">
+               <infoMap
+                  name="attributesOfClass">
+                  <long
+                     name="DrUID"
+                     value="1295299620296792835"/>
+                  <infoMap
+                     name="containedShapes"/>
+                  <infoMap
+                     name="displayPreference"/>
+                  <elemRef
+                     name="elementReference"
+                     value="ListShape"
+                     type="LIST"
+                     class="j:l:String"/>
+                  <infoMap
+                     name="graphicalData">
+                     <infoMap
+                        name="diagramStateProperties">
+                        <infoMap
+                           name="symbolic">
+                           <dimension
+                              name="elementSize"
+                              width="270.0"
+                              height="42.164062"/>
+                        </infoMap>
+                     </infoMap>
+                     <point
+                        name="elementPosition"
+                        x="0.0"
+                        y="35.671875"/>
+                     <string
+                        name="shapeState">symbolic</string>
+                     <boolean
+                        name="visibility"
+                        value="true"/>
+                  </infoMap>
+               </infoMap>
+               <infoMap
+                  name="nameOfShape">
+                  <long
+                     name="DrUID"
+                     value="5250297673242891334"/>
+                  <infoMap
+                     name="containedShapes"/>
+                  <infoMap
+                     name="displayPreference"/>
+                  <elemRef
+                     name="elementReference"
+                     value="TextShape"
+                     type="TEXT"
+                     class="j:l:String"/>
+                  <infoMap
+                     name="graphicalData">
+                     <infoMap
+                        name="diagramStateProperties">
+                        <infoMap
+                           name="symbolic">
+                           <dimension
+                              name="elementSize"
+                              width="270.0"
+                              height="19.835938"/>
+                        </infoMap>
+                     </infoMap>
+                     <point
+                        name="elementPosition"
+                        x="0.0"
+                        y="15.8359375"/>
+                     <string
+                        name="shapeState">symbolic</string>
+                     <boolean
+                        name="visibility"
+                        value="true"/>
+                  </infoMap>
+               </infoMap>
+               <infoMap
+                  name="operationsOfClass">
+                  <long
+                     name="DrUID"
+                     value="-2153895899571777273"/>
+                  <infoMap
+                     name="containedShapes"/>
+                  <infoMap
+                     name="displayPreference"/>
+                  <elemRef
+                     name="elementReference"
+                     value="ListShape"
+                     type="LIST"
+                     class="j:l:String"/>
+                  <infoMap
+                     name="graphicalData">
+                     <infoMap
+                        name="diagramStateProperties">
+                        <infoMap
+                           name="symbolic">
+                           <dimension
+                              name="elementSize"
+                              width="270.0"
+                              height="42.164062"/>
+                        </infoMap>
+                     </infoMap>
+                     <point
+                        name="elementPosition"
+                        x="0.0"
+                        y="77.83594"/>
+                     <string
+                        name="shapeState">symbolic</string>
+                     <boolean
+                        name="visibility"
+                        value="true"/>
+                  </infoMap>
+               </infoMap>
+               <infoMap
+                  name="otherInfoOfClass">
+                  <long
+                     name="DrUID"
+                     value="5287684220432445041"/>
+                  <infoMap
+                     name="containedShapes"/>
+                  <infoMap
+                     name="displayPreference"/>
+                  <elemRef
+                     name="elementReference"
+                     value="ListShape"
+                     type="LIST"
+                     class="j:l:String"/>
+                  <infoMap
+                     name="graphicalData">
+                     <infoMap
+                        name="diagramStateProperties">
+                        <infoMap
+                           name="symbolic">
+                           <dimension
+                              name="elementSize"
+                              width="270.0"
+                              height="120.0"/>
+                        </infoMap>
+                     </infoMap>
+                     <point
+                        name="elementPosition"
+                        x="0.0"
+                        y="0.0"/>
+                     <string
+                        name="shapeState">symbolic</string>
+                     <boolean
+                        name="visibility"
+                        value="false"/>
+                  </infoMap>
+               </infoMap>
+               <infoMap
+                  name="pathOfClass">
+                  <long
+                     name="DrUID"
+                     value="4610704971727693178"/>
+                  <infoMap
+                     name="containedShapes"/>
+                  <infoMap
+                     name="displayPreference"/>
+                  <elemRef
+                     name="elementReference"
+                     value="TextShape"
+                     type="TEXT"
+                     class="j:l:String"/>
+                  <infoMap
+                     name="graphicalData">
+                     <infoMap
+                        name="diagramStateProperties">
+                        <infoMap
+                           name="symbolic">
+                           <dimension
+                              name="elementSize"
+                              width="270.0"
+                              height="120.0"/>
+                        </infoMap>
+                     </infoMap>
+                     <point
+                        name="elementPosition"
+                        x="0.0"
+                        y="0.0"/>
+                     <string
+                        name="shapeState">symbolic</string>
+                     <boolean
+                        name="visibility"
+                        value="false"/>
+                  </infoMap>
+               </infoMap>
+               <infoMap
+                  name="stereotypeOfClass">
+                  <long
+                     name="DrUID"
+                     value="-5486147257712040043"/>
+                  <infoMap
+                     name="containedShapes"/>
+                  <infoMap
+                     name="displayPreference"/>
+                  <elemRef
+                     name="elementReference"
+                     value="TextShape"
+                     type="TEXT"
+                     class="j:l:String"/>
+                  <infoMap
+                     name="graphicalData">
+                     <infoMap
+                        name="diagramStateProperties">
+                        <infoMap
+                           name="symbolic">
+                           <dimension
+                              name="elementSize"
+                              width="236.0"
+                              height="15.8359375"/>
+                        </infoMap>
+                     </infoMap>
+                     <point
+                        name="elementPosition"
+                        x="17.0"
+                        y="0.0"/>
+                     <string
+                        name="shapeState">symbolic</string>
+                     <boolean
+                        name="visibility"
+                        value="true"/>
+                  </infoMap>
+               </infoMap>
+               <infoMap
+                  name="typeParamsOfClass">
+                  <long
+                     name="DrUID"
+                     value="7849378934001499154"/>
+                  <infoMap
+                     name="containedShapes"/>
+                  <infoMap
+                     name="displayPreference"/>
+                  <elemRef
+                     name="elementReference"
+                     value="ListShape"
+                     type="LIST"
+                     class="j:l:String"/>
+                  <infoMap
+                     name="graphicalData">
+                     <infoMap
+                        name="diagramStateProperties">
+                        <infoMap
+                           name="symbolic">
+                           <dimension
+                              name="elementSize"
+                              width="270.0"
+                              height="120.0"/>
+                        </infoMap>
+                     </infoMap>
+                     <point
+                        name="elementPosition"
+                        x="0.0"
+                        y="0.0"/>
+                     <string
+                        name="shapeState">symbolic</string>
+                     <boolean
+                        name="visibility"
+                        value="false"/>
+                  </infoMap>
+               </infoMap>
+            </infoMap>
+            <infoMap
+               name="displayPreference">
+               <null
+                  name="attributeFilterName"/>
+               <string
+                  name="attributeFilterVisibility">PUBLIC PROTECTED PACKAGE PRIVATE</string>
+               <boolean
+                  name="attributeShowStatic"
+                  value="true"/>
+               <boolean
+                  name="attributeShowType"
+                  value="true"/>
+               <boolean
+                  name="attributeShowVisibility"
+                  value="true"/>
+               <boolean
+                  name="attributesOfClass"
+                  value="true"/>
+               <null
+                  name="operationFilterName"/>
+               <string
+                  name="operationFilterVisibility">PUBLIC PROTECTED PACKAGE PRIVATE</string>
+               <integer
+                  name="operationShowParameters"
+                  value="0"/>
+               <boolean
+                  name="operationShowReturnType"
+                  value="true"/>
+               <boolean
+                  name="operationShowStatic"
+                  value="true"/>
+               <boolean
+                  name="operationShowVisibility"
+                  value="true"/>
+               <boolean
+                  name="operationsOfClass"
+                  value="true"/>
+               <boolean
+                  name="otherInfoOfClass"
+                  value="false"/>
+               <boolean
+                  name="pathOfClass"
+                  value="false"/>
+               <boolean
+                  name="stereotypeOfClass"
+                  value="true"/>
+               <boolean
+                  name="typeParamsOfClass"
+                  value="false"/>
+            </infoMap>
+            <elemRef
+               name="elementReference"
+               value="JID;;org/bn/mq;;###;;IConsumer"
+               type="JavaInterface"
+               class="o:b:JID"/>
+            <infoMap
+               name="graphicalData">
+               <infoMap
+                  name="diagramStateProperties">
+                  <infoMap
+                     name="symbolic">
+                     <insets
+                        name="containerInsets"
+                        top="0.0"
+                        left="0.0"
+                        bottom="0.0"
+                        right="0.0"/>
+                     <dimension
+                        name="elementSize"
+                        width="270.0"
+                        height="120.0"/>
+                     <infoMap
+                        name="layoutConstraints">
+                        <float
+                           name="attributesOfClass"
+                           value="0.5"/>
+                        <float
+                           name="nameOfShape"
+                           value="-2.0"/>
+                        <float
+                           name="operationsOfClass"
+                           value="0.5"/>
+                        <float
+                           name="stereotypeOfClass"
+                           value="-2.0"/>
+                     </infoMap>
+                     <infoList
+                        name="shapesUsed"/>
+                  </infoMap>
+               </infoMap>
+               <point
+                  name="elementPosition"
+                  x="359.4604"
+                  y="860.7201"/>
+               <graphicalProperties
+                  name="graphicalProperties">
+                  <color
+                     name="lineColor"
+                     rgb="0xa5a5a5"
+                     alpha="0xff"/>
+                  <float
+                     name="lineWidth"
+                     value="1.0"/>
+                  <integer
+                     name="lineStyle"
+                     value="0"/>
+                  <color
+                     name="fillColor"
+                     rgb="0xc6d6ff"
+                     alpha="0xff"/>
+                  <font
+                     name="fontType"
+                     fontFamily="SansSerif"
+                     fontSize="11.0"
+                     fontWeight="normal"
+                     fontStyle="normal"/>
+                  <color
+                     name="fontColor"
+                     rgb="0x0"
+                     alpha="0xff"/>
+               </graphicalProperties>
+               <string
+                  name="shapeState">symbolic</string>
+               <boolean
+                  name="visibility"
+                  value="true"/>
+            </infoMap>
+         </shapeMap>
+         <shapeMap>
+            <long
+               name="DrUID"
+               value="-5536552881911046237"/>
             <infoMap
                name="containedShapes"/>
             <long
                name="destinationShapeDrUID"
-               value="3273300710159972314"/>
+               value="1383890437104882569"/>
             <elemRef
                name="destinationShapeRef"
-               value="JID;;org/bn/mq;;###;;IRemoteMessageQueue"
+               value="JID;;org/bn/mq;;###;;IRemoteConsumer"
                type="JavaInterface"
                class="o:b:JID"/>
             <infoMap
@@ -3953,7 +4893,7 @@
             </infoMap>
             <elemRef
                name="elementReference"
-               value="org.bn.mq.IMessageQueue extends org.bn.mq.IRemoteMessageQueue"
+               value="org.bn.mq.IConsumer extends org.bn.mq.IRemoteConsumer"
                type="JavaExtends"
                class="j:l:String"/>
             <infoMap
@@ -3974,12 +4914,12 @@
                   name="elementPoints">
                   <point
                      name=""
-                     x="854.4604"
-                     y="335.7201"/>
+                     x="426.9604"
+                     y="860.7201"/>
                   <point
                      name=""
-                     x="854.4604"
-                     y="275.7201"/>
+                     x="426.9604"
+                     y="830.7201"/>
                </array>
                <point
                   name="elementPosition"
@@ -4035,12 +4975,12 @@
                   name="shapeState">symbolic</string>
                <elemRef
                   name="surrogateOriginalDstRef"
-                  value="JID;;org/bn/mq;;###;;IRemoteMessageQueue"
+                  value="JID;;org/bn/mq;;###;;IRemoteConsumer"
                   type="JavaInterface"
                   class="o:b:JID"/>
                <elemRef
                   name="surrogateOriginalSrcRef"
-                  value="JID;;org/bn/mq;;###;;IMessageQueue"
+                  value="JID;;org/bn/mq;;###;;IConsumer"
                   type="JavaInterface"
                   class="o:b:JID"/>
                <boolean
@@ -4049,10 +4989,10 @@
             </infoMap>
             <long
                name="sourceShapeDrUID"
-               value="-4166379072998750977"/>
+               value="7263072027682632326"/>
             <elemRef
                name="sourceShapeRef"
-               value="JID;;org/bn/mq;;###;;IMessageQueue"
+               value="JID;;org/bn/mq;;###;;IConsumer"
                type="JavaInterface"
                class="o:b:JID"/>
          </shapeMap>

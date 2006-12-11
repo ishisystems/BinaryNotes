@@ -19,7 +19,7 @@
 
 package org.bn.mq.impl;
 
-import org.bn.mq.IConsumer;
+import org.bn.mq.IRemoteConsumer;
 import org.bn.mq.IMQConnection;
 import org.bn.mq.IMessage;
 import org.bn.mq.IRemoteMessageQueue;
@@ -32,19 +32,19 @@ public class RemoteMessageQueue<T> implements IRemoteMessageQueue<T>{
         this.supplier = supplier;
     }
 
-    public void addConsumer(IConsumer<T> consumer) {
+    public void addConsumer(IRemoteConsumer<T> consumer) {
     }
 
-    public void addConsumer(IConsumer<T> consumer, String filter) {
+    public void addConsumer(IRemoteConsumer<T> consumer, String filter) {
     }
 
-    public void addPersistenceConsumer(IConsumer<T> consumer) {
+    public void addPersistenceConsumer(IRemoteConsumer<T> consumer) {
     }
 
-    public void addPersistenceConsumer(IConsumer<T> consumer, String filter) {
+    public void addPersistenceConsumer(IRemoteConsumer<T> consumer, String filter) {
     }
 
-    public void delConsumer(IConsumer<T> consumer) {
+    public void delConsumer(IRemoteConsumer<T> consumer) {
     }
 
     public IMessage<T> call(IMessage<T> message) {
