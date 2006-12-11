@@ -25,7 +25,7 @@ import java.net.URI;
 import org.bn.mq.net.*;
 
 public class TransportFactory implements ITransportFactory {
-    private final String scheme = "siberia";
+    private final String scheme = "bnmq";
 
     protected TransportWriterStorage writerStorage = new TransportWriterStorage();
     protected TransportReaderStorage readerStorage = new TransportReaderStorage();

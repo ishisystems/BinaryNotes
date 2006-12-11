@@ -29,9 +29,10 @@ import org.bn.mq.net.tcp.Transport;
 import org.bn.mq.net.tcp.TransportPacket;
 
 public class TransportWriterStorage {
-    private LinkedList<TransportPacket> queue = new LinkedList<TransportPacket>();
+    protected LinkedList<TransportPacket> queue = new LinkedList<TransportPacket>();
     protected final Lock awaitPacketLock = new ReentrantLock();
     protected final Condition awaitPacketEvent  = awaitPacketLock.newCondition(); 
+    private boolean finishThread = false;
     
     
     public TransportWriterStorage() {
@@ -65,7 +66,7 @@ public class TransportWriterStorage {
                 catch(Exception ex) {ex =null; }
             }
         }
-        while(result==null && queue!=null);
+        while(result==null && !finishThread);
         awaitPacketLock.unlock();
         return result;
     }
@@ -90,7 +91,8 @@ public class TransportWriterStorage {
         awaitPacketLock.lock();
         synchronized(queue) {
             queue.clear();
-            queue = null;
+            //queue = null;
+            finishThread = true;
         }            
         awaitPacketEvent.signal();
         awaitPacketLock.unlock();

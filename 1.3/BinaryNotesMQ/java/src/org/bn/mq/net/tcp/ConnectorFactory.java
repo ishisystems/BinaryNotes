@@ -82,6 +82,9 @@ public class ConnectorFactory extends SocketFactory {
     
     public void finalize() {        
         synchronized (createdTransports) {
+            for(SortedMap.Entry<URI,ConnectorTransport> item: createdTransports.entrySet()) {
+                item.getValue().close();
+            }
             createdTransports.clear();
         }
         connectorStorage.finalize();

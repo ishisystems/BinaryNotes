@@ -40,7 +40,6 @@ import org.bn.mq.net.ITransportListener;
 import org.bn.mq.net.ITransportMessageCoder;
 import org.bn.mq.protocol.MessageEnvelope;
 
-
 public abstract class Transport implements ITransport {
     private URI addr;
     private SocketChannel socket = null;
@@ -132,33 +131,22 @@ public abstract class Transport implements ITransport {
     }
     
     public void send(MessageEnvelope message) throws Exception {
-        socketLock.readLock().lock();
-        try {
-            ByteBuffer buffer = messageCoder.encode(message);
-            send(buffer);
-        }
-        finally {
-            socketLock.readLock().unlock();
-        }
+        ByteBuffer buffer = messageCoder.encode(message);
+        send(buffer);
     }
         
     public void sendAsync(MessageEnvelope message) throws Exception {
-        socketLock.readLock().lock();
-        try {
-            ByteBuffer buffer = messageCoder.encode(message);
-            sendAsync(buffer);
-        }
-        finally {
-            socketLock.readLock().unlock();
-        }    
+        ByteBuffer buffer = messageCoder.encode(message);
+        sendAsync(buffer);
     }     
     
     public void send(ByteBuffer buffer) throws IOException {
-        socketLock.readLock().lock();
-        SocketChannel channel = getSocket();
+        socketLock.readLock().lock();        
         try {                        
             if(isAvailable()) {
-                channel.write(buffer);
+                SocketChannel channel = getSocket();
+                if(channel!=null)
+                    channel.write(buffer);
             }
             else {
                 throw new IOException("Not connected");

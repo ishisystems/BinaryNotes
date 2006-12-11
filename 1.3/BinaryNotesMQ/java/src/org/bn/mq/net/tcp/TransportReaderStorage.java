@@ -87,13 +87,15 @@ public class TransportReaderStorage {
     public synchronized List<Transport> waitTransports() throws IOException {
         List<Transport> result = new LinkedList<Transport>();
         selector.select(100);
-        Set keys = selector.selectedKeys();
-        for (Iterator i = keys.iterator(); i.hasNext();) {
-            SelectionKey key = (SelectionKey) i.next();
-            i.remove();
-            if(!key.isReadable())
-                continue;
-            result.add((Transport)key.attachment());
+        synchronized(readerKeys) {
+            Set keys = selector.selectedKeys();
+            for (Iterator i = keys.iterator(); i.hasNext();) {
+                SelectionKey key = (SelectionKey) i.next();
+                i.remove();
+                if(!key.isReadable())
+                    continue;
+                result.add((Transport)key.attachment());
+            }
         }
         return result;        
     }

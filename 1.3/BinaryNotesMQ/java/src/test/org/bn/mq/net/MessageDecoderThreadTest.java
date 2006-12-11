@@ -45,7 +45,7 @@ public class MessageDecoderThreadTest extends TestCase {
     }
 
     public void testTakeMessage() throws Exception {
-        final String connectionString = "siberia://localhost:3333";
+        final String connectionString = "bnmq://localhost:3333";
         TransportFactory conFactory = new TransportFactory();
         conFactory.setTransportMessageCoderFactory(new TransportMessageCoderFactory());
         
@@ -61,11 +61,11 @@ public class MessageDecoderThreadTest extends TestCase {
         client.sendAsync(createMessage("Two"));
         Thread.sleep(500);
         conFactory.finalize();
-        
+        System.out.println("Finished: testTakeMessage");
     }
     
     public void testCall() throws Exception {
-        final String connectionString = "siberia://localhost:3333";
+        final String connectionString = "bnmq://localhost:3333";
         TransportFactory conFactory = new TransportFactory();
         conFactory.setTransportMessageCoderFactory(new TransportMessageCoderFactory());
         
@@ -77,7 +77,8 @@ public class MessageDecoderThreadTest extends TestCase {
         assertNotNull(client);
         MessageEnvelope result = client.call(createMessage("Call"));
         System.out.println("Result call received with Id:"+result.getId()+" has been received successfully");
-        conFactory.finalize();        
+        conFactory.finalize();
+        System.out.println("Finished: testCall");
     }    
 
     private class MessageListener implements ITransportListener {         
@@ -97,6 +98,7 @@ public class MessageDecoderThreadTest extends TestCase {
             }
             catch (Exception e) {
                 System.err.println(e);
+                e.printStackTrace();
             }
         }
     }

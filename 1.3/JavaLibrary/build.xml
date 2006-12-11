@@ -21,8 +21,7 @@
   <target name="compile" description="Compile Java source files" depends="init">
     <javac destdir="${output.dir}" classpathref="classpath"
            debug="${javac.debug}" nowarn="${javac.nowarn}"
-           deprecation="${javac.deprecation}" encoding="Cp1251" source="1.5"
-           target="1.5">
+           deprecation="${javac.deprecation}">
       <src path="src"/>
       <compilerarg line="${javac.compilerargs}"/>
     </javac>
@@ -30,8 +29,7 @@
   <target name="compile-debug" description="Compile Java source files" depends="init">
     <javac destdir="${output.dir}" classpathref="classpath"
            debug="on" nowarn="${javac.nowarn}"
-           deprecation="${javac.deprecation}" encoding="Cp1251" source="1.5"
-           target="1.5">
+           deprecation="${javac.deprecation}">
       <src path="src"/>
       <compilerarg line="${javac.compilerargs}"/>
     </javac>

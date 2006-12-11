@@ -50,6 +50,7 @@ public class TransportReader implements Runnable {
                         }
                         catch (Exception e) {
                             System.err.println(e);
+                            e.printStackTrace();
                         }
                     }
                 }

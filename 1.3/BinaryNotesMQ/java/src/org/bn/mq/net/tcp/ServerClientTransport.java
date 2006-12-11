@@ -37,9 +37,16 @@ public class ServerClientTransport extends Transport {
     
     
     protected void fireReceivedData(ByteBuffer packet) throws Exception {
-        MessageEnvelope message = messageCoder.decode(packet);
-        if(message!=null)    
-            serverTransport.fireReceivedData(message,this);
+        try {
+            MessageEnvelope message = messageCoder.decode(packet);        
+            if(message!=null)    
+                serverTransport.fireReceivedData(message,this);            
+        }
+        catch(Exception ex) {
+            System.err.println("Pkt"+packet);
+            System.err.println("Pkt len"+packet.limit());
+            throw ex;
+        }
     }
 
     protected void onTransportClosed() {
