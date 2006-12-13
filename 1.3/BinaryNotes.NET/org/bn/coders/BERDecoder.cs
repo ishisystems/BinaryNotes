@@ -398,27 +398,32 @@ namespace org.bn.coders
 		
 		protected override DecodedObject<object> decodeTag(System.IO.Stream stream)
 		{
-			int result = 0;
-			int bt = stream.ReadByte();
-			if (bt == - 1)
-				return null;
-			result = bt;
-			int len = 1;
-			if ((result & UniversalTags.LastUniversal) == UniversalTags.LastUniversal)
-			{
-				sbyte fBt = (sbyte) bt;
-				while ((fBt & 128) != 0)
-				{
-					result = result << 7;
-					result = result | (fBt & 127);
-					bt = stream.ReadByte();
-					if (bt == - 1)
-						break;
-					fBt = (sbyte) bt;
-					len++;
-				}
-			}
-			return new DecodedObject<object>(result, len);
+            int result = 0;
+            int bt = stream.ReadByte();
+            if (bt == -1)
+                return null;
+            result = bt;
+            int len = 1;
+            int tagClass = bt & 0xC0;
+            int tagValue = bt & 31;
+            bool isPrimitive = (bt & 0x20) == 0;
+            if (tagValue == UniversalTags.LastUniversal)
+            {
+                tagValue = 0;
+                do
+                {
+                    bt = stream.ReadByte();
+                    tagValue = (tagValue << 7) | (bt & 0x7f);
+                    len++;
+                }
+                while ((bt & 0x80) != 0);
+                tagValue = tagClass | tagValue;
+                result = tagValue;
+            }
+            else
+                result = bt;
+
+            return new DecodedObject<object>(result, len);
 		}
 		
 		protected bool checkTagForObject(DecodedObject<object> decodedTag, int tagClass, int elementType, int universalTag, ElementInfo elementInfo)

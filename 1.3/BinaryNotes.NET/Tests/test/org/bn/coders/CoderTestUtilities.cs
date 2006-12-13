@@ -379,7 +379,15 @@ namespace test.org.bn.coders
         {
             return new TestReal(200100.125);
         }
-        public abstract byte[] createTestRealBigBytes();    
+        public abstract byte[] createTestRealBigBytes();
+
+        public TestLongTag createTestLongTag()
+        {
+            TestLongTag result = new TestLongTag();
+            result.Value = (0xAAL);
+            return result;
+        }
+        public abstract byte[] createTestLongTagBytes();    
 
 	}
 }

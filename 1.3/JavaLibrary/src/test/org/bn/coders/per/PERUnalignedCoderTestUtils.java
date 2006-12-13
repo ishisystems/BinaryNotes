@@ -206,4 +206,8 @@ public class PERUnalignedCoderTestUtils extends CoderTestUtilities {
     public byte[] createChoiceInChoice3Bytes() {
         return new byte[] {0x02, (byte)0x80, 0x20,0x10,0x05, (byte)0x90 };
     }
+
+    public byte[] createTestLongTagBytes() {
+        return new byte[] { 0x02,0x00, (byte)0xAA };
+    }
 }

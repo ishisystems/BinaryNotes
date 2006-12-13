@@ -275,22 +275,25 @@ namespace org.bn.coders
 		
 		protected internal int encodeTag(int tagValue, System.IO.Stream stream)
 		{
-			int resultSize = 0;
-			if (tagValue < 256)
-			{
-				stream.WriteByte((byte) tagValue);
-				resultSize++;
-			}
-			else
-			{
-				while (tagValue != 0)
-				{
-					stream.WriteByte((byte) (tagValue & 127));
-					tagValue = tagValue << 7;
-					resultSize++;
-				}
-			}
-			return resultSize;
+            int resultSize = 0;
+            if ( tagValue  < 255 && ((tagValue&0x1f) < UniversalTags.LastUniversal )) { // Short tag
+                stream.WriteByte((byte)tagValue);
+                resultSize++;
+            }
+            else { // Long tag
+               // First octet 
+               int tagValueT = tagValue;
+               stream.WriteByte( (byte) (tagValueT & 0x1F)); // 0001 1111
+               resultSize++;
+               tagValueT >>= 7;            
+                while (tagValueT != 0) { 
+                    stream.WriteByte((byte) ((tagValueT & 0x7F)|0x80));
+                    tagValueT >>= 7 ;
+                    resultSize++;
+                }
+                stream.WriteByte( (byte) ((tagValue&0x7f)| UniversalTags.LastUniversal ));
+             }        
+            return resultSize;
 		}
 		
 		protected internal int encodeLength(int length, System.IO.Stream stream)

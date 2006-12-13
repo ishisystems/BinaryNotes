@@ -359,18 +359,25 @@ public class BERDecoder extends Decoder {
             return null;
         result = bt ;
         int len = 1;
-        if ((result & UniversalTag.LastUniversal) == UniversalTag.LastUniversal) {
-            byte fBt = (byte) bt;
-            while ((fBt & 128) != 0) {
-              result = result << 7 ;
-              result = result |  (fBt & 127);
-              bt = stream.read();
-              if(bt == -1)
-                break;
-              fBt = (byte)bt;
-              len ++;
-            }            
+        int tagClass = bt & 0xC0;
+        int tagValue = bt & 31;
+        boolean isPrimitive = (bt & 0x20) == 0;
+        if (tagValue == UniversalTag.LastUniversal) 
+        {
+                tagValue = 0;
+                do 
+                {
+                    bt = stream.read();
+                    tagValue = (tagValue << 7) | (bt & 0x7f);
+                    len++;
+                } 
+                while ((bt&0x80) != 0);
+                tagValue= tagClass | tagValue;
+                result = tagValue;
         }
+        else
+            result = bt;
+        
         return new DecodedObject (result,len);
     }
 

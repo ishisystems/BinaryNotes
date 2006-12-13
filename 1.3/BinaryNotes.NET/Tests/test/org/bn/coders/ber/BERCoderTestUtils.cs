@@ -237,6 +237,10 @@ namespace test.org.bn.coders.ber
             return new byte[] { 0x09, 0x05, (byte)0x80, (byte)0xFD, 0x18, 0x6D, 0x21 };
         }
 
+        public override byte[] createTestLongTagBytes()
+        {
+            return new byte[] { 0x5F, (byte)0xF6, 0x13, 0x02, 0x00, (byte)0xAA };
+        }
 
 	}
 }

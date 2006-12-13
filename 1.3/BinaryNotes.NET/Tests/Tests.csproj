@@ -99,6 +99,7 @@
     <Compile Include="test\org\bn\coders\test_asn\TestI8.cs" />
     <Compile Include="test\org\bn\coders\test_asn\TestIR.cs" />
     <Compile Include="test\org\bn\coders\test_asn\TestLong.cs" />
+    <Compile Include="test\org\bn\coders\test_asn\TestLongTag.cs" />
     <Compile Include="test\org\bn\coders\test_asn\TestNI.cs" />
     <Compile Include="test\org\bn\coders\test_asn\TestNI2.cs" />
     <Compile Include="test\org\bn\coders\test_asn\TestOCT.cs" />

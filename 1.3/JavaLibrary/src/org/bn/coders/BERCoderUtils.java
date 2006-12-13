@@ -36,7 +36,6 @@ class BERCoderUtils {
         
         if(elementInfo!=null) {
             if(elementInfo.hasTag()) {
-                /*tagClass = TagClass.ContextSpecific;*/
                 tagClass = elementInfo.tagClass();
                 result = tagClass | elemenType | elementInfo.tag();
             }

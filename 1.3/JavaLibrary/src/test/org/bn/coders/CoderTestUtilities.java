@@ -53,6 +53,7 @@ import test.org.bn.coders.test_asn.TestI16;
 import test.org.bn.coders.test_asn.TestI32;
 import test.org.bn.coders.test_asn.TestI8;
 import test.org.bn.coders.test_asn.TestIR;
+import test.org.bn.coders.test_asn.TestLongTag;
 import test.org.bn.coders.test_asn.TestNI;
 import test.org.bn.coders.test_asn.TestNI2;
 import test.org.bn.coders.test_asn.TestOCT;
@@ -448,5 +449,12 @@ public abstract class CoderTestUtilities {
         return new TestReal(200100.125);
     }
     public abstract byte[] createTestRealBigBytes();    
+
+    public TestLongTag createTestLongTag() {
+        TestLongTag result = new TestLongTag();
+        result.setValue(0xAAL);
+        return result;
+    }
+    public abstract byte[] createTestLongTagBytes();    
     
 }

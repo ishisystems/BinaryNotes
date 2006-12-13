@@ -393,6 +393,14 @@ namespace test.org.bn.coders
             
         }
 
+        public void testDecodeLongTag() {
+            IDecoder decoder = newDecoder();
+            System.IO.MemoryStream stream =
+              new System.IO.MemoryStream(coderTestUtils.createTestLongTagBytes());
+            TestLongTag val = decoder.decode<TestLongTag>(stream);
+            Assert.Equals(val.Value, coderTestUtils.createTestLongTag().Value);    
+        }
+
 
 	}
 }

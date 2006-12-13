@@ -269,4 +269,6 @@ EXPORTS TestOCT,TestPRN,TestI32,TestI16,TestI8,ContentType,ValueWithParams,Param
 		field6 UTCTime,
 		field7 TestLong
 	}
+
+	TestLongTag ::= [APPLICATION 15123] INTEGER
 END

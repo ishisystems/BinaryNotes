@@ -288,5 +288,13 @@ namespace test.org.bn.coders
             checkEncoded(encoder, coderTestUtils.createTestRealBig(), coderTestUtils.createTestRealBigBytes());            
         }
 
+        public void testEncodeLongTag() {
+            IEncoder encoder = newEncoder();
+            Assert.NotNull(encoder);
+            printEncoded("EncodeTestLongTag: ",encoder, coderTestUtils.createTestLongTag());
+            checkEncoded(encoder, coderTestUtils.createTestLongTag(), coderTestUtils.createTestLongTagBytes());                
+        }    
+
+
 	}
 }

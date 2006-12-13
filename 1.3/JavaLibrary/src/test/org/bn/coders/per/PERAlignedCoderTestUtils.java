@@ -199,4 +199,8 @@ public class PERAlignedCoderTestUtils extends CoderTestUtilities {
         return new byte[] { 0x02, (byte)0x80, 0x00,0x01,0x00, (byte)0x80, 
                 0x00,0x01,0x64};
     }
+
+    public byte[] createTestLongTagBytes() {
+        return new byte[] { 0x02,0x00, (byte)0xAA };
+    }
 }

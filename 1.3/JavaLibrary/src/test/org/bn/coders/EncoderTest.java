@@ -297,4 +297,10 @@ public abstract class EncoderTest extends TestCase {
         
     }
     
+    public void testEncodeLongTag() throws Exception {
+        IEncoder encoder = newEncoder();
+        assertNotNull(encoder);
+        printEncoded("EncodeTestLongTag: ",encoder, coderTestUtils.createTestLongTag());
+        checkEncoded(encoder, coderTestUtils.createTestLongTag(), coderTestUtils.createTestLongTagBytes());                
+    }    
 }
