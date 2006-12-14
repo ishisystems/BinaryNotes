@@ -37,4 +37,8 @@ public class RemoteSupplier implements IRemoteSupplier{
     public IMQConnection getConnection() {
         return this.connection;
     }
+
+    public String getId() {
+        return null;
+    }
 }

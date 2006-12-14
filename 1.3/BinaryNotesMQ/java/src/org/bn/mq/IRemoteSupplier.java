@@ -22,5 +22,6 @@ package org.bn.mq;
 import java.net.URI;
 
 public interface IRemoteSupplier {
+    String getId();
     <T> IRemoteMessageQueue<T> lookupQueue(String queuePath, Class<T> messageBodyClass);
 }

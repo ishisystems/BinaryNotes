@@ -36,4 +36,8 @@ public class Supplier implements ISupplier {
 
     public <T> void delQueue(IMessageQueue<T> queue) {
     }
+
+    public String getId() {
+        return null;
+    }
 }

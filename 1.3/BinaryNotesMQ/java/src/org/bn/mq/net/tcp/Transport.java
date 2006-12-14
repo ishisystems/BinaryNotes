@@ -28,6 +28,8 @@ import java.nio.channels.SocketChannel;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -49,8 +51,8 @@ public abstract class Transport implements ITransport {
     protected ByteBuffer tempReceiveBuffer = ByteBuffer.allocate(64*1024);
     protected ITransportMessageCoder messageCoder;
     protected final Lock callLock = new ReentrantLock();
-    protected final Condition callLockEvent  = callLock.newCondition();    
-    protected String currentCallMessageId = "-none-";
+    protected final Condition callLockEvent  = callLock.newCondition();        
+    protected AtomicReference<String> currentCallMessageId = new AtomicReference<String>("-none-");
     protected MessageEnvelope currentCallMessage = null;
     
     public Transport(URI addr, SocketFactory factory) {
@@ -195,7 +197,7 @@ public abstract class Transport implements ITransport {
             boolean doProcessListeners = true;            
             if(message!=null) {
                 callLock.lock();
-                if(currentCallMessageId.equals(message.getId())) {
+                if(currentCallMessageId.get().equals(message.getId())) {
                     currentCallMessage = message;
                     callLockEvent.signal();
                     doProcessListeners = false;
@@ -214,16 +216,18 @@ public abstract class Transport implements ITransport {
         MessageEnvelope result = null;
         callLock.lock();
         currentCallMessage = null;
-        currentCallMessageId = message.getId();        
+        currentCallMessageId.set(message.getId());
         try {
             sendAsync(message);
             callLockEvent.await(timeout,TimeUnit.SECONDS);
             result = currentCallMessage;
-            currentCallMessageId = "";
+            currentCallMessageId.set(" -none- ");
         }
         finally {
             callLock.unlock();
         }
+        if(result == null)
+            throw new TimeoutException("Call by RPC-style message timeout in "+this+"!");
         return result;    
     }
     
