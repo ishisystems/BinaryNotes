@@ -19,26 +19,52 @@
 
 package org.bn.mq.impl;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.bn.mq.IMessageQueue;
 import org.bn.mq.IRemoteMessageQueue;
 import org.bn.mq.ISupplier;
 import org.bn.mq.net.ITransport;
+import org.bn.mq.net.ITransportListener;
+import org.bn.mq.protocol.MessageEnvelope;
 
-public class Supplier implements ISupplier {
-    public Supplier() {
+public class Supplier implements ISupplier, ITransportListener {
+    private ITransport transport;
+    private String supplierId;
+    private Map<String,MessageQueue> queues = new HashMap<String,MessageQueue>();
+    
+    public Supplier(String supplierId, ITransport transport) {
+        this.transport = transport;
+        this.supplierId = supplierId;
     }
 
     public <T> IRemoteMessageQueue<T> lookupQueue(String queuePath, Class<T> messageBodyClass) {
         return null;
     }
 
-    public <T> void addQueue(IMessageQueue<T> queue) {
+    public <T> IMessageQueue<T> createQueue(String queuePath) {
+        MessageQueue queue = new MessageQueue<T>(queuePath,transport);
+        synchronized(queues) {
+            queues.put(queuePath,queue);
+        }
     }
 
-    public <T> void delQueue(IMessageQueue<T> queue) {
+    public <T> void removeQueue(IMessageQueue<T> queue) {
+        synchronized(queues) {
+            queues.remove(queue.getQueuePath());
+        }    
     }
 
     public String getId() {
-        return null;
+        return supplierId;
     }
+
+    public void onReceive(MessageEnvelope message, ITransport transport) {
+        
+    }
+
+    public void onConnected(ITransport transport) {}
+
+    public void onDisconnected(ITransport transport) {}
 }

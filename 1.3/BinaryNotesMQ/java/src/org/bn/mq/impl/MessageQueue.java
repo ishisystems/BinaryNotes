@@ -24,8 +24,17 @@ import org.bn.mq.IRemoteConsumer;
 import org.bn.mq.IMessage;
 import org.bn.mq.IMessageQueue;
 import org.bn.mq.IQueue;
+import org.bn.mq.net.ITransport;
 
 public class MessageQueue<T> implements IMessageQueue<T> {
+    private ITransport transport;
+    private String queuePath;
+    
+    public MessageQueue(String queuePath, ITransport transport) {
+        this.transport = transport;
+        this.queuePath = queuePath;
+    }
+    
     public IQueue<T> getQueue() {
         return null;
     }
@@ -57,6 +66,6 @@ public class MessageQueue<T> implements IMessageQueue<T> {
     }
 
     public String getQueuePath() {
-        return null;
+        return queuePath;
     }
 }

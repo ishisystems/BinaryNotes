@@ -64,18 +64,20 @@ public class MQConnection implements IMQConnection, ITransportListener {
         else
             throw new Exception("Error when accessing to supplier '"+supplierName+"': "+ result.getBody().getLookupResult().getCode().getValue().toString());
     }
-
-    public void registerSupplier(ISupplier supplier) {
-        synchronized(suppliers) {
+  
+    public ISupplier createSupplier(String supplierName) {
+        Supplier supplier = new Supplier(supplierName,transport);
+        synchronized(suppliers) {            
             suppliers.put(supplier.getId(),supplier);
-        }
+        }        
+        return supplier;
     }
-
-    public void unregisterSupplier(ISupplier supplier) {
+    
+    public void removeSupplier(ISupplier supplier) {
         synchronized(suppliers) {
             suppliers.remove(supplier.getId());
         }
-    }
+    }    
 
     public URI getAddr() {
         return transport.getAddr();
