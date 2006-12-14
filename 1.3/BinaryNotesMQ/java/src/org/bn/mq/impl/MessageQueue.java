@@ -36,6 +36,10 @@ public class MessageQueue<T> implements IMessageQueue<T> {
     }
 
     public IMessage<T> call(IMessage<T> message) {
+        return call(message,120);
+    }
+
+    public IMessage<T> call(IMessage<T> message, int timeout) {
         return null;
     }
 

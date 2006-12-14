@@ -53,6 +53,7 @@ public class ConnectorTransport extends Transport {
     protected void onConnected() {
         awaitConnectLock.lock();
         awaitConnectEvent.signal();
+        fireConnectedEvent();        
         awaitConnectLock.unlock();
     }
 
@@ -63,13 +64,14 @@ public class ConnectorTransport extends Transport {
         factory.reconnect(this);
     }
     
-    protected void onDisconnect() {
+    protected void onDisconnect() {        
         socketLock.writeLock().lock();
+        fireDisconnectedEvent();
         if(getSocket()!=null) {
             setSocket(null);
             factory.reconnect(this);
         }        
-        socketLock.writeLock().unlock();
+        socketLock.writeLock().unlock();        
     }
     
     protected void onTransportClosed() {

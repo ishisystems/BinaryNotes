@@ -173,6 +173,22 @@ public abstract class Transport implements ITransport {
         }    
     }
     
+    protected void fireConnectedEvent() {
+        synchronized(listeners) {
+            for(ITransportListener listener: listeners) {                    
+                listener.onConnected(this);
+            }            
+        }
+    }
+
+    protected void fireDisconnectedEvent() {
+        synchronized(listeners) {
+            for(ITransportListener listener: listeners) {                    
+                listener.onDisconnected(this);
+            }            
+        }
+    }
+    
     protected void fireReceivedData(ByteBuffer packet) throws Exception {
         synchronized(listeners) {
             MessageEnvelope message = messageCoder.decode(packet);
@@ -188,28 +204,31 @@ public abstract class Transport implements ITransport {
             }
             if(doProcessListeners) {
                 for(ITransportListener listener: listeners) {                    
-                            
-                                listener.onReceive(message,this);
+                    listener.onReceive(message,this);
                 }
             }
         }
     }
-    
-    public synchronized MessageEnvelope call(MessageEnvelope message) throws Exception {
+
+    public synchronized MessageEnvelope call(MessageEnvelope message, int timeout) throws Exception {
         MessageEnvelope result = null;
         callLock.lock();
         currentCallMessage = null;
         currentCallMessageId = message.getId();        
         try {
             sendAsync(message);
-            callLockEvent.await(120,TimeUnit.SECONDS);
+            callLockEvent.await(timeout,TimeUnit.SECONDS);
             result = currentCallMessage;
             currentCallMessageId = "";
         }
         finally {
             callLock.unlock();
         }
-        return result;
+        return result;    
+    }
+    
+    public synchronized MessageEnvelope call(MessageEnvelope message) throws Exception {
+        return this.call(message,120); // By default timeout is 2 min
     }
 
     public URI getAddr() {

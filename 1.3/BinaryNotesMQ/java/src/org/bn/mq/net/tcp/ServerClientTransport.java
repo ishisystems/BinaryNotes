@@ -51,6 +51,7 @@ public class ServerClientTransport extends Transport {
 
     protected void onTransportClosed() {
         serverTransport.removeClient(this);
+        //fireDisconnectedEvent();
         super.onTransportClosed();
     }
 }

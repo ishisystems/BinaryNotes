@@ -75,7 +75,7 @@ public class MessageDecoderThreadTest extends TestCase {
         
         ITransport client = conFactory.getClientTransport(new URI(connectionString));
         assertNotNull(client);
-        MessageEnvelope result = client.call(createMessage("Call"));
+        MessageEnvelope result = client.call(createMessage("Call"), 10);
         System.out.println("Result call received with Id:"+result.getId()+" has been received successfully");
         conFactory.finalize();
         System.out.println("Finished: testCall");
@@ -101,6 +101,14 @@ public class MessageDecoderThreadTest extends TestCase {
                 e.printStackTrace();
             }
         }
+
+        public void onConnected(ITransport transport) {
+            System.out.println("Connected from "+transport+". Addr:"+transport.getAddr());
+        }
+
+        public void onDisconnected(ITransport transport) {
+            System.out.println("Disconnected from "+transport+". Addr:"+transport.getAddr());
+        }
     }
     
     private class CallMessageListener implements ITransportListener {         
@@ -119,6 +127,14 @@ public class MessageDecoderThreadTest extends TestCase {
             catch (Exception e) {
                 System.err.println(e);
             }
+        }
+
+        public void onConnected(ITransport transport) {
+            System.out.println("Connected from "+transport+". Addr:"+transport.getAddr());
+        }
+
+        public void onDisconnected(ITransport transport) {
+            System.out.println("Disconnected from "+transport+". Addr:"+transport.getAddr());
         }
     }    
 }

@@ -48,8 +48,13 @@ public class RemoteMessageQueue<T> implements IRemoteMessageQueue<T>{
     }
 
     public IMessage<T> call(IMessage<T> message) {
+        return call(message,120);
+    }
+
+    public IMessage<T> call(IMessage<T> message, int timeout) {
         return null;
     }
+    
 
     public String getQueuePath() {
         return null;

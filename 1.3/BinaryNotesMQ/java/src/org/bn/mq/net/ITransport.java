@@ -34,6 +34,7 @@ public interface ITransport {
     void send(MessageEnvelope message) throws Exception;
     void sendAsync(MessageEnvelope message) throws Exception;
     MessageEnvelope call(MessageEnvelope message) throws Exception;
+    MessageEnvelope call(MessageEnvelope message, int timeout) throws Exception;
     
     URI getAddr();
     

@@ -86,10 +86,11 @@ public class ServerTransport extends Transport {
             ServerClientTransport transport;
             try {
                 transport = 
-                        new ServerClientTransport( new URI("siberia",addr.getHostAddress(),"",""), this, acceptorFactory );
+                        new ServerClientTransport( new URI("bnmq",addr.getHostAddress(),"",""), this, acceptorFactory );
                 transport.setSocket(client);
                 synchronized(clients) {
                     clients.add(transport);
+                    fireConnectedEvent(transport);
                 }
                 
             }
@@ -103,6 +104,7 @@ public class ServerTransport extends Transport {
     public void removeClient(ServerClientTransport transport) {
         synchronized(clients) {
             clients.remove(transport);
+            fireDisconnectedEvent(transport);
         }
     }
     
@@ -113,6 +115,23 @@ public class ServerTransport extends Transport {
             }
         }
     }
+    
+    protected void fireConnectedEvent(ServerClientTransport client) {
+        synchronized(listeners) {
+            for(ITransportListener listener: listeners) {                    
+                listener.onConnected(client);
+            }            
+        }
+    }
+
+    protected void fireDisconnectedEvent(ServerClientTransport client) {
+        synchronized(listeners) {
+            for(ITransportListener listener: listeners) {                    
+                listener.onDisconnected(client);
+            }            
+        }
+    }
+    
     
     public void finalize() {
         close();
@@ -128,5 +147,6 @@ public class ServerTransport extends Transport {
 
     protected void onTransportClosed() {
         // Do nothing. 
+        //fireDisconnectedEvent();
     }
 }

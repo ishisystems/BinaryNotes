@@ -26,5 +26,6 @@ public interface IRemoteMessageQueue<T> {
     void addPersistenceConsumer(IRemoteConsumer<T> consumer, String filter) throws Exception;
     void delConsumer(IRemoteConsumer<T> consumer) throws Exception;
     IMessage<T> call(IMessage<T> message) throws Exception;
+    IMessage<T> call(IMessage<T> message, int timeout) throws Exception;
     String getQueuePath();    
 }
