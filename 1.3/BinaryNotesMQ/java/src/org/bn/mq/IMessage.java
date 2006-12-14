@@ -23,7 +23,7 @@ import java.util.Date;
 
 public interface IMessage<T> {
     String getId();
-    IRemoteSupplier getSupplier();
+    String getSenderId();
 
     int getPriority();   
     void setPrioriy(int prio);

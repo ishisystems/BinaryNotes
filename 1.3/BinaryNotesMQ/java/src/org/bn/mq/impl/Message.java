@@ -28,11 +28,11 @@ public class Message<T> implements IMessage<T> {
     public String getId() {
         return null;
     }
-
-    public IRemoteSupplier getSupplier() {
+    
+    public String getSenderId() {
         return null;
     }
-
+    
     public int getPriority() {
         return 0;
     }

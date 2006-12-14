@@ -23,4 +23,6 @@ public interface IMessageQueue<T> extends IRemoteMessageQueue<T> {
     IQueue<T> getQueue();
     void setQueue(IQueue<T> queue);
     void sendMessage(IMessage<T> message);
+    void setPersistenseStorage(IPersistenceQueueStorage<T> storage);
+    IPersistenceQueueStorage<T> getPersistenceStorage();
 }

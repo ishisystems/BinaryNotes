@@ -18,7 +18,11 @@
  */
 package org.bn.mq;
 
-public interface IConsumer<T> extends IRemoteConsumer<T> {
-    void onDisconnected(IRemoteSupplier supplier);
-    void onConnected(IRemoteSupplier supplier);
+import java.util.List;
+
+public interface IPersistenceQueueStorage<T> {
+    List< IMessage <T> > getMessagesToSend(IRemoteConsumer<T> consumer);
+    void persistenceSubscribe(IRemoteConsumer<T> consumer);
+    void persistenceUnsubscribe(IRemoteConsumer<T> consumer);
+    void registerPersistenceMessage(IMessage<T> message);
 }

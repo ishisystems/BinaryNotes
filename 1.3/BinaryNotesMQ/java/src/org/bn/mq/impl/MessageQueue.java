@@ -19,6 +19,7 @@
 
 package org.bn.mq.impl;
 
+import org.bn.mq.IPersistenceQueueStorage;
 import org.bn.mq.IRemoteConsumer;
 import org.bn.mq.IMessage;
 import org.bn.mq.IMessageQueue;
@@ -59,6 +60,13 @@ public class MessageQueue<T> implements IMessageQueue<T> {
     }
 
     public String getQueuePath() {
+        return null;
+    }
+
+    public void setPersistenseStorage(IPersistenceQueueStorage<T> storage) {
+    }
+
+    public IPersistenceQueueStorage<T> getPersistenceStorage() {
         return null;
     }
 }
