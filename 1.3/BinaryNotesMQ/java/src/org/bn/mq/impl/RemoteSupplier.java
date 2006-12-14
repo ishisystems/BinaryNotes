@@ -37,7 +37,7 @@ public class RemoteSupplier implements IRemoteSupplier {
         this.id = id;
     }
     
-    public <T> IRemoteMessageQueue<T> lookupQueue(String queuePath, Class<T> messageBodyClass) {
+    public <T> IRemoteMessageQueue<T> lookupQueue(String queuePath) {
         return new RemoteMessageQueue<T>(queuePath, this);
     }
     
@@ -46,6 +46,6 @@ public class RemoteSupplier implements IRemoteSupplier {
     }
 
     public String getId() {
-        return null;
+        return this.id;
     }
 }

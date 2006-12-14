@@ -25,5 +25,5 @@ import org.bn.mq.net.ITransport;
 
 public interface IRemoteSupplier {
     String getId();
-    <T> IRemoteMessageQueue<T> lookupQueue(String queuePath, Class<T> messageBodyClass);    
+    <T> IRemoteMessageQueue<T> lookupQueue(String queuePath);    
 }

@@ -39,15 +39,20 @@ public class Supplier implements ISupplier, ITransportListener {
         this.supplierId = supplierId;
     }
 
-    public <T> IRemoteMessageQueue<T> lookupQueue(String queuePath, Class<T> messageBodyClass) {
-        return null;
+    public <T> IRemoteMessageQueue<T> lookupQueue(String queuePath) {
+        IRemoteMessageQueue<T> queue = null;
+        synchronized(queues) {
+            queue = (IRemoteMessageQueue<T>)queues.get(queuePath);
+        }
+        return queue;
     }
 
     public <T> IMessageQueue<T> createQueue(String queuePath) {
-        MessageQueue queue = new MessageQueue<T>(queuePath,transport);
+        MessageQueue<T> queue = new MessageQueue<T>(queuePath,transport);
         synchronized(queues) {
             queues.put(queuePath,queue);
         }
+        return queue;
     }
 
     public <T> void removeQueue(IMessageQueue<T> queue) {
