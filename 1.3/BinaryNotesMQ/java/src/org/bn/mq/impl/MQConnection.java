@@ -22,24 +22,31 @@ package org.bn.mq.impl;
 import java.net.URI;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.bn.mq.IMQConnection;
+import org.bn.mq.IMQConnectionListener;
 import org.bn.mq.IRemoteSupplier;
 import org.bn.mq.ISupplier;
 import org.bn.mq.net.ITransport;
+import org.bn.mq.net.ITransportListener;
 import org.bn.mq.protocol.LookupRequest;
+import org.bn.mq.protocol.LookupResult;
 import org.bn.mq.protocol.LookupResultCode;
 import org.bn.mq.protocol.MessageBody;
 import org.bn.mq.protocol.MessageEnvelope;
 
-public class MQConnection implements IMQConnection {
+public class MQConnection implements IMQConnection, ITransportListener {
     protected ITransport transport;
     protected final int callTimeout = 30;
     protected Map<String,ISupplier> suppliers = new HashMap<String,ISupplier>();
+    protected List < IMQConnectionListener> listeners = new LinkedList < IMQConnectionListener > ();
     
     public MQConnection(ITransport transport) {
         this.transport = transport;
+        transport.addListener(this);
     }
 
     public IRemoteSupplier lookup(String supplierName) throws Exception {
@@ -52,7 +59,7 @@ public class MQConnection implements IMQConnection {
         message.setId(this.toString());
         MessageEnvelope result = transport.call(message,callTimeout);
         if (result.getBody().getLookupResult().getCode().getValue() == LookupResultCode.EnumType.success ) {
-            return new RemoteSupplier(this);
+            return new RemoteSupplier(transport);
         }
         else
             throw new Exception("Error when accessing to supplier '"+supplierName+"': "+ result.getBody().getLookupResult().getCode().getValue().toString());
@@ -75,6 +82,62 @@ public class MQConnection implements IMQConnection {
     }
 
     public void close() {
+        transport.delListener(this);
         transport.close();
+    }
+
+    public void onReceive(MessageEnvelope message, ITransport replyTransport) {
+        if(message.getBody().isLookupRequestSelected()) {
+            MessageEnvelope result = new MessageEnvelope();
+            result.setId(message.getId());
+            MessageBody body = new MessageBody();
+            result.setBody(body);
+            LookupResult lResult = new LookupResult();
+            body.selectLookupResult(lResult);
+            try {
+                synchronized(suppliers) {
+                    ISupplier supplier = suppliers.get(message.getBody().getLookupRequest().getSupplierName());
+                    LookupResultCode resCode = new LookupResultCode();                    
+                    if(supplier!=null) {
+                        resCode.setValue(LookupResultCode.EnumType.success);
+                    }
+                    else
+                        resCode.setValue(LookupResultCode.EnumType.notFound);
+                    lResult.setCode(resCode);
+                }
+                replyTransport.sendAsync(result);
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void onConnected(ITransport transport) {
+        synchronized(listeners) {
+            for(IMQConnectionListener listener: listeners) {
+                listener.onConnected(this,transport);
+            }
+        }
+    }
+
+    public void onDisconnected(ITransport transport) {
+        synchronized(listeners) {
+            for(IMQConnectionListener listener: listeners) {
+                listener.onDisconnected(this, transport);
+            }
+        }    
+    }
+
+    public void addListener(IMQConnectionListener listener) {
+        synchronized(listeners) {
+            listeners.add(listener);
+        }
+    }
+
+    public void delListener(IMQConnectionListener listener) {
+        synchronized(listeners) {
+            listeners.remove(listener);
+        }    
     }
 }

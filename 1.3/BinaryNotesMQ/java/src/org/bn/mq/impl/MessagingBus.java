@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.net.URI;
 import org.bn.mq.*;
 import org.bn.mq.net.*;
-import org.bn.mq.impl.*;
 
 public class MessagingBus implements IMessagingBus {
     protected ITransportFactory factory = new org.bn.mq.net.tcp.TransportFactory();
@@ -34,6 +33,6 @@ public class MessagingBus implements IMessagingBus {
     }
 
     public IMQConnection create(URI addr) throws IOException {
-        return new MQConnection(factory.getServerTransport(addr));
+        return new MQServerConnection(factory.getServerTransport(addr));
     }
 }

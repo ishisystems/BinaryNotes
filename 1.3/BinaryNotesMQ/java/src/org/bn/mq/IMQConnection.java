@@ -22,6 +22,8 @@ package org.bn.mq;
 import java.net.URI;
 
 public interface IMQConnection {
+    void addListener(IMQConnectionListener listener);
+    void delListener(IMQConnectionListener listener);    
     IRemoteSupplier lookup(String supplierName) throws Exception;
     void registerSupplier(ISupplier supplier);
     void unregisterSupplier(ISupplier supplier);

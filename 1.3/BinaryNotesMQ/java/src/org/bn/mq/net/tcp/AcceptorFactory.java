@@ -55,13 +55,11 @@ public class AcceptorFactory extends SocketFactory {
            
     public ITransport getTransport(URI addr) throws IOException {
         ServerTransport transport = null;
-        boolean created = false;
         synchronized (acceptorStorage) {
-            transport = getCreatedTransport(addr);
-            if(transport == null) {
+            //transport = getCreatedTransport(addr);
+            //if(transport == null) {
                 transport = createTransport(addr);
-                created = true;
-            }
+            //}
         }
         return transport;
     }

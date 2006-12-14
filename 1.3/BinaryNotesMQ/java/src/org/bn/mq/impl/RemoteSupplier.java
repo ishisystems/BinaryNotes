@@ -22,11 +22,12 @@ package org.bn.mq.impl;
 import org.bn.mq.IMQConnection;
 import org.bn.mq.IRemoteMessageQueue;
 import org.bn.mq.IRemoteSupplier;
+import org.bn.mq.net.ITransport;
 
-public class RemoteSupplier implements IRemoteSupplier{
-    private IMQConnection connection;
+public class RemoteSupplier implements IRemoteSupplier {
+    private ITransport connection;
     
-    public RemoteSupplier(IMQConnection connection) {
+    public RemoteSupplier(ITransport connection) {
         this.connection = connection;
     }
     
@@ -34,7 +35,7 @@ public class RemoteSupplier implements IRemoteSupplier{
         return null;
     }
     
-    public IMQConnection getConnection() {
+    public ITransport getConnection() {
         return this.connection;
     }
 

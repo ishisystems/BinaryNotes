@@ -19,6 +19,7 @@
 package org.bn.mq.impl;
 
 import org.bn.mq.IConsumer;
+import org.bn.mq.IMQConnectionListener;
 import org.bn.mq.IMessage;
 import org.bn.mq.IRemoteSupplier;
 
@@ -28,15 +29,6 @@ public class Consumer<T> implements IConsumer<T> {
     }
 
     public void onMessage(IMessage<T> message) {
-    }
-    
-    
-    public void onDisconnected(IRemoteSupplier supplier) {
-        
-    }
-    
-    public void onConnected(IRemoteSupplier supplier) {
-        
     }
     
 }

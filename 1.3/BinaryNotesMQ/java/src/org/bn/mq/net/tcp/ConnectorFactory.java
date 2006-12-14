@@ -61,11 +61,11 @@ public class ConnectorFactory extends SocketFactory {
         ConnectorTransport transport = null;
         boolean created = false;
         synchronized (createdTransports) {
-            transport = getCreatedTransport(addr);
-            if(transport == null) {
+            //transport = getCreatedTransport(addr);
+            //if(transport == null) {
                 transport = createTransport(addr);
                 created = true;
-            }
+            //}
         }
         if(created) {
             connectorStorage.addAwaitingTransport(transport);
