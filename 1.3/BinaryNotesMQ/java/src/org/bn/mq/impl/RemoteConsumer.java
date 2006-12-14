@@ -21,6 +21,7 @@ package org.bn.mq.impl;
 
 import org.bn.mq.IRemoteConsumer;
 import org.bn.mq.IMessage;
+import org.bn.mq.net.ITransport;
 
 public class RemoteConsumer<T> implements IRemoteConsumer<T> {
     public String getId() {
@@ -28,5 +29,9 @@ public class RemoteConsumer<T> implements IRemoteConsumer<T> {
     }
 
     public void onMessage(IMessage<T> message) {
+    }
+
+    public ITransport getNetworkTransport() {
+        return null;
     }
 }

@@ -22,6 +22,7 @@ package org.bn.mq.impl;
 import org.bn.mq.IMessageQueue;
 import org.bn.mq.IRemoteMessageQueue;
 import org.bn.mq.ISupplier;
+import org.bn.mq.net.ITransport;
 
 public class Supplier implements ISupplier {
     public Supplier() {

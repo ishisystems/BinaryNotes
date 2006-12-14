@@ -24,6 +24,7 @@ import org.bn.mq.IMQConnection;
 import org.bn.mq.IMessage;
 import org.bn.mq.IRemoteMessageQueue;
 import org.bn.mq.IRemoteSupplier;
+import org.bn.mq.net.ITransport;
 
 public class RemoteMessageQueue<T> implements IRemoteMessageQueue<T>{
     private RemoteSupplier supplier;
@@ -57,6 +58,10 @@ public class RemoteMessageQueue<T> implements IRemoteMessageQueue<T>{
     
 
     public String getQueuePath() {
+        return null;
+    }
+
+    public ITransport getNetworkTransport() {
         return null;
     }
 }
