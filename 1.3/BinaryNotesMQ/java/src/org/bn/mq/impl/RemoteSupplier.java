@@ -23,16 +23,22 @@ import org.bn.mq.IMQConnection;
 import org.bn.mq.IRemoteMessageQueue;
 import org.bn.mq.IRemoteSupplier;
 import org.bn.mq.net.ITransport;
+import org.bn.mq.protocol.LookupRequest;
+import org.bn.mq.protocol.LookupResultCode;
+import org.bn.mq.protocol.MessageBody;
+import org.bn.mq.protocol.MessageEnvelope;
 
 public class RemoteSupplier implements IRemoteSupplier {
     private ITransport connection;
+    private String id;
     
-    public RemoteSupplier(ITransport connection) {
+    public RemoteSupplier(String id, ITransport connection) {
         this.connection = connection;
+        this.id = id;
     }
     
     public <T> IRemoteMessageQueue<T> lookupQueue(String queuePath, Class<T> messageBodyClass) {
-        return null;
+        return new RemoteMessageQueue<T>(queuePath, this);
     }
     
     public ITransport getConnection() {

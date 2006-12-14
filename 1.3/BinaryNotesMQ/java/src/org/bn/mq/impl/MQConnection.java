@@ -59,7 +59,7 @@ public class MQConnection implements IMQConnection, ITransportListener {
         message.setId(this.toString());
         MessageEnvelope result = transport.call(message,callTimeout);
         if (result.getBody().getLookupResult().getCode().getValue() == LookupResultCode.EnumType.success ) {
-            return new RemoteSupplier(transport);
+            return new RemoteSupplier(supplierName,transport);
         }
         else
             throw new Exception("Error when accessing to supplier '"+supplierName+"': "+ result.getBody().getLookupResult().getCode().getValue().toString());

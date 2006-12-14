@@ -16,8 +16,9 @@ DEFINITIONS IMPLICIT TAGS ::= BEGIN
 		subscribeRequest	[2] SubscribeRequest,
 		subscribeResult		[3] SubscribeResult,
 		unsubscribeRequest	[4] UnsubscribeRequest,		
-		lookupRequest		[5] LookupRequest,
-		lookupResult		[6] LookupResult
+		unsubscribeResult	[5] UnsubscribeResult,
+		lookupRequest		[6] LookupRequest,
+		lookupResult		[7] LookupResult
 	}
 	
 	SubscribeRequest ::= SEQUENCE {

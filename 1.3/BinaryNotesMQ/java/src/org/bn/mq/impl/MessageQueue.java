@@ -36,37 +36,27 @@ public class MessageQueue<T> implements IMessageQueue<T> {
     public void sendMessage(IMessage<T> message) {
     }
 
-    public IMessage<T> call(IMessage<T> message) {
-        return call(message,120);
+    public void setPersistenseStorage(IPersistenceQueueStorage<T> storage) {
     }
 
-    public IMessage<T> call(IMessage<T> message, int timeout) {
+    public IPersistenceQueueStorage<T> getPersistenceStorage() {
         return null;
     }
 
     public void addConsumer(IRemoteConsumer<T> consumer) {
     }
 
-    public void addConsumer(IRemoteConsumer<T> consumer, String filter) {
+    public void addConsumer(IRemoteConsumer<T> consumer, Boolean persistence) {
     }
 
-    public void addPersistenceConsumer(IRemoteConsumer<T> consumer) {
-    }
-
-    public void addPersistenceConsumer(IRemoteConsumer<T> consumer, String filter) {
+    public void addConsumer(IRemoteConsumer<T> consumer, Boolean persistence, 
+                            String filter) {
     }
 
     public void delConsumer(IRemoteConsumer<T> consumer) {
     }
 
     public String getQueuePath() {
-        return null;
-    }
-
-    public void setPersistenseStorage(IPersistenceQueueStorage<T> storage) {
-    }
-
-    public IPersistenceQueueStorage<T> getPersistenceStorage() {
         return null;
     }
 }

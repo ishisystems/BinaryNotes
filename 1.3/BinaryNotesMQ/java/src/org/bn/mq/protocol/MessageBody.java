@@ -44,12 +44,17 @@ import org.bn.types.*;
 	private UnsubscribeRequest unsubscribeRequest = null;
                 
   
-        @ASN1Element ( name = "lookupRequest", isOptional =  false , hasTag =  true, tag = 5 , hasDefaultValue =  false  )
+        @ASN1Element ( name = "unsubscribeResult", isOptional =  false , hasTag =  true, tag = 5 , hasDefaultValue =  false  )
+    
+	private UnsubscribeResult unsubscribeResult = null;
+                
+  
+        @ASN1Element ( name = "lookupRequest", isOptional =  false , hasTag =  true, tag = 6 , hasDefaultValue =  false  )
     
 	private LookupRequest lookupRequest = null;
                 
   
-        @ASN1Element ( name = "lookupResult", isOptional =  false , hasTag =  true, tag = 6 , hasDefaultValue =  false  )
+        @ASN1Element ( name = "lookupResult", isOptional =  false , hasTag =  true, tag = 7 , hasDefaultValue =  false  )
     
 	private LookupResult lookupResult = null;
                 
@@ -77,6 +82,8 @@ import org.bn.types.*;
                     setSubscribeResult(null);
                 
                     setUnsubscribeRequest(null);
+                
+                    setUnsubscribeResult(null);
                 
                     setLookupRequest(null);
                 
@@ -109,6 +116,8 @@ import org.bn.types.*;
                 
                     setUnsubscribeRequest(null);
                 
+                    setUnsubscribeResult(null);
+                
                     setLookupRequest(null);
                 
                     setLookupResult(null);
@@ -139,6 +148,8 @@ import org.bn.types.*;
                     setSubscribeResult(null);
                 
                     setUnsubscribeRequest(null);
+                
+                    setUnsubscribeResult(null);
                 
                     setLookupRequest(null);
                 
@@ -171,6 +182,8 @@ import org.bn.types.*;
                 
                     setUnsubscribeRequest(null);
                 
+                    setUnsubscribeResult(null);
+                
                     setLookupRequest(null);
                 
                     setLookupResult(null);
@@ -201,6 +214,41 @@ import org.bn.types.*;
                     setSubscribeRequest(null);
                 
                     setSubscribeResult(null);
+                
+                    setUnsubscribeResult(null);
+                
+                    setLookupRequest(null);
+                
+                    setLookupResult(null);
+                            
+        }
+        
+  
+        
+        public UnsubscribeResult getUnsubscribeResult () {
+            return this.unsubscribeResult;
+        }
+
+        public boolean isUnsubscribeResultSelected () {
+            return this.unsubscribeResult != null;
+        }
+
+        private void setUnsubscribeResult (UnsubscribeResult value) {
+            this.unsubscribeResult = value;
+        }
+
+        public void selectUnsubscribeResult (UnsubscribeResult value) {
+            this.unsubscribeResult = value;
+            
+                    setUserBody(null);
+                
+                    setDeliveryReport(null);
+                
+                    setSubscribeRequest(null);
+                
+                    setSubscribeResult(null);
+                
+                    setUnsubscribeRequest(null);
                 
                     setLookupRequest(null);
                 
@@ -235,6 +283,8 @@ import org.bn.types.*;
                 
                     setUnsubscribeRequest(null);
                 
+                    setUnsubscribeResult(null);
+                
                     setLookupResult(null);
                             
         }
@@ -265,6 +315,8 @@ import org.bn.types.*;
                     setSubscribeResult(null);
                 
                     setUnsubscribeRequest(null);
+                
+                    setUnsubscribeResult(null);
                 
                     setLookupRequest(null);
                             
