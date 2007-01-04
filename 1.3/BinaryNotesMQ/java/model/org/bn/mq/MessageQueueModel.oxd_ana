@@ -17,6 +17,14 @@
             class="o:b:JID"/>
       </shape>
       <shape
+         name="IConsumer extends IRemoteConsumer">
+         <elemRef
+            name=""
+            value="org.bn.mq.IConsumer extends org.bn.mq.IRemoteConsumer"
+            type="JavaExtends"
+            class="j:l:String"/>
+      </shape>
+      <shape
          name="IMQConnection">
          <elemRef
             name=""
@@ -47,6 +55,14 @@
             value="JID;;org/bn/mq;;###;;IMessageQueue"
             type="JavaInterface"
             class="o:b:JID"/>
+      </shape>
+      <shape
+         name="IMessageQueue extends IRemoteMessageQueue">
+         <elemRef
+            name=""
+            value="org.bn.mq.IMessageQueue extends org.bn.mq.IRemoteMessageQueue"
+            type="JavaExtends"
+            class="j:l:String"/>
       </shape>
       <shape
          name="IMessageQueue references IPersistenceQueueStorage">
@@ -5664,8 +5680,8 @@
                </infoMap>
                <point
                   name="elementPosition"
-                  x="487.42078"
-                  y="1279.9402"/>
+                  x="472.42078"
+                  y="1264.9402"/>
                <graphicalProperties
                   name="graphicalProperties">
                   <color
@@ -5703,7 +5719,7 @@
          <shapeMap>
             <long
                name="DrUID"
-               value="8483507145144757157"/>
+               value="8534287948324736938"/>
             <infoMap
                name="containedShapes"/>
             <long
@@ -5825,6 +5841,262 @@
             <elemRef
                name="sourceShapeRef"
                value="JID;;org/bn/mq;;###;;ISupplier"
+               type="JavaInterface"
+               class="o:b:JID"/>
+         </shapeMap>
+         <shapeMap>
+            <long
+               name="DrUID"
+               value="3368314458083358372"/>
+            <infoMap
+               name="containedShapes"/>
+            <long
+               name="destinationShapeDrUID"
+               value="3273300710159972314"/>
+            <elemRef
+               name="destinationShapeRef"
+               value="JID;;org/bn/mq;;###;;IRemoteMessageQueue"
+               type="JavaInterface"
+               class="o:b:JID"/>
+            <infoMap
+               name="displayPreference">
+               <integer
+                  name="edgeType"
+                  value="1"/>
+               <boolean
+                  name="starbordName"
+                  value="false"/>
+            </infoMap>
+            <elemRef
+               name="elementReference"
+               value="org.bn.mq.IMessageQueue extends org.bn.mq.IRemoteMessageQueue"
+               type="JavaExtends"
+               class="j:l:String"/>
+            <infoMap
+               name="graphicalData">
+               <infoMap
+                  name="diagramStateProperties">
+                  <infoMap
+                     name="symbolic">
+                     <dimension
+                        name="elementSize"
+                        width="0.0"
+                        height="0.0"/>
+                     <infoMap
+                        name="layoutConstraints"/>
+                  </infoMap>
+               </infoMap>
+               <array
+                  name="elementPoints">
+                  <point
+                     name=""
+                     x="952.4208"
+                     y="739.9402"/>
+                  <point
+                     name=""
+                     x="952.4208"
+                     y="679.9402"/>
+               </array>
+               <point
+                  name="elementPosition"
+                  x="412.42078"
+                  y="889.9402"/>
+               <graphicalProperties
+                  name="graphicalProperties">
+                  <color
+                     name="lineColor"
+                     rgb="0x646464"
+                     alpha="0xff"/>
+                  <float
+                     name="lineWidth"
+                     value="1.0"/>
+                  <integer
+                     name="lineStyle"
+                     value="0"/>
+                  <font
+                     name="fontType"
+                     fontFamily="SansSerif"
+                     fontSize="11.0"
+                     fontWeight="normal"
+                     fontStyle="normal"/>
+                  <color
+                     name="fontColor"
+                     rgb="0x0"
+                     alpha="0xff"/>
+               </graphicalProperties>
+               <array
+                  name="lastGlyph">
+                  <integer
+                     name=""
+                     value="2"
+                     scalar="true"/>
+                  <integer
+                     name=""
+                     value="536870913"
+                     scalar="true"/>
+                  <integer
+                     name=""
+                     value="1086324736"
+                     scalar="true"/>
+                  <integer
+                     name=""
+                     value="1086324736"
+                     scalar="true"/>
+                  <integer
+                     name=""
+                     value="1120403456"
+                     scalar="true"/>
+               </array>
+               <string
+                  name="shapeState">symbolic</string>
+               <elemRef
+                  name="surrogateOriginalDstRef"
+                  value="JID;;org/bn/mq;;###;;IRemoteMessageQueue"
+                  type="JavaInterface"
+                  class="o:b:JID"/>
+               <elemRef
+                  name="surrogateOriginalSrcRef"
+                  value="JID;;org/bn/mq;;###;;IMessageQueue"
+                  type="JavaInterface"
+                  class="o:b:JID"/>
+               <boolean
+                  name="visibility"
+                  value="true"/>
+            </infoMap>
+            <long
+               name="sourceShapeDrUID"
+               value="-4166379072998750977"/>
+            <elemRef
+               name="sourceShapeRef"
+               value="JID;;org/bn/mq;;###;;IMessageQueue"
+               type="JavaInterface"
+               class="o:b:JID"/>
+         </shapeMap>
+         <shapeMap>
+            <long
+               name="DrUID"
+               value="-4665635316400074631"/>
+            <infoMap
+               name="containedShapes"/>
+            <long
+               name="destinationShapeDrUID"
+               value="1383890437104882569"/>
+            <elemRef
+               name="destinationShapeRef"
+               value="JID;;org/bn/mq;;###;;IRemoteConsumer"
+               type="JavaInterface"
+               class="o:b:JID"/>
+            <infoMap
+               name="displayPreference">
+               <integer
+                  name="edgeType"
+                  value="1"/>
+               <boolean
+                  name="starbordName"
+                  value="false"/>
+            </infoMap>
+            <elemRef
+               name="elementReference"
+               value="org.bn.mq.IConsumer extends org.bn.mq.IRemoteConsumer"
+               type="JavaExtends"
+               class="j:l:String"/>
+            <infoMap
+               name="graphicalData">
+               <infoMap
+                  name="diagramStateProperties">
+                  <infoMap
+                     name="symbolic">
+                     <dimension
+                        name="elementSize"
+                        width="0.0"
+                        height="0.0"/>
+                     <infoMap
+                        name="layoutConstraints"/>
+                  </infoMap>
+               </infoMap>
+               <array
+                  name="elementPoints">
+                  <point
+                     name=""
+                     x="554.9208"
+                     y="1264.9402"/>
+                  <point
+                     name=""
+                     x="554.9208"
+                     y="1234.9402"/>
+               </array>
+               <point
+                  name="elementPosition"
+                  x="412.42078"
+                  y="889.9402"/>
+               <graphicalProperties
+                  name="graphicalProperties">
+                  <color
+                     name="lineColor"
+                     rgb="0x646464"
+                     alpha="0xff"/>
+                  <float
+                     name="lineWidth"
+                     value="1.0"/>
+                  <integer
+                     name="lineStyle"
+                     value="0"/>
+                  <font
+                     name="fontType"
+                     fontFamily="SansSerif"
+                     fontSize="11.0"
+                     fontWeight="normal"
+                     fontStyle="normal"/>
+                  <color
+                     name="fontColor"
+                     rgb="0x0"
+                     alpha="0xff"/>
+               </graphicalProperties>
+               <array
+                  name="lastGlyph">
+                  <integer
+                     name=""
+                     value="2"
+                     scalar="true"/>
+                  <integer
+                     name=""
+                     value="536870913"
+                     scalar="true"/>
+                  <integer
+                     name=""
+                     value="1086324736"
+                     scalar="true"/>
+                  <integer
+                     name=""
+                     value="1086324736"
+                     scalar="true"/>
+                  <integer
+                     name=""
+                     value="1120403456"
+                     scalar="true"/>
+               </array>
+               <string
+                  name="shapeState">symbolic</string>
+               <elemRef
+                  name="surrogateOriginalDstRef"
+                  value="JID;;org/bn/mq;;###;;IRemoteConsumer"
+                  type="JavaInterface"
+                  class="o:b:JID"/>
+               <elemRef
+                  name="surrogateOriginalSrcRef"
+                  value="JID;;org/bn/mq;;###;;IConsumer"
+                  type="JavaInterface"
+                  class="o:b:JID"/>
+               <boolean
+                  name="visibility"
+                  value="true"/>
+            </infoMap>
+            <long
+               name="sourceShapeDrUID"
+               value="6971007193482127044"/>
+            <elemRef
+               name="sourceShapeRef"
+               value="JID;;org/bn/mq;;###;;IConsumer"
                type="JavaInterface"
                class="o:b:JID"/>
          </shapeMap>

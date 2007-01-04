@@ -20,17 +20,27 @@
 package org.bn.mq.net.tcp;
 
 import java.util.LinkedList;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class ConnectorStorage {
     private LinkedList<ConnectorTransport> awaitingConnect = new LinkedList<ConnectorTransport> ();
+    protected final Lock awaitLock = new ReentrantLock();
+    protected final Condition awaitEvent  = awaitLock.newCondition(); 
+    private boolean finishThread = false;
+    
     
     public ConnectorStorage() {
     }
     
     public void addAwaitingTransport(ConnectorTransport transport) {
+        awaitLock.lock();    
         synchronized (awaitingConnect) {
             awaitingConnect.add(transport);
         }
+        awaitEvent.signal();
+        awaitLock.unlock();                
     }
     
     public void removeAwaitingTransport(ConnectorTransport transport) {
@@ -39,14 +49,30 @@ public class ConnectorStorage {
         }
     }    
     
-    public ConnectorTransport getAwaitingTransport() {
+    public ConnectorTransport getAwaitingTransport() {        
         ConnectorTransport result = null;
-        synchronized (awaitingConnect) {
-            if(!awaitingConnect.isEmpty()) {
-                result = awaitingConnect.getFirst();
-                awaitingConnect.removeFirst();
+        if(finishThread)
+            return result;
+        
+        do {
+            awaitLock.lock();
+            synchronized (awaitingConnect) {
+                if(!awaitingConnect.isEmpty()) {
+                    result = awaitingConnect.getFirst();
+                    awaitingConnect.removeFirst();
+                }
             }
+                        
+            if(result==null) {
+                try {
+                    awaitEvent.await();
+                }
+                catch(Exception ex) {ex =null; }
+            }            
+            awaitLock.unlock();
         }
+        while(result==null && !finishThread);
+                    
         return result;
     }
 
@@ -57,6 +83,12 @@ public class ConnectorStorage {
     }
     
     public void finalize() {
-        clear();
+        synchronized(awaitingConnect) {
+            finishThread = true;        
+            awaitingConnect.clear();
+        }
+        awaitLock.lock();        
+        awaitEvent.signal();
+        awaitLock.unlock();
     }
 }

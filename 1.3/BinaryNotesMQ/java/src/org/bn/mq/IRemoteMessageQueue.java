@@ -22,9 +22,12 @@ package org.bn.mq;
 import org.bn.mq.impl.RemoteMessageQueue;
 
 public interface IRemoteMessageQueue<T> {
-    void addConsumer(IRemoteConsumer<T> consumer)  throws Exception;
-    void addConsumer(IRemoteConsumer<T> consumer, Boolean persistence)  throws Exception ;
-    void addConsumer(IRemoteConsumer<T> consumer, Boolean persistence, String filter)  throws Exception ;
-    void delConsumer(IRemoteConsumer<T> consumer) throws Exception;
-    String getQueuePath();    
+    void addConsumer(IConsumer<T> consumer)  throws Exception;
+    void addConsumer(IConsumer<T> consumer, Boolean persistence)  throws Exception ;
+    void addConsumer(IConsumer<T> consumer, Boolean persistence, String filter)  throws Exception ;
+    void delConsumer(IConsumer<T> consumer) throws Exception;
+    String getQueuePath();
+
+    void start();
+    void stop();
 }

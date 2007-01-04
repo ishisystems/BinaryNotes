@@ -24,12 +24,18 @@ import org.bn.mq.IMessage;
 import org.bn.mq.IRemoteSupplier;
 import org.bn.mq.net.ITransport;
 
-public class Consumer<T> implements IConsumer<T> {
+public abstract class Consumer<T> implements IConsumer<T> {
+    private String consumerId;    
+    
+    public Consumer() {
+        this.consumerId = this.toString();
+    }
+    
+    public Consumer(String consumerId) {
+        this.consumerId = consumerId;
+    }
+    
     public String getId() {
-        return null;
+        return this.consumerId;
     }
-
-    public void onMessage(IMessage<T> message) {
-    }
-
 }

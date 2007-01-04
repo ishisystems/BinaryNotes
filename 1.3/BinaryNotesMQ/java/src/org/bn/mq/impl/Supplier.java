@@ -39,7 +39,7 @@ public class Supplier implements ISupplier, ITransportListener {
         this.supplierId = supplierId;
     }
 
-    public <T> IRemoteMessageQueue<T> lookupQueue(String queuePath) {
+    public <T> IRemoteMessageQueue<T> lookupQueue(String queuePath, Class<T> messageClass) {
         IRemoteMessageQueue<T> queue = null;
         synchronized(queues) {
             queue = (IRemoteMessageQueue<T>)queues.get(queuePath);
@@ -47,8 +47,8 @@ public class Supplier implements ISupplier, ITransportListener {
         return queue;
     }
 
-    public <T> IMessageQueue<T> createQueue(String queuePath) {
-        MessageQueue<T> queue = new MessageQueue<T>(queuePath,transport);
+    public <T> IMessageQueue<T> createQueue(String queuePath, Class<T> messageClass) {
+        MessageQueue<T> queue = new MessageQueue<T>(queuePath,transport, messageClass);
         synchronized(queues) {
             queues.put(queuePath,queue);
         }

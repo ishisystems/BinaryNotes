@@ -22,6 +22,6 @@ package org.bn.mq;
 import org.bn.mq.impl.Supplier;
 
 public interface ISupplier extends IRemoteSupplier {
-    public <T> IMessageQueue<T> createQueue(String queuePath);
+    public <T> IMessageQueue<T> createQueue(String queuePath, Class<T> messageClass);
     public <T> void removeQueue(IMessageQueue<T> queue);
 }

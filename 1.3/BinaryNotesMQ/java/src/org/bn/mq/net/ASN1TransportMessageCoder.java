@@ -24,6 +24,9 @@ import java.io.ByteArrayOutputStream;
 
 import java.nio.ByteBuffer;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.bn.CoderFactory;
 import org.bn.IDecoder;
 import org.bn.IEncoder;
@@ -32,35 +35,45 @@ import org.bn.mq.protocol.MessageEnvelope;
 
 public class ASN1TransportMessageCoder implements ITransportMessageCoder {
     protected IEncoder<MessageEnvelope> encoder;
-    protected IDecoder decoder;    
-    protected final String coderScheme = "PER/U";
+    protected int coderSchemeDefVal = (short)0x0101;
+    
     protected final byte coderVersion = 0x10;
-    protected final int headerSize = 4 + coderScheme.length() + 1;
+    protected final int headerSize = 4 + 2 + 1; // length packet + coder schema + coderVersion;
+    protected final HashMap<Integer,IDecoder> coderSchemaMap = new HashMap<Integer, IDecoder>();
+    
     protected ByteArrayOutputStream outputByteStream = new ByteArrayOutputStream();
     
     protected ByteBuffer currentDecoded = ByteBuffer.allocate(65535);
     protected boolean headerIsReaded = false;
-    protected byte[] crDecodedSchema = new byte[coderScheme.length()];
+    protected int crDecodedSchema = 0;
     protected byte crDecodedVersion = 0;
     protected int crDecodedLen = 0;
     
     
     public ASN1TransportMessageCoder() {
         try {
-            encoder = CoderFactory.getInstance().newEncoder(coderScheme );
-            decoder = CoderFactory.getInstance().newDecoder(coderScheme );
+            coderSchemaMap.put(0x0000, CoderFactory.getInstance().newDecoder("BER"));
+            coderSchemaMap.put(0x0100, CoderFactory.getInstance().newDecoder("PER"));
+            coderSchemaMap.put(0x0101, CoderFactory.getInstance().newDecoder("PER/U"));
+            IEncoder<MessageEnvelope> defEnc =  CoderFactory.getInstance().newEncoder("PER/U");
+            setDefaultEncoder(coderSchemeDefVal,defEnc);
         }
         catch (Exception e) {
             // TODO
         }
         
     }
+    
+    public void setDefaultEncoder(int coderSchemaVal, IEncoder<MessageEnvelope> encoder) {    
+        this.coderSchemeDefVal = coderSchemaVal;
+        this.encoder = encoder;
+    }
 
     public ByteBuffer encode(MessageEnvelope message) throws Exception {
         outputByteStream.reset();
         encoder.encode(message, outputByteStream);
         ByteBuffer buffer = ByteBuffer.allocate(outputByteStream.size()+headerSize);        
-        buffer.put(coderScheme.getBytes("US-ASCII"));
+        buffer.putShort((short)coderSchemeDefVal);
         buffer.put(coderVersion);
         buffer.putInt(outputByteStream.size());
         buffer.put(outputByteStream.toByteArray());
@@ -81,7 +94,7 @@ public class ASN1TransportMessageCoder implements ITransportMessageCoder {
         if(currentDecoded.position() > headerSize && !headerIsReaded) {
             int savePos = currentDecoded.position();
             currentDecoded.position(0);
-            currentDecoded.get(crDecodedSchema);
+            crDecodedSchema = currentDecoded.getShort();
             crDecodedVersion = currentDecoded.get();
             crDecodedLen = currentDecoded.getInt();
             headerIsReaded = true;
@@ -89,8 +102,8 @@ public class ASN1TransportMessageCoder implements ITransportMessageCoder {
         }
         
         if(headerIsReaded) {
+            IDecoder decoder = coderSchemaMap.get(crDecodedSchema);
             if(crDecodedLen <= currentDecoded.position() - headerSize ) {
-                //int savePos = currentDecoded.position();
                 currentDecoded.position(headerSize);
                 byte[] content = new byte[crDecodedLen];
                 currentDecoded.get(content);

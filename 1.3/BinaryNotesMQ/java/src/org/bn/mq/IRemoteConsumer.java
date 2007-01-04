@@ -21,7 +21,6 @@ package org.bn.mq;
 
 import org.bn.mq.net.ITransport;
 
-public interface IRemoteConsumer<T> {
-    String getId();
-    void onMessage(IMessage<T> message);    
+public interface IRemoteConsumer<T> extends IConsumer<T> {
+    ITransport getNetworkTransport();
 }

@@ -24,6 +24,7 @@ import java.util.Date;
 public interface IMessage<T> {
     String getId();
     String getSenderId();
+    String getQueuePath();
 
     int getPriority();   
     void setPrioriy(int prio);

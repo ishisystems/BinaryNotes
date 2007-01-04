@@ -79,17 +79,18 @@ public abstract class Transport implements ITransport {
     }
 
     
-    public ByteBuffer receiveAsync() throws IOException {
-        socketLock.readLock().lock();
-        SocketChannel channel = getSocket();
+    public ByteBuffer receiveAsync() throws IOException {        
         ByteBuffer result = null;
-        try {
-            if(isAvailable()) {
-                result = ByteBuffer.allocate(4096);                
-                int readedBytes = -1;
-                do {                                        
+        if(isAvailable()) {
+            result = ByteBuffer.allocate(4096);                
+            int readedBytes = -1;
+            do {
+                socketLock.readLock().lock();
+                try {
                     tempReceiveBuffer.clear();
-                    readedBytes = channel.read(tempReceiveBuffer);
+                    SocketChannel channel = getSocket();
+                    if(channel!=null)
+                        readedBytes = channel.read(tempReceiveBuffer);
                     if(readedBytes>0) {
                         if(result.remaining()<readedBytes) {
                             byte[] data = result.array();
@@ -98,21 +99,20 @@ public abstract class Transport implements ITransport {
                         }
                         result.put(tempReceiveBuffer.array(),result.position(),tempReceiveBuffer.position());
                     }
-                    else
-                    if(readedBytes==-1) {
-                        onTransportClosed();
-                    }                    
-                }                
-                while(readedBytes>0);
-                result.flip();
-            }
-            else {
-                throw new IOException("Not connected");
-            }
+                }
+                finally {
+                    socketLock.readLock().unlock();
+                }
+                if(readedBytes==-1) {
+                    onTransportClosed();
+                }                    
+            }                
+            while(readedBytes>0);
+            result.flip();
         }
-        finally {
-            socketLock.readLock().unlock();
-        }    
+        else {
+            throw new IOException("Not connected");
+        }
         return result;        
     }
     

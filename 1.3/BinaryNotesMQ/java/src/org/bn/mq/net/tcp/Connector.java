@@ -50,7 +50,7 @@ public class Connector implements Runnable {
                     System.out.println("Unable to connect for "+transport.getAddr());
                     transport.setSocket(null);
                     transport.onNotConnected();
-                }            
+                }
             }
         }
         while(!finish);

@@ -19,12 +19,17 @@
 
 package org.bn.mq.impl;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.bn.mq.IConsumer;
 import org.bn.mq.IRemoteConsumer;
 import org.bn.mq.IMQConnection;
 import org.bn.mq.IMessage;
 import org.bn.mq.IRemoteMessageQueue;
 import org.bn.mq.IRemoteSupplier;
 import org.bn.mq.net.ITransport;
+import org.bn.mq.net.ITransportListener;
 import org.bn.mq.protocol.LookupRequest;
 import org.bn.mq.protocol.LookupResultCode;
 import org.bn.mq.protocol.MessageBody;
@@ -34,25 +39,29 @@ import org.bn.mq.protocol.SubscribeResultCode;
 import org.bn.mq.protocol.UnsubscribeRequest;
 import org.bn.mq.protocol.UnsubscribeResultCode;
 
-public class RemoteMessageQueue<T> implements IRemoteMessageQueue<T>{
+public class RemoteMessageQueue<T> implements IRemoteMessageQueue<T>, ITransportListener {
     private RemoteSupplier supplier;
     private String queuePath;
     private final int subscribeTimeout = 60;
+    protected Map<String,IConsumer<T> > consumers = new HashMap<String,IConsumer<T> >();    
+    private Class<T> messageClass;
     
-    public RemoteMessageQueue(String queuePath, RemoteSupplier supplier) {
+    public RemoteMessageQueue(String queuePath, RemoteSupplier supplier, Class<T> messageClass) {
         this.supplier = supplier;
         this.queuePath = queuePath;
+        this.messageClass = messageClass;
+        start();
     }
 
-    public void addConsumer(IRemoteConsumer<T> consumer)  throws Exception  {
+    public void addConsumer(IConsumer<T> consumer)  throws Exception  {
         addConsumer(consumer, false);
     }
 
-    public void addConsumer(IRemoteConsumer<T> consumer, Boolean persistence)  throws Exception  {
+    public void addConsumer(IConsumer<T> consumer, Boolean persistence)  throws Exception  {
         addConsumer(consumer, persistence, null);
     }
 
-    public void addConsumer(IRemoteConsumer<T> consumer, Boolean persistence, String filter) throws Exception {
+    public void addConsumer(IConsumer<T> consumer, Boolean persistence, String filter) throws Exception {
         SubscribeRequest request = new SubscribeRequest();
         request.setConsumerId(consumer.getId());
         request.setFilter(filter);
@@ -66,12 +75,21 @@ public class RemoteMessageQueue<T> implements IRemoteMessageQueue<T>{
         message.setBody(body);
         message.setId(this.toString());
         MessageEnvelope result = supplier.getConnection().call(message,subscribeTimeout);
-        if (result.getBody().getSubscribeResult().getCode().getValue() == SubscribeResultCode.EnumType.success ) {
+        if (result.getBody().getSubscribeResult().getCode().getValue() != SubscribeResultCode.EnumType.success ) {
             throw new Exception("Error when accessing to queue '"+queuePath+"' for supplier '"+supplier.getId()+"': "+ result.getBody().getSubscribeResult().getCode().getValue().toString());
-        }    
+        }
+        else {
+            synchronized(consumers) {
+                consumers.put(consumer.getId(),consumer);
+            }
+        }
     }
 
-    public void delConsumer(IRemoteConsumer<T> consumer) throws Exception {
+    public void delConsumer(IConsumer<T> consumer) throws Exception {
+        synchronized(consumers) {
+            consumers.remove(consumer.getId());
+        }
+    
         UnsubscribeRequest request = new UnsubscribeRequest();
         request.setConsumerId(consumer.getId());
         request.setQueuePath(getQueuePath());
@@ -82,12 +100,44 @@ public class RemoteMessageQueue<T> implements IRemoteMessageQueue<T>{
         message.setBody(body);
         message.setId(this.toString());
         MessageEnvelope result = supplier.getConnection().call(message,subscribeTimeout);
-        if (result.getBody().getUnsubscribeResult().getCode().getValue() == UnsubscribeResultCode.EnumType.success ) {
+        if (result.getBody().getUnsubscribeResult().getCode().getValue() != UnsubscribeResultCode.EnumType.success ) {
             throw new Exception("Error when accessing to queue '"+queuePath+"' for supplier '"+supplier.getId()+"': "+ result.getBody().getUnsubscribeResult().getCode().getValue().toString());
         }        
     }
 
     public String getQueuePath() {
         return queuePath;
+    }
+
+    public void onReceive(MessageEnvelope message, ITransport transport) {
+        if(message.getBody().isMessageUserBodySelected() && message.getBody().getMessageUserBody().getQueuePath().equalsIgnoreCase(this.getQueuePath())) {
+            synchronized(consumers) {
+                IConsumer<T> consumer = consumers.get(message.getBody().getMessageUserBody().getConsumerId());
+                if(consumer!=null) {
+                    Message<T> msg = new Message<T>(this.messageClass);
+                    try {
+                        msg.fillFromEnvelope(message);
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    consumer.onMessage( msg );
+                }
+            }
+        }
+    }
+
+    public void onConnected(ITransport transport) {
+    }
+
+    public void onDisconnected(ITransport transport) {
+    }
+
+    public void start() {
+        this.supplier.getConnection().addListener(this);
+    }
+
+    public void stop() {
+        this.supplier.getConnection().delListener(this);
     }
 }

@@ -23,10 +23,11 @@ import junit.framework.TestCase;
 
 import org.bn.mq.net.ITransport;
 import org.bn.mq.net.ITransportListener;
-import org.bn.mq.net.TransportMessageCoderFactory;
+import org.bn.mq.net.ASN1TransportMessageCoderFactory;
 import org.bn.mq.net.tcp.TransportFactory;
 import org.bn.mq.protocol.MessageBody;
 import org.bn.mq.protocol.MessageEnvelope;
+import org.bn.mq.protocol.MessageUserBody;
 
 
 public class MessageDecoderThreadTest extends TestCase {
@@ -39,7 +40,11 @@ public class MessageDecoderThreadTest extends TestCase {
         MessageEnvelope message = new MessageEnvelope();
         message.setId("MsgId-"+vl);
         MessageBody msgBody = new MessageBody();
-        msgBody.selectUserBody(new byte[] { (byte)0xFF, (byte)0xFE });
+        MessageUserBody userBody = new MessageUserBody();
+        userBody.setUserBody(new byte[] { (byte)0xFF, (byte)0xFE });
+        userBody.setConsumerId(this.toString());
+        userBody.setQueuePath("testQueuePath/Temp");
+        msgBody.selectMessageUserBody(userBody);
         message.setBody(msgBody);
         return message;
     }
@@ -47,37 +52,46 @@ public class MessageDecoderThreadTest extends TestCase {
     public void testTakeMessage() throws Exception {
         final String connectionString = "bnmq://localhost:3333";
         TransportFactory conFactory = new TransportFactory();
-        conFactory.setTransportMessageCoderFactory(new TransportMessageCoderFactory());
-        
-        ITransport server = conFactory.getServerTransport(new URI(connectionString));
-        assertNotNull(server);
-        server.addListener(new MessageListener(this));
-        
-        ITransport client = conFactory.getClientTransport(new URI(connectionString));
-        client.addListener(new MessageListener(this));
-        assertNotNull(client);
+        try {
+            conFactory.setTransportMessageCoderFactory(new ASN1TransportMessageCoderFactory());
             
-        client.send(createMessage("AAAaasasasasassas"));
-        client.sendAsync(createMessage("Two"));
-        Thread.sleep(500);
-        conFactory.finalize();
+            ITransport server = conFactory.getServerTransport(new URI(connectionString));
+            assertNotNull(server);
+            server.addListener(new MessageListener(this));
+            
+            ITransport client = conFactory.getClientTransport(new URI(connectionString));
+            client.addListener(new MessageListener(this));
+            assertNotNull(client);
+                
+            client.send(createMessage("AAAaasasasasassas"));
+            client.sendAsync(createMessage("Two"));
+            Thread.sleep(500);
+        }
+        finally {
+            conFactory.finalize();
+        }
         System.out.println("Finished: testTakeMessage");
     }
     
     public void testCall() throws Exception {
         final String connectionString = "bnmq://localhost:3333";
         TransportFactory conFactory = new TransportFactory();
-        conFactory.setTransportMessageCoderFactory(new TransportMessageCoderFactory());
-        
-        ITransport server = conFactory.getServerTransport(new URI(connectionString));
-        assertNotNull(server);
-        server.addListener(new CallMessageListener(this));
-        
-        ITransport client = conFactory.getClientTransport(new URI(connectionString));
-        assertNotNull(client);
-        MessageEnvelope result = client.call(createMessage("Call"), 10);
-        System.out.println("Result call received with Id:"+result.getId()+" has been received successfully");
-        conFactory.finalize();
+        try {
+            conFactory.setTransportMessageCoderFactory(new ASN1TransportMessageCoderFactory());
+            
+            ITransport server = conFactory.getServerTransport(new URI(connectionString));
+            assertNotNull(server);
+            server.addListener(new CallMessageListener(this));
+            Thread.sleep(500);
+            
+            ITransport client = conFactory.getClientTransport(new URI(connectionString));
+            assertNotNull(client);
+            MessageEnvelope result = client.call(createMessage("Call"), 10);
+            System.out.println("Result call received with Id:"+result.getId()+" has been received successfully");
+        }
+        finally {
+            conFactory.finalize();
+        }
         System.out.println("Finished: testCall");
     }    
 

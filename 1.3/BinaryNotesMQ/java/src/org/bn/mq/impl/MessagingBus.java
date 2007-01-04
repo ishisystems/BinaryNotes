@@ -28,11 +28,24 @@ import org.bn.mq.net.*;
 public class MessagingBus implements IMessagingBus {
     protected ITransportFactory factory = new org.bn.mq.net.tcp.TransportFactory();
     
+    public MessagingBus() {
+        factory.setTransportMessageCoderFactory( new ASN1TransportMessageCoderFactory());
+    }
+    
     public IMQConnection connect(URI addr) throws IOException {
         return new MQConnection(factory.getClientTransport(addr));
     }
 
     public IMQConnection create(URI addr) throws IOException {
         return new MQServerConnection(factory.getServerTransport(addr));
+    }
+    
+    public void finalize() {
+        try {
+            factory.finalize();
+        }
+        catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

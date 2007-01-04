@@ -11,7 +11,7 @@ DEFINITIONS IMPLICIT TAGS ::= BEGIN
 	}
 
 	MessageBody ::= CHOICE {
-		userBody		[0] OCTET STRING,
+		messageUserBody		[0] MessageUserBody,
 		deliveryReport		[1] DeliveryReport,
 		subscribeRequest	[2] SubscribeRequest,
 		subscribeResult		[3] SubscribeResult,
@@ -19,6 +19,13 @@ DEFINITIONS IMPLICIT TAGS ::= BEGIN
 		unsubscribeResult	[5] UnsubscribeResult,
 		lookupRequest		[6] LookupRequest,
 		lookupResult		[7] LookupResult
+	}
+
+	MessageUserBody ::= SEQUENCE {
+		userBody		[0] OCTET STRING,
+		consumerId		[1] UTF8String,
+		queuePath		[2] UTF8String,
+		senderId		[3] UTF8String OPTIONAL
 	}
 	
 	SubscribeRequest ::= SEQUENCE {

@@ -39,6 +39,7 @@ public class TransportWriter implements Runnable{
             }
             catch(IOException ex) {
                 System.err.println("Unable to write packet for transport "+packet.getTransport());
+                ex.printStackTrace();
             }
         }
         while(packet!=null);

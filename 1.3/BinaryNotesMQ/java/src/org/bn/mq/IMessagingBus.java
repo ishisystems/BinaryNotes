@@ -26,4 +26,5 @@ import java.net.URI;
 public interface IMessagingBus {
     IMQConnection connect(URI addr) throws IOException;
     IMQConnection create(URI addr) throws IOException;
+    void finalize();
 }

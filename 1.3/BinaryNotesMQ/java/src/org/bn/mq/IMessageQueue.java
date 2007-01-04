@@ -22,7 +22,13 @@ package org.bn.mq;
 public interface IMessageQueue<T> extends IRemoteMessageQueue<T> {
     IQueue<T> getQueue();
     void setQueue(IQueue<T> queue);
-    void sendMessage(IMessage<T> message);
+    IMessage<T> createMessage(T body);
+    IMessage<T> createMessage();
+    
+    void sendMessage(IMessage<T> message) throws Exception;    
+    T call(T args) throws Exception;
+    T call(T args, String consumerId) throws Exception;
+    
     void setPersistenseStorage(IPersistenceQueueStorage<T> storage);
     IPersistenceQueueStorage<T> getPersistenceStorage();
 }

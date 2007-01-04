@@ -49,14 +49,14 @@ public class TransportReader implements Runnable {
                             transport.fireReceivedData(buffer);
                         }
                         catch (Exception e) {
-                            System.err.println(e);
-                            e.printStackTrace();
+                            //System.err.println(e);
+                            //e.printStackTrace();
                         }
                     }
                 }
             }
-            catch (IOException e) {
-                System.err.println(e);
+            catch (Exception e) {
+                e.printStackTrace();
             }            
         }
         while(!finish);

@@ -17,11 +17,10 @@ import org.bn.types.*;
 
     @ASN1Choice ( name = "MessageBody" )
     public class MessageBody {
-            @ASN1OctetString( name = "" )
+            
+        @ASN1Element ( name = "messageUserBody", isOptional =  false , hasTag =  true, tag = 0 , hasDefaultValue =  false  )
     
-        @ASN1Element ( name = "userBody", isOptional =  false , hasTag =  true, tag = 0 , hasDefaultValue =  false  )
-    
-	private byte[] userBody = null;
+	private MessageUserBody messageUserBody = null;
                 
   
         @ASN1Element ( name = "deliveryReport", isOptional =  false , hasTag =  true, tag = 1 , hasDefaultValue =  false  )
@@ -60,20 +59,20 @@ import org.bn.types.*;
                 
   
         
-        public byte[] getUserBody () {
-            return this.userBody;
+        public MessageUserBody getMessageUserBody () {
+            return this.messageUserBody;
         }
 
-        public boolean isUserBodySelected () {
-            return this.userBody != null;
+        public boolean isMessageUserBodySelected () {
+            return this.messageUserBody != null;
         }
 
-        private void setUserBody (byte[] value) {
-            this.userBody = value;
+        private void setMessageUserBody (MessageUserBody value) {
+            this.messageUserBody = value;
         }
 
-        public void selectUserBody (byte[] value) {
-            this.userBody = value;
+        public void selectMessageUserBody (MessageUserBody value) {
+            this.messageUserBody = value;
             
                     setDeliveryReport(null);
                 
@@ -108,7 +107,7 @@ import org.bn.types.*;
         public void selectDeliveryReport (DeliveryReport value) {
             this.deliveryReport = value;
             
-                    setUserBody(null);
+                    setMessageUserBody(null);
                 
                     setSubscribeRequest(null);
                 
@@ -141,7 +140,7 @@ import org.bn.types.*;
         public void selectSubscribeRequest (SubscribeRequest value) {
             this.subscribeRequest = value;
             
-                    setUserBody(null);
+                    setMessageUserBody(null);
                 
                     setDeliveryReport(null);
                 
@@ -174,7 +173,7 @@ import org.bn.types.*;
         public void selectSubscribeResult (SubscribeResult value) {
             this.subscribeResult = value;
             
-                    setUserBody(null);
+                    setMessageUserBody(null);
                 
                     setDeliveryReport(null);
                 
@@ -207,7 +206,7 @@ import org.bn.types.*;
         public void selectUnsubscribeRequest (UnsubscribeRequest value) {
             this.unsubscribeRequest = value;
             
-                    setUserBody(null);
+                    setMessageUserBody(null);
                 
                     setDeliveryReport(null);
                 
@@ -240,7 +239,7 @@ import org.bn.types.*;
         public void selectUnsubscribeResult (UnsubscribeResult value) {
             this.unsubscribeResult = value;
             
-                    setUserBody(null);
+                    setMessageUserBody(null);
                 
                     setDeliveryReport(null);
                 
@@ -273,7 +272,7 @@ import org.bn.types.*;
         public void selectLookupRequest (LookupRequest value) {
             this.lookupRequest = value;
             
-                    setUserBody(null);
+                    setMessageUserBody(null);
                 
                     setDeliveryReport(null);
                 
@@ -306,7 +305,7 @@ import org.bn.types.*;
         public void selectLookupResult (LookupResult value) {
             this.lookupResult = value;
             
-                    setUserBody(null);
+                    setMessageUserBody(null);
                 
                     setDeliveryReport(null);
                 

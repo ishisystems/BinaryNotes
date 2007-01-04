@@ -19,31 +19,101 @@
 
 package org.bn.mq.impl;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
+import org.bn.mq.IConsumer;
 import org.bn.mq.IPersistenceQueueStorage;
 import org.bn.mq.IRemoteConsumer;
 import org.bn.mq.IMessage;
 import org.bn.mq.IMessageQueue;
 import org.bn.mq.IQueue;
 import org.bn.mq.net.ITransport;
+import org.bn.mq.net.ITransportListener;
+import org.bn.mq.net.tcp.TransportPacket;
+import org.bn.mq.protocol.MessageBody;
+import org.bn.mq.protocol.MessageEnvelope;
+import org.bn.mq.protocol.SubscribeRequest;
+import org.bn.mq.protocol.SubscribeResult;
+import org.bn.mq.protocol.SubscribeResultCode;
+import org.bn.mq.protocol.UnsubscribeResult;
+import org.bn.mq.protocol.UnsubscribeResultCode;
 
-public class MessageQueue<T> implements IMessageQueue<T> {
+public class MessageQueue<T> implements IMessageQueue<T>, Runnable, ITransportListener {
     private ITransport transport;
     private String queuePath;
-    
-    public MessageQueue(String queuePath, ITransport transport) {
+    private IQueue<T> queue = new Queue<T>();
+    private AtomicInteger callCurId = new AtomicInteger(0);
+    private Thread senderThread = new Thread(this);
+    private AtomicBoolean stop = new AtomicBoolean(false);
+    protected final Lock awaitMessageLock = new ReentrantLock();
+    protected final Condition awaitMessageEvent  = awaitMessageLock.newCondition();
+    protected Map<String,IConsumer<T> > consumers = new HashMap<String,IConsumer<T> >();
+    protected Class<T> messageClass;
+        
+    public MessageQueue(String queuePath, ITransport transport, Class<T> messageClass) {
         this.transport = transport;
         this.queuePath = queuePath;
+        this.transport.addListener(this);
+        this.messageClass = messageClass;
+        start();
     }
     
     public IQueue<T> getQueue() {
-        return null;
+        return queue;
     }
 
     public void setQueue(IQueue<T> queue) {
+        synchronized(queue) {
+            this.queue = queue;
+        }
     }
 
     public void sendMessage(IMessage<T> message) {
+        awaitMessageLock.lock();
+        synchronized(queue) {
+            queue.push(message);
+        }        
+        awaitMessageEvent.signal();
+        awaitMessageLock.unlock();
     }
+    
+    public T call(T args) throws Exception {
+        Message<T> envelope =  new Message<T>(this.messageClass);
+        envelope.setId(queuePath +"/call-"+callCurId.getAndIncrement());
+        envelope.setBody(args);
+        MessageEnvelope argsEnv = envelope.createEnvelope();
+        MessageEnvelope result = null;
+        argsEnv.getBody().getMessageUserBody().setQueuePath(this.getQueuePath());
+        synchronized(consumers) {
+            for(Map.Entry<String, IConsumer<T> > entry: consumers.entrySet()) {                                
+                argsEnv.getBody().getMessageUserBody().setConsumerId(entry.getValue().getId());
+                result = transport.call(argsEnv);
+            }
+        }
+        envelope.fillFromEnvelope(result);
+        return envelope.getBody();        
+    }    
+
+    public T call(T args, String consumerId) throws Exception {
+        Message<T> envelope =  new Message<T>(this.messageClass);
+        envelope.setId(queuePath +"/call-"+callCurId.getAndIncrement());
+        envelope.setBody(args);
+        MessageEnvelope argsEnv = envelope.createEnvelope();
+        MessageEnvelope result = null;
+        argsEnv.getBody().getMessageUserBody().setQueuePath(this.getQueuePath());
+        argsEnv.getBody().getMessageUserBody().setConsumerId(consumerId);
+        result = transport.call(argsEnv);
+        envelope.fillFromEnvelope(result);
+        return envelope.getBody();        
+    }    
 
     public void setPersistenseStorage(IPersistenceQueueStorage<T> storage) {
     }
@@ -52,20 +122,195 @@ public class MessageQueue<T> implements IMessageQueue<T> {
         return null;
     }
 
-    public void addConsumer(IRemoteConsumer<T> consumer) {
+    public void addConsumer(IConsumer<T> consumer) throws Exception {
+        addConsumer(consumer, false);
     }
 
-    public void addConsumer(IRemoteConsumer<T> consumer, Boolean persistence) {
+    public void addConsumer(IConsumer<T> consumer, Boolean persistence) throws Exception {
+        addConsumer(consumer, persistence, null);
     }
 
-    public void addConsumer(IRemoteConsumer<T> consumer, Boolean persistence, 
-                            String filter) {
+    public void addConsumer(IConsumer<T> consumer, Boolean persistence, String filter) throws Exception {
+        synchronized(consumers) {            
+            if(consumers.containsKey(consumer.getId())) {
+                throw new Exception("Consumer with id:"+consumer.getId()+" is already subscription!");
+            }
+            else {
+                consumers.put(consumer.getId(),consumer);
+            }
+        }
     }
 
-    public void delConsumer(IRemoteConsumer<T> consumer) {
+    public void delConsumer(IConsumer<T> consumer) throws Exception {
+        synchronized(consumers) {
+            if(consumers.containsKey(consumer.getId())) {
+                throw new Exception("Consumer with id:"+consumer.getId()+" doesn't have any subscription!");
+            }
+            else {
+                consumers.remove(consumer.getId());
+            }        
+        }
     }
 
     public String getQueuePath() {
         return queuePath;
     }
+
+    public void run() {        
+        IMessage<T> message = null;
+        do {
+            awaitMessageLock.lock();
+            synchronized(queue) {
+                message = queue.getNext();
+            }
+            if(message==null) {
+                
+                try {
+                    awaitMessageEvent.await();
+                }
+                catch(Exception ex) {ex =null; }                
+            }            
+            awaitMessageLock.unlock();
+            if(message!=null) {
+                synchronized(consumers) {
+                    for(Map.Entry<String, IConsumer<T> > entry: consumers.entrySet()) {
+                        entry.getValue().onMessage(message);
+                    }
+                }
+            }
+            
+        }
+        while(!stop.get());
+    }
+
+    public void stop() {
+        stop.set(true);
+        awaitMessageLock.lock();
+        awaitMessageEvent.signal();
+        awaitMessageLock.unlock();
+        
+        try {
+        
+            senderThread.join();
+        }
+        catch (InterruptedException e) {
+             e.printStackTrace();
+        }
+    }
+
+    public void start() {
+        stop.set(false);
+        if(!senderThread.isAlive()) {
+            senderThread.start();
+        }
+        
+    }
+    
+    protected void dispose() {
+        this.transport.delListener(this);
+        stop();
+    }
+    
+    private void onReceiveSubscribeRequest(MessageEnvelope message, ITransport transport) {
+        RemoteConsumer<T> remoteConsumer = new RemoteConsumer<T>(message.getBody().getSubscribeRequest().getConsumerId(), transport, this.messageClass);
+        
+        MessageEnvelope resultMsg = new MessageEnvelope();
+        MessageBody body = new MessageBody();
+        SubscribeResult subscribeResult = new SubscribeResult();
+        SubscribeResultCode subscribeResultCode = new SubscribeResultCode();
+        body.selectSubscribeResult(subscribeResult);
+        resultMsg.setBody(body);
+        resultMsg.setId(message.getId());            
+        try {                
+            addConsumer(remoteConsumer,message.getBody().getSubscribeRequest().getPersistence(),message.getBody().getSubscribeRequest().getFilter());
+            subscribeResultCode.setValue(SubscribeResultCode.EnumType.success);
+        }
+        catch (Exception e) {
+            subscribeResultCode.setValue(SubscribeResultCode.EnumType.alreadySubscription);
+            subscribeResult.setDetails(e.toString());
+        }
+        subscribeResult.setCode(subscribeResultCode);
+        try {
+            transport.sendAsync(resultMsg);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }    
+    }
+
+    private void onReceiveUnsubscribeRequest(MessageEnvelope message, ITransport transport) {
+        IConsumer<T> consumer = null;
+        synchronized(consumers) {
+            consumer = consumers.get(message.getBody().getUnsubscribeRequest().getConsumerId());
+        }
+        MessageEnvelope resultMsg = new MessageEnvelope();
+        MessageBody body = new MessageBody();
+        UnsubscribeResult unsubscribeResult = new UnsubscribeResult();
+        UnsubscribeResultCode unsubscribeResultCode = new UnsubscribeResultCode();
+        body.selectUnsubscribeResult(unsubscribeResult);
+        resultMsg.setBody(body);
+        resultMsg.setId(message.getId());            
+        
+        if(consumer!=null) {            
+            try {
+                delConsumer(consumer);
+            }
+            catch (Exception e) {
+                // TODO
+            }
+            unsubscribeResultCode.setValue(UnsubscribeResultCode.EnumType.success);
+        }
+        else {
+            unsubscribeResultCode.setValue(UnsubscribeResultCode.EnumType.subscriptionNotExists);
+        }
+        unsubscribeResult.setCode(unsubscribeResultCode);
+        try {
+            transport.sendAsync(resultMsg);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }    
+    }
+
+    public void onReceive(MessageEnvelope message, ITransport transport) {
+        if(message.getBody().isSubscribeRequestSelected() && message.getBody().getSubscribeRequest().getQueuePath().equalsIgnoreCase(queuePath) ) {
+            onReceiveSubscribeRequest(message,transport);
+        }
+        else
+        if(message.getBody().isUnsubscribeRequestSelected() && message.getBody().getUnsubscribeRequest().getQueuePath().equalsIgnoreCase(queuePath) ) {
+            onReceiveUnsubscribeRequest(message,transport);
+        }
+        
+    }
+
+    public void onConnected(ITransport transport) {
+    }
+
+    public void onDisconnected(ITransport transport) {
+        synchronized(consumers) {
+            Map<String,IConsumer<T> > newConsumers = new HashMap<String,IConsumer<T> >();
+            for(Map.Entry<String,IConsumer<T>  > entry : consumers.entrySet()) {
+                if(entry.getValue() instanceof IRemoteConsumer ) {
+                    IRemoteConsumer<T> consumer = (IRemoteConsumer<T>) entry.getValue();
+                    if(!consumer.getNetworkTransport().equals(transport)) {
+                        newConsumers.put(entry.getValue().getId(),entry.getValue());
+                    }                
+                }
+            }
+            consumers.clear();
+            consumers.putAll(newConsumers);
+        }
+    }
+    
+    public IMessage<T> createMessage(T body) {
+        Message<T> result = new Message<T>(this.messageClass);
+        result.setBody(body);
+        result.setId(UUID.randomUUID().toString());
+        result.setQueuePath(getQueuePath());
+        return result;
+    }
+    
+    public IMessage<T> createMessage() {
+        return createMessage(null);
+    }    
 }
