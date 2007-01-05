@@ -42,6 +42,7 @@ public class ConnectorFactory extends SocketFactory {
     
     public ConnectorFactory( TransportWriterStorage writerStorage, TransportReaderStorage readerStorage, TransportFactory factory) {
         super(writerStorage , readerStorage, factory);
+        connectorThread.setName("BNMQ-Connector");
         connectorThread.start();
     }    
     

@@ -24,6 +24,7 @@ import junit.framework.TestCase;
 import org.bn.mq.net.ITransport;
 import org.bn.mq.net.ITransportListener;
 import org.bn.mq.net.ASN1TransportMessageCoderFactory;
+import org.bn.mq.net.ITransportCallListener;
 import org.bn.mq.net.tcp.TransportFactory;
 import org.bn.mq.protocol.MessageBody;
 import org.bn.mq.protocol.MessageEnvelope;
@@ -95,13 +96,35 @@ public class MessageDecoderThreadTest extends TestCase {
         System.out.println("Finished: testCall");
     }    
 
+    public void testAsyncCall() throws Exception {
+        final String connectionString = "bnmq://localhost:3333";
+        TransportFactory conFactory = new TransportFactory();
+        try {
+            conFactory.setTransportMessageCoderFactory(new ASN1TransportMessageCoderFactory());
+            
+            ITransport server = conFactory.getServerTransport(new URI(connectionString));
+            assertNotNull(server);
+            server.addListener(new CallMessageListener(this));
+            Thread.sleep(500);
+            
+            ITransport client = conFactory.getClientTransport(new URI(connectionString));
+            assertNotNull(client);
+            client.callAsync(createMessage("CallAsync"), new AsyncCallMessageListener());
+            Thread.sleep(500);
+        }
+        finally {
+            conFactory.finalize();
+        }
+        System.out.println("Finished: testCall");
+    }    
+
     private class MessageListener implements ITransportListener {         
         private MessageDecoderThreadTest parent;
         private int counter = 0;
         public MessageListener(MessageDecoderThreadTest parent) {
             this.parent = parent;
         }
-        public void onReceive(MessageEnvelope message, ITransport transport) {
+        public boolean onReceive(MessageEnvelope message, ITransport transport) {
             System.out.println("Message from "+transport+" with Id:"+message.getId()+" has been received successfully");
             try {
                 if(counter<10) {
@@ -114,6 +137,7 @@ public class MessageDecoderThreadTest extends TestCase {
                 System.err.println(e);
                 e.printStackTrace();
             }
+            return true;
         }
 
         public void onConnected(ITransport transport) {
@@ -131,7 +155,7 @@ public class MessageDecoderThreadTest extends TestCase {
         public CallMessageListener(MessageDecoderThreadTest parent) {
             this.parent = parent;
         }
-        public void onReceive(MessageEnvelope message, ITransport transport) {
+        public boolean onReceive(MessageEnvelope message, ITransport transport) {
             System.out.println("Call from "+transport+" with Id:"+message.getId()+" has been received successfully");
             try {
                 MessageEnvelope result = createMessage("result");
@@ -141,6 +165,7 @@ public class MessageDecoderThreadTest extends TestCase {
             catch (Exception e) {
                 System.err.println(e);
             }
+            return true;
         }
 
         public void onConnected(ITransport transport) {
@@ -151,4 +176,16 @@ public class MessageDecoderThreadTest extends TestCase {
             System.out.println("Disconnected from "+transport+". Addr:"+transport.getAddr());
         }
     }    
+    
+    private class AsyncCallMessageListener implements ITransportCallListener {
+
+        public void onCallResult(MessageEnvelope request, 
+                                 MessageEnvelope result) {
+            System.out.println("Call result received: " + result.toString());
+        }
+
+        public void onCallTimeout(MessageEnvelope request) {
+            System.out.println("!! Call result timeout !!. Request: " + request.toString());
+        }
+    }
 }

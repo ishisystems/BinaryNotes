@@ -39,6 +39,7 @@ public class TransportFactory implements ITransportFactory {
     protected Thread readerThread;
     protected TransportReader readerThreadBody;
     protected ITransportMessageCoderFactory messageCoderFactory;
+    protected AsyncCallManager asyncCallMgr = new AsyncCallManager();
     
     public TransportFactory () {
         startAsyncDispatchers();
@@ -50,6 +51,10 @@ public class TransportFactory implements ITransportFactory {
     
     public ITransportMessageCoderFactory getTransportMessageCoderFactory() {
         return messageCoderFactory;
+    }
+    
+    public AsyncCallManager getAsyncCallManager() {
+        return this.asyncCallMgr;
     }
     
     public ITransport getClientTransport(URI addr) throws IOException {        
@@ -67,9 +72,11 @@ public class TransportFactory implements ITransportFactory {
     protected void startAsyncDispatchers() {
         writerThreadBody = new TransportWriter(writerStorage);
         writerThread = new Thread(writerThreadBody);
+        writerThread.setName("BNMQ-TCPWriter");
         writerThread.start();
         readerThreadBody = new TransportReader(readerStorage);
         readerThread = new Thread(readerThreadBody);
+        readerThread.setName("BNMQ-TCPReader");
         readerThread.start();
     }
     
@@ -83,6 +90,7 @@ public class TransportFactory implements ITransportFactory {
         readerStorage.finalize();
         conFactory.finalize();
         acpFactory.finalize();
+        asyncCallMgr.stop();
     }
     
 }

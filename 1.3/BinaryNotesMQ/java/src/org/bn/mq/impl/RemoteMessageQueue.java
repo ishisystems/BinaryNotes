@@ -109,7 +109,7 @@ public class RemoteMessageQueue<T> implements IRemoteMessageQueue<T>, ITransport
         return queuePath;
     }
 
-    public void onReceive(MessageEnvelope message, ITransport transport) {
+    public boolean onReceive(MessageEnvelope message, ITransport transport) {
         if(message.getBody().isMessageUserBodySelected() && message.getBody().getMessageUserBody().getQueuePath().equalsIgnoreCase(this.getQueuePath())) {
             synchronized(consumers) {
                 IConsumer<T> consumer = consumers.get(message.getBody().getMessageUserBody().getConsumerId());
@@ -124,7 +124,9 @@ public class RemoteMessageQueue<T> implements IRemoteMessageQueue<T>, ITransport
                     consumer.onMessage( msg );
                 }
             }
+            return true;
         }
+        return false;
     }
 
     public void onConnected(ITransport transport) {

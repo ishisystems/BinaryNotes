@@ -88,7 +88,7 @@ public class MQConnection implements IMQConnection, ITransportListener {
         transport.close();
     }
 
-    public void onReceive(MessageEnvelope message, ITransport replyTransport) {
+    public boolean onReceive(MessageEnvelope message, ITransport replyTransport) {
         if(message.getBody().isLookupRequestSelected()) {
             MessageEnvelope result = new MessageEnvelope();
             result.setId(message.getId());
@@ -112,7 +112,10 @@ public class MQConnection implements IMQConnection, ITransportListener {
             catch (Exception e) {
                 e.printStackTrace();
             }
+            return true;
         }
+        else
+            return false;
     }
 
     public void onConnected(ITransport transport) {

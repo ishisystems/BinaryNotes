@@ -25,8 +25,12 @@ import java.net.URI;
 
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
+
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
@@ -38,23 +42,28 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.bn.mq.IMessage;
 
 import org.bn.mq.net.ITransport;
+import org.bn.mq.net.ITransportCallListener;
 import org.bn.mq.net.ITransportListener;
 import org.bn.mq.net.ITransportMessageCoder;
 import org.bn.mq.protocol.MessageEnvelope;
 
-public abstract class Transport implements ITransport {
+public abstract class Transport implements ITransport  {
     private URI addr;
     private SocketChannel socket = null;
     protected ReadWriteLock socketLock =  new ReentrantReadWriteLock();
-    protected List<ITransportListener> listeners = new LinkedList<ITransportListener>();
     protected SocketFactory socketFactory;
+    
+    protected List<ITransportListener> listeners = new LinkedList<ITransportListener>();
+    protected ITransportListener unhanledListener = null;
+        
     protected ByteBuffer tempReceiveBuffer = ByteBuffer.allocate(64*1024);
     protected ITransportMessageCoder messageCoder;
+    
     protected final Lock callLock = new ReentrantLock();
     protected final Condition callLockEvent  = callLock.newCondition();        
     protected AtomicReference<String> currentCallMessageId = new AtomicReference<String>("-none-");
     protected MessageEnvelope currentCallMessage = null;
-    
+        
     public Transport(URI addr, SocketFactory factory) {
         setAddr(addr);
         this.socketFactory = factory ;
@@ -191,25 +200,46 @@ public abstract class Transport implements ITransport {
         }
     }
     
-    protected void fireReceivedData(ByteBuffer packet) throws Exception {
-        synchronized(listeners) {
-            MessageEnvelope message = messageCoder.decode(packet);
-            boolean doProcessListeners = true;            
-            if(message!=null) {
-                callLock.lock();
-                if(currentCallMessageId.get().equals(message.getId())) {
-                    currentCallMessage = message;
-                    callLockEvent.signal();
-                    doProcessListeners = false;
-                }
-                callLock.unlock();
+    protected void doProcessReceivedData(MessageEnvelope message, ITransport forTransport) throws Exception {        
+        boolean doProcessListeners = true;            
+        if(message!=null) {
+            callLock.lock();
+            if(currentCallMessageId.get().equals(message.getId())) {
+                currentCallMessage = message;
+                callLockEvent.signal();
+                doProcessListeners = false;
             }
+            callLock.unlock();
             if(doProcessListeners) {
-                for(ITransportListener listener: listeners) {                    
-                    listener.onReceive(message,this);
+                AsyncCallManager mgr = socketFactory.getTransportFactory().getAsyncCallManager();
+                AsyncCallItem callAsyncResult =  mgr.getAsyncCall(message);
+                if(callAsyncResult!=null) {                    
+                    doProcessListeners = false;
+                    if(callAsyncResult.getListener()!=null) {
+                        callAsyncResult.getListener().onCallResult(callAsyncResult.getRequest(),message);
+                    }
                 }
             }
         }
+        synchronized(listeners) {            
+            if(doProcessListeners) {
+                boolean handled = false;
+                for(ITransportListener listener: listeners) {                    
+                    handled = listener.onReceive(message,forTransport);
+                }
+                if(!handled && this.unhanledListener!=null)
+                    this.unhanledListener.onReceive(message,forTransport);
+            }
+        }        
+    }
+    
+    protected void doProcessReceivedData(ByteBuffer packet, ITransport forTransport) throws Exception {
+        MessageEnvelope message = messageCoder.decode(packet);
+        doProcessReceivedData(message,forTransport);
+    }
+    
+    protected void fireReceivedData(ByteBuffer packet) throws Exception {
+        doProcessReceivedData(packet,this);
     }
 
     public synchronized MessageEnvelope call(MessageEnvelope message, int timeout) throws Exception {
@@ -234,6 +264,23 @@ public abstract class Transport implements ITransport {
     public synchronized MessageEnvelope call(MessageEnvelope message) throws Exception {
         return this.call(message,120); // By default timeout is 2 min
     }
+    
+    public void callAsync(MessageEnvelope message, ITransportCallListener listener) throws Exception {
+        this.callAsync(message,listener,120); // By default timeout is 2 min
+    }
+    
+    public void callAsync(MessageEnvelope message, ITransportCallListener listener, int timeout) throws Exception {
+        AsyncCallManager mgr = socketFactory.getTransportFactory().getAsyncCallManager();
+        try {
+            mgr.storeRequest(message,listener,timeout);
+            sendAsync(message);
+        }
+        catch(Exception ex) {
+            mgr.getAsyncCall(message.getId());
+            throw ex;
+        }        
+    }
+    
 
     public URI getAddr() {
         return addr;
@@ -271,6 +318,12 @@ public abstract class Transport implements ITransport {
     
     public void finalize() {
         close();
+    }
+    
+    public void setUnhandledMessagesListener(ITransportListener listener) {
+        synchronized(listeners) {
+            this.unhanledListener = listener;
+        }
     }
     
     

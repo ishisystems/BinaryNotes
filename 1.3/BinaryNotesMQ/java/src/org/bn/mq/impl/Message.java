@@ -119,7 +119,7 @@ public class Message<T> implements IMessage<T> {
     
     public void fillFromEnvelope(MessageEnvelope messageEnvelope) throws Exception {
         byte[] userBody = messageEnvelope.getBody().getMessageUserBody().getUserBody();
-        setBody((T)decoder.decode(new ByteArrayInputStream(userBody),messageClass));
+        setBody(decoder.decode(new ByteArrayInputStream(userBody),messageClass));
         setId(messageEnvelope.getId());
         setSenderId(messageEnvelope.getBody().getMessageUserBody().getSenderId());
     }

@@ -19,19 +19,14 @@
 
 package test.org.bn.mq;
 
-import java.io.IOException;
-
 import java.net.URI;
-
 import junit.framework.TestCase;
-
 import org.bn.mq.IConsumer;
 import org.bn.mq.IMQConnection;
 import org.bn.mq.IMQConnectionListener;
 import org.bn.mq.IMessage;
 import org.bn.mq.IMessageQueue;
 import org.bn.mq.IMessagingBus;
-import org.bn.mq.IQueue;
 import org.bn.mq.IRemoteMessageQueue;
 import org.bn.mq.IRemoteSupplier;
 import org.bn.mq.ISupplier;
@@ -56,19 +51,27 @@ public class MQFactoryTest extends TestCase {
             ISupplier supplier =  serverConnection.createSupplier("TestSupplier");
             queue = supplier.createQueue("myqueues/queue", String.class);
             serverConnection.addListener(new TestMQConnectionListener());
-            Thread.sleep(100);
+            Thread.sleep(200);
             
             clientConnection  = bus.connect(new URI("bnmq://127.0.0.1:3333"));
             clientConnection.addListener(new TestMQConnectionListener());
             IRemoteSupplier remSupplier =  clientConnection.lookup("TestSupplier");
-            IRemoteMessageQueue remQueue = remSupplier.lookupQueue("myqueues/queue", String.class);
+            IRemoteMessageQueue remQueue = remSupplier.lookupQueue("myqueues/queue", String.class);            
             remQueue.addConsumer(new TestConsumer());
             for(int i=0;i<100;i++) {                            
                 IMessage<String> message = queue.createMessage("Hello"+i);
                 queue.sendMessage(message);
             }
             Thread.sleep(100);
-                        
+            
+            try {
+                IRemoteMessageQueue unknownRemQueue = remSupplier.lookupQueue("myqueues/queue1", String.class);
+                unknownRemQueue.addConsumer(new TestConsumer());
+                assertTrue(false);
+            }
+            catch(Exception ex) {
+                assertTrue(ex.toString().contains("unknownQueue"));
+            }
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -85,9 +88,7 @@ public class MQFactoryTest extends TestCase {
                 try {
                     bus.finalize();
                 }
-                catch (Throwable e) {
-                    // TODO
-                }
+                catch (Throwable e) {e = null; }
             }
         }
     }

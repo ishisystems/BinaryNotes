@@ -26,6 +26,8 @@ import java.net.InetSocketAddress;
 import java.net.URI;
 
 import java.net.URISyntaxException;
+
+import java.nio.ByteBuffer;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.LinkedList;
@@ -43,6 +45,7 @@ public class ServerTransport extends Transport {
         super(addr, null);
         setSocket(null);      
         this.acceptorFactory = acceptorFactory;
+        this.socketFactory = acceptorFactory;
     }
     
     public synchronized void startListener() throws IOException {
@@ -108,12 +111,8 @@ public class ServerTransport extends Transport {
         }
     }
     
-    protected void fireReceivedData(MessageEnvelope message, ServerClientTransport client) {
-        synchronized(listeners) {
-            for(ITransportListener listener: listeners) {
-                listener.onReceive(message,client);
-            }
-        }
+    protected void fireReceivedData(MessageEnvelope message, ServerClientTransport client) throws Exception {
+        doProcessReceivedData(message,client);
     }
     
     protected void fireConnectedEvent(ServerClientTransport client) {

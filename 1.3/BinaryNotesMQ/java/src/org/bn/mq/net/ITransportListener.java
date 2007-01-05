@@ -22,7 +22,7 @@ package org.bn.mq.net;
 import org.bn.mq.protocol.MessageEnvelope;
 
 public interface ITransportListener {
-    void onReceive(MessageEnvelope message, ITransport transport);    
+    boolean onReceive(MessageEnvelope message, ITransport transport);
     void onConnected(ITransport transport);
     void onDisconnected(ITransport transport);
 }

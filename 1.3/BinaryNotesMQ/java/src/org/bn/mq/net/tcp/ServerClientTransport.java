@@ -43,7 +43,7 @@ public class ServerClientTransport extends Transport {
                 serverTransport.fireReceivedData(message,this);            
         }
         catch(Exception ex) {
-            System.err.println("Pkt"+packet);
+            System.err.println("Pkt: "+packet);
             System.err.println("Pkt len"+packet.limit());
             throw ex;
         }

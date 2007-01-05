@@ -27,7 +27,12 @@ import org.bn.mq.IRemoteMessageQueue;
 import org.bn.mq.ISupplier;
 import org.bn.mq.net.ITransport;
 import org.bn.mq.net.ITransportListener;
+import org.bn.mq.protocol.MessageBody;
 import org.bn.mq.protocol.MessageEnvelope;
+import org.bn.mq.protocol.SubscribeResult;
+import org.bn.mq.protocol.SubscribeResultCode;
+import org.bn.mq.protocol.UnsubscribeResult;
+import org.bn.mq.protocol.UnsubscribeResultCode;
 
 public class Supplier implements ISupplier, ITransportListener {
     private ITransport transport;
@@ -37,6 +42,7 @@ public class Supplier implements ISupplier, ITransportListener {
     public Supplier(String supplierId, ITransport transport) {
         this.transport = transport;
         this.supplierId = supplierId;
+        this.transport.setUnhandledMessagesListener(this);
     }
 
     public <T> IRemoteMessageQueue<T> lookupQueue(String queuePath, Class<T> messageClass) {
@@ -65,8 +71,44 @@ public class Supplier implements ISupplier, ITransportListener {
         return supplierId;
     }
 
-    public void onReceive(MessageEnvelope message, ITransport transport) {
+    public boolean onReceive(MessageEnvelope message, ITransport transport) {
+        if(message.getBody().isSubscribeRequestSelected()) {
+            MessageEnvelope resultMsg = new MessageEnvelope();
+            MessageBody body = new MessageBody();
+            SubscribeResult subscribeResult = new SubscribeResult();
+            SubscribeResultCode subscribeResultCode = new SubscribeResultCode();
+            body.selectSubscribeResult(subscribeResult);
+            resultMsg.setBody(body);
+            resultMsg.setId(message.getId());
+            subscribeResultCode.setValue(SubscribeResultCode.EnumType.unknownQueue);
+            subscribeResult.setCode(subscribeResultCode);
+            try {
+                transport.sendAsync(resultMsg);
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        else
+        if(message.getBody().isUnsubscribeRequestSelected()) {
+            MessageEnvelope resultMsg = new MessageEnvelope();
+            MessageBody body = new MessageBody();
+            UnsubscribeResult unsubscribeResult = new UnsubscribeResult();
+            UnsubscribeResultCode unsubscribeResultCode = new UnsubscribeResultCode();
+            body.selectUnsubscribeResult(unsubscribeResult);
+            resultMsg.setBody(body);
+            resultMsg.setId(message.getId());
+            unsubscribeResultCode.setValue(UnsubscribeResultCode.EnumType.unknownQueue);
+            unsubscribeResult.setCode(unsubscribeResultCode);
+            try {
+                transport.sendAsync(resultMsg);
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         
+        return true;
     }
 
     public void onConnected(ITransport transport) {}

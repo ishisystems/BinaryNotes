@@ -35,11 +35,14 @@ public interface ITransport {
     void sendAsync(MessageEnvelope message) throws Exception;
     MessageEnvelope call(MessageEnvelope message) throws Exception;
     MessageEnvelope call(MessageEnvelope message, int timeout) throws Exception;
+    void callAsync(MessageEnvelope message, ITransportCallListener listener) throws Exception;
+    void callAsync(MessageEnvelope message, ITransportCallListener listener, int timeout) throws Exception;
     
     URI getAddr();
     
     void addListener(ITransportListener listener);
-    void delListener(ITransportListener listener);    
+    void delListener(ITransportListener listener);
+    void setUnhandledMessagesListener(ITransportListener listener);
     
     boolean isAvailable();
     void close();

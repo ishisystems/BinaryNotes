@@ -69,6 +69,7 @@ public class AcceptorFactory extends SocketFactory {
       //      acceptorsExecutor.execute(new Acceptor(acceptorStorage));
        acceptorThreadBody = new Acceptor(acceptorStorage);
        acceptorThread = new Thread(acceptorThreadBody);
+       acceptorThread.setName("BNMQ-Acceptor");
        acceptorThread.start();
     }
     

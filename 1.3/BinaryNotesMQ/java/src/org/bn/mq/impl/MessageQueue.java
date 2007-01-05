@@ -63,6 +63,7 @@ public class MessageQueue<T> implements IMessageQueue<T>, Runnable, ITransportLi
         this.queuePath = queuePath;
         this.transport.addListener(this);
         this.messageClass = messageClass;
+        senderThread.setName("BNMessageQueue-"+queuePath);
         start();
     }
     
@@ -183,22 +184,23 @@ public class MessageQueue<T> implements IMessageQueue<T>, Runnable, ITransportLi
         while(!stop.get());
     }
 
-    public void stop() {
-        stop.set(true);
-        awaitMessageLock.lock();
-        awaitMessageEvent.signal();
-        awaitMessageLock.unlock();
-        
+    public synchronized void stop() {
+        stop.set(true);        
         try {
-        
-            senderThread.join();
+            if(senderThread.isAlive()) {
+                awaitMessageLock.lock();
+                awaitMessageEvent.signal();
+                awaitMessageLock.unlock();
+                this.transport.delListener(this);
+                senderThread.join();
+            }
         }
         catch (InterruptedException e) {
              e.printStackTrace();
         }
     }
 
-    public void start() {
+    public synchronized void start() {
         stop.set(false);
         if(!senderThread.isAlive()) {
             senderThread.start();
@@ -206,8 +208,7 @@ public class MessageQueue<T> implements IMessageQueue<T>, Runnable, ITransportLi
         
     }
     
-    protected void dispose() {
-        this.transport.delListener(this);
+    protected void dispose() {        
         stop();
     }
     
@@ -272,15 +273,17 @@ public class MessageQueue<T> implements IMessageQueue<T>, Runnable, ITransportLi
         }    
     }
 
-    public void onReceive(MessageEnvelope message, ITransport transport) {
+    public boolean onReceive(MessageEnvelope message, ITransport transport) {
         if(message.getBody().isSubscribeRequestSelected() && message.getBody().getSubscribeRequest().getQueuePath().equalsIgnoreCase(queuePath) ) {
             onReceiveSubscribeRequest(message,transport);
+            return true;
         }
         else
         if(message.getBody().isUnsubscribeRequestSelected() && message.getBody().getUnsubscribeRequest().getQueuePath().equalsIgnoreCase(queuePath) ) {
             onReceiveUnsubscribeRequest(message,transport);
+            return true;
         }
-        
+        return false;
     }
 
     public void onConnected(ITransport transport) {
