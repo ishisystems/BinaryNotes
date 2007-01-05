@@ -66,7 +66,7 @@ public class AsyncCallManager implements NotificationListener {
             asyncCalls.put(request.getId(),item);
         }
         Date tm = new Date();
-        tm.setTime(tm.getTime()+timeout);
+        tm.setTime(tm.getTime()+timeout*1000);
         item.setTimerId(asyncCallTimer.addNotification("AsyncCall","RequestId",item.getRequest().getId(),tm));
     }
     

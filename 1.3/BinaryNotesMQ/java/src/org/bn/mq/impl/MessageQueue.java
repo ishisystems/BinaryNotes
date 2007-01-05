@@ -29,6 +29,7 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.bn.mq.ICallAsyncListener;
 import org.bn.mq.IConsumer;
 import org.bn.mq.IPersistenceQueueStorage;
 import org.bn.mq.IRemoteConsumer;
@@ -86,24 +87,7 @@ public class MessageQueue<T> implements IMessageQueue<T>, Runnable, ITransportLi
         awaitMessageLock.unlock();
     }
     
-    public T call(T args) throws Exception {
-        Message<T> envelope =  new Message<T>(this.messageClass);
-        envelope.setId(queuePath +"/call-"+callCurId.getAndIncrement());
-        envelope.setBody(args);
-        MessageEnvelope argsEnv = envelope.createEnvelope();
-        MessageEnvelope result = null;
-        argsEnv.getBody().getMessageUserBody().setQueuePath(this.getQueuePath());
-        synchronized(consumers) {
-            for(Map.Entry<String, IConsumer<T> > entry: consumers.entrySet()) {                                
-                argsEnv.getBody().getMessageUserBody().setConsumerId(entry.getValue().getId());
-                result = transport.call(argsEnv);
-            }
-        }
-        envelope.fillFromEnvelope(result);
-        return envelope.getBody();        
-    }    
-
-    public T call(T args, String consumerId) throws Exception {
+    public T call(T args, String consumerId, int timeout) throws Exception {
         Message<T> envelope =  new Message<T>(this.messageClass);
         envelope.setId(queuePath +"/call-"+callCurId.getAndIncrement());
         envelope.setBody(args);
@@ -111,10 +95,56 @@ public class MessageQueue<T> implements IMessageQueue<T>, Runnable, ITransportLi
         MessageEnvelope result = null;
         argsEnv.getBody().getMessageUserBody().setQueuePath(this.getQueuePath());
         argsEnv.getBody().getMessageUserBody().setConsumerId(consumerId);
-        result = transport.call(argsEnv);
-        envelope.fillFromEnvelope(result);
-        return envelope.getBody();        
+        IConsumer<T> consumer = null;
+        synchronized(consumers) {
+            if(!consumers.containsKey(consumerId)) {
+                throw new Exception("Consumer with id:"+consumerId+" not found!");
+            }
+            else {
+                 consumer = consumers.get(consumerId);
+            }
+        }
+        if(consumer instanceof IRemoteConsumer) {
+            ITransport consTransport = ((IRemoteConsumer<T>)consumer).getNetworkTransport();
+            result = consTransport.call(argsEnv,timeout);
+            envelope.fillFromEnvelope(result);
+            return envelope.getBody();
+        }
+        else
+            throw new Exception("Call enabled only for remote consumer !");
     }    
+
+    public T call(T args, String consumerId) throws Exception {
+        return call(args, consumerId, 120);
+    }
+    
+    public void callAsync(T args, String consumerId, ICallAsyncListener<T> listener, int timeout) throws Exception {
+        Message<T> envelope =  new Message<T>(this.messageClass);
+        envelope.setId(queuePath +"/call-"+callCurId.getAndIncrement());
+        envelope.setBody(args);
+        MessageEnvelope argsEnv = envelope.createEnvelope();
+        argsEnv.getBody().getMessageUserBody().setQueuePath(this.getQueuePath());
+        argsEnv.getBody().getMessageUserBody().setConsumerId(consumerId);
+        IConsumer<T> consumer = null;
+        synchronized(consumers) {
+            if(!consumers.containsKey(consumerId)) {
+                throw new Exception("Consumer with id:"+consumerId+" not found!");
+            }
+            else {
+                 consumer = consumers.get(consumerId);
+            }
+        }
+        if(consumer instanceof IRemoteConsumer) {
+            ITransport consTransport = ((IRemoteConsumer<T>)consumer).getNetworkTransport();
+            consTransport.callAsync(argsEnv, new ProxyCallAsyncListener<T>(this, listener,messageClass),timeout );
+        }
+        else
+            throw new Exception("Call enabled only for remote consumer !");
+    }    
+
+    public void callAsync(T args, String consumerId, ICallAsyncListener<T> listener) throws Exception {
+        callAsync(args, consumerId, listener,120);
+    }
 
     public void setPersistenseStorage(IPersistenceQueueStorage<T> storage) {
     }

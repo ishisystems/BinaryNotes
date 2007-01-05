@@ -21,6 +21,8 @@ package test.org.bn.mq;
 
 import java.net.URI;
 import junit.framework.TestCase;
+
+import org.bn.mq.ICallAsyncListener;
 import org.bn.mq.IConsumer;
 import org.bn.mq.IMQConnection;
 import org.bn.mq.IMQConnectionListener;
@@ -51,7 +53,7 @@ public class MQFactoryTest extends TestCase {
             ISupplier supplier =  serverConnection.createSupplier("TestSupplier");
             queue = supplier.createQueue("myqueues/queue", String.class);
             serverConnection.addListener(new TestMQConnectionListener());
-            Thread.sleep(200);
+            Thread.sleep(500);
             
             clientConnection  = bus.connect(new URI("bnmq://127.0.0.1:3333"));
             clientConnection.addListener(new TestMQConnectionListener());
@@ -93,6 +95,53 @@ public class MQFactoryTest extends TestCase {
         }
     }
     
+    public void testRPCStyle() throws Exception {
+        IMessagingBus bus = MQFactory.getInstance().createMessagingBus();
+        IMQConnection serverConnection  = null;
+        IMQConnection clientConnection  = null;
+        IMessageQueue<String> queue = null;
+        try {
+            serverConnection  = bus.create(new URI("bnmq://127.0.0.1:3333"));
+            ISupplier supplier =  serverConnection.createSupplier("TestSupplier");
+            queue = supplier.createQueue("myqueues/queue", String.class);
+            serverConnection.addListener(new TestMQConnectionListener());
+            Thread.sleep(1500);
+            
+            clientConnection  = bus.connect(new URI("bnmq://127.0.0.1:3333"));
+            clientConnection.addListener(new TestMQConnectionListener());
+            IRemoteSupplier remSupplier =  clientConnection.lookup("TestSupplier");
+            IRemoteMessageQueue remQueue = remSupplier.lookupQueue("myqueues/queue", String.class);
+            remQueue.addConsumer(new TestRPCConsumer());
+            Thread.sleep(500);
+            String result = queue.call("Hello from Server","RPC-Consumer",40);
+            assertEquals(result,"Hello from RPC Consumer");
+            
+            queue.callAsync("Hello from Server","RPC-Consumer", new TestRPCAsyncCallBack(),20);
+            assertEquals(result,"Hello from RPC Consumer");
+            
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+        finally {
+            if(queue!=null) {
+                queue.stop();
+            }
+            if(clientConnection!=null)
+                clientConnection.close();        
+            if(serverConnection!=null)
+                serverConnection.close();
+            if(bus!=null) {
+                try {
+                    bus.finalize();
+                }
+                catch (Throwable e) {e = null; }
+            }
+        }
+    }
+    
+    
     protected class TestMQConnectionListener implements IMQConnectionListener {
 
         public void onDisconnected(IMQConnection connection, 
@@ -107,13 +156,35 @@ public class MQFactoryTest extends TestCase {
     }
 
     protected class TestConsumer implements IConsumer<String> {
-        
         public String getId() {
             return this.toString();
         }
-
-        public void onMessage(IMessage<String> message) {
+        public String onMessage(IMessage<String> message) {
             System.out.println("Received message: "+message.getBody());
+            return null;
         }
     }
+    
+    protected class TestRPCConsumer implements IConsumer<String> {
+        
+        public String getId() {
+            return "RPC-Consumer";
+        }
+        public String onMessage(IMessage<String> message) {
+            System.out.println("Received Call: "+message.getBody());
+            return "Hello from RPC Consumer";
+        }
+    }
+    
+    protected class TestRPCAsyncCallBack implements ICallAsyncListener<String> {
+
+        public void onCallResult(IMessageQueue queue, String request,String result) {
+            System.out.println("Received call result: "+result);
+        }
+
+        public void onCallTimeout(IMessageQueue queue, String request) {
+            System.out.println("!!! Received call timeout for request: "+request);
+        }
+    }
+
 }

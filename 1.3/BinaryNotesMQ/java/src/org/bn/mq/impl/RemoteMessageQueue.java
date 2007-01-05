@@ -121,7 +121,23 @@ public class RemoteMessageQueue<T> implements IRemoteMessageQueue<T>, ITransport
                     catch (Exception e) {
                         e.printStackTrace();
                     }
-                    consumer.onMessage( msg );
+                    
+                    T result = consumer.onMessage( msg );
+                    if(result!=null) {
+                        Message<T> resultMsg = new Message<T>(this.messageClass);
+                        resultMsg.setId(msg.getId());
+                        resultMsg.setBody(result);
+                        resultMsg.setQueuePath(msg.getQueuePath());                        
+                        MessageEnvelope resultMsgEnv;
+                        try {
+                            resultMsgEnv = resultMsg.createEnvelope();
+                            resultMsgEnv.getBody().getMessageUserBody().setConsumerId(consumer.getId());
+                            transport.sendAsync(resultMsgEnv);
+                        }
+                        catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
             }
             return true;

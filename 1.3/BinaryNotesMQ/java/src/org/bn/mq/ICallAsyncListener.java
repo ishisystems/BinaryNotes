@@ -16,11 +16,12 @@
  * With any your questions welcome to my e-mail 
  * or blog at http://abdulla-a.blogspot.com.
  */
-package org.bn.mq.net;
+
+package org.bn.mq;
 
 import org.bn.mq.protocol.MessageEnvelope;
 
-public interface ITransportCallListener {
-    void onCallResult(MessageEnvelope request, MessageEnvelope result);
-    void onCallTimeout(MessageEnvelope request);
+public interface ICallAsyncListener<T> {
+    void onCallResult(IMessageQueue queue, T request, T result);
+    void onCallTimeout(IMessageQueue queue, T request);
 }

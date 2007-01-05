@@ -200,27 +200,35 @@ public abstract class Transport implements ITransport  {
         }
     }
     
-    protected void doProcessReceivedData(MessageEnvelope message, ITransport forTransport) throws Exception {        
-        boolean doProcessListeners = true;            
-        if(message!=null) {
-            callLock.lock();
+    protected boolean processReceivedCallMessage(MessageEnvelope message) {
+        boolean result = false;
+        callLock.lock();
+        if(message!=null) {            
             if(currentCallMessageId.get().equals(message.getId())) {
                 currentCallMessage = message;
                 callLockEvent.signal();
-                doProcessListeners = false;
-            }
-            callLock.unlock();
-            if(doProcessListeners) {
-                AsyncCallManager mgr = socketFactory.getTransportFactory().getAsyncCallManager();
-                AsyncCallItem callAsyncResult =  mgr.getAsyncCall(message);
-                if(callAsyncResult!=null) {                    
-                    doProcessListeners = false;
-                    if(callAsyncResult.getListener()!=null) {
-                        callAsyncResult.getListener().onCallResult(callAsyncResult.getRequest(),message);
-                    }
+                result = true;
+            }            
+        }
+        callLock.unlock();
+        
+        if(!result) {
+            AsyncCallManager mgr = socketFactory.getTransportFactory().getAsyncCallManager();
+            AsyncCallItem callAsyncResult =  mgr.getAsyncCall(message);
+            if(callAsyncResult!=null) {                    
+                result = false;
+                if(callAsyncResult.getListener()!=null) {
+                    callAsyncResult.getListener().onCallResult(callAsyncResult.getRequest(),message);
                 }
             }
         }
+        
+        return result;
+    }
+    
+    protected void doProcessReceivedData(MessageEnvelope message, Transport forTransport) throws Exception {        
+        boolean doProcessListeners = !forTransport.processReceivedCallMessage(message);
+
         synchronized(listeners) {            
             if(doProcessListeners) {
                 boolean handled = false;
@@ -233,7 +241,7 @@ public abstract class Transport implements ITransport  {
         }        
     }
     
-    protected void doProcessReceivedData(ByteBuffer packet, ITransport forTransport) throws Exception {
+    protected void doProcessReceivedData(ByteBuffer packet, Transport forTransport) throws Exception {
         MessageEnvelope message = messageCoder.decode(packet);
         doProcessReceivedData(message,forTransport);
     }
@@ -264,11 +272,7 @@ public abstract class Transport implements ITransport  {
     public synchronized MessageEnvelope call(MessageEnvelope message) throws Exception {
         return this.call(message,120); // By default timeout is 2 min
     }
-    
-    public void callAsync(MessageEnvelope message, ITransportCallListener listener) throws Exception {
-        this.callAsync(message,listener,120); // By default timeout is 2 min
-    }
-    
+       
     public void callAsync(MessageEnvelope message, ITransportCallListener listener, int timeout) throws Exception {
         AsyncCallManager mgr = socketFactory.getTransportFactory().getAsyncCallManager();
         try {
@@ -281,6 +285,9 @@ public abstract class Transport implements ITransport  {
         }        
     }
     
+    public void callAsync(MessageEnvelope message, ITransportCallListener listener) throws Exception {
+        this.callAsync(message,listener,120); // By default timeout is 2 min
+    }
 
     public URI getAddr() {
         return addr;

@@ -122,6 +122,7 @@ public class Message<T> implements IMessage<T> {
         setBody(decoder.decode(new ByteArrayInputStream(userBody),messageClass));
         setId(messageEnvelope.getId());
         setSenderId(messageEnvelope.getBody().getMessageUserBody().getSenderId());
+        setQueuePath(messageEnvelope.getBody().getMessageUserBody().getQueuePath());
     }
 
     public MessageEnvelope createEnvelope() throws Exception {
@@ -135,7 +136,7 @@ public class Message<T> implements IMessage<T> {
         userBody.setQueuePath(getQueuePath());
         messageBody.selectMessageUserBody(userBody);        
         result.setBody(messageBody);
-        result.setId(this.getId());        
+        result.setId(this.getId());
         
         return result;
     }

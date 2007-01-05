@@ -41,7 +41,7 @@ public class RemoteConsumer<T> implements IRemoteConsumer<T> {
         return this.consumerId;
     }
 
-    public void onMessage(IMessage<T> message) {
+    public T onMessage(IMessage<T> message) {
         Message<T> msgImpl = new Message<T>(message, this.messageClass);
         try {
             MessageEnvelope envelope = msgImpl.createEnvelope();
@@ -51,6 +51,7 @@ public class RemoteConsumer<T> implements IRemoteConsumer<T> {
         catch (Exception e) {
             e.printStackTrace();
         }
+        return null;
     }
 
     public ITransport getNetworkTransport() {

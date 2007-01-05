@@ -26,8 +26,10 @@ public interface IMessageQueue<T> extends IRemoteMessageQueue<T> {
     IMessage<T> createMessage();
     
     void sendMessage(IMessage<T> message) throws Exception;    
-    T call(T args) throws Exception;
     T call(T args, String consumerId) throws Exception;
+    T call(T args, String consumerId, int timeout) throws Exception;
+    void callAsync(T args, String consumerId, ICallAsyncListener<T> listener) throws Exception;
+    void callAsync(T args, String consumerId, ICallAsyncListener<T> listener, int timeout) throws Exception;
     
     void setPersistenseStorage(IPersistenceQueueStorage<T> storage);
     IPersistenceQueueStorage<T> getPersistenceStorage();
