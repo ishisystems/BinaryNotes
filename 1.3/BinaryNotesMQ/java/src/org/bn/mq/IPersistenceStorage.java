@@ -18,6 +18,6 @@
  */
 package org.bn.mq;
 
-public interface IPersistenceStorage {
-    <T> IPersistenceQueueStorage createQueueStorage(IMessageQueue<T> messageQueue);
+public interface IPersistenceStorage<T> {
+    IPersistenceQueueStorage<T> createQueueStorage(String queueStorageName);
 }

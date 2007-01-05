@@ -142,7 +142,7 @@ public class Message<T> implements IMessage<T> {
     }
     
     private static IDecoder decoder = null;
-    private static IEncoder encoder = null;
+    private static IEncoder<Object> encoder = null;
     static {
         try {
             decoder = CoderFactory.getInstance().newDecoder("PER/U");

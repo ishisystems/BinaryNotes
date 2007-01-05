@@ -23,6 +23,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.bn.mq.IMessageQueue;
+import org.bn.mq.IPersistenceQueueStorage;
+import org.bn.mq.IQueue;
 import org.bn.mq.IRemoteMessageQueue;
 import org.bn.mq.ISupplier;
 import org.bn.mq.net.ITransport;
@@ -37,7 +39,7 @@ import org.bn.mq.protocol.UnsubscribeResultCode;
 public class Supplier implements ISupplier, ITransportListener {
     private ITransport transport;
     private String supplierId;
-    private Map<String,MessageQueue> queues = new HashMap<String,MessageQueue>();
+    private Map<String,MessageQueue > queues = new HashMap<String,MessageQueue >();
     
     public Supplier(String supplierId, ITransport transport) {
         this.transport = transport;
@@ -52,13 +54,29 @@ public class Supplier implements ISupplier, ITransportListener {
         }
         return queue;
     }
-
-    public <T> IMessageQueue<T> createQueue(String queuePath, Class<T> messageClass) {
+    
+    public <T> IMessageQueue<T> createQueue(String queuePath, Class<T> messageClass, IQueue<T> queueImpl, IPersistenceQueueStorage<T> storage) {
         MessageQueue<T> queue = new MessageQueue<T>(queuePath,transport, messageClass);
+        queue.setQueue(queueImpl);
+        queue.setPersistenseStorage(storage);
         synchronized(queues) {
             queues.put(queuePath,queue);
         }
         return queue;
+    }    
+
+    public <T> IMessageQueue<T> createQueue(String queuePath, Class<T> messageClass, IQueue<T> queueImpl) {
+        NullStorage<T> nullStorage =  new NullStorage<T>();
+        return createQueue(queuePath, messageClass, queueImpl, nullStorage.createQueueStorage(queuePath) );
+    }
+
+    public <T> IMessageQueue<T> createQueue(String queuePath, Class<T> messageClass) {
+        NullStorage<T> nullStorage =  new NullStorage<T>();
+        return createQueue(queuePath,messageClass,new Queue<T>(), nullStorage.createQueueStorage(queuePath) );
+    }
+    
+    public <T> IMessageQueue<T> createQueue(String queuePath, Class<T> messageClass, IPersistenceQueueStorage<T> storage) {
+        return createQueue(queuePath,messageClass,new Queue<T>(), storage);
     }
 
     public <T> void removeQueue(IMessageQueue<T> queue) {

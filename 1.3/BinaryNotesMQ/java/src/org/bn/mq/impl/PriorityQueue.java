@@ -20,6 +20,7 @@ package org.bn.mq.impl;
 
 import java.util.Comparator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 import org.bn.mq.IMessage;
@@ -38,6 +39,13 @@ public class PriorityQueue<T> implements IQueue<T> {
             priorityQueue.add(message);
         }
     }
+    
+    public void push(List<IMessage<T>> messages) {
+        synchronized(priorityQueue) {
+            priorityQueue.addAll(messages);
+        }
+    }
+    
 
     public IMessage<T> getNext() {
         synchronized(priorityQueue) {

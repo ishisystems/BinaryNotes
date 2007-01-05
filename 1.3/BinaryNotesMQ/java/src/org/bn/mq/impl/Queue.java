@@ -21,6 +21,8 @@ package org.bn.mq.impl;
 
 import java.util.LinkedList;
 
+import java.util.List;
+
 import org.bn.mq.IMessage;
 import org.bn.mq.IQueue;
 import org.bn.mq.protocol.MessageEnvelope;
@@ -33,6 +35,13 @@ public class Queue<T> implements IQueue<T> {
             simpleQueue.add(message);
         }
     }
+    
+    public void push(List<IMessage<T>> messages) {
+        synchronized(simpleQueue) {
+            simpleQueue.addAll(messages);
+        }
+    }
+    
 
     public IMessage<T> getNext() {
         synchronized(simpleQueue) {

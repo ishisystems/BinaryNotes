@@ -20,9 +20,12 @@ package org.bn.mq;
 
 import java.util.List;
 
+import org.bn.mq.impl.InMemoryQueueStorage;
+
 public interface IPersistenceQueueStorage<T> {
-    List< IMessage <T> > getMessagesToSend(IRemoteConsumer<T> consumer);
-    void persistenceSubscribe(IRemoteConsumer<T> consumer);
-    void persistenceUnsubscribe(IRemoteConsumer<T> consumer);
+    List< IMessage <T> > getMessagesToSend(IConsumer<T> consumer);
+    void persistenceSubscribe(IConsumer<T> consumer);
+    void persistenceUnsubscribe(IConsumer<T> consumer);
     void registerPersistenceMessage(IMessage<T> message);
+    void removeDeliveredMessage(IConsumer<T> consumer, IMessage<T> message);
 }

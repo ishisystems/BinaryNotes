@@ -20,6 +20,7 @@
 package org.bn.mq.impl;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -58,6 +59,7 @@ public class MessageQueue<T> implements IMessageQueue<T>, Runnable, ITransportLi
     protected final Condition awaitMessageEvent  = awaitMessageLock.newCondition();
     protected Map<String,IConsumer<T> > consumers = new HashMap<String,IConsumer<T> >();
     protected Class<T> messageClass;
+    protected IPersistenceQueueStorage<T> persistStorage;
         
     public MessageQueue(String queuePath, ITransport transport, Class<T> messageClass) {
         this.transport = transport;
@@ -81,6 +83,8 @@ public class MessageQueue<T> implements IMessageQueue<T>, Runnable, ITransportLi
     public void sendMessage(IMessage<T> message) {
         awaitMessageLock.lock();
         synchronized(queue) {
+            if(message.isMandatory())
+                persistStorage.registerPersistenceMessage(message);
             queue.push(message);
         }        
         awaitMessageEvent.signal();
@@ -147,10 +151,11 @@ public class MessageQueue<T> implements IMessageQueue<T>, Runnable, ITransportLi
     }
 
     public void setPersistenseStorage(IPersistenceQueueStorage<T> storage) {
+        this.persistStorage = storage;
     }
 
     public IPersistenceQueueStorage<T> getPersistenceStorage() {
-        return null;
+        return this.persistStorage;
     }
 
     public void addConsumer(IConsumer<T> consumer) throws Exception {
@@ -162,12 +167,14 @@ public class MessageQueue<T> implements IMessageQueue<T>, Runnable, ITransportLi
     }
 
     public void addConsumer(IConsumer<T> consumer, Boolean persistence, String filter) throws Exception {
-        synchronized(consumers) {            
+        synchronized(consumers) {
             if(consumers.containsKey(consumer.getId())) {
                 throw new Exception("Consumer with id:"+consumer.getId()+" is already subscription!");
             }
             else {
                 consumers.put(consumer.getId(),consumer);
+                if(persistence)
+                    persistStorage.persistenceSubscribe(consumer);
             }
         }
     }
@@ -179,6 +186,7 @@ public class MessageQueue<T> implements IMessageQueue<T>, Runnable, ITransportLi
             }
             else {
                 consumers.remove(consumer.getId());
+                persistStorage.persistenceUnsubscribe(consumer);                
             }        
         }
     }
@@ -206,6 +214,9 @@ public class MessageQueue<T> implements IMessageQueue<T>, Runnable, ITransportLi
                 synchronized(consumers) {
                     for(Map.Entry<String, IConsumer<T> > entry: consumers.entrySet()) {
                         entry.getValue().onMessage(message);
+                        if(message.isMandatory()) {
+                            persistStorage.removeDeliveredMessage(entry.getValue(),message);
+                        }
                     }
                 }
             }
@@ -255,6 +266,15 @@ public class MessageQueue<T> implements IMessageQueue<T>, Runnable, ITransportLi
         try {                
             addConsumer(remoteConsumer,message.getBody().getSubscribeRequest().getPersistence(),message.getBody().getSubscribeRequest().getFilter());
             subscribeResultCode.setValue(SubscribeResultCode.EnumType.success);
+            if(message.getBody().getSubscribeRequest().getPersistence()) {
+                List<IMessage<T>> messages =  persistStorage.getMessagesToSend(remoteConsumer);
+                awaitMessageLock.lock();
+                synchronized(queue) {
+                    queue.push(messages);
+                }        
+                awaitMessageEvent.signal();
+                awaitMessageLock.unlock();
+            }
         }
         catch (Exception e) {
             subscribeResultCode.setValue(SubscribeResultCode.EnumType.alreadySubscription);

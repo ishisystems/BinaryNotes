@@ -18,10 +18,20 @@
  */
 package org.bn.mq;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.bn.mq.impl.InMemoryStorage;
 import org.bn.mq.impl.MessagingBus;
+import org.bn.mq.impl.NullStorage;
+import org.bn.mq.impl.PriorityQueue;
+import org.bn.mq.impl.Queue;
 
 public class MQFactory {
     private static MQFactory instance = new MQFactory();
+        
+    protected MQFactory() {
+    }    
     
     public static MQFactory getInstance() {
         return instance;
@@ -29,5 +39,33 @@ public class MQFactory {
     
     public IMessagingBus createMessagingBus() {
         return new MessagingBus();
+    }
+    
+    public <T> IQueue<T> createQueue(Class<T> messageClass) {
+        return createQueue("simple",messageClass);
+    }
+    
+    public <T> IQueue<T> createQueue(String algorithm, Class<T> messageClass) {
+        if(algorithm == null || (algorithm!=null && algorithm.equalsIgnoreCase("simple"))) {
+            return new Queue<T>();
+        }
+        else
+        if(algorithm.equalsIgnoreCase("priority")) {
+            return new PriorityQueue<T>();
+        }
+        else
+            return null;
+    }
+    
+    public <T> IPersistenceStorage<T> createPersistenceStorage(String storageType, Class<T> messageClass) {
+        if(storageType == null || (storageType!=null && storageType.length() == 0)) {
+            return new NullStorage<T>();
+        }
+        else
+        if(storageType.equalsIgnoreCase("InMemory")) {
+            return new InMemoryStorage<T>();
+        }
+        else
+            return null;
     }
 }

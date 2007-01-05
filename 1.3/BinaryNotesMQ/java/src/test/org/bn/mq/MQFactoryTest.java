@@ -29,6 +29,7 @@ import org.bn.mq.IMQConnectionListener;
 import org.bn.mq.IMessage;
 import org.bn.mq.IMessageQueue;
 import org.bn.mq.IMessagingBus;
+import org.bn.mq.IPersistenceStorage;
 import org.bn.mq.IRemoteMessageQueue;
 import org.bn.mq.IRemoteSupplier;
 import org.bn.mq.ISupplier;
@@ -52,19 +53,18 @@ public class MQFactoryTest extends TestCase {
             serverConnection  = bus.create(new URI("bnmq://127.0.0.1:3333"));
             ISupplier supplier =  serverConnection.createSupplier("TestSupplier");
             queue = supplier.createQueue("myqueues/queue", String.class);
-            serverConnection.addListener(new TestMQConnectionListener());
-            Thread.sleep(500);
+            serverConnection.addListener(new TestMQConnectionListener());            
             
             clientConnection  = bus.connect(new URI("bnmq://127.0.0.1:3333"));
             clientConnection.addListener(new TestMQConnectionListener());
             IRemoteSupplier remSupplier =  clientConnection.lookup("TestSupplier");
-            IRemoteMessageQueue remQueue = remSupplier.lookupQueue("myqueues/queue", String.class);            
+            IRemoteMessageQueue<String> remQueue = remSupplier.lookupQueue("myqueues/queue", String.class);            
             remQueue.addConsumer(new TestConsumer());
             for(int i=0;i<100;i++) {                            
                 IMessage<String> message = queue.createMessage("Hello"+i);
                 queue.sendMessage(message);
             }
-            Thread.sleep(100);
+            Thread.sleep(1000);
             
             try {
                 IRemoteMessageQueue unknownRemQueue = remSupplier.lookupQueue("myqueues/queue1", String.class);
@@ -105,19 +105,19 @@ public class MQFactoryTest extends TestCase {
             ISupplier supplier =  serverConnection.createSupplier("TestSupplier");
             queue = supplier.createQueue("myqueues/queue", String.class);
             serverConnection.addListener(new TestMQConnectionListener());
-            Thread.sleep(1500);
             
             clientConnection  = bus.connect(new URI("bnmq://127.0.0.1:3333"));
             clientConnection.addListener(new TestMQConnectionListener());
             IRemoteSupplier remSupplier =  clientConnection.lookup("TestSupplier");
-            IRemoteMessageQueue remQueue = remSupplier.lookupQueue("myqueues/queue", String.class);
+            IRemoteMessageQueue<String> remQueue = remSupplier.lookupQueue("myqueues/queue", String.class);
             remQueue.addConsumer(new TestRPCConsumer());
-            Thread.sleep(500);
-            String result = queue.call("Hello from Server","RPC-Consumer",40);
+
+            String result = queue.call("Hello from Server","RPC-Consumer",20);
             assertEquals(result,"Hello from RPC Consumer");
             
-            queue.callAsync("Hello from Server","RPC-Consumer", new TestRPCAsyncCallBack(),20);
+            queue.callAsync("Hello from Server 2","RPC-Consumer", new TestRPCAsyncCallBack(),20);
             assertEquals(result,"Hello from RPC Consumer");
+            Thread.sleep(2000);
             
         }
         catch (Exception e) {
@@ -139,6 +139,56 @@ public class MQFactoryTest extends TestCase {
                 catch (Throwable e) {e = null; }
             }
         }
+    }
+
+    public void testPersistence() throws Exception {
+        IMessagingBus bus = MQFactory.getInstance().createMessagingBus();        
+        IPersistenceStorage<String> persistStorage =  MQFactory.getInstance().createPersistenceStorage("InMemory",String.class);
+        IMQConnection serverConnection  = null;
+        IMQConnection clientConnection  = null;
+        IMessageQueue<String> queue = null;
+        try {
+            serverConnection  = bus.create(new URI("bnmq://127.0.0.1:3333"));
+            ISupplier supplier =  serverConnection.createSupplier("TestSupplier");            
+            queue = supplier.createQueue("myqueues/queue", String.class,persistStorage.createQueueStorage("myqueues/queue"));
+            serverConnection.addListener(new TestMQConnectionListener());
+            
+            clientConnection  = bus.connect(new URI("bnmq://127.0.0.1:3333"));
+            clientConnection.addListener(new TestMQConnectionListener());
+            IRemoteSupplier remSupplier =  clientConnection.lookup("TestSupplier");
+            IRemoteMessageQueue<String> remQueue = remSupplier.lookupQueue("myqueues/queue", String.class);
+            remQueue.addConsumer(new TestPersistenceConsumer(),true);
+            clientConnection.close();
+            clientConnection = null;            
+            for(int i=0;i<10;i++) {
+                IMessage<String> mandatoryMessage = queue.createMessage("Mandatory message "+i);
+                mandatoryMessage.setMandatory(true);
+                queue.sendMessage(mandatoryMessage);
+            }            
+            clientConnection  = bus.connect(new URI("bnmq://127.0.0.1:3333"));
+            clientConnection.addListener(new TestMQConnectionListener());
+            remSupplier =  clientConnection.lookup("TestSupplier");
+            remQueue = remSupplier.lookupQueue("myqueues/queue", String.class);
+            remQueue.addConsumer(new TestPersistenceConsumer(),true);
+            Thread.sleep(2000);
+            //clientConnection.close();            
+            
+        }
+        finally {
+            if(queue!=null) {
+                queue.stop();
+            }
+            if(clientConnection!=null)
+                clientConnection.close();        
+            if(serverConnection!=null)
+                serverConnection.close();
+            if(bus!=null) {
+                try {
+                    bus.finalize();
+                }
+                catch (Throwable e) {e = null; }
+            }
+        }        
     }
     
     
@@ -174,7 +224,7 @@ public class MQFactoryTest extends TestCase {
             System.out.println("Received Call: "+message.getBody());
             return "Hello from RPC Consumer";
         }
-    }
+    }    
     
     protected class TestRPCAsyncCallBack implements ICallAsyncListener<String> {
 
@@ -184,6 +234,17 @@ public class MQFactoryTest extends TestCase {
 
         public void onCallTimeout(IMessageQueue queue, String request) {
             System.out.println("!!! Received call timeout for request: "+request);
+        }
+    }
+    
+    protected class TestPersistenceConsumer implements IConsumer<String> {
+        
+        public String getId() {
+            return "Persistence-Consumer";
+        }
+        public String onMessage(IMessage<String> message) {
+            System.out.println("Persistence consumer received : "+message.getBody());
+            return null;
         }
     }
 

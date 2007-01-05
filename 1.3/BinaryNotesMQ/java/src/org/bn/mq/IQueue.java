@@ -19,7 +19,10 @@
 
 package org.bn.mq;
 
+import java.util.List;
+
 public interface IQueue<T> {
     void push(IMessage<T> message);
+    void push(List<IMessage<T>> messages);
     IMessage<T> getNext();
 }
