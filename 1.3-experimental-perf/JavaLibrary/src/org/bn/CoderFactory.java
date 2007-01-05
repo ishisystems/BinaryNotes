@@ -114,6 +114,8 @@ import org.bn.coders.BERDecoder;
 import org.bn.coders.BEREncoder;
 import org.bn.coders.DERDecoder;
 import org.bn.coders.DEREncoder;
+import org.bn.coders.FastBERDecoder;
+import org.bn.coders.FastBEREncoder;
 import org.bn.coders.PERAlignedDecoder;
 import org.bn.coders.PERAlignedEncoder;
 import org.bn.coders.PERUnalignedDecoder;
@@ -152,6 +154,10 @@ public class CoderFactory {
             return new BEREncoder<T>();
         }
         else
+        if(encodingSchema.equalsIgnoreCase("FastBER")) {
+            return new FastBEREncoder<T>();
+        }
+        else
         if(encodingSchema.equalsIgnoreCase("PER")||encodingSchema.equalsIgnoreCase("PER/Aligned")||encodingSchema.equalsIgnoreCase("PER/A")) {
             return new PERAlignedEncoder<T>();
         }        
@@ -185,6 +191,10 @@ public class CoderFactory {
     public IDecoder newDecoder(String encodingSchema) throws Exception {
         if(encodingSchema.equalsIgnoreCase("BER")) {
             return new BERDecoder();
+        }
+        else
+        if(encodingSchema.equalsIgnoreCase("FastBER")) {
+            return new FastBERDecoder();
         }
         else
         if(encodingSchema.equalsIgnoreCase("PER")||encodingSchema.equalsIgnoreCase("PER/Aligned")||encodingSchema.equalsIgnoreCase("PER/A")) {

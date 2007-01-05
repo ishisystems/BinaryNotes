@@ -42,7 +42,9 @@
             <xsl:call-template name="header"/>
 
     @ASN1Sequence ( name = "<xsl:value-of select='$sequenceName'/>", isSet = <xsl:choose><xsl:when test="isSequence = 'false'">true</xsl:when><xsl:otherwise>false</xsl:otherwise></xsl:choose> )
-    public class <xsl:value-of select="$sequenceName"/> {
+    public class <xsl:value-of select="$sequenceName"/>
+       extends CodeableSequence
+    {
             <xsl:call-template name="elements"/>            
             <xsl:call-template name="sequenceFunctions"/>
                     
@@ -52,6 +54,13 @@
             <xsl:call-template name="elementDefaults"/>
         }
             
+        private static final SequenceDescriptor SEQUENCE_DESCRIPTOR =
+           new <xsl:value-of select='$sequenceName'/>Descriptor();
+
+        public SequenceDescriptor getSequenceDescriptor()
+        {
+           return SEQUENCE_DESCRIPTOR;
+        }
     }
             <xsl:call-template name="footer"/>
         </xsltc:output>        

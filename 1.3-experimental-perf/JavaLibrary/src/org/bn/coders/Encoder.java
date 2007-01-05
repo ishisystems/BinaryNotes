@@ -195,6 +195,8 @@ public abstract class Encoder<T> implements IEncoder<T> {
         int resultSize = 0;
         if(field.isSynthetic())
             return resultSize;
+        if(java.lang.reflect.Modifier.isStatic(field.getModifiers()))
+           return resultSize;
         if(field.isAnnotationPresent(ASN1Null.class)) {
             return encodeNull(object,stream,elementInfo);
         }
@@ -225,7 +227,7 @@ public abstract class Encoder<T> implements IEncoder<T> {
                                                                        InvocationTargetException {
         ElementInfo info = null;                                                               
         for ( Field field : object.getClass().getDeclaredFields() ) {
-            if(!field.isSynthetic()) {
+            if(!field.isSynthetic() && !java.lang.reflect.Modifier.isStatic(field.getModifiers())) {
                 if(isSelectedChoiceItem(field,object)) {
                     //selectedField = field;
                     //Object invokeObjResult = invokeGetterMethodForField(field,object);

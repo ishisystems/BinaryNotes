@@ -40,6 +40,7 @@ import org.bn.*;
 import org.bn.annotations.*;
 import org.bn.annotations.constraints.*;
 import org.bn.coders.*;
+import org.bn.metadata.*;
 import org.bn.types.*;
 
 

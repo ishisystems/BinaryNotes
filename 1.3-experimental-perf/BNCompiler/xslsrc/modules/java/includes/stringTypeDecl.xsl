@@ -28,7 +28,7 @@
     <xsl:output method="text" encoding="UTF-8" indent="no"/>
 
     <xsl:template name="stringTypeDecl">
-        stringType = <xsl:choose>
+        <xsl:choose>
             <xsl:when test="stringtype = 'PrintableString'"> UniversalTag.PrintableString </xsl:when>
             <xsl:when test="stringtype = 'NumericString'"> UniversalTag.NumericString </xsl:when>
             <xsl:when test="stringtype = 'TeletexString'"> UniversalTag.TeletexString </xsl:when>
@@ -39,7 +39,7 @@
             <xsl:when test="stringtype = 'GeneralString'"> UniversalTag.GeneralString </xsl:when>
             <xsl:when test="stringtype = 'UniversalString'"> UniversalTag.UniversalString </xsl:when>
             <xsl:when test="stringtype = 'BMPString'"> UniversalTag.BMPString </xsl:when>
-	    <xsl:when test="stringtype = 'UTF8String'">UniversalTag.UTF8String </xsl:when>
+	         <xsl:when test="stringtype = 'UTF8String'">UniversalTag.UTF8String </xsl:when>
             <xsl:when test="stringtype = 'GeneralizedTime'">UniversalTag.GeneralizedTime </xsl:when>
             <xsl:when test="stringtype = 'UTCTime'">UniversalTag.UTCTime </xsl:when>
             <xsl:otherwise> UniversalTag.UnspecifiedString </xsl:otherwise>

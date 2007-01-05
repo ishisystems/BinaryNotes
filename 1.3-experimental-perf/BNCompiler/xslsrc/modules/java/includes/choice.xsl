@@ -40,9 +40,19 @@
             <xsl:call-template name="header"/>
 
     @ASN1Choice ( name = "<xsl:value-of select='$choiceName'/>" )
-    public class <xsl:value-of select="$choiceName"/> {
+    public class <xsl:value-of select="$choiceName"/>
+       extends CodeableChoice
+    {
             <xsl:call-template name="elements"/>
             <xsl:call-template name="choiceFunctions"/>
+
+        private static final ChoiceDescriptor CHOICE_DESCRIPTOR =
+           new <xsl:value-of select='$choiceName'/>Descriptor();
+
+        public ChoiceDescriptor getChoiceDescriptor()
+        {
+           return CHOICE_DESCRIPTOR;
+        }
     }
             <xsl:call-template name="footer"/>
         </xsltc:output>        

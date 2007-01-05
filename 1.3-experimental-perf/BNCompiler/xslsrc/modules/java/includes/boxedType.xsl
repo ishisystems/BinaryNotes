@@ -35,8 +35,9 @@
             <xsl:call-template name="header"/>
 
     @ASN1BoxedType ( name = "<xsl:value-of select='$boxedName'/>" )
-    public class <xsl:value-of select="$boxedName"/> {
-                
+    public class <xsl:value-of select="$boxedName"/>
+       extends CodeableBoxedType
+    {
         <xsl:call-template name="typeDecl"/>                 
         <xsl:call-template name="elementDecl"/>
         <xsl:for-each select="constraint">
@@ -69,6 +70,26 @@
         </xsl:otherwise>
         </xsl:choose>
             
+
+        private static final BoxedTypeDescriptor BOXED_TYPE_DESCRIPTOR;
+
+        static
+        {
+           try
+           {
+              BOXED_TYPE_DESCRIPTOR =
+                 new <xsl:value-of select='$boxedName'/>Descriptor();
+           }
+           catch (Exception exception)
+           {
+              throw new RuntimeException(exception);
+           }
+        };
+
+        public BoxedTypeDescriptor getBoxedTypeDescriptor()
+        {
+           return BOXED_TYPE_DESCRIPTOR;
+        }
     }
             <xsl:call-template name="footer"/>
         </xsltc:output>        

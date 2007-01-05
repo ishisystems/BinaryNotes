@@ -29,7 +29,7 @@
     <xsl:output method="text" encoding="UTF-8" indent="no"/>
 
     <xsl:template name="stringDecl"><xsl:for-each select="typeReference">
-    @ASN1String( name = "<xsl:value-of select='name'/>", <xsl:call-template name="stringTypeDecl"/>, isUCS = <xsl:value-of select='isUCSType'/> )
+    @ASN1String( name = "<xsl:value-of select='name'/>", stringType = <xsl:call-template name="stringTypeDecl"/>, isUCS = <xsl:value-of select='isUCSType'/> )
     </xsl:for-each>
     </xsl:template>
 </xsl:stylesheet>

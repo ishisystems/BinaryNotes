@@ -41,7 +41,9 @@
     @ASN1Enum (
         name = "<xsl:value-of select='$enumName'/>"
     )
-    public class <xsl:value-of select='$enumName'/> {        
+    public class <xsl:value-of select='$enumName'/> 
+       extends CodeableEnum
+    {
         public enum EnumType {
             <xsl:call-template name="enumItems"/>
         }
@@ -63,6 +65,14 @@
         
         public void setIntegerForm(Integer value) {
             integerForm = value;
+        }
+
+        private static final EnumDescriptor ENUM_DESCRIPTOR =
+           new <xsl:value-of select='$enumName'/>Descriptor();
+
+        public EnumDescriptor getEnumDescriptor()
+        {
+           return ENUM_DESCRIPTOR;
         }
     }
             <xsl:call-template name="footer"/>

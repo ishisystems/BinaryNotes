@@ -36,7 +36,27 @@
             <xsl:call-template name="header"/>
 
     <xsl:call-template name="nullDecl"/>
-    public class <xsl:value-of select="$boxedName"/> {                    
+    public class <xsl:value-of select="$boxedName"/>
+       extends CodeableBoxedType
+    {
+            private static final BoxedTypeDescriptor BOXED_TYPE_DESCRIPTOR;
+            static
+            {
+               try
+               {
+                  BOXED_TYPE_DESCRIPTOR =
+                     new <xsl:value-of select='$boxedName'/>Descriptor();
+               }
+               catch (Exception exception)
+               {
+                   throw new RuntimeException(exception);
+               }
+            };
+
+            public BoxedTypeDescriptor getBoxedTypeDescriptor()
+            {
+               return BOXED_TYPE_DESCRIPTOR;
+            }
     }
             <xsl:call-template name="footer"/>
         </xsltc:output>        

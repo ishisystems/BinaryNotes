@@ -41,6 +41,20 @@
     <xsl:import href="includes/boxedNullType.xsl"/>
     <xsl:import href="includes/packageInfo.xsl"/>
        
+    <xsl:import href="includes/boxedBitStringMetadata.xsl"/>
+    <xsl:import href="includes/boxedBooleanMetadata.xsl"/>
+    <xsl:import href="includes/boxedIntegerMetadata.xsl"/>    
+    <xsl:import href="includes/boxedMetadata.xsl"/>
+    <xsl:import href="includes/boxedNullMetadata.xsl"/>
+    <xsl:import href="includes/boxedOctetStringMetadata.xsl"/>
+    <xsl:import href="includes/boxedRealMetadata.xsl"/>
+    <xsl:import href="includes/boxedSequenceOfMetadata.xsl"/>
+    <xsl:import href="includes/boxedStringMetadata.xsl"/>
+    <xsl:import href="includes/choiceMetadata.xsl"/>
+    <xsl:import href="includes/enumMetadata.xsl"/>
+    <xsl:import href="includes/packageInfo.xsl"/>
+    <xsl:import href="includes/sequenceMetadata.xsl"/>
+
     <xsl:output method="text" encoding="UTF-8" indent="no"/>
     
     <xsl:variable name="outputDirectory"><xsl:value-of select="//outputDirectory"/></xsl:variable>
@@ -59,71 +73,79 @@
     
     <xsl:template match="//module/asnTypes/choices">
         <xsl:call-template name="choice"/>
+        <xsl:call-template name="choiceMetadata"/>
         <xsl:apply-templates/>
     </xsl:template>
 
     <xsl:template match="//module/asnTypes/sequenceSets">
         <xsl:call-template name="sequence"/>
+        <xsl:call-template name="sequenceMetadata"/>
         <xsl:apply-templates/>
     </xsl:template>
 
     <xsl:template match="//module/asnTypes/enums">
         <xsl:call-template name="enum"/>
+        <xsl:call-template name="enumMetadata"/>
         <xsl:apply-templates/>
     </xsl:template>
 
     <xsl:template match="//module/asnTypes/sequenceSetsOf">
         <xsl:call-template name="boxedSequenceOfType"/>
+        <xsl:call-template name="boxedSequenceOfMetadata"/>
         <xsl:apply-templates/>
     </xsl:template>
 
     <xsl:template match="//module/asnTypes/characterStrings">
         <xsl:call-template name="boxedStringType"/>
+        <xsl:call-template name="boxedStringMetadata"/>
         <xsl:apply-templates/>
     </xsl:template>
 
     <xsl:template match="//module/asnTypes/octetStrings">
         <xsl:call-template name="boxedOctetStringType"/>
+        <xsl:call-template name="boxedOctetStringMetadata"/>
         <xsl:apply-templates/>
     </xsl:template>
 
-    <xsl:template match="//module/asnTypes/octetStrings">
-        <xsl:call-template name="boxedOctetStringType"/>
-        <xsl:apply-templates/>
-    </xsl:template>
-    
     <xsl:template match="//module/asnTypes/booleans">
         <xsl:call-template name="boxedBooleanType"/>
+        <xsl:call-template name="boxedBooleanMetadata"/>
         <xsl:apply-templates/>
     </xsl:template>
 
     <xsl:template match="//module/asnTypes/bitStrings">
         <xsl:call-template name="boxedBitStringType"/>
+        <xsl:call-template name="boxedBitStringMetadata"/>
         <xsl:apply-templates/>
     </xsl:template>
 
     <xsl:template match="//module/asnTypes/integers">
         <xsl:call-template name="boxedIntegerType"/>
+        <xsl:call-template name="boxedIntegerMetadata"/>
         <xsl:apply-templates/>
     </xsl:template>
 
     <xsl:template match="//module/asnTypes/reals">
         <xsl:call-template name="boxedRealType"/>
+        <xsl:call-template name="boxedRealMetadata"/>
         <xsl:apply-templates/>
     </xsl:template>
 
     <xsl:template match="//module/asnTypes/taggeds">
         <xsl:call-template name="boxedType"/>
+        <xsl:call-template name="boxedMetadata"/>
         <xsl:apply-templates/>
     </xsl:template>
 
     <xsl:template match="//module/asnTypes/defineds">
         <xsl:call-template name="boxedType"/>
+        <xsl:call-template name="boxedMetadata"/>
         <xsl:apply-templates/>
     </xsl:template>
 
     <xsl:template match="//module/asnTypes/nulls">
         <xsl:call-template name="boxedNullType"/>
+        <xsl:call-template name="boxedNullMetadata"/>
         <xsl:apply-templates/>
     </xsl:template>
     
