@@ -1,0 +1,1 @@
+bncompiler.cmd -m java -o output -ns test.org.bn.test_asn -f test.asn
