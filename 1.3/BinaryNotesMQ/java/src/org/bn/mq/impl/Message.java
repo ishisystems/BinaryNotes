@@ -23,6 +23,8 @@ import java.io.ByteArrayInputStream;
 
 import java.io.ByteArrayOutputStream;
 
+import java.io.Serializable;
+
 import java.util.Date;
 
 import org.bn.CoderFactory;
@@ -34,7 +36,7 @@ import org.bn.mq.protocol.MessageBody;
 import org.bn.mq.protocol.MessageEnvelope;
 import org.bn.mq.protocol.MessageUserBody;
 
-public class Message<T> implements IMessage<T> {
+public class Message<T> implements IMessage<T>, Serializable {
     
     private String id;
     private T body;

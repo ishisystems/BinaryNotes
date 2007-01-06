@@ -19,16 +19,25 @@
 
 package org.bn.mq.impl;
 
-import org.bn.mq.IMessageQueue;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import org.bn.mq.IPersistenceQueueStorage;
 import org.bn.mq.IPersistenceStorage;
 
-public class NullStorage<T> implements IPersistenceStorage<T> {
-    public NullStorage(String storageName) {
+public class SQLStorage<T> implements IPersistenceStorage<T> {    
+    private String storageName;
+    
+    public SQLStorage(String storageName) {
+        this.storageName = storageName;
     }
     
-    private NullQueueStorage<T> nullQueueStorage = new NullQueueStorage<T>();
-    public IPersistenceQueueStorage<T> createQueueStorage(String queueStorageName) {
-        return nullQueueStorage;
+    protected Connection getConnection() throws Exception {
+        return DriverManager.getConnection(storageName);
     }
+    
+    public IPersistenceQueueStorage<T> createQueueStorage(String queueStorageName) throws Exception {
+        Connection con = getConnection();        
+        con.setAutoCommit(true);
+        return new SQLQueueStorage<T>(con,queueStorageName);
+    }        
 }

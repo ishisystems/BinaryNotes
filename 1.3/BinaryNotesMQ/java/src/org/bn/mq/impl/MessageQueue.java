@@ -80,7 +80,7 @@ public class MessageQueue<T> implements IMessageQueue<T>, Runnable, ITransportLi
         }
     }
 
-    public void sendMessage(IMessage<T> message) {
+    public void sendMessage(IMessage<T> message) throws Exception {
         awaitMessageLock.lock();
         synchronized(queue) {
             if(message.isMandatory())
@@ -215,7 +215,12 @@ public class MessageQueue<T> implements IMessageQueue<T>, Runnable, ITransportLi
                     for(Map.Entry<String, IConsumer<T> > entry: consumers.entrySet()) {
                         entry.getValue().onMessage(message);
                         if(message.isMandatory()) {
-                            persistStorage.removeDeliveredMessage(entry.getValue(),message);
+                            try {
+                                persistStorage.removeDeliveredMessage(entry.getValue(),message);
+                            }
+                            catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
                 }

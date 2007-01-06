@@ -19,6 +19,8 @@
 
 package org.bn.mq;
 
+import java.io.Serializable;
+
 public interface IMessageQueue<T> extends IRemoteMessageQueue<T> {
     IQueue<T> getQueue();
     void setQueue(IQueue<T> queue);

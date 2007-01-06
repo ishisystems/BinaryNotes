@@ -29,6 +29,7 @@ import org.bn.mq.IMQConnectionListener;
 import org.bn.mq.IMessage;
 import org.bn.mq.IMessageQueue;
 import org.bn.mq.IMessagingBus;
+import org.bn.mq.IPersistenceQueueStorage;
 import org.bn.mq.IPersistenceStorage;
 import org.bn.mq.IRemoteMessageQueue;
 import org.bn.mq.IRemoteSupplier;
@@ -142,15 +143,24 @@ public class MQFactoryTest extends TestCase {
     }
 
     public void testPersistence() throws Exception {
-        IMessagingBus bus = MQFactory.getInstance().createMessagingBus();        
-        IPersistenceStorage<String> persistStorage =  MQFactory.getInstance().createPersistenceStorage("InMemory",String.class);
+        IMessagingBus bus = MQFactory.getInstance().createMessagingBus();
+        
+        // For InMemoryDB (Not HSQLDB - more simple & fastest!)
+        IPersistenceStorage<String> persistStorage =  MQFactory.getInstance().createPersistenceStorage("InMemory","MyMemoryStorage",String.class);
+        
+        // For HSQLDB
+        //Class.forName("org.hsqldb.jdbcDriver");
+        //IPersistenceStorage<String> persistStorage =  MQFactory.getInstance().createPersistenceStorage("SQL","jdbc:hsqldb:mem:aname",String.class);
+        
         IMQConnection serverConnection  = null;
         IMQConnection clientConnection  = null;
         IMessageQueue<String> queue = null;
+        IPersistenceQueueStorage<String> queueStorage = null;
         try {
             serverConnection  = bus.create(new URI("bnmq://127.0.0.1:3333"));
             ISupplier supplier =  serverConnection.createSupplier("TestSupplier");            
-            queue = supplier.createQueue("myqueues/queue", String.class,persistStorage.createQueueStorage("myqueues/queue"));
+            queueStorage = persistStorage.createQueueStorage("MyQueue");
+            queue = supplier.createQueue("myqueues/queue", String.class,queueStorage);
             serverConnection.addListener(new TestMQConnectionListener());
             
             clientConnection  = bus.connect(new URI("bnmq://127.0.0.1:3333"));
@@ -159,12 +169,14 @@ public class MQFactoryTest extends TestCase {
             IRemoteMessageQueue<String> remQueue = remSupplier.lookupQueue("myqueues/queue", String.class);
             remQueue.addConsumer(new TestPersistenceConsumer(),true);
             clientConnection.close();
-            clientConnection = null;            
+            clientConnection = null; 
+            
             for(int i=0;i<10;i++) {
                 IMessage<String> mandatoryMessage = queue.createMessage("Mandatory message "+i);
                 mandatoryMessage.setMandatory(true);
                 queue.sendMessage(mandatoryMessage);
-            }            
+            }
+            
             clientConnection  = bus.connect(new URI("bnmq://127.0.0.1:3333"));
             clientConnection.addListener(new TestMQConnectionListener());
             remSupplier =  clientConnection.lookup("TestSupplier");
@@ -177,6 +189,9 @@ public class MQFactoryTest extends TestCase {
         finally {
             if(queue!=null) {
                 queue.stop();
+            }
+            if(queueStorage!=null) {
+                queueStorage.close();
             }
             if(clientConnection!=null)
                 clientConnection.close();        

@@ -18,14 +18,17 @@
  */
 package org.bn.mq;
 
+import java.io.Serializable;
+
 import java.util.List;
 
 import org.bn.mq.impl.InMemoryQueueStorage;
 
 public interface IPersistenceQueueStorage<T> {
     List< IMessage <T> > getMessagesToSend(IConsumer<T> consumer);
-    void persistenceSubscribe(IConsumer<T> consumer);
-    void persistenceUnsubscribe(IConsumer<T> consumer);
-    void registerPersistenceMessage(IMessage<T> message);
-    void removeDeliveredMessage(IConsumer<T> consumer, IMessage<T> message);
+    void persistenceSubscribe(IConsumer<T> consumer) throws Exception;
+    void persistenceUnsubscribe(IConsumer<T> consumer) throws Exception;
+    void registerPersistenceMessage(IMessage<T> message) throws Exception;
+    void removeDeliveredMessage(IConsumer<T> consumer, IMessage<T> message) throws Exception ;
+    void close();
 }

@@ -66,12 +66,12 @@ public class Supplier implements ISupplier, ITransportListener {
     }    
 
     public <T> IMessageQueue<T> createQueue(String queuePath, Class<T> messageClass, IQueue<T> queueImpl) {
-        NullStorage<T> nullStorage =  new NullStorage<T>();
+        NullStorage<T> nullStorage =  new NullStorage<T>(null);
         return createQueue(queuePath, messageClass, queueImpl, nullStorage.createQueueStorage(queuePath) );
     }
 
     public <T> IMessageQueue<T> createQueue(String queuePath, Class<T> messageClass) {
-        NullStorage<T> nullStorage =  new NullStorage<T>();
+        NullStorage<T> nullStorage =  new NullStorage<T>(null);
         return createQueue(queuePath,messageClass,new Queue<T>(), nullStorage.createQueueStorage(queuePath) );
     }
     

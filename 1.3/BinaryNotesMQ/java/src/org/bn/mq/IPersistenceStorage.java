@@ -18,6 +18,8 @@
  */
 package org.bn.mq;
 
+import java.io.Serializable;
+
 public interface IPersistenceStorage<T> {
-    IPersistenceQueueStorage<T> createQueueStorage(String queueStorageName);
+    IPersistenceQueueStorage<T> createQueueStorage(String queueStorageName) throws Exception;
 }

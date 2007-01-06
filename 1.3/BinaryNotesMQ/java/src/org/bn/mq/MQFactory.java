@@ -26,6 +26,7 @@ import org.bn.mq.impl.MessagingBus;
 import org.bn.mq.impl.NullStorage;
 import org.bn.mq.impl.PriorityQueue;
 import org.bn.mq.impl.Queue;
+import org.bn.mq.impl.SQLStorage;
 
 public class MQFactory {
     private static MQFactory instance = new MQFactory();
@@ -57,13 +58,17 @@ public class MQFactory {
             return null;
     }
     
-    public <T> IPersistenceStorage<T> createPersistenceStorage(String storageType, Class<T> messageClass) {
+    public <T> IPersistenceStorage<T> createPersistenceStorage(String storageType, String storageName, Class<T> messageClass) {
         if(storageType == null || (storageType!=null && storageType.length() == 0)) {
-            return new NullStorage<T>();
+            return new NullStorage<T>(storageName);
         }
         else
         if(storageType.equalsIgnoreCase("InMemory")) {
-            return new InMemoryStorage<T>();
+            return new InMemoryStorage<T>(storageName);
+        }
+        else
+        if(storageType.equalsIgnoreCase("SQL")) {
+            return new SQLStorage<T>(storageName);
         }
         else
             return null;
