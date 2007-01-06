@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BinaryNotes", "BinaryNotes.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{8D701C15-B34F-4F9D-B70A-8188BCF13232}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BinaryNotesMQ", "..\BinaryNotesMQ\.net\BinaryNotesMQ\BinaryNotesMQ.csproj", "{0EEB930C-D643-4258-9912-7D546F6AC031}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,6 +21,10 @@ Global
 		{8D701C15-B34F-4F9D-B70A-8188BCF13232}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8D701C15-B34F-4F9D-B70A-8188BCF13232}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8D701C15-B34F-4F9D-B70A-8188BCF13232}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0EEB930C-D643-4258-9912-7D546F6AC031}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0EEB930C-D643-4258-9912-7D546F6AC031}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0EEB930C-D643-4258-9912-7D546F6AC031}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0EEB930C-D643-4258-9912-7D546F6AC031}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
