@@ -29,7 +29,7 @@ import org.bn.mq.IMessage;
 import org.bn.mq.IRemoteMessageQueue;
 import org.bn.mq.IRemoteSupplier;
 import org.bn.mq.net.ITransport;
-import org.bn.mq.net.ITransportListener;
+import org.bn.mq.net.ITransportConnectionListener;
 import org.bn.mq.net.ITransportReader;
 import org.bn.mq.protocol.LookupRequest;
 import org.bn.mq.protocol.LookupResultCode;

@@ -43,7 +43,7 @@ import org.bn.mq.IMessage;
 
 import org.bn.mq.net.ITransport;
 import org.bn.mq.net.ITransportCallListener;
-import org.bn.mq.net.ITransportListener;
+import org.bn.mq.net.ITransportConnectionListener;
 import org.bn.mq.net.ITransportMessageCoder;
 import org.bn.mq.net.ITransportReader;
 import org.bn.mq.protocol.MessageEnvelope;
@@ -54,7 +54,7 @@ public abstract class Transport implements ITransport  {
     protected ReadWriteLock socketLock =  new ReentrantReadWriteLock();
     protected SocketFactory socketFactory;
     
-    protected List<ITransportListener> listeners = new LinkedList<ITransportListener>();
+    protected List<ITransportConnectionListener> listeners = new LinkedList<ITransportConnectionListener>();
     protected ReadWriteLock listenersLock =  new ReentrantReadWriteLock();
 
     protected List<ITransportReader> readers = new LinkedList<ITransportReader>();
@@ -190,14 +190,14 @@ public abstract class Transport implements ITransport  {
         send(ByteBuffer.wrap(buffer));
     }
     
-    public void addListener(ITransportListener listener) {
+    public void addConnectionListener(ITransportConnectionListener listener) {
         //synchronized(listeners) {
         listenersLock.writeLock().lock();
         listeners.add(listener);
         listenersLock.writeLock().unlock();
     }
 
-    public void delListener(ITransportListener listener) {
+    public void delConnectionListener(ITransportConnectionListener listener) {
         listenersLock.writeLock().lock();
         listeners.remove(listener);
         listenersLock.writeLock().unlock();
@@ -207,7 +207,7 @@ public abstract class Transport implements ITransport  {
         listenersLock.readLock().lock();
         try {
             //synchronized(listeners) {
-            for(ITransportListener listener: listeners) {                    
+            for(ITransportConnectionListener listener: listeners) {                    
                 listener.onConnected(this);
             }            
         }
@@ -219,7 +219,7 @@ public abstract class Transport implements ITransport  {
     public void fireDisconnectedEvent() {
         listenersLock.readLock().lock();
         try {
-            for(ITransportListener listener: listeners) {                    
+            for(ITransportConnectionListener listener: listeners) {                    
                 listener.onDisconnected(this);
             }            
         }

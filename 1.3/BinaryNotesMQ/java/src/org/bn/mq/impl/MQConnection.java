@@ -31,7 +31,7 @@ import org.bn.mq.IMQConnectionListener;
 import org.bn.mq.IRemoteSupplier;
 import org.bn.mq.ISupplier;
 import org.bn.mq.net.ITransport;
-import org.bn.mq.net.ITransportListener;
+import org.bn.mq.net.ITransportConnectionListener;
 import org.bn.mq.net.ITransportReader;
 import org.bn.mq.protocol.LookupRequest;
 import org.bn.mq.protocol.LookupResult;
@@ -39,7 +39,7 @@ import org.bn.mq.protocol.LookupResultCode;
 import org.bn.mq.protocol.MessageBody;
 import org.bn.mq.protocol.MessageEnvelope;
 
-public class MQConnection implements IMQConnection, ITransportListener, ITransportReader {
+public class MQConnection implements IMQConnection, ITransportConnectionListener, ITransportReader {
     protected ITransport transport;
     protected final int callTimeout = 30;
     protected Map<String,ISupplier> suppliers = new HashMap<String,ISupplier>();
@@ -47,7 +47,7 @@ public class MQConnection implements IMQConnection, ITransportListener, ITranspo
     
     public MQConnection(ITransport transport) {
         this.transport = transport;
-        transport.addListener(this);
+        transport.addConnectionListener(this);
         transport.addReader(this);
     }
 
@@ -86,7 +86,7 @@ public class MQConnection implements IMQConnection, ITransportListener, ITranspo
     }
 
     public void close() {
-        transport.delListener(this);
+        transport.delConnectionListener(this);
         transport.delReader(this);
         transport.close();
     }

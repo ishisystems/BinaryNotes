@@ -38,7 +38,7 @@ import org.bn.mq.IMessage;
 import org.bn.mq.IMessageQueue;
 import org.bn.mq.IQueue;
 import org.bn.mq.net.ITransport;
-import org.bn.mq.net.ITransportListener;
+import org.bn.mq.net.ITransportConnectionListener;
 import org.bn.mq.net.ITransportReader;
 import org.bn.mq.net.tcp.TransportPacket;
 import org.bn.mq.protocol.MessageBody;
@@ -49,7 +49,7 @@ import org.bn.mq.protocol.SubscribeResultCode;
 import org.bn.mq.protocol.UnsubscribeResult;
 import org.bn.mq.protocol.UnsubscribeResultCode;
 
-public class MessageQueue<T> implements IMessageQueue<T>, Runnable, ITransportListener, ITransportReader {
+public class MessageQueue<T> implements IMessageQueue<T>, Runnable, ITransportConnectionListener, ITransportReader {
     private ITransport transport;
     private String queuePath;
     private IQueue<T> queue = new Queue<T>();
@@ -65,7 +65,7 @@ public class MessageQueue<T> implements IMessageQueue<T>, Runnable, ITransportLi
     public MessageQueue(String queuePath, ITransport transport, Class<T> messageClass) {
         this.transport = transport;
         this.queuePath = queuePath;
-        this.transport.addListener(this);
+        this.transport.addConnectionListener(this);
         this.transport.addReader(this);
         this.messageClass = messageClass;
         senderThread.setName("BNMessageQueue-"+queuePath);
@@ -241,7 +241,7 @@ public class MessageQueue<T> implements IMessageQueue<T>, Runnable, ITransportLi
                 awaitMessageLock.lock();
                 awaitMessageEvent.signal();
                 awaitMessageLock.unlock();
-                this.transport.delListener(this);
+                this.transport.delConnectionListener(this);
                 this.transport.delReader(this);
                 senderThread.join();
             }

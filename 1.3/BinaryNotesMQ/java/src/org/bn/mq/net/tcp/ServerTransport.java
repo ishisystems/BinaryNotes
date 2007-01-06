@@ -33,7 +33,7 @@ import java.nio.channels.SocketChannel;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.bn.mq.net.ITransportListener;
+import org.bn.mq.net.ITransportConnectionListener;
 import org.bn.mq.protocol.MessageEnvelope;
 
 public class ServerTransport extends Transport {
@@ -118,7 +118,7 @@ public class ServerTransport extends Transport {
         //synchronized(listeners) {
         listenersLock.readLock().lock();
         try {
-            for(ITransportListener listener: listeners) {                    
+            for(ITransportConnectionListener listener: listeners) {                    
                 listener.onConnected(client);
             }            
         }
@@ -131,7 +131,7 @@ public class ServerTransport extends Transport {
     protected void fireDisconnectedEvent(ServerClientTransport client) {
         listenersLock.readLock().lock();
         try {
-            for(ITransportListener listener: listeners) {                    
+            for(ITransportConnectionListener listener: listeners) {                    
                 listener.onDisconnected(client);
             }            
         }

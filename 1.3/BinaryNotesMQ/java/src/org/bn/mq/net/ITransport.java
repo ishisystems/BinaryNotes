@@ -40,8 +40,8 @@ public interface ITransport {
     
     URI getAddr();
     
-    void addListener(ITransportListener listener);
-    void delListener(ITransportListener listener);
+    void addConnectionListener(ITransportConnectionListener listener);
+    void delConnectionListener(ITransportConnectionListener listener);
 
     void addReader(ITransportReader listener);
     void delReader(ITransportReader listener);

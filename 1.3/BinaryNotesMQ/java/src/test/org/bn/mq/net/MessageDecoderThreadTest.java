@@ -22,7 +22,7 @@ import java.net.URI;
 import junit.framework.TestCase;
 
 import org.bn.mq.net.ITransport;
-import org.bn.mq.net.ITransportListener;
+import org.bn.mq.net.ITransportConnectionListener;
 import org.bn.mq.net.ASN1TransportMessageCoderFactory;
 import org.bn.mq.net.ITransportCallListener;
 import org.bn.mq.net.ITransportReader;
@@ -60,12 +60,12 @@ public class MessageDecoderThreadTest extends TestCase {
             ITransport server = conFactory.getServerTransport(new URI(connectionString));
             assertNotNull(server);
             MessageListener ml = new MessageListener(this);
-            server.addListener(ml);
+            server.addConnectionListener(ml);
             server.addReader(ml);
             
             ITransport client = conFactory.getClientTransport(new URI(connectionString));
             ml = new MessageListener(this);
-            client.addListener(ml);
+            client.addConnectionListener(ml);
             client.addReader(ml);
             assertNotNull(client);
                 
@@ -88,7 +88,7 @@ public class MessageDecoderThreadTest extends TestCase {
             ITransport server = conFactory.getServerTransport(new URI(connectionString));
             assertNotNull(server);
             CallMessageListener cl = new CallMessageListener(this);
-            server.addListener(cl);
+            server.addConnectionListener(cl);
             server.addReader(cl);
             Thread.sleep(500);
             
@@ -112,7 +112,7 @@ public class MessageDecoderThreadTest extends TestCase {
             ITransport server = conFactory.getServerTransport(new URI(connectionString));
             assertNotNull(server);
             CallMessageListener cl = new CallMessageListener(this);
-            server.addListener(cl);
+            server.addConnectionListener(cl);
             server.addReader(cl);
             Thread.sleep(500);
             
@@ -127,7 +127,7 @@ public class MessageDecoderThreadTest extends TestCase {
         System.out.println("Finished: testCall");
     }    
 
-    private class MessageListener implements ITransportListener, ITransportReader {         
+    private class MessageListener implements ITransportConnectionListener, ITransportReader {         
         private MessageDecoderThreadTest parent;
         private int counter = 0;
         public MessageListener(MessageDecoderThreadTest parent) {
@@ -158,7 +158,7 @@ public class MessageDecoderThreadTest extends TestCase {
         }
     }
     
-    private class CallMessageListener implements ITransportListener, ITransportReader {         
+    private class CallMessageListener implements ITransportConnectionListener, ITransportReader {         
         private MessageDecoderThreadTest parent;
         private int counter = 0;
         public CallMessageListener(MessageDecoderThreadTest parent) {

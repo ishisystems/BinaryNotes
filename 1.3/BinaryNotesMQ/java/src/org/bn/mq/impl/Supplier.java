@@ -28,7 +28,7 @@ import org.bn.mq.IQueue;
 import org.bn.mq.IRemoteMessageQueue;
 import org.bn.mq.ISupplier;
 import org.bn.mq.net.ITransport;
-import org.bn.mq.net.ITransportListener;
+import org.bn.mq.net.ITransportConnectionListener;
 import org.bn.mq.net.ITransportReader;
 import org.bn.mq.protocol.MessageBody;
 import org.bn.mq.protocol.MessageEnvelope;
