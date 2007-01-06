@@ -114,6 +114,8 @@ public class Main {
 
     private void startForModule(Module module, String[] args) throws Exception {
         if(!arguments.getGenerateModelOnly()) {
+            System.out.println("Current directory: "+new File (".").getCanonicalPath());
+            System.out.println("Compiling file: "+arguments.getInputFileName());
             ByteArrayOutputStream outputXml = new ByteArrayOutputStream(65535);
             createModel(outputXml, args, module);
             InputStream stream = new ByteArrayInputStream(outputXml.toByteArray());
