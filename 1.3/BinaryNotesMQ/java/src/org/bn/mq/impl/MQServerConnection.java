@@ -76,7 +76,7 @@ public class MQServerConnection extends MQConnection {
             clients.remove(client);
             synchronized(listeners) {
                 for(IMQConnectionListener listener: listeners) {
-                    listener.onConnected(this,client);
+                    listener.onDisconnected(this,client);
                 }
             }            
         }    

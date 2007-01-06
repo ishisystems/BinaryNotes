@@ -18,7 +18,8 @@ DEFINITIONS IMPLICIT TAGS ::= BEGIN
 		unsubscribeRequest	[4] UnsubscribeRequest,		
 		unsubscribeResult	[5] UnsubscribeResult,
 		lookupRequest		[6] LookupRequest,
-		lookupResult		[7] LookupResult
+		lookupResult		[7] LookupResult,
+		aliveRequest		[8] AliveRequest
 	}
 
 	MessageUserBody ::= SEQUENCE {
@@ -98,6 +99,10 @@ DEFINITIONS IMPLICIT TAGS ::= BEGIN
 		notFound		(1),
 		accessDenied		(2),
 		unknown			(255)
+	}
+
+	AliveRequest ::= SEQUENCE {
+		timestamp	INTEGER
 	}
 
 

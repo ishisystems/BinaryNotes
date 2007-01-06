@@ -145,7 +145,7 @@ public class MQFactoryTest extends TestCase {
     public void testPersistence() throws Exception {
         IMessagingBus bus = MQFactory.getInstance().createMessagingBus();
         
-        // For InMemoryDB (Not HSQLDB - more simple & fastest!)
+        // For InMemoryDB (It's not HSQLDB!)
         IPersistenceStorage<String> persistStorage =  MQFactory.getInstance().createPersistenceStorage("InMemory","MyMemoryStorage",String.class);
         
         // For HSQLDB

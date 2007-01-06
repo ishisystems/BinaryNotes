@@ -39,6 +39,7 @@ import org.bn.mq.IMessageQueue;
 import org.bn.mq.IQueue;
 import org.bn.mq.net.ITransport;
 import org.bn.mq.net.ITransportListener;
+import org.bn.mq.net.ITransportReader;
 import org.bn.mq.net.tcp.TransportPacket;
 import org.bn.mq.protocol.MessageBody;
 import org.bn.mq.protocol.MessageEnvelope;
@@ -48,7 +49,7 @@ import org.bn.mq.protocol.SubscribeResultCode;
 import org.bn.mq.protocol.UnsubscribeResult;
 import org.bn.mq.protocol.UnsubscribeResultCode;
 
-public class MessageQueue<T> implements IMessageQueue<T>, Runnable, ITransportListener {
+public class MessageQueue<T> implements IMessageQueue<T>, Runnable, ITransportListener, ITransportReader {
     private ITransport transport;
     private String queuePath;
     private IQueue<T> queue = new Queue<T>();
@@ -65,6 +66,7 @@ public class MessageQueue<T> implements IMessageQueue<T>, Runnable, ITransportLi
         this.transport = transport;
         this.queuePath = queuePath;
         this.transport.addListener(this);
+        this.transport.addReader(this);
         this.messageClass = messageClass;
         senderThread.setName("BNMessageQueue-"+queuePath);
         start();
@@ -80,7 +82,9 @@ public class MessageQueue<T> implements IMessageQueue<T>, Runnable, ITransportLi
         }
     }
 
-    public void sendMessage(IMessage<T> message) throws Exception {
+    public void sendMessage(IMessage<T> message) throws Exception {        
+        if(message.getBody()==null)
+            throw new Exception("Incorrect empty message body is specified to send!");
         awaitMessageLock.lock();
         synchronized(queue) {
             if(message.isMandatory())
@@ -238,6 +242,7 @@ public class MessageQueue<T> implements IMessageQueue<T>, Runnable, ITransportLi
                 awaitMessageEvent.signal();
                 awaitMessageLock.unlock();
                 this.transport.delListener(this);
+                this.transport.delReader(this);
                 senderThread.join();
             }
         }

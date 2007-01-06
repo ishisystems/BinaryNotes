@@ -81,6 +81,10 @@ public class ConnectorFactory extends SocketFactory {
         //connectorsExecutor.execute(connector);
     }
     
+    public ConnectorStorage getConnectorStorage() {
+        return this.connectorStorage;        
+    }
+    
     public void finalize() {        
         synchronized (createdTransports) {
             for(SortedMap.Entry<URI,ConnectorTransport> item: createdTransports.entrySet()) {

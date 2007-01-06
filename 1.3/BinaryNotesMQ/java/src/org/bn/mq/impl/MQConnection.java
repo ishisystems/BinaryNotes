@@ -32,13 +32,14 @@ import org.bn.mq.IRemoteSupplier;
 import org.bn.mq.ISupplier;
 import org.bn.mq.net.ITransport;
 import org.bn.mq.net.ITransportListener;
+import org.bn.mq.net.ITransportReader;
 import org.bn.mq.protocol.LookupRequest;
 import org.bn.mq.protocol.LookupResult;
 import org.bn.mq.protocol.LookupResultCode;
 import org.bn.mq.protocol.MessageBody;
 import org.bn.mq.protocol.MessageEnvelope;
 
-public class MQConnection implements IMQConnection, ITransportListener {
+public class MQConnection implements IMQConnection, ITransportListener, ITransportReader {
     protected ITransport transport;
     protected final int callTimeout = 30;
     protected Map<String,ISupplier> suppliers = new HashMap<String,ISupplier>();
@@ -47,6 +48,7 @@ public class MQConnection implements IMQConnection, ITransportListener {
     public MQConnection(ITransport transport) {
         this.transport = transport;
         transport.addListener(this);
+        transport.addReader(this);
     }
 
     public IRemoteSupplier lookup(String supplierName) throws Exception {
@@ -85,6 +87,7 @@ public class MQConnection implements IMQConnection, ITransportListener {
 
     public void close() {
         transport.delListener(this);
+        transport.delReader(this);
         transport.close();
     }
 

@@ -29,6 +29,7 @@ import org.bn.mq.IRemoteMessageQueue;
 import org.bn.mq.ISupplier;
 import org.bn.mq.net.ITransport;
 import org.bn.mq.net.ITransportListener;
+import org.bn.mq.net.ITransportReader;
 import org.bn.mq.protocol.MessageBody;
 import org.bn.mq.protocol.MessageEnvelope;
 import org.bn.mq.protocol.SubscribeResult;
@@ -36,7 +37,7 @@ import org.bn.mq.protocol.SubscribeResultCode;
 import org.bn.mq.protocol.UnsubscribeResult;
 import org.bn.mq.protocol.UnsubscribeResultCode;
 
-public class Supplier implements ISupplier, ITransportListener {
+public class Supplier implements ISupplier, ITransportReader {
     private ITransport transport;
     private String supplierId;
     private Map<String,MessageQueue > queues = new HashMap<String,MessageQueue >();
@@ -44,7 +45,7 @@ public class Supplier implements ISupplier, ITransportListener {
     public Supplier(String supplierId, ITransport transport) {
         this.transport = transport;
         this.supplierId = supplierId;
-        this.transport.setUnhandledMessagesListener(this);
+        this.transport.setUnhandledMessagesReader(this);
     }
 
     public <T> IRemoteMessageQueue<T> lookupQueue(String queuePath, Class<T> messageClass) {
@@ -63,7 +64,7 @@ public class Supplier implements ISupplier, ITransportListener {
             queues.put(queuePath,queue);
         }
         return queue;
-    }    
+    }
 
     public <T> IMessageQueue<T> createQueue(String queuePath, Class<T> messageClass, IQueue<T> queueImpl) {
         NullStorage<T> nullStorage =  new NullStorage<T>(null);
@@ -128,8 +129,4 @@ public class Supplier implements ISupplier, ITransportListener {
         
         return true;
     }
-
-    public void onConnected(ITransport transport) {}
-
-    public void onDisconnected(ITransport transport) {}
 }

@@ -21,8 +21,7 @@ package org.bn.mq.net;
 
 import org.bn.mq.protocol.MessageEnvelope;
 
-public interface ITransportListener {
-    boolean onReceive(MessageEnvelope message, ITransport transport);
+public interface ITransportListener {    
     void onConnected(ITransport transport);
     void onDisconnected(ITransport transport);
 }

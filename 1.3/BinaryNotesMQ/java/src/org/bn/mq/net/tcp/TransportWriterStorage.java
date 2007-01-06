@@ -20,19 +20,29 @@
 package org.bn.mq.net.tcp;
 
 import java.nio.ByteBuffer;
+
+import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-
+import org.bn.mq.net.ITransportMessageCoder;
 import org.bn.mq.net.tcp.Transport;
 import org.bn.mq.net.tcp.TransportPacket;
+import org.bn.mq.protocol.AliveRequest;
+import org.bn.mq.protocol.MessageBody;
+import org.bn.mq.protocol.MessageEnvelope;
 
 public class TransportWriterStorage {
     protected LinkedList<TransportPacket> queue = new LinkedList<TransportPacket>();
     protected final Lock awaitPacketLock = new ReentrantLock();
     protected final Condition awaitPacketEvent  = awaitPacketLock.newCondition(); 
     private boolean finishThread = false;
+    protected ITransportMessageCoder messageCoder;
+    
+    protected LinkedList<Transport> aliveRequestCheckList = new LinkedList<Transport>();
     
     
     public TransportWriterStorage() {
@@ -61,7 +71,9 @@ public class TransportWriterStorage {
             }
             if(result==null) {
                 try {
-                    awaitPacketEvent.await();
+                    if(!awaitPacketEvent.await(10,TimeUnit.SECONDS)) {
+                        pushAliveReqForRecipients();
+                    }
                 }
                 catch(Exception ex) {ex =null; }
             }
@@ -85,7 +97,48 @@ public class TransportWriterStorage {
         }        
         awaitPacketEvent.signal();
         awaitPacketLock.unlock();
-    }    
+    }
+    
+    public void addAliveReqInspection(Transport transport) {
+        synchronized(aliveRequestCheckList) {
+            aliveRequestCheckList.add(transport);
+        }        
+    }
+
+    public void delAliveReqInspection(Transport transport) {
+        synchronized(aliveRequestCheckList) {
+            aliveRequestCheckList.remove(transport);
+        }
+    }
+    
+    public void pushAliveReqForRecipients() {
+        if(this.messageCoder!=null) {
+            synchronized(aliveRequestCheckList) {
+                MessageEnvelope envelope = new MessageEnvelope();
+                MessageBody body = new MessageBody();                    
+                AliveRequest req = new AliveRequest();
+                envelope.setId("-PING-");
+                req.setTimestamp(new Date().getTime());
+                body.selectAliveRequest(req);
+                envelope.setBody(body);
+                ByteBuffer buffer;
+                try {
+                    buffer = messageCoder.encode(envelope);
+                    for(Transport transport : aliveRequestCheckList) {
+                        pushPacket(transport,buffer);
+                    }
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+                
+            }
+        }
+    }
+    
+    public void setMessageCoder(ITransportMessageCoder coder) {
+        this.messageCoder = coder;
+    }
     
     public void finalize() {
         awaitPacketLock.lock();

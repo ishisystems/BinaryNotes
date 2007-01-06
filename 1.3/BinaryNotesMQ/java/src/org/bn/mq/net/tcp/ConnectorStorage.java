@@ -25,41 +25,82 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class ConnectorStorage {
-    private LinkedList<ConnectorTransport> awaitingConnect = new LinkedList<ConnectorTransport> ();
+    public class ConnectorStorageEvent {
+        private ConnectorTransport transportConnect = null;
+        private ConnectorTransport disconnectedTransport = null;
+        
+        public void setTransportToConnect(ConnectorTransport transport) {
+            this.transportConnect = transport;
+        }
+        
+        public ConnectorTransport getTransportToConnect() {
+            return this.transportConnect;
+        }
+                
+        public ConnectorTransport getDisconnectedTransport() {
+            return this.disconnectedTransport;
+        }
+
+        public void setDisconnectedTransport(ConnectorTransport transport) {
+            this.disconnectedTransport = transport;
+        }
+        
+    }
+    
+    private LinkedList<ConnectorStorageEvent> awaitingEvents = new LinkedList<ConnectorStorageEvent> ();
     protected final Lock awaitLock = new ReentrantLock();
     protected final Condition awaitEvent  = awaitLock.newCondition(); 
     private boolean finishThread = false;
-    
-    
+        
     public ConnectorStorage() {
     }
     
     public void addAwaitingTransport(ConnectorTransport transport) {
         awaitLock.lock();    
-        synchronized (awaitingConnect) {
-            awaitingConnect.add(transport);
+        synchronized (awaitingEvents) {
+            ConnectorStorageEvent event = new ConnectorStorageEvent();
+            event.setTransportToConnect(transport);
+            awaitingEvents.add(event);
         }
         awaitEvent.signal();
         awaitLock.unlock();                
     }
     
-    public void removeAwaitingTransport(ConnectorTransport transport) {
-        synchronized (awaitingConnect) {
-            awaitingConnect.remove(transport);
+    public void addDisconnectedTransport(ConnectorTransport transport) {
+        awaitLock.lock();    
+        synchronized (awaitingEvents) {
+            ConnectorStorageEvent event = new ConnectorStorageEvent();
+            event.setDisconnectedTransport(transport);
+            awaitingEvents.add(event);
         }
+        awaitEvent.signal();
+        awaitLock.unlock();                
     }    
     
-    public ConnectorTransport getAwaitingTransport() {        
-        ConnectorTransport result = null;
+    
+    public void removeAwaitingTransport(ConnectorTransport transport) {
+        synchronized (awaitingEvents) {
+            for(ConnectorStorageEvent event: awaitingEvents) {
+                if(event.getTransportToConnect()!=null && event.getTransportToConnect().equals(transport)) {
+                    awaitingEvents.remove(event);
+                    break;
+                }
+            }
+            
+        }
+    }
+    
+    public ConnectorStorageEvent getAwaitingEvent() {        
+        ConnectorStorageEvent result = null;
         if(finishThread)
             return result;
         
         do {
             awaitLock.lock();
-            synchronized (awaitingConnect) {
-                if(!awaitingConnect.isEmpty()) {
-                    result = awaitingConnect.getFirst();
-                    awaitingConnect.removeFirst();
+            synchronized (awaitingEvents) {
+                if(!awaitingEvents.isEmpty()) {
+                    result = awaitingEvents.getFirst();
+                    awaitingEvents.removeFirst();
                 }
             }
                         
@@ -77,15 +118,15 @@ public class ConnectorStorage {
     }
 
     public void clear() {
-        synchronized (awaitingConnect) {
-            awaitingConnect.clear();
+        synchronized (awaitingEvents) {
+            awaitingEvents.clear();
         }
     }
     
     public void finalize() {
-        synchronized(awaitingConnect) {
+        synchronized(awaitingEvents) {
             finishThread = true;        
-            awaitingConnect.clear();
+            awaitingEvents.clear();
         }
         awaitLock.lock();        
         awaitEvent.signal();

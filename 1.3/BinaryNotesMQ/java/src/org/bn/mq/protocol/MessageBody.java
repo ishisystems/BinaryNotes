@@ -58,6 +58,11 @@ import org.bn.types.*;
 	private LookupResult lookupResult = null;
                 
   
+        @ASN1Element ( name = "aliveRequest", isOptional =  false , hasTag =  true, tag = 8 , hasDefaultValue =  false  )
+    
+	private AliveRequest aliveRequest = null;
+                
+  
         
         public MessageUserBody getMessageUserBody () {
             return this.messageUserBody;
@@ -87,6 +92,8 @@ import org.bn.types.*;
                     setLookupRequest(null);
                 
                     setLookupResult(null);
+                
+                    setAliveRequest(null);
                             
         }
         
@@ -120,6 +127,8 @@ import org.bn.types.*;
                     setLookupRequest(null);
                 
                     setLookupResult(null);
+                
+                    setAliveRequest(null);
                             
         }
         
@@ -153,6 +162,8 @@ import org.bn.types.*;
                     setLookupRequest(null);
                 
                     setLookupResult(null);
+                
+                    setAliveRequest(null);
                             
         }
         
@@ -186,6 +197,8 @@ import org.bn.types.*;
                     setLookupRequest(null);
                 
                     setLookupResult(null);
+                
+                    setAliveRequest(null);
                             
         }
         
@@ -219,6 +232,8 @@ import org.bn.types.*;
                     setLookupRequest(null);
                 
                     setLookupResult(null);
+                
+                    setAliveRequest(null);
                             
         }
         
@@ -252,6 +267,8 @@ import org.bn.types.*;
                     setLookupRequest(null);
                 
                     setLookupResult(null);
+                
+                    setAliveRequest(null);
                             
         }
         
@@ -285,6 +302,8 @@ import org.bn.types.*;
                     setUnsubscribeResult(null);
                 
                     setLookupResult(null);
+                
+                    setAliveRequest(null);
                             
         }
         
@@ -318,6 +337,43 @@ import org.bn.types.*;
                     setUnsubscribeResult(null);
                 
                     setLookupRequest(null);
+                
+                    setAliveRequest(null);
+                            
+        }
+        
+  
+        
+        public AliveRequest getAliveRequest () {
+            return this.aliveRequest;
+        }
+
+        public boolean isAliveRequestSelected () {
+            return this.aliveRequest != null;
+        }
+
+        private void setAliveRequest (AliveRequest value) {
+            this.aliveRequest = value;
+        }
+
+        public void selectAliveRequest (AliveRequest value) {
+            this.aliveRequest = value;
+            
+                    setMessageUserBody(null);
+                
+                    setDeliveryReport(null);
+                
+                    setSubscribeRequest(null);
+                
+                    setSubscribeResult(null);
+                
+                    setUnsubscribeRequest(null);
+                
+                    setUnsubscribeResult(null);
+                
+                    setLookupRequest(null);
+                
+                    setLookupResult(null);
                             
         }
         

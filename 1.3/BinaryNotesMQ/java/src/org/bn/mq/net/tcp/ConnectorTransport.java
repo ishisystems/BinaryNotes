@@ -64,20 +64,19 @@ public class ConnectorTransport extends Transport {
         factory.reconnect(this);
     }
     
-    protected void onDisconnect() {        
+    protected void onDisconnect() {
         socketLock.writeLock().lock();
-        fireDisconnectedEvent();
+        fireDisconnectedEvent();        
         if(getSocket()!=null) {
             setSocket(null);
             factory.reconnect(this);
         }        
-        socketLock.writeLock().unlock();        
+        socketLock.writeLock().unlock();
     }
     
     protected void onTransportClosed() {
-        onDisconnect();
-    }
-    
+        factory.getConnectorStorage().addDisconnectedTransport(this);
+    }    
     
     public boolean finishConnect() {
         awaitConnectLock.lock();
@@ -90,17 +89,4 @@ public class ConnectorTransport extends Transport {
         awaitConnectLock.unlock();  
         return isAvailable();
     }
-    
-    public void send(ByteBuffer buffer) throws IOException {
-        try {
-            super.send(buffer);
-        }
-        catch(IOException ex) {
-            if(!isAvailable()) {
-                onDisconnect();
-            }
-            throw ex;
-        }
-    }
-
 }

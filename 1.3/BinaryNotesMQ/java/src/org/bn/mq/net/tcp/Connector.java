@@ -33,23 +33,32 @@ public class Connector implements Runnable {
 
     public void run() {
         do {
-            ConnectorTransport transport =  storage.getAwaitingTransport();
-            if(transport!=null) {
-                System.out.println("Connecting started for "+transport.getAddr());
-                boolean connected = false;
-                try {
-                    connected = transport.connect();
-                    if(connected) {
-                        transport.onConnected();
-                    }                
+            ConnectorStorage.ConnectorStorageEvent event =  storage.getAwaitingEvent();
+            if(event!=null) {
+                ConnectorTransport transport = event.getTransportToConnect();
+                if(transport!=null) {
+                    System.out.println("Connecting started for "+transport.getAddr());
+                    boolean connected = false;
+                    try {
+                        connected = transport.connect();
+                        if(connected) {
+                            transport.onConnected();
+                        }                
+                    }
+                    catch (IOException ex) {
+                        connected = false;
+                    }
+                    if(!connected) {
+                        System.out.println("Unable to connect for "+transport.getAddr());
+                        transport.setSocket(null);
+                        transport.onNotConnected();
+                    }
                 }
-                catch (IOException ex) {
-                    connected = false;
-                }
-                if(!connected) {
-                    System.out.println("Unable to connect for "+transport.getAddr());
-                    transport.setSocket(null);
-                    transport.onNotConnected();
+                else
+                if(event.getDisconnectedTransport()!=null) {
+                    transport = event.getDisconnectedTransport();
+                    transport.onDisconnect();
+                    System.out.println("!!!!!");
                 }
             }
         }

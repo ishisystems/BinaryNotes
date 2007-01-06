@@ -45,6 +45,7 @@ import org.bn.mq.net.ITransport;
 import org.bn.mq.net.ITransportCallListener;
 import org.bn.mq.net.ITransportListener;
 import org.bn.mq.net.ITransportMessageCoder;
+import org.bn.mq.net.ITransportReader;
 import org.bn.mq.protocol.MessageEnvelope;
 
 public abstract class Transport implements ITransport  {
@@ -54,7 +55,11 @@ public abstract class Transport implements ITransport  {
     protected SocketFactory socketFactory;
     
     protected List<ITransportListener> listeners = new LinkedList<ITransportListener>();
-    protected ITransportListener unhanledListener = null;
+    protected ReadWriteLock listenersLock =  new ReentrantReadWriteLock();
+
+    protected List<ITransportReader> readers = new LinkedList<ITransportReader>();
+    protected ReadWriteLock readersLock =  new ReentrantReadWriteLock();
+    protected ITransportReader unhanledReader = null;  
         
     protected ByteBuffer tempReceiveBuffer = ByteBuffer.allocate(64*1024);
     protected ITransportMessageCoder messageCoder;
@@ -142,30 +147,43 @@ public abstract class Transport implements ITransport  {
     }
     
     public void send(MessageEnvelope message) throws Exception {
-        ByteBuffer buffer = messageCoder.encode(message);
-        send(buffer);
+        if(isAvailable()) {    
+            ByteBuffer buffer = messageCoder.encode(message);
+            send(buffer);
+        }
+        else
+            throw new IOException("Transport is not connected!");
     }
         
     public void sendAsync(MessageEnvelope message) throws Exception {
-        ByteBuffer buffer = messageCoder.encode(message);
-        sendAsync(buffer);
+        if(isAvailable()) {        
+            ByteBuffer buffer = messageCoder.encode(message);
+            sendAsync(buffer);
+        }
+        else
+            throw new IOException("Transport is not connected!");
     }     
     
     public void send(ByteBuffer buffer) throws IOException {
-        socketLock.readLock().lock();        
-        try {                        
-            if(isAvailable()) {
-                SocketChannel channel = getSocket();
-                if(channel!=null)
-                    channel.write(buffer);
+        try {
+            socketLock.readLock().lock();        
+            try {                        
+                if(isAvailable()) {
+                    SocketChannel channel = getSocket();
+                    if(channel!=null)
+                        channel.write(buffer);
+                }
+                else {
+                    throw new IOException("Not connected");
+                }
             }
-            else {
-                throw new IOException("Not connected");
-            }
+            finally {
+                socketLock.readLock().unlock();
+            }    
         }
-        finally {
-            socketLock.readLock().unlock();
-        }    
+        catch(Exception ex) {
+            this.onTransportClosed();            
+        }
     }
 
     public void send(byte[] buffer) throws IOException {
@@ -173,30 +191,40 @@ public abstract class Transport implements ITransport  {
     }
     
     public void addListener(ITransportListener listener) {
-        synchronized(listeners) {
-            listeners.add(listener);
-        }
+        //synchronized(listeners) {
+        listenersLock.writeLock().lock();
+        listeners.add(listener);
+        listenersLock.writeLock().unlock();
     }
 
     public void delListener(ITransportListener listener) {
-        synchronized(listeners) {
-            listeners.remove(listener);
-        }    
+        listenersLock.writeLock().lock();
+        listeners.remove(listener);
+        listenersLock.writeLock().unlock();
     }
     
-    protected void fireConnectedEvent() {
-        synchronized(listeners) {
+    public void fireConnectedEvent() {
+        listenersLock.readLock().lock();
+        try {
+            //synchronized(listeners) {
             for(ITransportListener listener: listeners) {                    
                 listener.onConnected(this);
             }            
         }
+        finally {
+            listenersLock.readLock().unlock();
+        }
     }
 
-    protected void fireDisconnectedEvent() {
-        synchronized(listeners) {
+    public void fireDisconnectedEvent() {
+        listenersLock.readLock().lock();
+        try {
             for(ITransportListener listener: listeners) {                    
                 listener.onDisconnected(this);
             }            
+        }
+        finally {
+            listenersLock.readLock().unlock();
         }
     }
     
@@ -227,18 +255,25 @@ public abstract class Transport implements ITransport  {
     }
     
     protected void doProcessReceivedData(MessageEnvelope message, Transport forTransport) throws Exception {        
+        if(message.getBody().isAliveRequestSelected())
+            return;
         boolean doProcessListeners = !forTransport.processReceivedCallMessage(message);
 
-        synchronized(listeners) {            
+        readersLock.readLock().lock();
+        try {
             if(doProcessListeners) {
                 boolean handled = false;
-                for(ITransportListener listener: listeners) {                    
-                    handled = listener.onReceive(message,forTransport);
+                for(ITransportReader reader: readers) {                    
+                    handled = reader.onReceive(message,forTransport);
                 }
-                if(!handled && this.unhanledListener!=null)
-                    this.unhanledListener.onReceive(message,forTransport);
+                if(!handled && this.unhanledReader!=null)
+                    this.unhanledReader.onReceive(message,forTransport);
             }
         }        
+        finally {
+            readersLock.readLock().unlock();
+        }
+        
     }
     
     protected void doProcessReceivedData(ByteBuffer packet, Transport forTransport) throws Exception {
@@ -307,10 +342,12 @@ public abstract class Transport implements ITransport  {
         if(this.socketFactory!=null) {
             if(this.socket!=null) {
                 this.socketFactory.getReaderStorage().addTransport(this);
+                this.socketFactory.getWriterStorage().addAliveReqInspection(this);
                 messageCoder = socketFactory.getTransportFactory().getTransportMessageCoderFactory().newCoder(this);
             }
             else {
                 this.socketFactory.getReaderStorage().removeTransport(this);
+                this.socketFactory.getWriterStorage().delAliveReqInspection(this);
             }
         }
         socketLock.writeLock().unlock();
@@ -327,11 +364,22 @@ public abstract class Transport implements ITransport  {
         close();
     }
     
-    public void setUnhandledMessagesListener(ITransportListener listener) {
-        synchronized(listeners) {
-            this.unhanledListener = listener;
-        }
+    public void addReader(ITransportReader reader) {
+        readersLock.writeLock().lock();
+        readers.add(reader);
+        readersLock.writeLock().unlock();
+    }
+
+    public void delReader(ITransportReader reader) {
+        readersLock.writeLock().lock();
+        readers.remove(reader);
+        readersLock.writeLock().unlock();
     }
     
+    public void setUnhandledMessagesReader(ITransportReader reader) {
+        readersLock.writeLock().lock();
+        this.unhanledReader = reader;
+        readersLock.writeLock().unlock();
+    }
     
 }

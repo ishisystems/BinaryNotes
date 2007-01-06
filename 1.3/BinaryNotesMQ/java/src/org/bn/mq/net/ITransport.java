@@ -42,7 +42,10 @@ public interface ITransport {
     
     void addListener(ITransportListener listener);
     void delListener(ITransportListener listener);
-    void setUnhandledMessagesListener(ITransportListener listener);
+
+    void addReader(ITransportReader listener);
+    void delReader(ITransportReader listener);
+    void setUnhandledMessagesReader(ITransportReader listener);
     
     boolean isAvailable();
     void close();

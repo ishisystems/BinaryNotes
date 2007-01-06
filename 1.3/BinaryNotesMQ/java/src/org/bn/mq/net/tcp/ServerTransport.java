@@ -53,8 +53,7 @@ public class ServerTransport extends Transport {
         serverChannel = ServerSocketChannel.open();
         serverChannel.configureBlocking(false);
         serverChannel.socket().setReuseAddress(true);
-        serverChannel.socket().bind(new InetSocketAddress( getAddr().getHost(), getAddr().getPort()));
-        
+        serverChannel.socket().bind(new InetSocketAddress( getAddr().getHost(), getAddr().getPort()));        
     }
     
     public void close() {        
@@ -116,18 +115,28 @@ public class ServerTransport extends Transport {
     }
     
     protected void fireConnectedEvent(ServerClientTransport client) {
-        synchronized(listeners) {
+        //synchronized(listeners) {
+        listenersLock.readLock().lock();
+        try {
             for(ITransportListener listener: listeners) {                    
                 listener.onConnected(client);
             }            
         }
+        finally {
+            listenersLock.readLock().unlock();
+        }
+        //}
     }
 
     protected void fireDisconnectedEvent(ServerClientTransport client) {
-        synchronized(listeners) {
+        listenersLock.readLock().lock();
+        try {
             for(ITransportListener listener: listeners) {                    
                 listener.onDisconnected(client);
             }            
+        }
+        finally {
+            listenersLock.readLock().unlock();
         }
     }
     

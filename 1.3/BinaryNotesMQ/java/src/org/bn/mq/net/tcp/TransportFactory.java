@@ -47,6 +47,9 @@ public class TransportFactory implements ITransportFactory {
     
     public void setTransportMessageCoderFactory(ITransportMessageCoderFactory coderFactory) {
         this.messageCoderFactory = coderFactory;
+        if(this.messageCoderFactory!=null) {
+            writerStorage.setMessageCoder(this.messageCoderFactory.newCoder(null));
+        }
     }
     
     public ITransportMessageCoderFactory getTransportMessageCoderFactory() {
@@ -67,6 +70,14 @@ public class TransportFactory implements ITransportFactory {
 
     public boolean checkURISupport(URI addr) {
         return addr.getScheme().equalsIgnoreCase(scheme);
+    }
+    
+    public ConnectorFactory getConnectorFactory() {
+        return this.conFactory;
+    }
+
+    public AcceptorFactory getAcceptorFactory() {
+        return this.acpFactory;
     }
     
     protected void startAsyncDispatchers() {

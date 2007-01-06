@@ -25,6 +25,7 @@ import org.bn.mq.net.ITransport;
 import org.bn.mq.net.ITransportListener;
 import org.bn.mq.net.ASN1TransportMessageCoderFactory;
 import org.bn.mq.net.ITransportCallListener;
+import org.bn.mq.net.ITransportReader;
 import org.bn.mq.net.tcp.TransportFactory;
 import org.bn.mq.protocol.MessageBody;
 import org.bn.mq.protocol.MessageEnvelope;
@@ -58,10 +59,14 @@ public class MessageDecoderThreadTest extends TestCase {
             
             ITransport server = conFactory.getServerTransport(new URI(connectionString));
             assertNotNull(server);
-            server.addListener(new MessageListener(this));
+            MessageListener ml = new MessageListener(this);
+            server.addListener(ml);
+            server.addReader(ml);
             
             ITransport client = conFactory.getClientTransport(new URI(connectionString));
-            client.addListener(new MessageListener(this));
+            ml = new MessageListener(this);
+            client.addListener(ml);
+            client.addReader(ml);
             assertNotNull(client);
                 
             client.send(createMessage("AAAaasasasasassas"));
@@ -82,7 +87,9 @@ public class MessageDecoderThreadTest extends TestCase {
             
             ITransport server = conFactory.getServerTransport(new URI(connectionString));
             assertNotNull(server);
-            server.addListener(new CallMessageListener(this));
+            CallMessageListener cl = new CallMessageListener(this);
+            server.addListener(cl);
+            server.addReader(cl);
             Thread.sleep(500);
             
             ITransport client = conFactory.getClientTransport(new URI(connectionString));
@@ -104,7 +111,9 @@ public class MessageDecoderThreadTest extends TestCase {
             
             ITransport server = conFactory.getServerTransport(new URI(connectionString));
             assertNotNull(server);
-            server.addListener(new CallMessageListener(this));
+            CallMessageListener cl = new CallMessageListener(this);
+            server.addListener(cl);
+            server.addReader(cl);
             Thread.sleep(500);
             
             ITransport client = conFactory.getClientTransport(new URI(connectionString));
@@ -118,7 +127,7 @@ public class MessageDecoderThreadTest extends TestCase {
         System.out.println("Finished: testCall");
     }    
 
-    private class MessageListener implements ITransportListener {         
+    private class MessageListener implements ITransportListener, ITransportReader {         
         private MessageDecoderThreadTest parent;
         private int counter = 0;
         public MessageListener(MessageDecoderThreadTest parent) {
@@ -149,7 +158,7 @@ public class MessageDecoderThreadTest extends TestCase {
         }
     }
     
-    private class CallMessageListener implements ITransportListener {         
+    private class CallMessageListener implements ITransportListener, ITransportReader {         
         private MessageDecoderThreadTest parent;
         private int counter = 0;
         public CallMessageListener(MessageDecoderThreadTest parent) {

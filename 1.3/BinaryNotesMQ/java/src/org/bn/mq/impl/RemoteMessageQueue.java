@@ -30,6 +30,7 @@ import org.bn.mq.IRemoteMessageQueue;
 import org.bn.mq.IRemoteSupplier;
 import org.bn.mq.net.ITransport;
 import org.bn.mq.net.ITransportListener;
+import org.bn.mq.net.ITransportReader;
 import org.bn.mq.protocol.LookupRequest;
 import org.bn.mq.protocol.LookupResultCode;
 import org.bn.mq.protocol.MessageBody;
@@ -39,7 +40,7 @@ import org.bn.mq.protocol.SubscribeResultCode;
 import org.bn.mq.protocol.UnsubscribeRequest;
 import org.bn.mq.protocol.UnsubscribeResultCode;
 
-public class RemoteMessageQueue<T> implements IRemoteMessageQueue<T>, ITransportListener {
+public class RemoteMessageQueue<T> implements IRemoteMessageQueue<T>, ITransportReader {
     private RemoteSupplier supplier;
     private String queuePath;
     private final int subscribeTimeout = 60;
@@ -145,17 +146,11 @@ public class RemoteMessageQueue<T> implements IRemoteMessageQueue<T>, ITransport
         return false;
     }
 
-    public void onConnected(ITransport transport) {
-    }
-
-    public void onDisconnected(ITransport transport) {
-    }
-
     public void start() {
-        this.supplier.getConnection().addListener(this);
+        this.supplier.getConnection().addReader(this);
     }
 
     public void stop() {
-        this.supplier.getConnection().delListener(this);
+        this.supplier.getConnection().delReader(this);
     }
 }
