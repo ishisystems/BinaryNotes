@@ -24,6 +24,6 @@ namespace org.bn.mq
 	{
 		IMQConnection connect(Uri addr);
         IMQConnection create(Uri addr);
-		//void Finalize();
+		void close();
 	}
 }

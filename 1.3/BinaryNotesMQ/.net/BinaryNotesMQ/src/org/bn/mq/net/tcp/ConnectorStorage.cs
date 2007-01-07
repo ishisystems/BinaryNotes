@@ -67,7 +67,7 @@ namespace org.bn.mq.net.tcp
 
 		
 		private LinkedList < ConnectorStorageEvent > awaitingEvents = new LinkedList < ConnectorStorageEvent >();
-		protected internal AutoResetEvent awaitEvent;
+		protected internal AutoResetEvent awaitEvent = new AutoResetEvent(false);
 		private bool finishThread = false;
 		
 		public ConnectorStorage()
@@ -155,15 +155,22 @@ namespace org.bn.mq.net.tcp
 				awaitingEvents.Clear();
 			}
 		}
+
+        public void close()
+        {
+            lock (awaitingEvents)
+            {
+                finishThread = true;
+                awaitingEvents.Clear();
+            }
+            awaitEvent.Set();
+
+        }
+
 		
 		~ConnectorStorage()
 		{
-			lock (awaitingEvents)
-			{
-				finishThread = true;
-				awaitingEvents.Clear();
-			}
-			awaitEvent.Set();
+            close();
 		}
 	}
 }

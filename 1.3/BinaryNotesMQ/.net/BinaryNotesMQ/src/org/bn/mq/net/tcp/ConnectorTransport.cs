@@ -18,6 +18,9 @@
 */
 using System;
 using System.Threading;
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
 using System.Collections.Generic;
 using org.bn.mq.protocol;
 using org.bn.mq.net;
@@ -27,7 +30,7 @@ namespace org.bn.mq.net.tcp
 	
 	public class ConnectorTransport:Transport
 	{
-		protected internal AutoResetEvent awaitConnectEvent;
+		protected internal AutoResetEvent awaitConnectEvent = new AutoResetEvent(false);
 		protected internal ConnectorFactory factory;
 		
 		public ConnectorTransport(Uri addr, ConnectorFactory factory):base(addr, factory)
@@ -37,15 +40,13 @@ namespace org.bn.mq.net.tcp
 		
 		public virtual bool connect()
 		{
-            /*SocketChannel cSocket = SocketChannel.open(new InetSocketAddress(getAddr().getHost(), getAddr().getPort()));
-            cSocket.configureBlocking(false);
-            if (cSocket.finishConnect())
-            {
-                setSocket(cSocket);
-                return true;
-            }
-            else*/
-            return false;             
+            IPHostEntry ipHostInfo = Dns.Resolve(getAddr().Host);
+            IPAddress ipAddress = ipHostInfo.AddressList[0];
+            IPEndPoint ipe = new IPEndPoint(ipAddress, getAddr().Port);
+            Socket s = new Socket(AddressFamily.InterNetwork,SocketType.Stream, ProtocolType.Tcp);
+            s.Connect(ipe);
+            setSocket(s);
+            return true;
 		}
 		
 		protected internal virtual void  onConnected()

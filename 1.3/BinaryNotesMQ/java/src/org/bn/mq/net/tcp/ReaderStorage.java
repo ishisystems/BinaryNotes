@@ -75,7 +75,7 @@ public class ReaderStorage {
         }
     }
     
-    public void finalize() {
+    public void close() {
         try {
             selector.close();
         }

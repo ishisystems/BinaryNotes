@@ -140,11 +140,6 @@ public class ServerTransport extends Transport {
         }
     }
     
-    
-    public void finalize() {
-        close();
-    }
-
     public ServerSocketChannel getServerSocket() {
         return serverChannel;
     }

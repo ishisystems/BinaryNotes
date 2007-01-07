@@ -91,16 +91,30 @@ public class TransportFactory implements ITransportFactory {
         readerThread.start();
     }
     
-    public void finalize() throws InterruptedException {
+    public void close() {
         writerThreadBody.stop();
         readerThreadBody.stop();
-        writerStorage.finalize();        
-        writerThread.join();
-        readerThread.join();
+        writerStorage.close();  
+        if(writerThread.isAlive()) {
+            try {
+                writerThread.join();
+            }
+            catch(Exception ex) {
+                ex = null;
+            }
+        }
+        if(readerThread.isAlive()) {
+            try {
+                readerThread.join();    
+            }
+            catch(Exception ex) {
+                ex = null;
+            }            
+        }
         
-        readerStorage.finalize();
-        conFactory.finalize();
-        acpFactory.finalize();
+        readerStorage.close();
+        conFactory.close();
+        acpFactory.close();
         asyncCallMgr.stop();
     }
     

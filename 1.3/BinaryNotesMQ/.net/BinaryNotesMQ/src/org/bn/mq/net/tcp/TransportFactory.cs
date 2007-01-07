@@ -73,7 +73,7 @@ namespace org.bn.mq.net.tcp
 		private const string scheme = "bnmq";
 		
 		protected internal WriterStorage writerStorage = new WriterStorage();
-		protected internal ReaderStorage readerStorage = new ReaderStorage();		
+		//protected internal ReaderStorage readerStorage = new ReaderStorage();		
 		protected internal ConnectorFactory conFactory;
 		protected internal AcceptorFactory acpFactory;
 		
@@ -81,15 +81,15 @@ namespace org.bn.mq.net.tcp
 		protected internal Writer writerThreadBody;
 		
 		protected internal Thread readerThread;
-		protected internal Reader readerThreadBody;
+		//protected internal Reader readerThreadBody;
 
 		protected internal ITransportMessageCoderFactory messageCoderFactory;
 		protected internal AsyncCallManager asyncCallMgr = new AsyncCallManager();
 		
 		public TransportFactory()
 		{
-            conFactory = new ConnectorFactory(writerStorage, readerStorage, this);
-            acpFactory = new AcceptorFactory(writerStorage, readerStorage, this);
+            conFactory = new ConnectorFactory(writerStorage, this);
+            acpFactory = new AcceptorFactory(writerStorage, this);
             startAsyncDispatchers();
 		}
 		
@@ -114,24 +114,31 @@ namespace org.bn.mq.net.tcp
 			writerThread = new Thread(new ThreadStart(writerThreadBody.Run));
 			writerThread.Name = "BNMQ-TCPWriter";
             writerThread.Start();
-			readerThreadBody = new Reader(readerStorage);
+			/*readerThreadBody = new Reader(readerStorage);
 			readerThread = new Thread(new ThreadStart(readerThreadBody.Run));
 			readerThread.Name = "BNMQ-TCPReader";
-			readerThread.Start();
+			readerThread.Start();*/
 		}
+
+        public void close()
+        {
+            writerThreadBody.stop();
+            //readerThreadBody.stop();
+            writerStorage.close();
+            if(writerThread.IsAlive)
+                writerThread.Join();
+
+            //readerThread.Join();
+            //readerStorage.Finalize();
+
+            conFactory.close();
+            acpFactory.close();
+            asyncCallMgr.stop();
+        }
 		
 		~TransportFactory()
 		{
-			writerThreadBody.stop();
-			readerThreadBody.stop();
-			//writerStorage.Finalize();
-			writerThread.Join();
-			readerThread.Join();
-			
-			//readerStorage.Finalize();
-			//conFactory.Finalize();
-			//acpFactory.Finalize();
-			asyncCallMgr.stop();
+            close();
 		}
 	}
 }

@@ -18,6 +18,9 @@
 */
 using System;
 using System.Threading;
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
 using System.Collections.Generic;
 using org.bn.mq.protocol;
 using org.bn.mq.net;
@@ -27,7 +30,7 @@ namespace org.bn.mq.net.tcp
 	
 	public class ServerTransport:Transport
 	{
-		virtual public String ServerSocket
+		virtual public Socket ServerSocket
 		{
 			get
 			{
@@ -40,7 +43,7 @@ namespace org.bn.mq.net.tcp
 			}
 			
 		}
-        private String serverChannel = null;
+        private Socket serverChannel = null;
 		protected List < ServerClientTransport > clients = new List < ServerClientTransport >();
 		protected internal AcceptorFactory acceptorFactory;
 		
@@ -56,6 +59,15 @@ namespace org.bn.mq.net.tcp
 			lock (this)
 			{
 				close();
+                IPHostEntry ipHostInfo = Dns.Resolve(getAddr().Host);
+                IPAddress ipAddress = ipHostInfo.AddressList[0];
+                IPEndPoint localEndPoint = new IPEndPoint(ipAddress, getAddr().Port);
+                serverChannel = new Socket(AddressFamily.InterNetwork,SocketType.Stream, ProtocolType.Tcp);
+                serverChannel.Bind(localEndPoint);
+                serverChannel.Listen(100);
+                serverChannel.BeginAccept(this.acceptClient, serverChannel);
+
+
 				/*serverChannel = ServerSocketChannel.open();
 				serverChannel.configureBlocking(false);
 				serverChannel.socket().setReuseAddress(true);
@@ -70,12 +82,17 @@ namespace org.bn.mq.net.tcp
 			{
 				try
 				{
-					//ServerSocket.close();
+                    lock (addr)
+                    {
+                        //serverChannel.Shutdown(SocketShutdown.Both);
+                        //serverChannel.Disconnect(true);
+                        serverChannel.Close();
+                        serverChannel = null;
+                    }
 				}
-				catch (System.IO.IOException e)
-				{
-					// TODO
-				}
+				catch (Exception e) {
+                    Console.WriteLine(e);
+                }
 			}
 			
 			lock (clients)
@@ -93,37 +110,32 @@ namespace org.bn.mq.net.tcp
 		{
 			lock (addr)
 			{
-				//return ServerSocket != null && ServerSocket.isOpen();
-                return false;
+                return serverChannel != null && serverChannel.IsBound;
 			}
 		}
 		
-		public virtual bool acceptClient()
+		public virtual void acceptClient(IAsyncResult asyncResult)
 		{
-			/*SocketChannel client = ServerSocket.accept();
-			if (client != null)
-			{
-				System.Net.IPAddress addr = client.socket().getInetAddress();
-				System.Console.Out.WriteLine("Client connected from " + addr);
-				client.configureBlocking(false);
-				ServerClientTransport transport;
-				try
-				{
-					transport = new ServerClientTransport(new URI("bnmq", addr.ToString(), "", ""), this, acceptorFactory);
-					transport.setSocket(client);
-					lock (clients)
-					{
-						clients.add(transport);
-						fireConnectedEvent(transport);
-					}
-				}
-				catch (URISyntaxException e)
-				{
-					e = null;
-				}
-			}
-			return client != null;*/
-            return false;
+            if (isAvailable())
+            {
+                Socket listener = (Socket)asyncResult.AsyncState;
+                Socket clientSocket = listener.EndAccept(asyncResult);
+                if (clientSocket != null)
+                {
+                    ServerClientTransport transport =
+                        new ServerClientTransport(
+                            new Uri("bnmq://" + clientSocket.RemoteEndPoint.ToString()),
+                        this,
+                        acceptorFactory
+                    );
+                    transport.setSocket(clientSocket);
+                    lock (clients)
+                    {
+                        clients.Add(transport);
+                        fireConnectedEvent(transport);
+                    }
+                }
+            }
 		}
 		
 		public virtual void  removeClient(ServerClientTransport transport)
@@ -170,8 +182,6 @@ namespace org.bn.mq.net.tcp
 		
 		protected internal override void  onTransportClosed()
 		{
-			// Do nothing. 
-			//fireDisconnectedEvent();
 		}
 	}
 }

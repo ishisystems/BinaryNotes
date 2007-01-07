@@ -54,12 +54,15 @@ namespace org.bn.mq.net.tcp
 		{
 			lock (this)
 			{
-                asyncCallTimer.Dispose();
-                asyncCallTimer = null;
-				lock (asyncCalls)
-				{
-                    asyncCalls.Clear();
-				}
+                if (asyncCallTimer != null)
+                {
+                    asyncCallTimer.Dispose();
+                    asyncCallTimer = null;
+                    lock (asyncCalls)
+                    {
+                        asyncCalls.Clear();
+                    }
+                }
 			}
 		}
 		

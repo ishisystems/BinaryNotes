@@ -85,17 +85,18 @@ public class ConnectorFactory extends SocketFactory {
         return this.connectorStorage;        
     }
     
-    public void finalize() {        
+    public void close() {        
         synchronized (createdTransports) {
             for(SortedMap.Entry<URI,ConnectorTransport> item: createdTransports.entrySet()) {
                 item.getValue().close();
             }
             createdTransports.clear();
         }
-        connectorStorage.finalize();
+        connectorStorage.close();
         connector.stop();
         try {
-            connectorThread.join();
+            if(connectorThread.isAlive())
+                connectorThread.join();
         }
         catch (InterruptedException e) {
             // TODO

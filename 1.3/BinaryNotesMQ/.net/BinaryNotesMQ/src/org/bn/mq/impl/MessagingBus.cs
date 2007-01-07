@@ -42,17 +42,15 @@ namespace org.bn.mq.impl
 		{
 			return new MQServerConnection(factory.getServerTransport(addr));
 		}
+
+        public void close()
+        {
+		    factory.close();
+        }
 		
 		~MessagingBus()
 		{
-			try
-			{
-				//factory.Finalize();
-			}
-			catch (System.Threading.ThreadInterruptedException e)
-			{
-                Console.WriteLine(e);
-			}
+            close();
 		}
 	}
 }

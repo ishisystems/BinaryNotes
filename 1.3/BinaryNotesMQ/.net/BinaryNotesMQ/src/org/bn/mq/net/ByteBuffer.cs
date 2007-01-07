@@ -65,8 +65,8 @@ namespace org.bn.mq.net
         public void put(byte[] value, int offset, int len)
         {
             Buffer.BlockCopy(value, offset, buffer, position, len);
-            position += len - position;
-            limit += len - position;
+            position += len - offset;
+            limit += len - offset;
         }
 
 
@@ -89,7 +89,8 @@ namespace org.bn.mq.net
 
         public void get(byte[] buf)
         {
-            Buffer.BlockCopy(buffer, 0, buf, position, buf.Length);
+            Buffer.BlockCopy(buffer, position, buf, 0, buf.Length);
+            position += buf.Length;
         }
 
         public short getShort()

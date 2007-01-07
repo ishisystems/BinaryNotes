@@ -72,9 +72,12 @@ public class MessageDecoderThreadTest extends TestCase {
             client.send(createMessage("AAAaasasasasassas"));
             client.sendAsync(createMessage("Two"));
             Thread.sleep(500);
+            client.close();
+            server.close();
+            
         }
         finally {
-            conFactory.finalize();
+            conFactory.close();
         }
         System.out.println("Finished: testTakeMessage");
     }
@@ -96,9 +99,12 @@ public class MessageDecoderThreadTest extends TestCase {
             assertNotNull(client);
             MessageEnvelope result = client.call(createMessage("Call"), 10);
             System.out.println("Result call received with Id:"+result.getId()+" has been received successfully");
+            client.close();
+            server.close();
+            
         }
         finally {
-            conFactory.finalize();
+            conFactory.close();
         }
         System.out.println("Finished: testCall");
     }    
@@ -120,9 +126,12 @@ public class MessageDecoderThreadTest extends TestCase {
             assertNotNull(client);
             client.callAsync(createMessage("CallAsync"), new AsyncCallMessageListener());
             Thread.sleep(500);
+            client.close();
+            server.close();
+            
         }
         finally {
-            conFactory.finalize();
+            conFactory.close();
         }
         System.out.println("Finished: testCall");
     }    

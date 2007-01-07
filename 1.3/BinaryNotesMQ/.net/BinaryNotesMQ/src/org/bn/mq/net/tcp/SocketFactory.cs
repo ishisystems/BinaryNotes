@@ -30,22 +30,22 @@ namespace org.bn.mq.net.tcp
 			}
 			
 		}
-		virtual public ReaderStorage ReaderStorage
+		/*virtual public ReaderStorage ReaderStorage
 		{
 			get
 			{
 				return this.readerStorage;
 			}
 			
-		}
+		}*/
 		protected internal WriterStorage writerStorage;
-		protected internal ReaderStorage readerStorage;
+		//protected internal ReaderStorage readerStorage;
 		private TransportFactory factory;
 		
-		public SocketFactory(WriterStorage writerStorage, ReaderStorage readerStorage, TransportFactory factory)
+		public SocketFactory(WriterStorage writerStorage, TransportFactory factory)
 		{
 			this.writerStorage = writerStorage;
-			this.readerStorage = readerStorage;
+			//this.readerStorage = readerStorage;
 			this.setTransportFactory(factory);
 		}
 		

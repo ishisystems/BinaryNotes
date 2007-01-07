@@ -278,7 +278,8 @@ public abstract class Transport implements ITransport  {
     
     protected void doProcessReceivedData(ByteBuffer packet, Transport forTransport) throws Exception {
         MessageEnvelope message = messageCoder.decode(packet);
-        doProcessReceivedData(message,forTransport);
+        if(message!=null)
+            doProcessReceivedData(message,forTransport);
     }
     
     protected void fireReceivedData(ByteBuffer packet) throws Exception {

@@ -70,7 +70,6 @@ namespace org.bn.mq.net.tcp
 					{
 						transport = ev.DisconnectedTransport;
 						transport.onDisconnect();
-						System.Console.Out.WriteLine("!!!!!");
 					}
 				}
 			}

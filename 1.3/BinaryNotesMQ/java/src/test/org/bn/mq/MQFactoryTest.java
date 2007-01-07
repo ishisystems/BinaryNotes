@@ -89,7 +89,7 @@ public class MQFactoryTest extends TestCase {
                 serverConnection.close();
             if(bus!=null) {
                 try {
-                    bus.finalize();
+                    bus.close();
                 }
                 catch (Throwable e) {e = null; }
             }
@@ -135,7 +135,7 @@ public class MQFactoryTest extends TestCase {
                 serverConnection.close();
             if(bus!=null) {
                 try {
-                    bus.finalize();
+                    bus.close();
                 }
                 catch (Throwable e) {e = null; }
             }
@@ -199,7 +199,7 @@ public class MQFactoryTest extends TestCase {
                 serverConnection.close();
             if(bus!=null) {
                 try {
-                    bus.finalize();
+                    bus.close();
                 }
                 catch (Throwable e) {e = null; }
             }

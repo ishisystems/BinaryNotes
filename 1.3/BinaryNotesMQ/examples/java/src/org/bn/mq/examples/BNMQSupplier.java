@@ -158,7 +158,7 @@ public class BNMQSupplier {
             if(bus!=null) {
                 try {
                     System.out.println("Trying to finallize messaging bus");
-                    bus.finalize();
+                    bus.close();
                 }
                 catch (Throwable e) {e = null; }
             }            

@@ -29,5 +29,5 @@ public interface ITransportFactory {
     void setTransportMessageCoderFactory(ITransportMessageCoderFactory coderFactory);
     ITransportMessageCoderFactory getTransportMessageCoderFactory();
     boolean checkURISupport(URI addr);
-    void finalize() throws InterruptedException;
+    void close();
 }

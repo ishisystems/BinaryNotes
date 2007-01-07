@@ -34,6 +34,6 @@ namespace org.bn.mq.net
         ITransport getServerTransport(Uri addr);
 
         bool checkURISupport(Uri addr);
-		//void Finalize();
+        void close();
 	}
 }

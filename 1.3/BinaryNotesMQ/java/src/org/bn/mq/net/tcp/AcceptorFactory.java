@@ -73,9 +73,16 @@ public class AcceptorFactory extends SocketFactory {
        acceptorThread.start();
     }
     
-    public void finalize() throws InterruptedException {
+    public void close()  {
         acceptorThreadBody.stop();
-        acceptorThread.join();
-        acceptorStorage.finalize();
+        try {
+            if(acceptorThread.isAlive()) {
+                acceptorThread.join();
+            }
+        }
+        catch(Exception ex) {
+            ex = null;
+        }
+        acceptorStorage.close();
     }
 }

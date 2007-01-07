@@ -18,8 +18,12 @@
 */
 using System;
 using System.Threading;
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
 using System.Collections.Generic;
 using org.bn.mq.protocol;
+using org.bn.mq.net;
 
 namespace org.bn.mq.net.tcp
 {
@@ -27,7 +31,7 @@ namespace org.bn.mq.net.tcp
 	public abstract class Transport : ITransport
 	{
 		protected Uri addr;
-		private String socket = null;
+		private Socket socket = null;
 		//protected internal ReadWriteLock socketLock = new ReentrantReadWriteLock();
 		protected internal SocketFactory socketFactory;
 		
@@ -67,33 +71,37 @@ namespace org.bn.mq.net.tcp
 			//readersLock.writeLock().unlock();			
 		}
 
-        public String getSocket() 
+        public Socket getSocket() 
         {
-            return null;
+            return this.socket;
         }
 
-        public void setSocket(String socket)
+        public void setSocket(Socket value)
         {
-			/*set
-			{
-				socketLock.writeLock().lock_Renamed();
-				this.socket = value;
-				if (this.socketFactory != null)
-				{
-					if (this.socket != null)
-					{
-						this.socketFactory.ReaderStorage.addTransport(this);
-						this.socketFactory.WriterStorage.addAliveReqInspection(this);
-						messageCoder = socketFactory.getTransportFactory().TransportMessageCoderFactory.newCoder(this);
-					}
-					else
-					{
-						this.socketFactory.ReaderStorage.removeTransport(this);
-						this.socketFactory.WriterStorage.delAliveReqInspection(this);
-					}
-				}
-				socketLock.writeLock().unlock();
-			}*/
+            lock (addr)
+            {
+                this.socket = value;
+                if (this.socketFactory != null)
+                {
+                    if (this.socket != null)
+                    {
+                        //this.socketFactory.ReaderStorage.addTransport(this);                        
+                        this.socketFactory.WriterStorage.addAliveReqInspection(this);
+                        messageCoder = socketFactory.getTransportFactory().TransportMessageCoderFactory.newCoder(this);
+                        this.socket.BeginReceive(
+                            tempReceiveBuffer.Value, 0, tempReceiveBuffer.Value.Length, 
+                            SocketFlags.None,
+                            new AsyncCallback(this.receiveAsync),
+                            this.socket
+                        );
+                    }
+                    else
+                    {
+                        //this.socketFactory.ReaderStorage.removeTransport(this);
+                        this.socketFactory.WriterStorage.delAliveReqInspection(this);
+                    }
+                }
+            }
         }
 
 
@@ -118,46 +126,31 @@ namespace org.bn.mq.net.tcp
 		}
 		
 		
-		public virtual ByteBuffer receiveAsync()
+		//public virtual ByteBuffer receiveAsync()
+        public virtual void receiveAsync(IAsyncResult ar)
 		{
-			ByteBuffer result = null;
-			if (isAvailable())
-			{
-				result = ByteBuffer.allocate(4096);
-				int readedBytes = - 1;
-				do 
-				{
-                    lock(addr) // Compact Framework doesn't supported RW-Mutex & Semaphores :(
-                    {
-					    tempReceiveBuffer.clear();
-					    /*SocketChannel channel = Socket;
-					    if (channel != null)
-						    readedBytes = channel.read(tempReceiveBuffer);
-                         */
-					    if (readedBytes > 0)
-					    {
-						    if (result.Remaining < readedBytes)
-						    {
-							    byte[] data = result.Value;
-							    result = ByteBuffer.allocate(data.Length + 4096);
-							    result.put(data);
-						    }
-						    result.put(tempReceiveBuffer.Value, result.Position, tempReceiveBuffer.Position);
-					    }
-					    if (readedBytes == - 1)
-					    {
-						    onTransportClosed();
-					    }
-                    }   
-			    }
-			    while (readedBytes > 0);
-			    result.flip();
-			}
-			else
-			{
-				throw new System.IO.IOException("Not connected");
-			}
-			return result;
+            if (isAvailable())
+            {
+                Socket handler = (Socket)ar.AsyncState;
+                int bytesRead = handler.EndReceive(ar);
+                if (bytesRead > 0)
+                {
+                    ByteBuffer result = ByteBuffer.allocate(bytesRead);
+                    result.put(tempReceiveBuffer.Value, 0, bytesRead);                    
+                    fireReceivedData(result);
+                    tempReceiveBuffer.clear();
+                    this.socket.BeginReceive(
+                        tempReceiveBuffer.Value, 0, tempReceiveBuffer.Value.Length,
+                        SocketFlags.None,
+                        new AsyncCallback(this.receiveAsync),
+                        this.socket
+                    );
+                }
+                else
+                {
+                    onTransportClosed();
+                }
+            }
 		}
 		
 		public virtual void  sendAsync(ByteBuffer buffer)
@@ -210,6 +203,12 @@ namespace org.bn.mq.net.tcp
                 {
 				    if (isAvailable())
 				    {
+                        Socket channel = getSocket();
+                        if (channel != null)
+                        {
+                            channel.Send(buffer.Value);
+                        }
+
 					    /*SocketChannel channel = Socket;
 					    if (channel != null)
 						    channel.write(buffer);
@@ -330,7 +329,8 @@ namespace org.bn.mq.net.tcp
 		protected internal virtual void  doProcessReceivedData(ByteBuffer packet, Transport forTransport)
 		{
 			MessageEnvelope message = messageCoder.decode(packet);
-			doProcessReceivedData(message, forTransport);
+            if(message!=null)
+			    doProcessReceivedData(message, forTransport);
 		}
 		
 		protected internal virtual void  fireReceivedData(ByteBuffer packet)
@@ -397,8 +397,7 @@ namespace org.bn.mq.net.tcp
             lock(addr)
             {
 			    //bool result = Socket != null && Socket.isOpen() && Socket.isConnected();
-			    //return result;
-                return false;
+                return socket!=null;
             }
 		}
 		

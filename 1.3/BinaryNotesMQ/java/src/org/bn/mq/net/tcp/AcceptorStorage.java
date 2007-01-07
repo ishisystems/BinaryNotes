@@ -90,7 +90,7 @@ public class AcceptorStorage {
     }
     
     
-    public void finalize() {
+    public void close() {
         synchronized(acceptKeys) {
             for(Map.Entry<ServerTransport,SelectionKey> entry: acceptKeys.entrySet()) {
                 entry.getKey().close();

@@ -40,12 +40,7 @@ public class MessagingBus implements IMessagingBus {
         return new MQServerConnection(factory.getServerTransport(addr));
     }
     
-    public void finalize() {
-        try {
-            factory.finalize();
-        }
-        catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+    public void close() {
+        factory.close();
     }
 }

@@ -28,7 +28,7 @@ namespace org.bn.mq.net.tcp
 	public class WriterStorage
 	{
         protected LinkedList<TransportPacket> queue = new LinkedList<TransportPacket>();
-        protected internal AutoResetEvent awaitPacketEvent;
+        protected internal AutoResetEvent awaitPacketEvent = new AutoResetEvent(false);
         private bool finishThread = false;
         protected internal ITransportMessageCoder messageCoder;
         protected LinkedList<Transport> aliveRequestCheckList = new LinkedList<Transport>();
@@ -156,15 +156,20 @@ namespace org.bn.mq.net.tcp
 				}
 			}
 		}
+
+        public void close()
+        {
+            lock (queue)
+            {
+                queue.Clear();
+                finishThread = true;
+            }
+            awaitPacketEvent.Set();
+        }
 		
 		~WriterStorage()
 		{
-			lock (queue)
-			{
-				queue.Clear();
-				finishThread = true;
-			}
-			awaitPacketEvent.Set();
+            close();
 		}
 	}
 }

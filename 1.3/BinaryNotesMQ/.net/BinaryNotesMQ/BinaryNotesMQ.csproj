@@ -131,15 +131,7 @@
     <Compile Include="src\org\bn\mq\net\MessagingBusNet.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\org\bn\mq\net\tcp\Acceptor.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="src\org\bn\mq\net\tcp\AcceptorFactory.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="src\org\bn\mq\net\tcp\AcceptorStorage.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="src\org\bn\mq\net\tcp\AcceptorFactory.cs" />
     <Compile Include="src\org\bn\mq\net\tcp\AsyncCallItem.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -174,12 +166,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\org\bn\mq\net\tcp\TransportPacket.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="src\org\bn\mq\net\tcp\Reader.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="src\org\bn\mq\net\tcp\ReaderStorage.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\org\bn\mq\net\tcp\Writer.cs">

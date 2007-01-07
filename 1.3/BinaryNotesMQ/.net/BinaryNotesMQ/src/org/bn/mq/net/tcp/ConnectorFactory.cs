@@ -42,7 +42,7 @@ namespace org.bn.mq.net.tcp
 		protected internal Thread connectorThread;
 		
 		
-		public ConnectorFactory(WriterStorage writerStorage, ReaderStorage readerStorage, TransportFactory factory):base(writerStorage, readerStorage, factory)
+		public ConnectorFactory(WriterStorage writerStorage, TransportFactory factory):base(writerStorage, factory)
 		{
             connector = new Connector(connectorStorage);
             connectorThread = new Thread(new System.Threading.ThreadStart(connector.Run));
@@ -53,7 +53,7 @@ namespace org.bn.mq.net.tcp
 		protected internal virtual ConnectorTransport getCreatedTransport(Uri addr)
 		{
 			ConnectorTransport result = null;
-            if (createdTransports.ContainsKey(addr))
+            if (!createdTransports.ContainsKey(addr))
             {
                 result = createdTransports[addr];
             }
@@ -88,27 +88,33 @@ namespace org.bn.mq.net.tcp
 		{
 			connectorStorage.addAwaitingTransport(transport);
 		}
+
+        public void close()
+        {
+            lock (createdTransports)
+            {
+                foreach (ConnectorTransport item in createdTransports.Values)
+                {
+                    item.close();
+                }
+                createdTransports.Clear();
+            }
+            connectorStorage.close();
+            connector.stop();
+            try
+            {
+                if(connectorThread.IsAlive)
+                    connectorThread.Join();
+            }
+            catch (System.Threading.ThreadInterruptedException e)
+            {
+                // TODO
+            }
+        }
 		
 		~ConnectorFactory()
 		{
-			lock (createdTransports)
-			{
-				foreach(ConnectorTransport item in createdTransports.Values)
-				{
-					item.close();
-				}
-				createdTransports.Clear();
-			}
-			//connectorStorage.Finalize();
-			connector.stop();
-			try
-			{
-				connectorThread.Join();
-			}
-			catch (System.Threading.ThreadInterruptedException e)
-			{
-				// TODO
-			}
+            close();
 		}
 	}
 }

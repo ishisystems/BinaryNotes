@@ -138,7 +138,7 @@ public class WriterStorage {
         this.messageCoder = coder;
     }
     
-    public void finalize() {
+    public void close() {
         awaitPacketLock.lock();
         synchronized(queue) {
             queue.clear();

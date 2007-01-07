@@ -123,7 +123,7 @@ public class ConnectorStorage {
         }
     }
     
-    public void finalize() {
+    public void close() {
         synchronized(awaitingEvents) {
             finishThread = true;        
             awaitingEvents.clear();

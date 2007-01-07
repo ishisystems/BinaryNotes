@@ -44,9 +44,10 @@ public class TransportFactoryTest extends TestCase {
             ITransport transport = conFactory.getServerTransport(new URI(connectionString));
             assertNotNull(transport);
             Thread.sleep(500);
+            transport.close();
         }
         finally {
-            conFactory.finalize();
+            conFactory.close();
         }
         System.out.println("Finished: testGetServerTransport");
     }
@@ -68,9 +69,11 @@ public class TransportFactoryTest extends TestCase {
                 client.sendAsync(buffer);
             }
             Thread.sleep(500);
+            client.close();
+            server.close();
         }
         finally {
-            conFactory.finalize();
+            conFactory.close();
         }
         System.out.println("Finished: testSendRecvServerTransport");
     }    
