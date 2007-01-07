@@ -19,7 +19,10 @@
 using System;
 namespace org.bn.mq
 {
-	
+
+    public delegate void CallAsyncDelegateResult<T>(IMessageQueue<T> queue, T request, T result);
+    public delegate void CallAsyncDelegateTimeout<T>(IMessageQueue<T> queue, T request);
+
 	public interface IMessageQueue<T> : IRemoteMessageQueue<T>
 	{
 		IQueue<T> Queue
@@ -44,5 +47,9 @@ namespace org.bn.mq
 		
         void  callAsync(T args, string consumerId, ICallAsyncListener<T> listener);
 		void  callAsync(T args, string consumerId, ICallAsyncListener<T> listener, int timeout);
+
+        void callAsync(T args, string consumerId, CallAsyncDelegateResult<T> resultDelegate, CallAsyncDelegateTimeout<T> timeoutDelegate);
+        void callAsync(T args, string consumerId, CallAsyncDelegateResult<T> resultDelegate, CallAsyncDelegateTimeout<T> timeoutDelegate, int timeout);
+
 	}
 }

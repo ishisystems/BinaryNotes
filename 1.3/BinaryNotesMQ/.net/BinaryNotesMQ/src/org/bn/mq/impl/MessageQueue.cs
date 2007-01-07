@@ -101,17 +101,16 @@ namespace org.bn.mq.impl
 			}
 			awaitMessageEvent.Set();
 		}
-		
 		public virtual T call(T args, string consumerId, int timeout)
 		{
-			Message<T> envelope = new Message<T>();
-			envelope.Id = (queuePath + "/call-" + callCurId++);
-			envelope.Body = (args);
-			MessageEnvelope argsEnv = envelope.createEnvelope();
-			MessageEnvelope result = null;
-			argsEnv.Body.MessageUserBody.QueuePath = this.QueuePath;
-			argsEnv.Body.MessageUserBody.ConsumerId = consumerId;
-			IConsumer<T> consumer = null;
+            Message<T> envelope = new Message<T>();
+            envelope.Id = (queuePath + "/call-" + callCurId++);
+            envelope.Body = (args);
+            MessageEnvelope argsEnv = envelope.createEnvelope();
+            argsEnv.Body.MessageUserBody.QueuePath = this.QueuePath;
+            argsEnv.Body.MessageUserBody.ConsumerId = consumerId;
+            
+            IConsumer<T> consumer = null;
 			lock (consumers)
 			{
 				if (!consumers.ContainsKey(consumerId))
@@ -126,6 +125,7 @@ namespace org.bn.mq.impl
 			
             if (consumer is IRemoteConsumer<T>)
 			{
+                MessageEnvelope result = null;
 				ITransport consTransport = ((IRemoteConsumer<T>)consumer).NetworkTransport;
 				result = consTransport.call(argsEnv, timeout);
 				envelope.fillFromEnvelope(result);
@@ -143,14 +143,13 @@ namespace org.bn.mq.impl
         public virtual void callAsync(T args, string consumerId, ICallAsyncListener<T> listener, int timeout)
 		{
             Message<T> envelope = new Message<T>();
-			envelope.Id = (queuePath + "/call-" + callCurId++);
-			envelope.Body = (args);
-			MessageEnvelope argsEnv = envelope.createEnvelope();
-			MessageEnvelope result = null;
-			argsEnv.Body.MessageUserBody.QueuePath = this.QueuePath;
-			argsEnv.Body.MessageUserBody.ConsumerId = consumerId;
-			IConsumer<T> consumer = null;
-			lock (consumers)
+            envelope.Id = (queuePath + "/call-" + callCurId++);
+            envelope.Body = (args);
+            MessageEnvelope argsEnv = envelope.createEnvelope();
+            argsEnv.Body.MessageUserBody.QueuePath = this.QueuePath;
+            argsEnv.Body.MessageUserBody.ConsumerId = consumerId;
+            IConsumer<T> consumer = null;
+            lock (consumers)
 			{
 				if (!consumers.ContainsKey(consumerId))
 				{
@@ -170,10 +169,46 @@ namespace org.bn.mq.impl
 				throw new System.Exception("Call enabled only for remote consumer !");
 		}
 
+
         public virtual void callAsync(T args, string consumerId, ICallAsyncListener<T> listener)
 		{
 			callAsync(args, consumerId, listener, 120);
 		}
+
+        public virtual void callAsync(T args, string consumerId, CallAsyncDelegateResult<T> resultDelegate, CallAsyncDelegateTimeout<T> timeoutDelegate)
+        {
+            callAsync(args, consumerId, resultDelegate, timeoutDelegate, 120);
+        }
+
+        public virtual void callAsync(T args, string consumerId, CallAsyncDelegateResult<T> resultDelegate, CallAsyncDelegateTimeout<T> timeoutDelegate, int timeout)
+        {
+            Message<T> envelope = new Message<T>();
+            envelope.Id = (queuePath + "/call-" + callCurId++);
+            envelope.Body = (args);
+            MessageEnvelope argsEnv = envelope.createEnvelope();
+            argsEnv.Body.MessageUserBody.QueuePath = this.QueuePath;
+            argsEnv.Body.MessageUserBody.ConsumerId = consumerId;
+            IConsumer<T> consumer = null;
+            lock (consumers)
+            {
+                if (!consumers.ContainsKey(consumerId))
+                {
+                    throw new Exception("Consumer with id:" + consumerId + " not found!");
+                }
+                else
+                {
+                    consumer = consumers[consumerId];
+                }
+            }
+            if (consumer is IRemoteConsumer<T>)
+            {
+                ITransport consTransport = ((IRemoteConsumer<T>)consumer).NetworkTransport;
+                consTransport.callAsync(argsEnv, new ProxyCallAsyncListener<T>(this, resultDelegate, timeoutDelegate), timeout);
+            }
+            else
+                throw new System.Exception("Call enabled only for remote consumer !");
+        }
+
 		
 		public virtual void  addConsumer(IConsumer<T> consumer)
 		{

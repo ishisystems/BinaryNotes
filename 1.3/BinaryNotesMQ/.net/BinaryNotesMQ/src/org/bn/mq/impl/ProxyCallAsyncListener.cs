@@ -26,49 +26,74 @@ namespace org.bn.mq.impl
 
     public class ProxyCallAsyncListener<T> : ITransportCallListener
 	{
-		private ICallAsyncListener<T> listener;
+		private ICallAsyncListener<T> listener = null;
 		private IMessageQueue<T> queue;
+        private CallAsyncDelegateResult<T> resultDelegate = null; 
+        private CallAsyncDelegateTimeout<T> timeoutDelegate = null;
 		
 		public ProxyCallAsyncListener(IMessageQueue<T> queue, ICallAsyncListener<T> listener)
 		{
 			this.listener = listener;
 			this.queue = queue;
 		}
+
+        public ProxyCallAsyncListener(IMessageQueue<T> queue, CallAsyncDelegateResult<T> resultDelegate, CallAsyncDelegateTimeout<T> timeoutDelegate)
+        {
+            this.timeoutDelegate = timeoutDelegate;
+            this.resultDelegate = resultDelegate;
+            this.queue = queue;
+        }
 		
 		public virtual void  onCallResult(MessageEnvelope requestEnv, MessageEnvelope resultEnv)
 		{
-			if (listener != null)
-			{
-				Message<T> request = new Message<T>();
+            try
+            {
+
+                Message<T> request = new Message<T>();
                 Message<T> result = new Message<T>();
-				try
-				{
-					request.fillFromEnvelope(requestEnv);
-					result.fillFromEnvelope(resultEnv);
-					listener.onCallResult(queue, request.Body, result.Body);
-				}
-				catch (Exception e)
-				{
-                    Console.WriteLine(e.ToString());
-				}
-			}
+                request.fillFromEnvelope(requestEnv);
+                result.fillFromEnvelope(resultEnv);
+
+                if (listener != null)
+                {
+                    listener.onCallResult(queue, request.Body, result.Body);
+                }
+                else
+                {
+                    if (resultDelegate != null)
+                    {
+                        resultDelegate.Invoke(queue, request.Body, result.Body);
+                    }                    
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+
 		}
 		
 		public virtual void  onCallTimeout(MessageEnvelope requestEnv)
 		{
-			if (listener != null)
+            Message<T> request = new Message<T>();
+			try
 			{
-                Message<T> request = new Message<T>();
-				try
-				{
-					request.fillFromEnvelope(requestEnv);
+				request.fillFromEnvelope(requestEnv);
+			    if (listener != null)
+			    {
 					listener.onCallTimeout(queue, request.Body);
 				}
-				catch (System.Exception e)
-				{
-                    Console.WriteLine(e.ToString());
-				}
+                else
+                if (timeoutDelegate != null)
+                {
+                    timeoutDelegate.Invoke(queue, request.Body);
+                }
 			}
+            catch (System.Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+
 		}
 	}
 }
