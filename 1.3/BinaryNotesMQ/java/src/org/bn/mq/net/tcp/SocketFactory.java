@@ -20,21 +20,21 @@
 package org.bn.mq.net.tcp;
 
 public class SocketFactory {
-    protected TransportWriterStorage writerStorage;
-    protected TransportReaderStorage readerStorage;
+    protected WriterStorage writerStorage;
+    protected ReaderStorage readerStorage;
     private TransportFactory factory;
 
-    public SocketFactory( TransportWriterStorage writerStorage, TransportReaderStorage readerStorage, TransportFactory factory) {
+    public SocketFactory( WriterStorage writerStorage, ReaderStorage readerStorage, TransportFactory factory) {
         this.writerStorage = writerStorage;
         this.readerStorage = readerStorage;
         this.setTransportFactory(factory);
     }
 
-    public TransportWriterStorage getWriterStorage() {
+    public WriterStorage getWriterStorage() {
         return this.writerStorage;
     }
 
-    public TransportReaderStorage getReaderStorage() {
+    public ReaderStorage getReaderStorage() {
         return this.readerStorage;
     }
 

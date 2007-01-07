@@ -55,7 +55,7 @@ public class Message<T> implements IMessage<T>, Serializable {
         this(messageClass);
         setId(src.getId());
         setSenderId(src.getSenderId());
-        setPrioriy(src.getPriority());
+        setPriority(src.getPriority());
         setMandatory(src.isMandatory());
         setLifeTime(src.getLifeTime());
         setBody(src.getBody());
@@ -82,7 +82,7 @@ public class Message<T> implements IMessage<T>, Serializable {
         return priority;
     }
 
-    public void setPrioriy(int prio) {
+    public void setPriority(int prio) {
         this.priority = prio;
     }
 

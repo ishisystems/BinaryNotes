@@ -35,7 +35,7 @@ public class AcceptorFactory extends SocketFactory {
     //protected final int acceptorsPoolSize = 2;
     //protected Executor acceptorsExecutor = Executors.newFixedThreadPool(acceptorsPoolSize);
     
-    public AcceptorFactory( TransportWriterStorage writerStorage, TransportReaderStorage readerStorage, TransportFactory factory) {
+    public AcceptorFactory( WriterStorage writerStorage, ReaderStorage readerStorage, TransportFactory factory) {
         super (writerStorage, readerStorage, factory);        
         initAcceptors();
     }

@@ -185,7 +185,7 @@ public class MessageQueue<T> implements IMessageQueue<T>, Runnable, ITransportCo
 
     public void delConsumer(IConsumer<T> consumer) throws Exception {
         synchronized(consumers) {
-            if(consumers.containsKey(consumer.getId())) {
+            if(!consumers.containsKey(consumer.getId())) {
                 throw new Exception("Consumer with id:"+consumer.getId()+" doesn't have any subscription!");
             }
             else {

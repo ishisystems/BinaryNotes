@@ -21,10 +21,10 @@ package org.bn.mq.net.tcp;
 
 import java.io.IOException;
 
-public class TransportWriter implements Runnable{    
-    protected TransportWriterStorage storage;
+public class Writer implements Runnable{    
+    protected WriterStorage storage;
     
-    public TransportWriter (TransportWriterStorage storage) {
+    public Writer (WriterStorage storage) {
         this.storage = storage;
     }
     

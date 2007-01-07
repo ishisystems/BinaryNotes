@@ -29,13 +29,11 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.bn.mq.net.ITransportMessageCoder;
-import org.bn.mq.net.tcp.Transport;
-import org.bn.mq.net.tcp.TransportPacket;
 import org.bn.mq.protocol.AliveRequest;
 import org.bn.mq.protocol.MessageBody;
 import org.bn.mq.protocol.MessageEnvelope;
 
-public class TransportWriterStorage {
+public class WriterStorage {
     protected LinkedList<TransportPacket> queue = new LinkedList<TransportPacket>();
     protected final Lock awaitPacketLock = new ReentrantLock();
     protected final Condition awaitPacketEvent  = awaitPacketLock.newCondition(); 
@@ -45,7 +43,7 @@ public class TransportWriterStorage {
     protected LinkedList<Transport> aliveRequestCheckList = new LinkedList<Transport>();
     
     
-    public TransportWriterStorage() {
+    public WriterStorage() {
     }
     
     public TransportPacket getPacket() {

@@ -27,7 +27,7 @@ public interface IMessage<T> {
     String getQueuePath();
 
     int getPriority();   
-    void setPrioriy(int prio);
+    void setPriority(int prio);
    
     boolean isMandatory();
     void setMandatory(boolean flag);

@@ -27,17 +27,17 @@ import org.bn.mq.net.*;
 public class TransportFactory implements ITransportFactory {
     private final String scheme = "bnmq";
 
-    protected TransportWriterStorage writerStorage = new TransportWriterStorage();
-    protected TransportReaderStorage readerStorage = new TransportReaderStorage();
+    protected WriterStorage writerStorage = new WriterStorage();
+    protected ReaderStorage readerStorage = new ReaderStorage();
     
     protected ConnectorFactory conFactory = new ConnectorFactory( writerStorage, readerStorage, this);
     protected AcceptorFactory acpFactory = new AcceptorFactory(writerStorage, readerStorage, this);
 
     protected Thread writerThread;
-    protected TransportWriter writerThreadBody;
+    protected Writer writerThreadBody;
     
     protected Thread readerThread;
-    protected TransportReader readerThreadBody;
+    protected Reader readerThreadBody;
     protected ITransportMessageCoderFactory messageCoderFactory;
     protected AsyncCallManager asyncCallMgr = new AsyncCallManager();
     
@@ -81,11 +81,11 @@ public class TransportFactory implements ITransportFactory {
     }
     
     protected void startAsyncDispatchers() {
-        writerThreadBody = new TransportWriter(writerStorage);
+        writerThreadBody = new Writer(writerStorage);
         writerThread = new Thread(writerThreadBody);
         writerThread.setName("BNMQ-TCPWriter");
         writerThread.start();
-        readerThreadBody = new TransportReader(readerStorage);
+        readerThreadBody = new Reader(readerStorage);
         readerThread = new Thread(readerThreadBody);
         readerThread.setName("BNMQ-TCPReader");
         readerThread.start();

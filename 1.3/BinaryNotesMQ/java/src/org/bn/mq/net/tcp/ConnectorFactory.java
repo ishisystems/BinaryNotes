@@ -40,7 +40,7 @@ public class ConnectorFactory extends SocketFactory {
     protected Thread connectorThread = new Thread(connector);
     
     
-    public ConnectorFactory( TransportWriterStorage writerStorage, TransportReaderStorage readerStorage, TransportFactory factory) {
+    public ConnectorFactory( WriterStorage writerStorage, ReaderStorage readerStorage, TransportFactory factory) {
         super(writerStorage , readerStorage, factory);
         connectorThread.setName("BNMQ-Connector");
         connectorThread.start();

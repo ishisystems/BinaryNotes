@@ -244,7 +244,7 @@ public abstract class Transport implements ITransport  {
             AsyncCallManager mgr = socketFactory.getTransportFactory().getAsyncCallManager();
             AsyncCallItem callAsyncResult =  mgr.getAsyncCall(message);
             if(callAsyncResult!=null) {                    
-                result = false;
+                result = true;
                 if(callAsyncResult.getListener()!=null) {
                     callAsyncResult.getListener().onCallResult(callAsyncResult.getRequest(),message);
                 }

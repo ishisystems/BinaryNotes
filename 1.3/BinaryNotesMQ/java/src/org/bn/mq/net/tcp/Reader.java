@@ -24,11 +24,11 @@ import java.nio.ByteBuffer;
 import java.util.List;
 
 
-public class TransportReader implements Runnable {
-    protected TransportReaderStorage storage;
+public class Reader implements Runnable {
+    protected ReaderStorage storage;
     protected boolean finish = false;
     
-    public TransportReader(TransportReaderStorage storage) {
+    public Reader(ReaderStorage storage) {
         this.storage = storage;
     }
     

@@ -32,11 +32,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-public class TransportReaderStorage {
+public class ReaderStorage {
     protected Selector selector = null;
     protected HashMap<Transport,SelectionKey> readerKeys = new HashMap<Transport,SelectionKey>();
     
-    protected TransportReaderStorage() {
+    protected ReaderStorage() {
         try {
             selector = Selector.open();
         }
