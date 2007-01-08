@@ -33,6 +33,7 @@ import org.bn.metadata.ASN1ElementMetadata;
 import org.bn.metadata.ASN1Metadata;
 import org.bn.metadata.ASN1SequenceMetadata;
 import org.bn.metadata.ASN1StringMetadata;
+import org.bn.metadata.ChoiceDescriptor;
 import org.bn.metadata.FieldDescriptor;
 import org.bn.metadata.SequenceDescriptor;
 import org.bn.types.BitString;
@@ -65,6 +66,33 @@ public class FastBEREncoder<T>
     {
         int resultSize = 0;
 
+        CodeableSequence sequence = (CodeableSequence) object;
+        SequenceDescriptor sequenceDescriptor = sequence.getSequenceDescriptor();
+        FieldDescriptor[] fieldDescriptors = sequenceDescriptor.getFieldDescriptors();
+        for (int index = fieldDescriptors.length - 1; index >= 0; index--)
+        {
+            IValueEncoder encoder = fieldDescriptors[index].getEncoder();
+
+            // !@# need to handle optional fields...
+
+            resultSize +=
+                encoder.encode(this,
+                               fieldDescriptors[index].getField(object),
+                               fieldDescriptors[index].getTypeMetadata(),
+                               fieldDescriptors[index].getElementMetadata(),
+                               stream);
+        }
+
+        ASN1SequenceMetadata sequenceMetadata = sequenceDescriptor.getSequenceMetadata();
+
+        int tagValue =
+            tagValue(elementMetadata,
+                     TagClass.Universal,
+                     ElementType.Constructed,
+                     sequenceMetadata.isSet() ? UniversalTag.Set : UniversalTag.Sequence);
+
+        resultSize += encodeHeader(tagValue, resultSize, stream);
+
         return resultSize;
     }
         
@@ -75,6 +103,47 @@ public class FastBEREncoder<T>
         throws Exception
     {
         int resultSize = 0;
+
+        CodeableChoice choice = (CodeableChoice) object;
+        ChoiceDescriptor choiceDescriptor = choice.getChoiceDescriptor();
+        FieldDescriptor[] fieldDescriptors = choiceDescriptor.getFieldDescriptors();
+
+        FieldDescriptor fieldToEncode = null;
+        Object fieldValue = null;
+        int index = 0;
+        while ((fieldToEncode == null) && (index < fieldDescriptors.length))
+        {
+            // !@# Linear search -- blech!  I'm not crazy about just
+            // looking for the first non-null field, but to be
+            // smarter about things, we'll have to modify the
+            // BNCompiler to generate a method telling us which field
+            // is selected.
+            fieldValue = fieldDescriptors[index].getField(object);
+            if (fieldValue != null)
+            {
+                fieldToEncode = fieldDescriptors[index];
+            }
+            else
+            {
+                index++;
+            }
+        }
+
+        IValueEncoder encoder = fieldToEncode.getEncoder();
+        resultSize +=
+            encoder.encode(this, fieldValue,
+                           fieldToEncode.getTypeMetadata(),
+                           fieldToEncode.getElementMetadata(),
+                           stream);
+
+        int tagValue =
+            tagValue(elementMetadata,
+                     TagClass.ContextSpecific,
+                     ElementType.Constructed,
+                     UniversalTag.LastUniversal);
+
+        resultSize += encodeHeader(tagValue, resultSize, stream);
+
         return resultSize;
     }    
         

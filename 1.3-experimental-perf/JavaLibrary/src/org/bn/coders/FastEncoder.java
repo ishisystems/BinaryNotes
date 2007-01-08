@@ -21,8 +21,12 @@ package org.bn.coders;
 import java.io.OutputStream;
 
 import org.bn.IEncoder;
+import org.bn.metadata.ASN1ChoiceMetadata;
 import org.bn.metadata.ASN1ElementMetadata;
 import org.bn.metadata.ASN1Metadata;
+import org.bn.metadata.ASN1SequenceMetadata;
+import org.bn.metadata.BoxedElementTypeDescriptor;
+import org.bn.metadata.BoxedTypeDescriptor;
 import org.bn.metadata.ChoiceDescriptor;
 import org.bn.metadata.FieldDescriptor;
 import org.bn.utils.ReverseByteArrayOutputStream;
@@ -35,6 +39,15 @@ public abstract class FastEncoder<T> implements IEncoder<T> {
     public void encode(T object, OutputStream stream)
         throws Exception
     {
+        int resultSize = encodeClassType(object, null, stream);
+
+        if(resultSize == 0)
+        {
+            String message =
+                "Unable to find any supported annotation for class type: " +
+                object.getClass().getName();
+            throw new IllegalArgumentException(message);
+        };
     }
 
     protected int encodeClassType(Object              object,
@@ -42,7 +55,31 @@ public abstract class FastEncoder<T> implements IEncoder<T> {
                                   OutputStream        stream)
         throws Exception
     {
-        return 0;
+        int resultSize = 0;
+
+        if (object instanceof CodeableSequence)
+        {
+            CodeableSequence sequence = (CodeableSequence) object;
+            ASN1SequenceMetadata typeMetadata =
+                sequence.getSequenceDescriptor().getSequenceMetadata();
+            resultSize = encodeSequence(sequence, typeMetadata, elementMetadata, stream);
+        }
+        else if (object instanceof CodeableChoice)
+        {
+            CodeableChoice choice = (CodeableChoice) object;
+            ASN1ChoiceMetadata typeMetadata =
+                choice.getChoiceDescriptor().getChoiceMetadata();
+            resultSize = encodeChoice(choice, typeMetadata, elementMetadata, stream);
+        }
+        else if (object instanceof CodeableBoxedType)
+        {
+            resultSize = encodeBoxedType(object, null, elementMetadata, stream);
+        }
+        else
+        {
+            throw new Exception("Not yet implemented.");
+        }
+        return resultSize;
     }
 
     protected int encodeJavaElement(Object              object,
@@ -60,15 +97,11 @@ public abstract class FastEncoder<T> implements IEncoder<T> {
                                           OutputStream        stream)
         throws Exception;
 
-    protected int encodeChoice(Object              object,
-                               ASN1Metadata        typeMetadata,
-                               ASN1ElementMetadata elementMetadata,
-                               OutputStream        stream)
-        throws Exception
-    {
-        return 0;
-    }
-    
+    abstract protected int encodeChoice(Object              object,
+                                        ASN1Metadata        typeMetadata,
+                                        ASN1ElementMetadata elementMetadata,
+                                        OutputStream        stream)
+        throws Exception;
         
     protected int encodeEnum(Object              object,
                              ASN1Metadata        typeMetadata,
@@ -76,6 +109,7 @@ public abstract class FastEncoder<T> implements IEncoder<T> {
                              OutputStream        stream)
         throws Exception 
     {
+        if (true) throw new Exception("encodeEnum(): Not yet implemented.");
         return 0;
     }
     
@@ -85,7 +119,7 @@ public abstract class FastEncoder<T> implements IEncoder<T> {
                                 OutputStream        stream)
                                 throws Exception 
     {
-        return 0;
+        return encodeClassType(object, elementMetadata, stream);
     }
     
     protected int encodeBoxedType(Object              object,
@@ -94,7 +128,20 @@ public abstract class FastEncoder<T> implements IEncoder<T> {
                                   OutputStream        stream)
         throws Exception 
     {
-        return 0;
+        CodeableBoxedType boxedType = (CodeableBoxedType) object;
+        BoxedTypeDescriptor descriptor = boxedType.getBoxedTypeDescriptor();
+
+        if (descriptor instanceof BoxedElementTypeDescriptor)
+        {
+            throw new RuntimeException("encoding BoxedTypeElements not yet supported.");
+        }
+
+        IValueEncoder encoder = descriptor.getEncoder();
+        
+        // !@# need to handle nullable field scenario...
+        Object value = descriptor.getGetter().invoke(object);
+
+        return encoder.encode(this, value, descriptor.getTypeMetadata(), elementMetadata, stream);
     }
 
     protected abstract int encodeBoolean(Object              object,

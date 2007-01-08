@@ -20,6 +20,7 @@
 package org.bn.metadata;
 
 import org.bn.coders.IValueDecoder;
+import org.bn.coders.IValueEncoder;
 
 /**
  * @author jcfinley@users.sourceforge.net
@@ -28,18 +29,26 @@ public class ItemDescriptor
     extends Descriptor
 {
     private ASN1ElementMetadata elementMetadata;
+    private IValueEncoder       encoder;
     private IValueDecoder       decoder;
 
     public ItemDescriptor(ASN1ElementMetadata elementMetadata,
+                          IValueEncoder       encoder,
                           IValueDecoder       decoder)
     {
         this.elementMetadata = elementMetadata;
+        this.encoder         = encoder;
         this.decoder         = decoder;
     }
 
     public ASN1ElementMetadata getElementMetadata()
     {
         return elementMetadata;
+    }
+
+    public IValueEncoder getEncoder()
+    {
+        return encoder;
     }
 
     public IValueDecoder getDecoder()

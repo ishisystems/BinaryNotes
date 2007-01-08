@@ -26,6 +26,7 @@
     <xsl:output method="text" encoding="UTF-8" indent="no"/>
 
     <xsl:import href="decoderMetadata.xsl"/>    
+    <xsl:import href="encoderMetadata.xsl"/>    
     <xsl:import href="elementMetadata.xsl"/>    
     <xsl:import href="fieldMetadata.xsl"/>    
 
@@ -64,6 +65,7 @@
                                   <xsl:value-of select="$getDeclaredField"/>,
                                   <xsl:call-template name="fieldMetadata"/>,
                                   <xsl:call-template name="elementMetadata"/>,
+                                  <xsl:call-template name="encoderMetadata"/>,
                                   <xsl:call-template name="decoderMetadata"/>),
              </xsl:for-each>        
            };
@@ -86,9 +88,10 @@
                                                              Field               field,
                                                              ASN1Metadata        typeMetadata,
                                                              ASN1ElementMetadata elementMetadata,
+                                                             IValueEncoder       encoder,
                                                              IValueDecoder       decoder)
        {
-          super(name, field, typeMetadata, elementMetadata, decoder);
+          super(name, field, typeMetadata, elementMetadata, encoder, decoder);
        }
 
        public Object getField(Object targetObject)

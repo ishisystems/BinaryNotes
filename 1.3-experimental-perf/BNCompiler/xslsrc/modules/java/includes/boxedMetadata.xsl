@@ -47,6 +47,7 @@ public class <xsl:value-of select="$boxedName"/>Descriptor
       super("value",
             <xsl:call-template name="fieldMetadata"/>,
             <xsl:call-template name="elementMetadata"/>,
+            ValueEncoders.ELEMENT,
             ValueDecoders.ELEMENT);
    }
 }

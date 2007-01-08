@@ -20,6 +20,7 @@
 package org.bn.metadata;
 
 import org.bn.coders.IValueDecoder;
+import org.bn.coders.IValueEncoder;
 
 /**
  * @author jcfinley@users.sourceforge.net
@@ -32,10 +33,11 @@ public class BoxedElementTypeDescriptor
     public BoxedElementTypeDescriptor(String              name,
                                       ASN1Metadata        typeMetadata,
                                       ASN1ElementMetadata elementMetadata,
+                                      IValueEncoder       encoder,
                                       IValueDecoder       decoder)
     {
 //         super(name, typeMetadata, decoder);
-        super(name, null, null, typeMetadata, decoder);
+        super(name, null, null, null, typeMetadata, encoder, decoder);
         this.elementMetadata = elementMetadata;
     }
 

@@ -22,6 +22,7 @@ package org.bn.metadata;
 import java.lang.reflect.Field;
 
 import org.bn.coders.IValueDecoder;
+import org.bn.coders.IValueEncoder;
 
 /**
  * @author jcfinley@users.sourceforge.net
@@ -42,9 +43,10 @@ abstract public class FieldDescriptor
                            Field               field,
                            ASN1Metadata        typeMetadata,
                            ASN1ElementMetadata elementMetadata,
+                           IValueEncoder       encoder,
                            IValueDecoder       decoder)
     {
-        super(elementMetadata, decoder);
+        super(elementMetadata, encoder, decoder);
 
         this.name         = name;
         this.field        = field;

@@ -46,10 +46,12 @@ public class <xsl:value-of select="$boxedName"/>Descriptor
    {
       super("value",
            <xsl:value-of select="$valueFieldRef"/>,
+           <xsl:value-of select="$boxedName"/>.class.getMethod("getValue"),
            <xsl:value-of select="$boxedName"/>.class.getMethod("setValue", <xsl:value-of select="$valueFieldRef"/>.getType()),
             new ASN1StringMetadata("<xsl:value-of select='name'/>",
                                    <xsl:value-of select='isUCSType'/>,
                                    <xsl:call-template name="stringTypeDecl"/>),
+            ValueEncoders.STRING,
             ValueDecoders.STRING);
    }
 }

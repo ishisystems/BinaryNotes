@@ -23,6 +23,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 import org.bn.coders.IValueDecoder;
+import org.bn.coders.IValueEncoder;
 
 /**
  * @author jcfinley@users.sourceforge.net
@@ -32,20 +33,26 @@ public class BoxedTypeDescriptor
 {
     private String        name;
     private Field         field;
+    private Method        getter;
     private Method        setter;
     private ASN1Metadata  typeMetadata;
+    private IValueEncoder encoder;
     private IValueDecoder decoder;
 
     public BoxedTypeDescriptor(String        name,
                                Field         field,
+                               Method        getter,
                                Method        setter,
                                ASN1Metadata  typeMetadata,
+                               IValueEncoder encoder,
                                IValueDecoder decoder)
     {
         this.name         = name;
         this.field        = field;
+        this.getter       = getter;
         this.setter       = setter;
         this.typeMetadata = typeMetadata;
+        this.encoder      = encoder;
         this.decoder      = decoder;
     }
 
@@ -59,6 +66,11 @@ public class BoxedTypeDescriptor
         return field;
     }
 
+    public Method getGetter()
+    {
+        return getter;
+    }
+
     public Method getSetter()
     {
         return setter;
@@ -67,6 +79,11 @@ public class BoxedTypeDescriptor
     public ASN1Metadata getTypeMetadata()
     {
         return typeMetadata;
+    }
+
+    public IValueEncoder getEncoder()
+    {
+        return encoder;
     }
 
     public IValueDecoder getDecoder()
