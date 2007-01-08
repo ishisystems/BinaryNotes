@@ -21,7 +21,22 @@ package org.bn.mq;
 
 import org.bn.mq.protocol.MessageEnvelope;
 
+/**
+ * Interface for implementation listener for handling async calls
+ */
 public interface ICallAsyncListener<T> {
+    /**
+     * The event invokes when result for call has been received
+     * @param queue Incoming queue 
+     * @param request Source user request (handback)
+     * @param result Result from consumer
+     */
     void onCallResult(IMessageQueue queue, T request, T result);
+    
+    /**
+     * The event invokes when timeout for call is expired
+     * @param queue Incoming queue 
+     * @param request Source user request (handback)
+     */
     void onCallTimeout(IMessageQueue queue, T request);
 }

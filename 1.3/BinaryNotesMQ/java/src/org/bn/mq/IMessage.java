@@ -21,20 +21,81 @@ package org.bn.mq;
 
 import java.util.Date;
 
+/**
+ * Interface represents message.
+ * Implementation of interface can be created with queue.createMessage() method 
+ */
 public interface IMessage<T> {
+    /**
+     * Get message Id
+     * @return Message Id
+     */
     String getId();
+    
+    /**
+     * Get sender Id
+     * @todo For future version
+     * @return Sender Id
+     */
     String getSenderId();
+    
+    /**
+     * Get message queue path
+     * @return Message queue path
+     */
     String getQueuePath();
-
-    int getPriority();   
+    
+    /**
+     * Get the priority of message. 
+     * @note Not all implementation of queue handling this parameter
+     * @return priority of message
+     */
+    int getPriority();
+    
+    /**
+     * Set the priority of message
+     * @note Not all implementation of queue handling this parameter
+     * @param prio priority of message
+     */
     void setPriority(int prio);
-   
+    
+    /**
+     * If message mandatory for delivery, this flag has true value.
+     * Mandatory messages maybe stored in MQ for delivering to persistence consumers
+     * @return Mandatory flag
+     */
     boolean isMandatory();
+    
+    /**
+     * Set message mandatory flag. 
+     * Messages with mandatory flag maybe stored in MQ for delivering to persistence consumers
+     * @param flag
+     */
     void setMandatory(boolean flag);
     
+    /**
+     * Get the life time of message
+     * @todo For future version
+     * @return the life time of message
+     */
     Date getLifeTime();
+    
+    /**
+     * Set the life time of message
+     * @todo For future version
+     * @param lifeTime the life time of message
+     */
     void setLifeTime(Date lifeTime);
     
+    /**
+     * Get the user body content
+     * @return the user body content
+     */
     T getBody();
+    
+    /**
+     * Set the user body content
+     * @param body the user body content
+     */
     void setBody(T body);
 }

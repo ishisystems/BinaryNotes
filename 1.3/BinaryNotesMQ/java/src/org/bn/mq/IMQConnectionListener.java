@@ -20,7 +20,23 @@ package org.bn.mq;
 
 import org.bn.mq.net.ITransport;
 
+/**
+ * Transport connection listener
+ */
 public interface IMQConnectionListener {
+    /**
+     * Event invokes when connection is disconnected
+     * If IMQConnection is server, onDisconnect can occur more than one time for all connected clients
+     * @param connection MQConnection instance
+     * @param networkTransport network transport instance. 
+     */
     void onDisconnected(IMQConnection connection, ITransport networkTransport);
+    
+    /**
+     * Event invokes when connection is connected
+     * If IMQConnection is server, onConnected can occur more than one time for all connecting clients
+     * @param connection MQConnection instance
+     * @param networkTransport Network transport instance
+     */    
     void onConnected(IMQConnection connection, ITransport networkTransport);
 }

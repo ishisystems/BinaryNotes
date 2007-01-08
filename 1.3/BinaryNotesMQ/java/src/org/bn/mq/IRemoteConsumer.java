@@ -21,6 +21,13 @@ package org.bn.mq;
 
 import org.bn.mq.net.ITransport;
 
+/**
+ * Remote consumer interface specification
+ */
 public interface IRemoteConsumer<T> extends IConsumer<T> {
+    /**
+     * Get the transport instance
+     * @return transport instance
+     */
     ITransport getNetworkTransport();
 }

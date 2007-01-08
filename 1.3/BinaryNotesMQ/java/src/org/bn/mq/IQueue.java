@@ -21,8 +21,25 @@ package org.bn.mq;
 
 import java.util.List;
 
+/**
+ * Queue (algorithm) interface specification
+ */
 public interface IQueue<T> {
+    /**
+     * Put message
+     * @param message message instance
+     */
     void push(IMessage<T> message);
+    
+    /**
+     * Put messages
+     * @param messages message list
+     */
     void push(List<IMessage<T>> messages);
+    
+    /**
+     * Get next message to send
+     * @return message to send
+     */
     IMessage<T> getNext();
 }

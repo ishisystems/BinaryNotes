@@ -21,10 +21,49 @@ package org.bn.mq;
 
 import org.bn.mq.impl.Supplier;
 
+/**
+ * Interface to supplier
+ */
 public interface ISupplier extends IRemoteSupplier {
+    /**
+     * Create new queue for specified path & user message body type
+     * @param queuePath queue path
+     * @param messageClass user message body type
+     * @return queue instance
+     */
     public <T> IMessageQueue<T> createQueue(String queuePath, Class<T> messageClass);
+    
+    /**
+     * Create new queue for specified path & user message body type
+     * @param queuePath queue path
+     * @param messageClass user message body type
+     * @param queueImpl queue algorithm
+     * @return queue instance
+     */
     public <T> IMessageQueue<T> createQueue(String queuePath, Class<T> messageClass, IQueue<T> queueImpl);
+    
+    /**
+     * Create new queue for specified path & user message body type
+     * @param queuePath queue path
+     * @param messageClass user message body type
+     * @param queueImpl queue algorithm
+     * @param storage persistence storage for queue
+     * @return queue instance
+     */    
     public <T> IMessageQueue<T> createQueue(String queuePath, Class<T> messageClass, IQueue<T> queueImpl, IPersistenceQueueStorage<T> storage);
+    
+    /**
+     * Create new queue for specified path & user message body type
+     * @param queuePath queue path
+     * @param messageClass user message body type
+     * @param storage persistence storage for queue
+     * @return queue instance
+     */        
     public <T> IMessageQueue<T> createQueue(String queuePath, Class<T> messageClass, IPersistenceQueueStorage<T> storage);
+    
+    /**
+     * Remove supplier queue
+     * @param queue queue instance
+     */
     public <T> void removeQueue(IMessageQueue<T> queue);
 }

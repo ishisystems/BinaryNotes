@@ -21,13 +21,51 @@ package org.bn.mq;
 
 import org.bn.mq.impl.RemoteMessageQueue;
 
+/**
+ * Remote message queue interface
+ */
 public interface IRemoteMessageQueue<T> {
+    /**
+     * Add new subscription for specified consumer
+     * @param consumer consumer instance
+     */
     void addConsumer(IConsumer<T> consumer)  throws Exception;
+    
+    /**
+     * Add new subscription for specified consumer
+     * @param consumer consumer instance
+     * @param persistence if true then persistence subscription will performed
+     */    
     void addConsumer(IConsumer<T> consumer, Boolean persistence)  throws Exception ;
+
+    /**
+     * Add new subscription for specified consumer
+     * @param consumer consumer instance
+     * @param persistence if true then persistence subscription will performed
+     * @param filter filter for subscription (not supported for version 1.0)
+     */        
     void addConsumer(IConsumer<T> consumer, Boolean persistence, String filter)  throws Exception ;
+    
+    /**
+     * Remove subscription to queue
+     * @param consumer consumer instance
+     */
     void delConsumer(IConsumer<T> consumer) throws Exception;
+    
+    /**
+     * Get queue path
+     * @return queue path
+     */
     String getQueuePath();
 
+    /**
+     * Start queue processing
+     * @note when queue created is already started
+     */
     void start();
+    
+    /**
+     * Stop queue processing
+     */
     void stop();
 }

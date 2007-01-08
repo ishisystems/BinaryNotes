@@ -21,14 +21,50 @@ package org.bn.mq;
 
 import java.net.URI;
 
+/**
+ * Transport connection abstraction
+ */
 public interface IMQConnection {
+    /**
+     * Add new connection listener
+     * @param listener connection listener
+     */
     void addListener(IMQConnectionListener listener);
+    
+    /**
+     * Del the connection listener
+     * @param listener connection listener
+     */    
     void delListener(IMQConnectionListener listener);    
+    
+    /**
+     * Lookup remote supplier with specified name
+     * @param supplierName supplier name
+     * @return RemoteSupplier proxy object
+     */
     IRemoteSupplier lookup(String supplierName) throws Exception;
     
+    /**
+     * Create/register supplier on connection with specified name
+     * @param supplierName supplier name
+     * @return supplier instance
+     */
     ISupplier createSupplier(String supplierName);
+    
+    /**
+     * Remove registered supplier
+     * @param supplier supplier instance
+     */
     void removeSupplier(ISupplier supplier);
     
+    /**
+     * Get connection addr
+     * @return connection addr
+     */
     URI getAddr();
+    
+    /**
+     * Close & destroy current connection
+     */
     void close();
 }

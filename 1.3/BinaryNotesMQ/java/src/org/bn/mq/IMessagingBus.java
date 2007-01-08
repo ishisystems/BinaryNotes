@@ -23,8 +23,26 @@ import java.io.IOException;
 
 import java.net.URI;
 
+/**
+ * Messaging bus and transport layer abstraction
+ */
 public interface IMessagingBus {
+    /**
+     * Create client connection
+     * @param addr remote address
+     * @return MQConnection instance
+     */
     IMQConnection connect(URI addr) throws IOException;
+    
+    /**
+     * Create server listener
+     * @param addr bind address & port
+     * @return MQConnection instance
+     */
     IMQConnection create(URI addr) throws IOException;
+    
+    /**
+     * Close bus & destroy all listeners & connectors
+     */
     void close();
 }

@@ -19,7 +19,21 @@
 
 package org.bn.mq;
 
+/**
+ * Interface for implementation own consumers
+ */
 public interface IConsumer<T>  {
+    /**
+     * Method calls for determinate consumer id
+     * @note - Don't supported changing Id value in the runtime. Please provide only one value.
+     * @return Consumer Id
+     */
     String getId();
+    
+    /**
+     * Event invokes when received message from Queue
+     * @param message
+     * @return
+     */
     T onMessage(IMessage<T> message);
 }

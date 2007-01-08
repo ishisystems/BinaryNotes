@@ -28,24 +28,46 @@ import org.bn.mq.impl.PriorityQueue;
 import org.bn.mq.impl.Queue;
 import org.bn.mq.impl.SQLStorage;
 
+/**
+ * Factory for accessing to implementation of MQ 
+ */
 public class MQFactory {
     private static MQFactory instance = new MQFactory();
         
     protected MQFactory() {
     }    
     
+    /**
+     * Get access to instance of factory
+     * @return instance of factory
+     */
     public static MQFactory getInstance() {
         return instance;
     }
     
+    /**
+     * Create the messaging bus
+     * @return messaging bus
+     */
     public IMessagingBus createMessagingBus() {
         return new MessagingBus();
     }
     
+    /**
+     * Create new default queue algorithm (implementation)
+     * @param messageClass user message type
+     * @return queue algorithm (implementation)
+     */
     public <T> IQueue<T> createQueue(Class<T> messageClass) {
         return createQueue("simple",messageClass);
     }
-    
+
+    /**
+     * Create new queue algorithm (implementation) with specified type
+     * @param algorithm algorithm name. Now supported only "simple", "priority".
+     * @param messageClass user message type
+     * @return queue algorithm (implementation)
+     */    
     public <T> IQueue<T> createQueue(String algorithm, Class<T> messageClass) {
         if(algorithm == null || (algorithm!=null && algorithm.equalsIgnoreCase("simple"))) {
             return new Queue<T>();
@@ -58,6 +80,13 @@ public class MQFactory {
             return null;
     }
     
+    /**
+     * Creating persistence storage
+     * @param storageType type of storage. Supported now: "InMemory", "SQL"
+     * @param storageProperties properties of storage.
+     * @param messageClass user message type
+     * @return Persistence storage implementation
+     */
     public <T> IPersistenceStorage<T> createPersistenceStorage(String storageType, Map<String,Object> storageProperties, Class<T> messageClass) throws Exception {
         if(storageType == null || (storageType!=null && storageType.length() == 0)) {
             return new NullStorage<T>(storageProperties);

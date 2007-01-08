@@ -24,11 +24,44 @@ import java.util.List;
 
 import org.bn.mq.impl.InMemoryQueueStorage;
 
+/**
+ * Interface specification of persistence storage implementations for queue 
+ */
 public interface IPersistenceQueueStorage<T> {
+    /**
+     * Get messages to send for consumer (awaiting list)
+     * @param consumer consumer instance
+     * @return awaiting list
+     */
     List< IMessage <T> > getMessagesToSend(IConsumer<T> consumer);
+    
+    /**
+     * Persistence subscribe consumer
+     * @param consumer consumer instance
+     */
     void persistenceSubscribe(IConsumer<T> consumer) throws Exception;
+    
+    /**
+     * Remove persistence subscription
+     * @param consumer consumer instance
+     */
     void persistenceUnsubscribe(IConsumer<T> consumer) throws Exception;
+    
+    /**
+     * Register persistence message for all consumers subscriptions
+     * @param message message instance
+     */
     void registerPersistenceMessage(IMessage<T> message) throws Exception;
+    
+    /**
+     * Remove registered message for specified consumer
+     * @param consumer consumer instance
+     * @param message message instance
+     */
     void removeDeliveredMessage(IConsumer<T> consumer, IMessage<T> message) throws Exception ;
+    
+    /**
+     * Close & finalize storage
+     */
     void close();
 }

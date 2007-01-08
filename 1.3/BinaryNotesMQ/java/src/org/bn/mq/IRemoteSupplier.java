@@ -23,7 +23,21 @@ import java.net.URI;
 
 import org.bn.mq.net.ITransport;
 
+/**
+ * Interface to remote supplier 
+ */
 public interface IRemoteSupplier {
+    /**
+     * Get id to remote supplier
+     * @return
+     */
     String getId();
+    
+    /**
+     * Lookup remote queue by specified path & message body type
+     * @param queuePath queue path
+     * @param messageClass user message body type
+     * @return proxy to remote queue instance
+     */
     <T> IRemoteMessageQueue<T> lookupQueue(String queuePath, Class<T> messageClass);
 }

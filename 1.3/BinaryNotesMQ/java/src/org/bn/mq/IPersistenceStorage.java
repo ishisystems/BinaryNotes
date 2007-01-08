@@ -20,6 +20,14 @@ package org.bn.mq;
 
 import java.io.Serializable;
 
+/**
+ * Interface specification of persistence storage type implementations  
+ */
 public interface IPersistenceStorage<T> {
+    /**
+     * Create persistence storage with specified queue name
+     * @param queueStorageName queue storage name
+     * @return persistence queue storage instance
+     */
     IPersistenceQueueStorage<T> createQueueStorage(String queueStorageName) throws Exception;
 }
