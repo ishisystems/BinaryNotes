@@ -55,7 +55,7 @@ namespace org.bn.mq.net.tcp
 								transport.onConnected();
 							}
 						}
-						catch (System.IO.IOException ex)
+						catch (Exception ex)
 						{
 							connected = false;
 						}
