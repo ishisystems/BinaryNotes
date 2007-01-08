@@ -92,7 +92,9 @@ public class ReaderStorage {
             for (Iterator i = keys.iterator(); i.hasNext();) {
                 SelectionKey key = (SelectionKey) i.next();
                 i.remove();
-                if(!key.isReadable())
+                if(!key.isValid())
+                    continue;
+                if((!key.isReadable()))
                     continue;
                 result.add((Transport)key.attachment());
             }

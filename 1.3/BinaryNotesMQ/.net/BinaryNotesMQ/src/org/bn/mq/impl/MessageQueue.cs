@@ -473,7 +473,7 @@ namespace org.bn.mq.impl
 		{
 			Message<T> result = new Message<T>();
 			result.Body = body;
-			result.Id = this.QueuePath+"/Message#"+DateTime.Now.Ticks.ToString()+"/"+messageIdGenerator++;
+			result.Id = this.QueuePath+"/#"+(DateTime.Now.Ticks/10000).ToString()+"/"+messageIdGenerator++;
 			result.QueuePath = this.QueuePath;
 			return result;
 		}

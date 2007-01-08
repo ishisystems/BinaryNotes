@@ -58,7 +58,7 @@ namespace org.bn.mq.examples
         
         protected class ExampleConsumer : IConsumer<ExampleMessage> {
             public String Id {
-                get { return "ExampleConsumer"; }
+                get { return ".NetExampleConsumer"; }
             }
             public ExampleMessage onMessage(IMessage<ExampleMessage> message) {
                 Console.WriteLine("Received message #"+message.Id+" from supplier. Has body:"+message.Body);

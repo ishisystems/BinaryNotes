@@ -69,7 +69,7 @@ public class BNMQConsumer {
     
     protected class ExampleConsumer implements IConsumer<ExampleMessage> {
         public String getId() {
-            return "ExampleConsumer";
+            return "JavaExampleConsumer";
         }
         public ExampleMessage onMessage(IMessage<ExampleMessage> message) {
             System.out.println("Received message #"+message.getId()+" from supplier. Has body:"+message.getBody());
@@ -82,7 +82,7 @@ public class BNMQConsumer {
         IRemoteSupplier remSupplier =  clientConnection.lookup("ExampleSupplier");
         queue = remSupplier.lookupQueue("myqueues/queue", ExampleMessage.class);            
         System.out.println("Trying to lookup & persistence subscribe consumer");
-        queue.addConsumer(new ExampleConsumer(),true);        
+        queue.addConsumer(new ExampleConsumer(),true);
     }
     private void start() {
         IMessagingBus bus = MQFactory.getInstance().createMessagingBus();

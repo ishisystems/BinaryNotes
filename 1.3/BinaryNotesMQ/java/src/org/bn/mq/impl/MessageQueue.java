@@ -19,6 +19,7 @@
 
 package org.bn.mq.impl;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,6 +62,7 @@ public class MessageQueue<T> implements IMessageQueue<T>, Runnable, ITransportCo
     protected Map<String,IConsumer<T> > consumers = new HashMap<String,IConsumer<T> >();
     protected Class<T> messageClass;
     protected IPersistenceQueueStorage<T> persistStorage;
+    protected static AtomicInteger messageIdGenerator = new AtomicInteger(1);
         
     public MessageQueue(String queuePath, ITransport transport, Class<T> messageClass) {
         this.transport = transport;
@@ -368,7 +370,7 @@ public class MessageQueue<T> implements IMessageQueue<T>, Runnable, ITransportCo
     public IMessage<T> createMessage(T body) {
         Message<T> result = new Message<T>(this.messageClass);
         result.setBody(body);
-        result.setId(UUID.randomUUID().toString());
+        result.setId(this.getQueuePath()+"/#"+new Date().getTime()+"/"+messageIdGenerator.getAndIncrement());
         result.setQueuePath(getQueuePath());
         return result;
     }

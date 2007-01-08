@@ -71,6 +71,7 @@ namespace org.bn.mq.examples
                         messageBody.Field2 = (0xffffL);
                         Console.WriteLine("Queue: Trying to send message #"+message.Id);
                         message.Body = (messageBody);
+                        //message.Mandatory = true;
                         queue.sendMessage(message);
                     }
                     catch (Exception e) {
@@ -94,7 +95,6 @@ namespace org.bn.mq.examples
             
             
             IMQConnection serverConnection  = null;
-            IMQConnection clientConnection  = null;
             IMessageQueue<ExampleMessage> queue = null;
             IPersistenceQueueStorage<ExampleMessage> queueStorage = null;
             QueueDispatcher dispatcher = null;
