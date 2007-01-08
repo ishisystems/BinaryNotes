@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.Reflection;
 using org.bn.mq.protocol;
 using org.bn.mq.net;
 
@@ -28,20 +29,47 @@ namespace org.bn.mq.impl
 
     public class SQLStorage<T> : IPersistenceStorage<T>
 	{		
-		virtual protected internal DbConnection getConnection()
+        IDictionary<String, Object> storageProperties;
+
+        public SQLStorage(IDictionary<String, Object> storageProperties)
 		{
+            this.storageProperties = storageProperties;
+		}
+
+        virtual protected internal DbConnection getConnection()
+        {
             DbConnection connection = null;
-            Type evClass = Type.GetType(storageName);
-            connection = (DbConnection)Activator.CreateInstance(evClass);
+            Assembly asm = null;
+            if (storageProperties.ContainsKey("dbAssemblyName"))
+            {
+                asm = Assembly.Load((string)storageProperties["dbAssemblyName"]);
+            }
+            else
+                throw new Exception("Unable to present property: 'dbAssemblyName'!");
+            
+            string dbConClassName = null;
+            if (storageProperties.ContainsKey("dbConnectionClass"))
+            {
+                dbConClassName = (string)storageProperties["dbConnectionClass"];
+            }
+            else
+                throw new Exception("Unable to present property: 'dbConnectionClass'!");
+
+            Type dbConClass = asm.GetType(dbConClassName);
+            connection = (DbConnection)Activator.CreateInstance(dbConClass);
+
+            string dbConString = null;
+            if (storageProperties.ContainsKey("dbConnectionString"))
+            {
+                dbConString = (string)storageProperties["dbConnectionString"];
+            }
+            else
+                throw new Exception("Unable to present property: 'dbConnectionString'!");
+            connection.ConnectionString = dbConString;
             connection.Open();
             return connection;
-		}
-		private string storageName;
-		
-		public SQLStorage(string storageName)
-		{
-			this.storageName = storageName;
-		}
+        }
+
 		
 		public virtual IPersistenceQueueStorage<T> createQueueStorage(string queueStorageName)
 		{

@@ -36,7 +36,7 @@ namespace org.bn.mq.impl
 		private ITransport transport;
 		private string supplierId;
 
-		private IDictionary<String, IMessageQueue<object>> queues = new Dictionary<String, IMessageQueue<object>>();
+		private IDictionary<String, object> queues = new Dictionary<String, object>();
 		
 		public Supplier(string supplierId, ITransport transport)
 		{
@@ -62,7 +62,7 @@ namespace org.bn.mq.impl
 			queue.PersistenceStorage = storage;
 			lock (queues)
 			{
-				queues[queuePath] = (IMessageQueue<object>)queue;
+				queues[queuePath] = queue;
 			}
 			return queue;
 		}

@@ -118,22 +118,29 @@ namespace org.bn.mq.net.tcp
 		{
             if (isAvailable())
             {
-                Socket listener = (Socket)asyncResult.AsyncState;
-                Socket clientSocket = listener.EndAccept(asyncResult);
-                if (clientSocket != null)
+                try
                 {
-                    ServerClientTransport transport =
-                        new ServerClientTransport(
-                            new Uri("bnmq://" + clientSocket.RemoteEndPoint.ToString()),
-                        this,
-                        acceptorFactory
-                    );
-                    transport.setSocket(clientSocket);
-                    lock (clients)
+                    Socket listener = (Socket)asyncResult.AsyncState;
+                    Socket clientSocket = listener.EndAccept(asyncResult);
+                    if (clientSocket != null)
                     {
-                        clients.Add(transport);
-                        fireConnectedEvent(transport);
+                        ServerClientTransport transport =
+                            new ServerClientTransport(
+                                new Uri("bnmq://" + clientSocket.RemoteEndPoint.ToString()),
+                            this,
+                            acceptorFactory
+                        );
+                        transport.setSocket(clientSocket);
+                        lock (clients)
+                        {
+                            clients.Add(transport);
+                            fireConnectedEvent(transport);
+                        }
                     }
+                }
+                finally
+                {
+                    serverChannel.BeginAccept(this.acceptClient, serverChannel);
                 }
             }
 		}

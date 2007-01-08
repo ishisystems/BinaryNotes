@@ -115,6 +115,11 @@ namespace org.bn.mq.net.tcp
 				    try
 				    {
 					    //Socket.close();
+                        if (socket != null)
+                        {
+                            socket.Shutdown(SocketShutdown.Both);
+                            socket.Close();
+                        }
 					    setSocket(null);
 				    }
 				    catch (System.IO.IOException e)
@@ -131,22 +136,29 @@ namespace org.bn.mq.net.tcp
 		{
             if (isAvailable())
             {
-                Socket handler = (Socket)ar.AsyncState;
-                int bytesRead = handler.EndReceive(ar);
-                if (bytesRead > 0)
+                try
                 {
-                    ByteBuffer result = ByteBuffer.allocate(bytesRead);
-                    result.put(tempReceiveBuffer.Value, 0, bytesRead);                    
-                    fireReceivedData(result);
-                    tempReceiveBuffer.clear();
-                    this.socket.BeginReceive(
-                        tempReceiveBuffer.Value, 0, tempReceiveBuffer.Value.Length,
-                        SocketFlags.None,
-                        new AsyncCallback(this.receiveAsync),
-                        this.socket
-                    );
+                    Socket handler = (Socket)ar.AsyncState;
+                    int bytesRead = handler.EndReceive(ar);
+                    if (bytesRead > 0)
+                    {
+                        ByteBuffer result = ByteBuffer.allocate(bytesRead);
+                        result.put(tempReceiveBuffer.Value, 0, bytesRead);
+                        fireReceivedData(result);
+                        tempReceiveBuffer.clear();
+                        this.socket.BeginReceive(
+                            tempReceiveBuffer.Value, 0, tempReceiveBuffer.Value.Length,
+                            SocketFlags.None,
+                            new AsyncCallback(this.receiveAsync),
+                            this.socket
+                        );
+                    }
+                    else
+                    {
+                        onTransportClosed();
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
                     onTransportClosed();
                 }

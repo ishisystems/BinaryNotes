@@ -28,10 +28,21 @@ namespace org.bn.mq.impl
 	{
         private IDictionary<String, InMemoryQueueStorage<T>> storages = new Dictionary<String, InMemoryQueueStorage<T>>();
 		private string storageName;
-		
-		public InMemoryStorage(string storageName)
+        IDictionary<String, Object> storageProperties;
+
+        public InMemoryStorage(IDictionary<String, Object> storageProperties)
 		{
-			this.storageName = storageName;
+			//this.storageName = storageName;
+            this.storageProperties = storageProperties;
+            if (!this.storageProperties.ContainsKey("storageName"))
+            {
+                throw new Exception("Unable to present property: 'storageName'");
+            }
+            else
+            {
+                this.storageName = (string)this.storageProperties["storageName"];
+            }
+
 		}
 		
 		public virtual IPersistenceQueueStorage<T> createQueueStorage(string queueStorageName)

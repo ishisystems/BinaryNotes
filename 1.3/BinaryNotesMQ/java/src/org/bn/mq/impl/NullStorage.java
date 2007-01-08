@@ -19,12 +19,14 @@
 
 package org.bn.mq.impl;
 
+import java.util.Map;
+
 import org.bn.mq.IMessageQueue;
 import org.bn.mq.IPersistenceQueueStorage;
 import org.bn.mq.IPersistenceStorage;
 
 public class NullStorage<T> implements IPersistenceStorage<T> {
-    public NullStorage(String storageName) {
+    public NullStorage(Map<String,Object> storageProperties) {
     }
     
     private NullQueueStorage<T> nullQueueStorage = new NullQueueStorage<T>();

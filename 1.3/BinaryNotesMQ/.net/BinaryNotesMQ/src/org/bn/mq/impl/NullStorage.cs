@@ -26,7 +26,7 @@ namespace org.bn.mq.impl
 	
 	public class NullStorage<T> : IPersistenceStorage<T>
 	{
-		public NullStorage(string storageName)
+        public NullStorage(IDictionary<String, Object> storageProperties)
 		{
 		}
 		

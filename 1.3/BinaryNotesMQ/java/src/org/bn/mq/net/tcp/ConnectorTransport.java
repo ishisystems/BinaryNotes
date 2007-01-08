@@ -78,6 +78,12 @@ public class ConnectorTransport extends Transport {
         factory.getConnectorStorage().addDisconnectedTransport(this);
     }    
     
+    public void close() {
+        super.close();
+        factory.removeTransport(this);
+    }
+    
+    
     public boolean finishConnect() {
         awaitConnectLock.lock();
         try {

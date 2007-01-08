@@ -21,14 +21,24 @@ package org.bn.mq.impl;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+
+import java.util.Map;
+
 import org.bn.mq.IPersistenceQueueStorage;
 import org.bn.mq.IPersistenceStorage;
 
 public class SQLStorage<T> implements IPersistenceStorage<T> {    
     private String storageName;
+    private Map<String,Object> storageProperties;
     
-    public SQLStorage(String storageName) {
-        this.storageName = storageName;
+    public SQLStorage(Map<String,Object> storageProperties) throws Exception {
+        this.storageProperties = storageProperties;
+        if(!this.storageProperties.containsKey("dbConnectionString")) {
+            throw new Exception("Unable to present property: 'dbConnectionString'");
+        }
+        else {
+            this.storageName = (String)this.storageProperties.get("dbConnectionString");
+        }
     }
     
     protected Connection getConnection() throws Exception {

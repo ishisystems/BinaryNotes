@@ -38,7 +38,7 @@ namespace org.bn.mq.net.tcp
 
 
 		protected internal Connector connector;
-		protected IDictionary< Uri, ConnectorTransport > createdTransports = new Dictionary< Uri, ConnectorTransport >();
+		protected IList< ConnectorTransport > createdTransports = new List< ConnectorTransport >();
 		protected internal Thread connectorThread;
 		
 		
@@ -50,22 +50,20 @@ namespace org.bn.mq.net.tcp
 			connectorThread.Start();
 		}
 		
-		protected internal virtual ConnectorTransport getCreatedTransport(Uri addr)
-		{
-			ConnectorTransport result = null;
-            if (!createdTransports.ContainsKey(addr))
-            {
-                result = createdTransports[addr];
-            }
-			return result;
-		}
-
         protected internal virtual ConnectorTransport createTransport(Uri addr)
 		{
 			ConnectorTransport transport = new ConnectorTransport(addr, this);
-			createdTransports.Add(addr, transport);
+			createdTransports.Add(transport);
 			return transport;
 		}
+
+        public void removeTransport(ConnectorTransport transport)
+        {
+            lock (createdTransports)
+            {
+                createdTransports.Remove(transport);
+            }
+        }
 
         public virtual ITransport getTransport(Uri addr)
 		{
@@ -93,7 +91,7 @@ namespace org.bn.mq.net.tcp
         {
             lock (createdTransports)
             {
-                foreach (ConnectorTransport item in createdTransports.Values)
+                foreach (ConnectorTransport item in createdTransports)
                 {
                     item.close();
                 }

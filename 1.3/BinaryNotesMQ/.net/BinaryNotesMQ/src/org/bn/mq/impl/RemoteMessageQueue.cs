@@ -71,7 +71,9 @@ namespace org.bn.mq.impl
 			body.selectSubscribeRequest(request);
 			message.Body = (body);
 			message.Id = this.ToString();
-			MessageEnvelope result = supplier.Connection.call(message, subscribeTimeout);
+            // !!!!!
+			//MessageEnvelope result = supplier.Connection.call(message, 1000);
+            MessageEnvelope result = supplier.Connection.call(message, subscribeTimeout);
 			if (result.Body.SubscribeResult.Code.Value != SubscribeResultCode.EnumType.success)
 			{
 				throw new System.Exception("Error when accessing to queue '" + queuePath + "' for supplier '" + supplier.Id + "': " 

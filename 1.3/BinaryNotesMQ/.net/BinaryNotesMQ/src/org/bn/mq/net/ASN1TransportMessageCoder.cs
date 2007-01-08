@@ -112,7 +112,7 @@ namespace org.bn.mq.net
                             currentDecoded.Position = headerSize;
                             byte[] content = new byte[crDecodedLen];
                             currentDecoded.get(content);
-                            currentDecoded = currentDecoded.slice();
+                            //currentDecoded = currentDecoded.slice();
                             result = decoder.decode<MessageEnvelope>(new System.IO.MemoryStream(content));
                             headerIsReaded = false;
                             currentDecoded.clear();

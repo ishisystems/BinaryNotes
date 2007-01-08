@@ -17,6 +17,9 @@
 * or blog at http://abdulla-a.blogspot.com.
 */
 using System;
+
+using org.bn.mq.impl;
+
 namespace org.bn.mq
 {
 
@@ -38,8 +41,7 @@ namespace org.bn.mq
 		
 		public virtual IMessagingBus createMessagingBus()
 		{
-            return null;
-			//return new MessagingBus();
+			return new MessagingBus();
 		}
 		
 		public virtual IQueue<T> createQueue<T>()
@@ -49,33 +51,33 @@ namespace org.bn.mq
 
         public virtual IQueue<T> createQueue<T>(string algorithm)
 		{
-			/*if (algorithm == null || (algorithm != null && algorithm.ToUpper().Equals("simple".ToUpper())))
+			if (algorithm == null || (algorithm != null && algorithm.ToUpper().Equals("simple".ToUpper())))
 			{
-				return new Queue();
+				return new Queue<T>();
 			}
-			else if (algorithm.ToUpper().Equals("priority".ToUpper()))
+			/*else if (algorithm.ToUpper().Equals("priority".ToUpper()))
 			{
 				return new PriorityQueue();
-			}
-			else*/
-			return null;
+			}*/
+			else
+			    return null;
 		}
 		
-		public virtual IPersistenceStorage<T> createPersistenceStorage<T>(string storageType, string storageName)
+		public virtual IPersistenceStorage<T> createPersistenceStorage<T>(string storageType, System.Collections.Generic.IDictionary<String,Object> properties)
 		{
-			/*if (storageType == null || (storageType != null && storageType.Length == 0))
+			if (storageType == null || (storageType != null && storageType.Length == 0))
 			{
-				return new NullStorage(storageName);
+                return new NullStorage<T>(properties);
 			}
 			else if (storageType.ToUpper().Equals("InMemory".ToUpper()))
 			{
-				return new InMemoryStorage(storageName);
+                return new InMemoryStorage<T>(properties);
 			}
 			else if (storageType.ToUpper().Equals("SQL".ToUpper()))
 			{
-				return new SQLStorage(storageName);
+                return new SQLStorage<T>(properties);
 			}
-			else*/
+			else
 				return null;
 		}
 	}

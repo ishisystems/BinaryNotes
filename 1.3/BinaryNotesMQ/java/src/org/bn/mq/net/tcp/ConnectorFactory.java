@@ -33,7 +33,7 @@ public class ConnectorFactory extends SocketFactory {
     
     protected ConnectorStorage connectorStorage = new ConnectorStorage();    
     protected Connector connector = new Connector(connectorStorage);
-    protected SortedMap<URI,ConnectorTransport> createdTransports = new TreeMap<URI,ConnectorTransport>();
+    protected List<ConnectorTransport> createdTransports = new LinkedList<ConnectorTransport>();
     
     //protected final int connectorsPoolSize = 2;
     //protected Executor connectorsExecutor = Executors.newFixedThreadPool(connectorsPoolSize);
@@ -46,15 +46,15 @@ public class ConnectorFactory extends SocketFactory {
         connectorThread.start();
     }    
     
-    protected ConnectorTransport getCreatedTransport(URI addr) {
+    /*protected ConnectorTransport getCreatedTransport(URI addr) {
         ConnectorTransport result = null;
         result = createdTransports.get(addr);
         return result;
-    }
+    }*/
     
     protected ConnectorTransport createTransport(URI addr) {
         ConnectorTransport transport = new ConnectorTransport(addr, this);
-        createdTransports.put(addr, transport);
+        createdTransports.add(transport);
         return transport;    
     }
         
@@ -87,8 +87,8 @@ public class ConnectorFactory extends SocketFactory {
     
     public void close() {        
         synchronized (createdTransports) {
-            for(SortedMap.Entry<URI,ConnectorTransport> item: createdTransports.entrySet()) {
-                item.getValue().close();
+            for(ConnectorTransport item: createdTransports) {
+                item.close();
             }
             createdTransports.clear();
         }
@@ -100,6 +100,12 @@ public class ConnectorFactory extends SocketFactory {
         }
         catch (InterruptedException e) {
             // TODO
+        }
+    }
+
+    protected void removeTransport(ConnectorTransport transport) {
+        synchronized (createdTransports) {
+            createdTransports.remove(transport);
         }
     }
 }

@@ -38,7 +38,15 @@ namespace test.org.bn.mq
         void startTests()
         {
             //startTransportFactoryTests();
-            startMessageDecoderTests();
+            //startMessageDecoderTests();
+            startMQFactoryTests();
+        }
+
+        private void startMQFactoryTests()
+        {
+            //new MQFactoryTest().testCreatingObjects();
+            //new MQFactoryTest().testRPCStyle();
+            new MQFactoryTest().testPersistence();
         }
 
         private void startMessageDecoderTests()

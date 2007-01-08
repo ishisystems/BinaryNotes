@@ -20,6 +20,10 @@
 package test.org.bn.mq;
 
 import java.net.URI;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import junit.framework.TestCase;
 
 import org.bn.mq.ICallAsyncListener;
@@ -145,12 +149,6 @@ public class MQFactoryTest extends TestCase {
     public void testPersistence() throws Exception {
         IMessagingBus bus = MQFactory.getInstance().createMessagingBus();
         
-        // For InMemoryDB (It's not HSQLDB!)
-        IPersistenceStorage<String> persistStorage =  MQFactory.getInstance().createPersistenceStorage("InMemory","MyMemoryStorage",String.class);
-        
-        // For HSQLDB
-        //Class.forName("org.hsqldb.jdbcDriver");
-        //IPersistenceStorage<String> persistStorage =  MQFactory.getInstance().createPersistenceStorage("SQL","jdbc:hsqldb:mem:aname",String.class);
         
         IMQConnection serverConnection  = null;
         IMQConnection clientConnection  = null;
@@ -159,6 +157,17 @@ public class MQFactoryTest extends TestCase {
         try {
             serverConnection  = bus.create(new URI("bnmq://127.0.0.1:3333"));
             ISupplier supplier =  serverConnection.createSupplier("TestSupplier");            
+
+            Map<String,Object> storProps = new HashMap<String,Object>();
+            // For InMemoryDB (It's not HSQLDB!)
+            storProps.put("storageName","MyMemoryStorage");
+            IPersistenceStorage<String> persistStorage =  MQFactory.getInstance().createPersistenceStorage("InMemory",storProps,String.class);
+            
+            // For HSQLDB
+            //Class.forName("org.hsqldb.jdbcDriver");
+            //storProps.put("dbConnectionString","jdbc:hsqldb:mem:aname");            
+            //IPersistenceStorage<String> persistStorage =  MQFactory.getInstance().createPersistenceStorage("SQL",storProps,String.class);
+            
             queueStorage = persistStorage.createQueueStorage("MyQueue");
             queue = supplier.createQueue("myqueues/queue", String.class,queueStorage);
             serverConnection.addListener(new TestMQConnectionListener());

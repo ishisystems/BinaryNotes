@@ -23,6 +23,8 @@ import java.io.IOException;
 
 import java.net.URI;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.bn.mq.IMQConnection;
@@ -110,8 +112,8 @@ public class BNMQSupplier {
 
     private void start() {
         IMessagingBus bus = MQFactory.getInstance().createMessagingBus();
-        // For InMemoryDB (It's not HSQLDB!)
-        IPersistenceStorage< ExampleMessage > persistStorage =  MQFactory.getInstance().createPersistenceStorage("InMemory","MyMemoryStorage", ExampleMessage.class);
+        
+        
         IMQConnection serverConnection  = null;
         IMQConnection clientConnection  = null;
         IMessageQueue<ExampleMessage> queue = null;
@@ -123,6 +125,12 @@ public class BNMQSupplier {
             System.out.println("Listener created successfully");
             ISupplier supplier =  serverConnection.createSupplier("ExampleSupplier");
             System.out.println("Supplier created successfully");
+
+            Map<String,Object> storProps = new HashMap<String,Object>();
+            storProps.put("storageName","MyMemoryStorage");
+            // For InMemoryDB (It's not HSQLDB!)        
+            IPersistenceStorage< ExampleMessage > persistStorage =  MQFactory.getInstance().createPersistenceStorage("InMemory",storProps, ExampleMessage.class);
+            
             queueStorage = persistStorage.createQueueStorage("MyQueue");
             System.out.println("QueueStorage created successfully");
             

@@ -76,12 +76,14 @@ namespace org.bn.mq.impl
             consumerId.ParameterName = "@consumerId";
             persistenceUnsubscribeCmd.Parameters.Add(consumerId);
 
-            registerMessageCmd = prepareStatement("insert into " + queueStorageName + "_messages (id,consumerId,message) " + "select @messageId, consumerId, @message from  " + queueStorageName + "_subscriptions ");
+            registerMessageCmd = prepareStatement(
+                "insert into " + queueStorageName + "_messages (id,consumerId,message) " 
+                + "select @messageId, consumerId, @message from  " + queueStorageName + "_subscriptions ");
             DbParameter message = registerMessageCmd.CreateParameter();
             message.ParameterName = "@message";
             registerMessageCmd.Parameters.Add(message);
             DbParameter messageId = registerMessageCmd.CreateParameter();
-            consumerId.ParameterName = "@messageId";
+            messageId.ParameterName = "@messageId";
             registerMessageCmd.Parameters.Add(messageId);
 
             removeMessageCmd = prepareStatement("delete from " + queueStorageName + "_messages where id = @messageId and consumerId = @consumerId ");
@@ -149,6 +151,7 @@ namespace org.bn.mq.impl
                         IMessage<T> message = (IMessage<T>)deserialize(inputStream);
 						result.Add(message);
 					}
+                    resultSet.Close();
 				}
 			}
 			catch (System.Exception ex)
@@ -162,21 +165,27 @@ namespace org.bn.mq.impl
 		{
 			lock (connection)
 			{
+                DbTransaction trans =  connection.BeginTransaction();
 				try
 				{
-                    getMessagesCmd.Parameters["@consumerId"].Value = consumer.Id;
+                    checkPersistenceSubscribeCmd.Parameters["@consumerId"].Value = consumer.Id;
 					DbDataReader exists = this.checkPersistenceSubscribeCmd.ExecuteReader();
 					if (!exists.Read())
 					{
+                        exists.Close();
                         this.persistenceSubscribeCmd.Parameters["@consumerId"].Value = consumer.Id;
 						this.persistenceSubscribeCmd.ExecuteNonQuery();
 					}
+                    else
+                        exists.Close();
+                    trans.Commit();
 				}
 				catch (System.Exception ex)
 				{
                     Console.WriteLine(ex.ToString());
+                    trans.Rollback();
 					throw ex;
-				}
+				}                
 			}
 		}
 		
@@ -184,8 +193,19 @@ namespace org.bn.mq.impl
 		{
 			lock (connection)
 			{
-                this.persistenceUnsubscribeCmd.Parameters["@consumerId"].Value = consumer.Id;
-                this.persistenceUnsubscribeCmd.ExecuteNonQuery();
+                DbTransaction trans =  connection.BeginTransaction();
+                try
+                {
+                    this.persistenceUnsubscribeCmd.Parameters["@consumerId"].Value = consumer.Id;
+                    this.persistenceUnsubscribeCmd.ExecuteNonQuery();
+                    trans.Commit();
+                }
+                catch (System.Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                    trans.Rollback();
+                    throw ex;
+                }                
             }
 		}
 		
@@ -193,12 +213,24 @@ namespace org.bn.mq.impl
 		{
 			lock (connection)
 			{
-				System.IO.MemoryStream byteOutput = new System.IO.MemoryStream();
-				System.IO.BinaryWriter output = new System.IO.BinaryWriter(byteOutput);
-                serialize(byteOutput, message);
-                this.registerMessageCmd.Parameters["@messageId"].Value = message.Id;
-                this.registerMessageCmd.Parameters["@message"].Value = byteOutput.ToArray();
-                this.registerMessageCmd.ExecuteNonQuery();
+                DbTransaction trans =  connection.BeginTransaction();
+                try
+                {
+				    System.IO.MemoryStream byteOutput = new System.IO.MemoryStream();
+				    System.IO.BinaryWriter output = new System.IO.BinaryWriter(byteOutput);
+                    serialize(byteOutput, message);
+                    this.registerMessageCmd.Parameters["@messageId"].Value = message.Id;
+                    this.registerMessageCmd.Parameters["@message"].Value = byteOutput.ToArray();
+                    this.registerMessageCmd.ExecuteNonQuery();
+                    trans.Commit();
+                }
+                catch (System.Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                    trans.Rollback();
+                    throw ex;
+                }                
+
 			}
 		}
 		
@@ -206,9 +238,21 @@ namespace org.bn.mq.impl
 		{
 			lock (connection)
 			{
-                this.removeMessageCmd.Parameters["@messageId"].Value = message.Id;
-                this.removeMessageCmd.Parameters["@consumerId"].Value = consumer.Id;
-				this.removeMessageCmd.ExecuteNonQuery();
+                DbTransaction trans =  connection.BeginTransaction();
+                try
+                {
+                    this.removeMessageCmd.Parameters["@messageId"].Value = message.Id;
+                    this.removeMessageCmd.Parameters["@consumerId"].Value = consumer.Id;
+				    this.removeMessageCmd.ExecuteNonQuery();
+                    trans.Commit();
+                }
+                catch (System.Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                    trans.Rollback();
+                    throw ex;
+                }                
+
 			}
 		}
 

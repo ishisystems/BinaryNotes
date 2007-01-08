@@ -30,9 +30,16 @@ import org.bn.mq.MQFactory;
 public class InMemoryStorage<T> implements IPersistenceStorage<T> {
     private Map<String, InMemoryQueueStorage<T> > storages = new HashMap<String, InMemoryQueueStorage<T> > ();
     private String storageName;
+    private Map<String,Object> storageProperties;
     
-    public InMemoryStorage(String storageName) {
-        this.storageName = storageName;
+    public InMemoryStorage(Map<String,Object> storageProperties) throws Exception {
+        this.storageProperties = storageProperties;
+        if(!this.storageProperties.containsKey("storageName")) {
+            throw new Exception("Unable to present property: 'storageName'");
+        }
+        else {
+            this.storageName = (String)this.storageProperties.get("storageName");
+        }
     }
     
     public IPersistenceQueueStorage<T> createQueueStorage(String queueStorageName) {

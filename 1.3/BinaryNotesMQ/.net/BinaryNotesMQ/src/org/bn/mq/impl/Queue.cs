@@ -31,7 +31,10 @@ namespace org.bn.mq.impl
         {
             lock (simpleQueue)
             {
-                return simpleQueue.Dequeue();
+                if (simpleQueue.Count > 0)
+                    return simpleQueue.Dequeue();
+                else
+                    return null;
             }
         }
 

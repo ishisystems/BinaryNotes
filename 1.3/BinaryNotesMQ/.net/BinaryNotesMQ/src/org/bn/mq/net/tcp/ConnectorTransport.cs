@@ -73,6 +73,15 @@ namespace org.bn.mq.net.tcp
                 }
             }
 		}
+
+        public override void close()
+        {
+            base.close();
+            lock (addr) // Compact Framework doesn't supported RW-Mutex & Semaphores :(
+            {
+                factory.removeTransport(this);
+            }            
+        }
 		
 		protected internal override void onTransportClosed()
 		{

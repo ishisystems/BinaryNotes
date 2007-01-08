@@ -58,17 +58,17 @@ public class MQFactory {
             return null;
     }
     
-    public <T> IPersistenceStorage<T> createPersistenceStorage(String storageType, String storageName, Class<T> messageClass) {
+    public <T> IPersistenceStorage<T> createPersistenceStorage(String storageType, Map<String,Object> storageProperties, Class<T> messageClass) throws Exception {
         if(storageType == null || (storageType!=null && storageType.length() == 0)) {
-            return new NullStorage<T>(storageName);
+            return new NullStorage<T>(storageProperties);
         }
         else
         if(storageType.equalsIgnoreCase("InMemory")) {
-            return new InMemoryStorage<T>(storageName);
+            return new InMemoryStorage<T>(storageProperties);
         }
         else
         if(storageType.equalsIgnoreCase("SQL")) {
-            return new SQLStorage<T>(storageName);
+            return new SQLStorage<T>(storageProperties);
         }
         else
             return null;
