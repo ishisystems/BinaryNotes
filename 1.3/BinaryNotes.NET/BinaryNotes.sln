@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BinaryNotesMQ", "..\BinaryN
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BNMQTests", "..\BinaryNotesMQ\.net\BNMQTests\BNMQTests.csproj", "{940A43F5-F22A-4C5E-9271-F381B159BDD7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BNMQExample", "..\BinaryNotesMQ\examples\.net\BNMQExample\BNMQExample.csproj", "{4801C926-5F21-484E-83C3-E28626C8BB09}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +33,10 @@ Global
 		{940A43F5-F22A-4C5E-9271-F381B159BDD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{940A43F5-F22A-4C5E-9271-F381B159BDD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{940A43F5-F22A-4C5E-9271-F381B159BDD7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4801C926-5F21-484E-83C3-E28626C8BB09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4801C926-5F21-484E-83C3-E28626C8BB09}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4801C926-5F21-484E-83C3-E28626C8BB09}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4801C926-5F21-484E-83C3-E28626C8BB09}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

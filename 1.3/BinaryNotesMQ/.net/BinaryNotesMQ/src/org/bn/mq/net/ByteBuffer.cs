@@ -73,12 +73,20 @@ namespace org.bn.mq.net
         public void putShort(short value)
         {
             byte[] valAsBytes = BitConverter.GetBytes(value);
+            if (BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(valAsBytes);
+            }
             put(valAsBytes);
         }
 
         public void putInt(int value)
         {
             byte[] valAsBytes = BitConverter.GetBytes(value);
+            if (BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(valAsBytes);
+            }
             put(valAsBytes);
         }
 
@@ -95,15 +103,26 @@ namespace org.bn.mq.net
 
         public short getShort()
         {
-            short result = BitConverter.ToInt16(buffer, position);
-            position += 2;
+            byte[] valAsBytes = new byte[2];
+            get(valAsBytes);
+            if (BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(valAsBytes);
+            }
+
+            short result = BitConverter.ToInt16(valAsBytes, 0);
             return result;
         }
 
         public int getInt()
         {
-            int result =  BitConverter.ToInt32(buffer, position);
-            position += 4;
+            byte[] valAsBytes = new byte[4];
+            get(valAsBytes);
+            if (BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(valAsBytes);
+            }
+            int result = BitConverter.ToInt32(valAsBytes, 0);
             return result;
         }
 
