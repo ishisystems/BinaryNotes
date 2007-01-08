@@ -5,6 +5,7 @@ ChangeLog
 							[!] 		- Important warning or note
 							{<component>}	- Component/Group that changed
 
+1.3.0	{doc}		[+] Add new documentation for BinaryNotes (Dist\doc)
 1.3.0	{lib}		[*] Fixed BER encoding for long tags
 1.3.0	{all}		[!] Started the new project - BinaryNotes Message Queues (BNMQ). The more details will be available later at bnotes.sf.net.
 1.3.0 	{comp}		[*] Fixed incorrect default value generation for BOOLEAN
