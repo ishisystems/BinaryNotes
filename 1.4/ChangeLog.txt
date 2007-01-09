@@ -5,7 +5,8 @@ ChangeLog
 							[!] 		- Important warning or note
 							{<component>}	- Component/Group that changed
 
-1.4.0	{all}		[+] Migrated to Java 6 and removed JAXB reference implementation from distrib
+1.4.0	{comp}		[+] Removed JAXB reference implementation from distrib (already in Java6)
+1.4.0	{all}		[+] Migrated to Java 6 
 -
 1.3.0	{doc}		[+] Add new documentation for BinaryNotes (Dist\doc)
 1.3.0	{lib}		[*] Fixed BER encoding for long tags
