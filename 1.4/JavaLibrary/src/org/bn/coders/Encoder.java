@@ -55,6 +55,10 @@ public abstract class Encoder<T> implements IEncoder<T>, IASN1TypesEncoder {
 
     public int encodeClassType(Object object, OutputStream stream, ElementInfo elementInfo) throws Exception {
         int resultSize = 0;
+        if(elementInfo.isPreparedAnnotatedElement()) {
+            IASN1PreparedElement element = elementInfo.getPreparedAnnotatedElement();
+            resultSize+=element.encode(this,stream, elementInfo);
+        }
         if( elementInfo.getAnnotatedClass().isAnnotationPresent(ASN1SequenceOf.class) ) {
             resultSize+=encodeSequenceOf(object, stream, elementInfo);
         }        

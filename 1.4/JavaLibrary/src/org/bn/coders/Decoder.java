@@ -44,6 +44,12 @@ public abstract class Decoder implements IDecoder, IASN1TypesDecoder {
     }
     
     public DecodedObject decodeClassType(DecodedObject decodedTag, Class objectClass, ElementInfo elementInfo, InputStream stream) throws Exception {
+        
+        if(elementInfo.isPreparedAnnotatedElement()) {
+            IASN1PreparedElement element = elementInfo.getPreparedAnnotatedElement();
+            return element.decode(decodedTag, this,stream, elementInfo);
+        }    
+        else
         if( elementInfo.getAnnotatedClass().isAnnotationPresent(ASN1SequenceOf.class) ) {
             return decodeSequenceOf(decodedTag, objectClass,elementInfo, stream);
         }        
