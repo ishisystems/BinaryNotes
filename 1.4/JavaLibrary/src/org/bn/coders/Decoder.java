@@ -34,16 +34,16 @@ import java.lang.reflect.Type;
 import org.bn.annotations.*;
 
 
-public abstract class Decoder implements IDecoder {    
+public abstract class Decoder implements IDecoder, IASN1TypesDecoder {    
     public <T> T decode(InputStream stream, Class<T> objectClass) throws Exception {
-
         ElementInfo elemInfo = new ElementInfo();
         elemInfo.setAnnotatedClass(objectClass);
-        elemInfo.setASN1ElementInfo(objectClass.getAnnotation(ASN1Element.class));
+        //elemInfo.setASN1ElementInfo(objectClass.getAnnotation(ASN1Element.class));
+        elemInfo.setASN1ElementInfoForClass(objectClass);
         return (T)decodeClassType(decodeTag(stream),objectClass,elemInfo, stream).getValue();
     }
     
-    protected DecodedObject decodeClassType(DecodedObject decodedTag, Class objectClass, ElementInfo elementInfo, InputStream stream) throws Exception {
+    public DecodedObject decodeClassType(DecodedObject decodedTag, Class objectClass, ElementInfo elementInfo, InputStream stream) throws Exception {
         if( elementInfo.getAnnotatedClass().isAnnotationPresent(ASN1SequenceOf.class) ) {
             return decodeSequenceOf(decodedTag, objectClass,elementInfo, stream);
         }        
@@ -245,7 +245,8 @@ public abstract class Decoder implements IDecoder {
     protected DecodedObject decodeSequenceField(DecodedObject fieldTag, Object sequenceObj, Field field, InputStream stream, ElementInfo elementInfo, boolean optionalCheck) throws  Exception {
         ElementInfo info = new ElementInfo();
         info.setAnnotatedClass(field);
-        info.setASN1ElementInfo(field.getAnnotation(ASN1Element.class));
+        //info.setASN1ElementInfo(field.getAnnotation(ASN1Element.class));
+        info.setASN1ElementInfoForClass(field);
         if(field.getType().isMemberClass()) {
             info.setParentObject(sequenceObj);
         }
@@ -273,7 +274,8 @@ public abstract class Decoder implements IDecoder {
             if(!field.isSynthetic()) {
                 ElementInfo info = new ElementInfo();
                 info.setAnnotatedClass(field);
-                info.setASN1ElementInfo(field.getAnnotation(ASN1Element.class));
+                //info.setASN1ElementInfo(field.getAnnotation(ASN1Element.class));
+                info.setASN1ElementInfoForClass(field);
                 if(field.getType().isMemberClass()) {
                     info.setParentObject(choice);
                 }                
@@ -320,10 +322,7 @@ public abstract class Decoder implements IDecoder {
             invokeSetterMethodForField ( field, result, param.get(null)) ;
         }        
         return new DecodedObject(result,itemValue.getSize());
-    }
-        
-    protected abstract DecodedObject decodeEnumItem(DecodedObject decodedTag,Class objectClass, Class enumClass, ElementInfo elementInfo, InputStream stream) throws Exception ;
-    
+    }    
 
     protected DecodedObject decodeElement(DecodedObject decodedTag,Class objectClass, ElementInfo elementInfo, InputStream stream) throws Exception  {
         elementInfo.setAnnotatedClass(objectClass);
@@ -358,26 +357,4 @@ public abstract class Decoder implements IDecoder {
         }
         return result;
     }
-
-    protected abstract DecodedObject  decodeBoolean(DecodedObject decodedTag, Class objectClass, ElementInfo elementInfo, InputStream stream) throws Exception;
-
-    protected abstract DecodedObject  decodeAny(DecodedObject decodedTag, Class objectClass, ElementInfo elementInfo, InputStream stream) throws Exception ;
-
-    protected abstract DecodedObject  decodeNull(DecodedObject decodedTag, Class objectClass, ElementInfo elementInfo, InputStream stream) throws Exception ;
-
-    protected abstract DecodedObject  decodeInteger(DecodedObject decodedTag, Class objectClass, ElementInfo elementInfo, InputStream stream) throws Exception ;
-
-    protected abstract DecodedObject  decodeReal(DecodedObject decodedTag, Class objectClass, ElementInfo elementInfo, InputStream stream) throws Exception ;
-
-    protected abstract DecodedObject  decodeOctetString(DecodedObject decodedTag, Class objectClass, ElementInfo elementInfo, InputStream stream) throws Exception ;
-
-    protected abstract DecodedObject  decodeBitString(DecodedObject decodedTag, Class objectClass, ElementInfo elementInfo, InputStream stream) throws Exception ;
-
-    protected abstract DecodedObject  decodeString(DecodedObject decodedTag, Class objectClass, ElementInfo elementInfo, InputStream stream) throws Exception ;
-
-    protected abstract DecodedObject  decodeSequenceOf(DecodedObject decodedTag, Class objectClass, ElementInfo elementInfo, InputStream stream) throws Exception ;
-    
-    protected abstract DecodedObject decodeTag(InputStream stream) throws Exception ;
-    
-    //
 }

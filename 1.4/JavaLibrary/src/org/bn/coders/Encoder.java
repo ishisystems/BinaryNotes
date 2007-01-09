@@ -39,12 +39,13 @@ import org.bn.annotations.*;
 import org.bn.annotations.constraints.*;
 import org.bn.utils.ReverseByteArrayOutputStream;
 
-public abstract class Encoder<T> implements IEncoder<T> {
+public abstract class Encoder<T> implements IEncoder<T>, IASN1TypesEncoder {
     
     public void encode(T object, OutputStream stream) throws Exception {
         ElementInfo elemInfo = new ElementInfo();
         elemInfo.setAnnotatedClass(object.getClass());
-        elemInfo.setASN1ElementInfo(object.getClass().getAnnotation(ASN1Element.class));
+        //elemInfo.setASN1ElementInfo(object.getClass().getAnnotation(ASN1Element.class));
+        elemInfo.setASN1ElementInfoForClass(object.getClass());
         int sizeOfEncodedBytes = encodeClassType(object, stream, elemInfo);
         if( sizeOfEncodedBytes == 0) {
            throw new IllegalArgumentException("Unable to find any supported annotation for class type: " + object.getClass().toString());
@@ -52,7 +53,7 @@ public abstract class Encoder<T> implements IEncoder<T> {
         
     }
 
-    protected int encodeClassType(Object object, OutputStream stream, ElementInfo elementInfo) throws Exception {
+    public int encodeClassType(Object object, OutputStream stream, ElementInfo elementInfo) throws Exception {
         int resultSize = 0;
         if( elementInfo.getAnnotatedClass().isAnnotationPresent(ASN1SequenceOf.class) ) {
             resultSize+=encodeSequenceOf(object, stream, elementInfo);
@@ -201,7 +202,8 @@ public abstract class Encoder<T> implements IEncoder<T> {
             if(invokeObjResult!=null) {
                 ElementInfo info = new ElementInfo();
                 info.setAnnotatedClass(field);
-                info.setASN1ElementInfo(field.getAnnotation(ASN1Element.class));
+                //info.setASN1ElementInfo(field.getAnnotation(ASN1Element.class));
+                info.setASN1ElementInfoForClass(field);
                 resultSize += encodeClassType(invokeObjResult, stream, info);
             }
             else
@@ -231,7 +233,8 @@ public abstract class Encoder<T> implements IEncoder<T> {
                     //Object invokeObjResult = invokeGetterMethodForField(field,object);
                     info = new ElementInfo();
                     info.setAnnotatedClass(field);
-                    info.setASN1ElementInfo(field.getAnnotation(ASN1Element.class));
+                    //info.setASN1ElementInfo(field.getAnnotation(ASN1Element.class));
+                    info.setASN1ElementInfoForClass(field);
                     break;
                 }
             }
@@ -251,7 +254,7 @@ public abstract class Encoder<T> implements IEncoder<T> {
     }
     
         
-    protected int encodeEnum(Object object, OutputStream stream, ElementInfo elementInfo) throws Exception  {
+    public int encodeEnum(Object object, OutputStream stream, ElementInfo elementInfo) throws Exception  {
         int resultSize = 0;
         Field field = object.getClass().getDeclaredField("value");
         Object result = invokeGetterMethodForField( field, object);
@@ -275,9 +278,6 @@ public abstract class Encoder<T> implements IEncoder<T> {
         return resultSize;
     }
     
-    protected abstract int encodeEnumItem(Object enumConstant, Class enumClass, OutputStream stream, ElementInfo elementInfo) throws Exception ;
-    
-
     protected int encodeElement(Object object, OutputStream stream, ElementInfo elementInfo) throws Exception  {
         elementInfo.setAnnotatedClass(object.getClass());
         return encodeClassType(object,stream,elementInfo);
@@ -294,23 +294,4 @@ public abstract class Encoder<T> implements IEncoder<T> {
             return encodeClassType(invokeGetterMethodForField(field,object), stream, elementInfo);
         }
     }
-
-    protected abstract int encodeBoolean(Object object, OutputStream stream, ElementInfo elementInfo) throws Exception;
-
-    protected abstract int encodeAny(Object object, OutputStream stream, ElementInfo elementInfo) throws Exception ;
-
-    protected abstract int encodeNull(Object object, OutputStream stream, ElementInfo elementInfo) throws Exception ;
-
-    protected abstract int encodeInteger(Object object, OutputStream steam, ElementInfo elementInfo) throws Exception ;
-
-    protected abstract int encodeReal(Object object, OutputStream steam, ElementInfo elementInfo) throws Exception ;
-
-    protected abstract int encodeOctetString(Object object, OutputStream steam, ElementInfo elementInfo) throws Exception ;
-
-    protected abstract int encodeBitString(Object object, OutputStream steam, ElementInfo elementInfo) throws Exception ;
-
-    protected abstract int encodeString(Object object, OutputStream steam, ElementInfo elementInfo) throws Exception ;
-
-    protected abstract int encodeSequenceOf(Object object, OutputStream steam, ElementInfo elementInfo) throws Exception ;
-    
 }
