@@ -24,7 +24,7 @@ import java.lang.reflect.Type;
 
 import org.bn.annotations.ASN1Element;
 
-class ElementInfo {
+public class ElementInfo {
     private ASN1Element element;
     private AnnotatedElement  annotatedClass, parentAnnotated;
     private Type genericInfo;

@@ -36,25 +36,25 @@ namespace org.bn
 
         public IEncoder newEncoder(String encodingSchema) {
             if(encodingSchema.Equals("BER",StringComparison.CurrentCultureIgnoreCase)) {
-                return new BEREncoder();
+                return new org.bn.coders.ber.BEREncoder();
             }
             else
             if (encodingSchema.Equals("PER", StringComparison.CurrentCultureIgnoreCase) || 
                 encodingSchema.Equals("PER/Aligned", StringComparison.CurrentCultureIgnoreCase) ||
                 encodingSchema.Equals("PER/A", StringComparison.CurrentCultureIgnoreCase))
             {
-                return new PERAlignedEncoder();
+                return new org.bn.coders.per.PERAlignedEncoder();
             }
             else
             if (encodingSchema.Equals("PER/Unaligned", StringComparison.CurrentCultureIgnoreCase)||
                 encodingSchema.Equals("PER/U", StringComparison.CurrentCultureIgnoreCase))
             {
-                return new PERUnalignedEncoder();
+                return new org.bn.coders.per.PERUnalignedEncoder();
             }
             else
             if (encodingSchema.Equals("DER", StringComparison.CurrentCultureIgnoreCase))
             {
-                return new DEREncoder();
+                return new org.bn.coders.der.DEREncoder();
             }
             else
                 return null;
@@ -66,25 +66,25 @@ namespace org.bn
 
         public IDecoder newDecoder(String encodingSchema) {
             if(encodingSchema.Equals("BER", StringComparison.CurrentCultureIgnoreCase)) {
-                return new BERDecoder();
+                return new org.bn.coders.ber.BERDecoder();
             }
             else
             if (encodingSchema.Equals("PER", StringComparison.CurrentCultureIgnoreCase) || 
                 encodingSchema.Equals("PER/Aligned", StringComparison.CurrentCultureIgnoreCase)||
                 encodingSchema.Equals("PER/A", StringComparison.CurrentCultureIgnoreCase))
             {
-                return new PERAlignedDecoder();
+                return new org.bn.coders.per.PERAlignedDecoder();
             }
             else
             if (encodingSchema.Equals("PER/Unaligned", StringComparison.CurrentCultureIgnoreCase)||
                 encodingSchema.Equals("PER/U", StringComparison.CurrentCultureIgnoreCase))
             {
-                return new PERUnalignedDecoder();
+                return new org.bn.coders.per.PERUnalignedDecoder();
             }
             else
             if (encodingSchema.Equals("DER", StringComparison.CurrentCultureIgnoreCase))
             {
-                return new DERDecoder();
+                return new org.bn.coders.der.DERDecoder();
             }
             else
                 return null;

@@ -19,7 +19,7 @@
 
 package org.bn.coders;
 
-class DecodedObject<T> {
+public class DecodedObject<T> {
         T value;
         int size;
 

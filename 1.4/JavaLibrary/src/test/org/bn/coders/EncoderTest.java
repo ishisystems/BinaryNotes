@@ -28,7 +28,7 @@ import junit.framework.TestCase;
 import org.bn.CoderFactory;
 import org.bn.IDecoder;
 import org.bn.IEncoder;
-import org.bn.coders.BEREncoder;
+import org.bn.coders.ber.BEREncoder;
 import org.bn.coders.Encoder;
 
 import test.org.bn.utils.ByteTools;

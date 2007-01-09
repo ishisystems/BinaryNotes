@@ -156,22 +156,16 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="org\bn\CoderFactory.cs" />
-    <Compile Include="org\bn\coders\BERCoderUtils.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="org\bn\coders\BERDecoder.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="org\bn\coders\BEREncoder.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="org\bn\coders\ber\BERCoderUtils.cs" />
+    <Compile Include="org\bn\coders\ber\BERDecoder.cs" />
+    <Compile Include="org\bn\coders\ber\BEREncoder.cs" />
     <Compile Include="org\bn\coders\CoderUtils.cs" />
     <Compile Include="org\bn\coders\DecodedObject.cs" />
     <Compile Include="org\bn\coders\Decoder.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="org\bn\coders\DERDecoder.cs" />
-    <Compile Include="org\bn\coders\DEREncoder.cs" />
+    <Compile Include="org\bn\coders\der\DERDecoder.cs" />
+    <Compile Include="org\bn\coders\der\DEREncoder.cs" />
     <Compile Include="org\bn\coders\ElementInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -181,11 +175,11 @@
     <Compile Include="org\bn\coders\Encoder.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="org\bn\coders\PERAlignedDecoder.cs" />
-    <Compile Include="org\bn\coders\PERAlignedEncoder.cs" />
-    <Compile Include="org\bn\coders\PERCoderUtils.cs" />
-    <Compile Include="org\bn\coders\PERUnalignedDecoder.cs" />
-    <Compile Include="org\bn\coders\PERUnalignedEncoder.cs" />
+    <Compile Include="org\bn\coders\per\PERAlignedDecoder.cs" />
+    <Compile Include="org\bn\coders\per\PERAlignedEncoder.cs" />
+    <Compile Include="org\bn\coders\per\PERCoderUtils.cs" />
+    <Compile Include="org\bn\coders\per\PERUnalignedDecoder.cs" />
+    <Compile Include="org\bn\coders\per\PERUnalignedEncoder.cs" />
     <Compile Include="org\bn\coders\TagClass.cs">
       <SubType>Code</SubType>
     </Compile>

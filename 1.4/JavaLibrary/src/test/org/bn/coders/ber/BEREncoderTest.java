@@ -21,7 +21,7 @@ package test.org.bn.coders.ber;
 import org.bn.CoderFactory;
 import org.bn.IEncoder;
 
-import org.bn.coders.BEREncoder;
+import org.bn.coders.ber.BEREncoder;
 
 import test.org.bn.coders.CoderTestUtilities;
 import test.org.bn.coders.EncoderTest;
