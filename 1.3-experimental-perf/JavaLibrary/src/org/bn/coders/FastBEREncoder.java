@@ -136,13 +136,21 @@ public class FastBEREncoder<T>
                            fieldToEncode.getElementMetadata(),
                            stream);
 
-        int tagValue =
-            tagValue(elementMetadata,
-                     TagClass.ContextSpecific,
-                     ElementType.Constructed,
-                     UniversalTag.LastUniversal);
+//         int tagValue =
+//             tagValue(elementMetadata,
+//                      TagClass.ContextSpecific,
+//                      ElementType.Constructed,
+//                      UniversalTag.LastUniversal);
+        if (elementMetadata != null)
+        {
+            int tagValue =
+                tagValue(elementMetadata,
+                         TagClass.ContextSpecific,
+                         ElementType.Constructed,
+                         UniversalTag.LastUniversal);
 
-        resultSize += encodeHeader(tagValue, resultSize, stream);
+            resultSize += encodeHeader(tagValue, resultSize, stream);
+        }
 
         return resultSize;
     }    
@@ -390,14 +398,13 @@ public class FastBEREncoder<T>
     {
         int resultSize = 0;
 
-        Collection<Object> sequence = (Collection<Object>) object;
         int sizeOfCollection = 0;
-        Iterator iterator = sequence.iterator();
-        while (iterator.hasNext())
+        Object[] sequence = ((Collection<Object>) object).toArray();
+        for (int index = sequence.length - 1; index >= 0; index--)
         {
-            Object member = iterator.next();
+            Object member = sequence[index];
             // !@# constraints
-            sizeOfCollection += encodeClassType(member, elementMetadata, stream); // !@# elementMetadata?
+            sizeOfCollection += encodeClassType(member, null, stream);
         }
 
         resultSize += sizeOfCollection;
