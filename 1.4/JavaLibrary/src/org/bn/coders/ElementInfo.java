@@ -42,7 +42,7 @@ public class ElementInfo {
     }
     
     public void setASN1ElementInfoForClass(AnnotatedElement anElement) {
-        if(! (anElement instanceof IPreparedElement)) {
+        if(! (anElement instanceof ICodingPreparedElement)) {
             this.element = anElement.getAnnotation(ASN1Element.class);
         }
     }
@@ -53,6 +53,17 @@ public class ElementInfo {
     
     public void setAnnotatedClass(AnnotatedElement cls) {
         this.annotatedClass = cls;
+    }
+    
+    public boolean isEncodePreparedAnnotatedElement() {
+        if(annotatedClass instanceof ICodingPreparedElement) {
+            return true;
+        }
+        return false;
+    }
+    
+    public ICodingPreparedElement getCodingPreparedAnnotatedElement() {
+        return (ICodingPreparedElement) annotatedClass;
     }
     
     public void setGenericInfo(Type info) {
