@@ -40,7 +40,7 @@ import org.lineargs.LineArgsParser;
 
 
 public class Main {
-    private final static String version = "1.3.0";
+    private final static String version = "1.4.0";
     private LineArgsParser     parser    = new LineArgsParser();
     private CompilerArgs arguments = null;
     
