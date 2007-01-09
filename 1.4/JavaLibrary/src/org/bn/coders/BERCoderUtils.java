@@ -26,8 +26,8 @@ class BERCoderUtils {
     public static int getTagValueForElement(ElementInfo info, int tagClass, int elemenType, int universalTag) {
         int result = tagClass | elemenType | universalTag;
         ASN1Element elementInfo = null;
-        if(info.getElement()!=null) {
-            elementInfo = info.getElement();
+        if(info.getASN1ElementInfo()!=null) {
+            elementInfo = info.getASN1ElementInfo();
         }
         else
         if(info.getAnnotatedClass().isAnnotationPresent(ASN1Element.class)) {

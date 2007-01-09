@@ -27,11 +27,9 @@ namespace org.bn.coders
 	{		
         public virtual T decode<T>(Stream stream) {
             Type objectClass = typeof(T);
-            ElementInfo elemInfo = 
-                new ElementInfo(
-                    objectClass,
-                    CoderUtils.getAttribute<ASN1Element>(objectClass)
-                );
+            ElementInfo elemInfo = new ElementInfo();
+            elemInfo.AnnotatedClass = objectClass;
+            elemInfo.ASN1ElementInfo = CoderUtils.getAttribute<ASN1Element>(objectClass);
             return (T)decodeClassType(decodeTag(stream),objectClass,elemInfo, stream).Value;
         }
 		
@@ -229,10 +227,9 @@ namespace org.bn.coders
 		
 		protected virtual DecodedObject<object> decodeSequenceField(DecodedObject<object> fieldTag, object sequenceObj, PropertyInfo field, System.IO.Stream stream, ElementInfo elementInfo, bool checkOptional)
 		{
-            ElementInfo info = new ElementInfo(
-                field,
-                CoderUtils.getAttribute<ASN1Element>(field)
-            );
+            ElementInfo info = new ElementInfo();
+            info.AnnotatedClass = field;
+            info.ASN1ElementInfo = CoderUtils.getAttribute<ASN1Element>(field);
             
             //info.setGenericInfo(field.getGenericType());
 			if (CoderUtils.isAttributePresent<ASN1Null>(field))
@@ -261,11 +258,9 @@ namespace org.bn.coders
 			DecodedObject<object> val = null;
 			foreach(PropertyInfo field in objectClass.GetProperties())
 			{
-                ElementInfo info = new ElementInfo(
-                    field,
-                    CoderUtils.getAttribute<ASN1Element>(field)
-                );
-                //info.setGenericInfo(field.getGenericType());
+                ElementInfo info = new ElementInfo();
+                info.AnnotatedClass = field;
+                info.ASN1ElementInfo = CoderUtils.getAttribute<ASN1Element>(field);
                 val = decodeClassType(decodedTag, field.PropertyType, info, stream);
 				if (val != null)
 				{
@@ -274,7 +269,7 @@ namespace org.bn.coders
 				}
 				;
 			}
-			if (val == null && elementInfo.Element != null && !elementInfo.Element.IsOptional)
+			if (val == null && elementInfo.ASN1ElementInfo != null && !elementInfo.ASN1ElementInfo.IsOptional)
 			{
 				throw new System.ArgumentException("The choice '" + objectClass.ToString() + "' does not have a selected item!");
 			}

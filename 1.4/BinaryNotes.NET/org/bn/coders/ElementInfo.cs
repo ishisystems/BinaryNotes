@@ -33,7 +33,7 @@ namespace org.bn.coders
             set { parentAnnotatedClass = value; }
         }
 
-        public ASN1Element Element
+        public ASN1Element ASN1ElementInfo
         {
             get { return element; }
             set { element = value; }
@@ -48,17 +48,6 @@ namespace org.bn.coders
 
         public ElementInfo()
         {
-        }
-
-        public ElementInfo(ICustomAttributeProvider annotatedClass)
-        {
-            AnnotatedClass = annotatedClass;
-        }
-
-        public ElementInfo(ICustomAttributeProvider annotatedClass, ASN1Element element)
-        {
-            AnnotatedClass = annotatedClass;
-            Element = element;
         }
 
         public bool isAttributePresent<T>() 

@@ -99,7 +99,7 @@ namespace org.bn.coders
 
         protected override DecodedObject<object> decodeChoice(DecodedObject<object> decodedTag, Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
         {
-            if (elementInfo.Element != null)
+            if (elementInfo.ASN1ElementInfo != null)
             {
                 if (!checkTagForObject(decodedTag, TagClasses.ContextSpecific, ElementType.Constructed, UniversalTags.LastUniversal, elementInfo))
                     return null;
@@ -348,7 +348,7 @@ namespace org.bn.coders
 				int lenOfItems = 0;
                 elementInfo.ParentAnnotatedClass = elementInfo.AnnotatedClass;
 				elementInfo.AnnotatedClass = paramType;
-				elementInfo.Element = null;
+				elementInfo.ASN1ElementInfo = null;
 				do 
 				{
 					DecodedObject<object> itemTag = decodeTag(stream);

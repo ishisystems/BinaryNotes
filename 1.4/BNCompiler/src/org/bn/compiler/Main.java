@@ -68,7 +68,7 @@ public class Main {
             else
                 model.moduleNS = model.module.moduleIdentifier.name.toLowerCase();
         }
-        marshaller.marshal(model, outputXml);        
+        marshaller.marshal(model, outputXml);
         
     }
 
@@ -91,7 +91,7 @@ public class Main {
     public static void main(String args[]) {
         try {
             System.out.println("BinaryNotes compiler v"+version);
-            System.out.println("        (c) 2006 Abdulla G. Abdurakhmanov");
+            System.out.println("        (c) 2007 Abdulla G. Abdurakhmanov");
             new Main().start(args);
         } catch (Exception ex) {
             System.err.println(ex);

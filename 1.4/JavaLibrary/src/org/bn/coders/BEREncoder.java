@@ -68,7 +68,7 @@ public class BEREncoder<T> extends Encoder<T> {
     protected int encodeChoice(Object object, OutputStream stream, ElementInfo elementInfo)  throws Exception {
         int resultSize = 0;
         int sizeOfChoiceField =  super.encodeChoice ( object, stream , elementInfo );
-        if(elementInfo.getElement()!=null) {
+        if(elementInfo.getASN1ElementInfo()!=null) {
             resultSize += encodeHeader ( BERCoderUtils.getTagValueForElement (elementInfo, TagClass.ContextSpecific, ElementType.Constructed, UniversalTag.LastUniversal), sizeOfChoiceField, stream );
         }        
         resultSize+= sizeOfChoiceField;
@@ -255,7 +255,8 @@ public class BEREncoder<T> extends Encoder<T> {
         int sizeOfCollection = 0;
         for(int i=0;i<collection.length;i++) {
             Object obj = collection[collection.length - 1 - i];
-            ElementInfo info = new ElementInfo(obj.getClass());
+            ElementInfo info = new ElementInfo();
+            info.setAnnotatedClass(obj.getClass());
             info.setParentAnnotated(elementInfo.getAnnotatedClass());
             sizeOfCollection+=encodeClassType(obj,stream,info);
         }
@@ -265,7 +266,7 @@ public class BEREncoder<T> extends Encoder<T> {
         
         ASN1SequenceOf seqInfo = elementInfo.getAnnotatedClass().getAnnotation(ASN1SequenceOf.class);
         if(!seqInfo.isSetOf()) {
-            resultSize += encodeTag( 
+            resultSize += encodeTag(
                 BERCoderUtils.getTagValueForElement(elementInfo,TagClass.Universal, ElementType.Constructed, UniversalTag.Sequence),
                 stream
             );        

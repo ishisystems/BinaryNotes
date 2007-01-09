@@ -33,20 +33,20 @@ class ElementInfo {
     public ElementInfo() {            
     }
     
-    public ElementInfo(AnnotatedElement  annotatedObj) {
+    /*public ElementInfo(AnnotatedElement  annotatedObj) {
         this(annotatedObj,null);
     }
 
     public ElementInfo(AnnotatedElement  annotatedObj, ASN1Element element) {
         setAnnotatedClass(annotatedObj);
         setElement(element);
-    }
+    }*/
     
-    public ASN1Element getElement() {
+    public ASN1Element getASN1ElementInfo() {
         return element;
     }
 
-    public void setElement(ASN1Element element) {
+    public void setASN1ElementInfo(ASN1Element element) {
         this.element = element;
     }
 

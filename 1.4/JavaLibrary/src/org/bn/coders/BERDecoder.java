@@ -210,7 +210,7 @@ public class BERDecoder extends Decoder {
     
     protected DecodedObject decodeChoice(DecodedObject decodedTag, Class objectClass, ElementInfo elementInfo, 
                                    InputStream stream) throws Exception {        
-        if(elementInfo.getElement()!=null) {            
+        if(elementInfo.getASN1ElementInfo()!=null) {            
             if(!checkTagForObject(decodedTag, TagClass.ContextSpecific, ElementType.Constructed,UniversalTag.LastUniversal, elementInfo))
                 return null;
             DecodedObject<Integer> lenOfChild = decodeLength(stream);
@@ -311,7 +311,7 @@ public class BERDecoder extends Decoder {
             ParameterizedType tp = (ParameterizedType)elementInfo.getGenericInfo();
             Class paramType = (Class)tp.getActualTypeArguments()[0];
             elementInfo.setAnnotatedClass(paramType);
-            elementInfo.setElement(null);
+            elementInfo.setASN1ElementInfo(null);
             do {                
                 DecodedObject itemTag = decodeTag(stream);
                 DecodedObject item=decodeClassType(itemTag,paramType,elementInfo,stream);

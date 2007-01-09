@@ -63,7 +63,7 @@ public class PERAlignedEncoder<T> extends Encoder<T> {
      */
     protected int encodeConstraintLengthDeterminant(int length, int min, int max, BitArrayOutputStream stream) throws Exception {
         if( max <= 0xFFFF) {
-            // 10.9. NOTE 2 – (Tutorial) In the case of the ALIGNED variant 
+            // 10.9. NOTE 2 ï¿½ (Tutorial) In the case of the ALIGNED variant 
             // if the length count is bounded above by an upper bound that is 
             // less than 64K, then the constrained whole number encoding 
             // is used for the length.
@@ -109,7 +109,7 @@ public class PERAlignedEncoder<T> extends Encoder<T> {
     /**
      * Encoding of a constrained whole number
      * ITU-T X.691. 10.5. 
-     * NOTE – (Tutorial) This subclause is referenced by other clauses, 
+     * NOTE ï¿½ (Tutorial) This subclause is referenced by other clauses, 
      * and itself references earlier clauses for the production of 
      * a nonnegative-binary-integer or a 2's-complement-binary-integer encoding.
      */
@@ -174,7 +174,7 @@ public class PERAlignedEncoder<T> extends Encoder<T> {
     /** 
      * Encoding of a semi-constrained whole number
      * ITU-T X.691. 10.7. 
-     * NOTE – (Tutorial) This procedure is used when a lower bound can be 
+     * NOTE ï¿½ (Tutorial) This procedure is used when a lower bound can be 
      * identified but not an upper bound. The encoding procedure places 
      * the offset from the lower bound into the minimum number of octets 
      * as a non-negative-binary-integer, and requires an explicit length 
@@ -193,7 +193,7 @@ public class PERAlignedEncoder<T> extends Encoder<T> {
     /**
      * Encode normally small number
      * ITU-T X.691. 10.6
-     * NOTE – (Tutorial) This procedure is used when encoding 
+     * NOTE ï¿½ (Tutorial) This procedure is used when encoding 
      * a non-negative whole number that is expected to be small, but whose size 
      * is potentially unlimited due to the presence of an extension marker. 
      * An example is a choice index.
@@ -230,7 +230,7 @@ public class PERAlignedEncoder<T> extends Encoder<T> {
     /**
      * Encoding of a unconstrained whole number
      * ITU-T X.691. 10.8. 
-     * NOTE – (Tutorial) This case only arises in the encoding of the 
+     * NOTE ï¿½ (Tutorial) This case only arises in the encoding of the 
      * value of an integer type with no lower bound. The procedure
      * encodes the value as a 2's-complement-binary-integer into 
      * the minimum number of octets required to accommodate the encoding,
@@ -379,7 +379,7 @@ public class PERAlignedEncoder<T> extends Encoder<T> {
     /**
      * Encoding of the choice structure
      * ITU-T X.691. 22. 
-     * NOTE – (Tutorial) A choice type is encoded by encoding an index specifying 
+     * NOTE ï¿½ (Tutorial) A choice type is encoded by encoding an index specifying 
      * the chosen alternative. This is encoded as for a constrained integer 
      * (unless the extension marker is present in the choice type, 
      * in which case it is a normally small non-negative whole number) 
@@ -402,7 +402,9 @@ public class PERAlignedEncoder<T> extends Encoder<T> {
                 if(isSelectedChoiceItem(field,object)) {
                     //selectedField = field;
                     //Object invokeObjResult = invokeGetterMethodForField(field,object);
-                    info = new ElementInfo(field, field.getAnnotation(ASN1Element.class));
+                    info = new ElementInfo();
+                    info.setAnnotatedClass(field);
+                    info.setASN1ElementInfo(field.getAnnotation(ASN1Element.class));
                     break;
                 }            
             }
@@ -459,7 +461,7 @@ public class PERAlignedEncoder<T> extends Encoder<T> {
     }
 
     protected int encodeBitString(Object object, OutputStream stream, ElementInfo elementInfo) throws Exception {    
-        /*NOTE – (Tutorial) Bitstrings constrained to a fixed length less than or equal to 16 bits do not cause octet alignment. Larger
+        /*NOTE ï¿½ (Tutorial) Bitstrings constrained to a fixed length less than or equal to 16 bits do not cause octet alignment. Larger
         bitstrings are octet-aligned in the ALIGNED variant. If the length is fixed by constraints and the upper bound is less than 64K,
         there is no explicit length encoding, otherwise a length encoding is included which can take any of the forms specified earlier for
         length encodings, including fragmentation for large bit strings.*/
@@ -513,7 +515,8 @@ public class PERAlignedEncoder<T> extends Encoder<T> {
         resultSize += encodeLength(collection.length, elementInfo, stream);        
         for(int i=0;i<collection.length;i++) {
             Object obj = collection[i];
-            ElementInfo info = new ElementInfo(obj.getClass());
+            ElementInfo info = new ElementInfo();
+            info.setAnnotatedClass(obj.getClass());
             info.setParentAnnotated(elementInfo.getAnnotatedClass());
             resultSize+=encodeClassType(obj,stream,info);
         }

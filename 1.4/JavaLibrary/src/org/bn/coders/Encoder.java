@@ -42,11 +42,9 @@ import org.bn.utils.ReverseByteArrayOutputStream;
 public abstract class Encoder<T> implements IEncoder<T> {
     
     public void encode(T object, OutputStream stream) throws Exception {
-        ElementInfo elemInfo = 
-            new ElementInfo(
-                object.getClass(), 
-                object.getClass().getAnnotation(ASN1Element.class)
-            );
+        ElementInfo elemInfo = new ElementInfo();
+        elemInfo.setAnnotatedClass(object.getClass());
+        elemInfo.setASN1ElementInfo(object.getClass().getAnnotation(ASN1Element.class));
         int sizeOfEncodedBytes = encodeClassType(object, stream, elemInfo);
         if( sizeOfEncodedBytes == 0) {
            throw new IllegalArgumentException("Unable to find any supported annotation for class type: " + object.getClass().toString());
@@ -201,7 +199,9 @@ public abstract class Encoder<T> implements IEncoder<T> {
         else {
             Object invokeObjResult = invokeGetterMethodForField(field,object);
             if(invokeObjResult!=null) {
-                ElementInfo info = new ElementInfo(field, field.getAnnotation(ASN1Element.class));
+                ElementInfo info = new ElementInfo();
+                info.setAnnotatedClass(field);
+                info.setASN1ElementInfo(field.getAnnotation(ASN1Element.class));
                 resultSize += encodeClassType(invokeObjResult, stream, info);
             }
             else
@@ -229,7 +229,9 @@ public abstract class Encoder<T> implements IEncoder<T> {
                 if(isSelectedChoiceItem(field,object)) {
                     //selectedField = field;
                     //Object invokeObjResult = invokeGetterMethodForField(field,object);
-                    info = new ElementInfo(field, field.getAnnotation(ASN1Element.class));
+                    info = new ElementInfo();
+                    info.setAnnotatedClass(field);
+                    info.setASN1ElementInfo(field.getAnnotation(ASN1Element.class));
                     break;
                 }
             }

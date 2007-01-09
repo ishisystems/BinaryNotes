@@ -77,7 +77,7 @@ namespace org.bn.coders
 		{
 			int result = 0;
 			int sizeOfChoiceField = base.encodeChoice(obj, stream, elementInfo);
-            if (elementInfo.Element != null)
+            if (elementInfo.ASN1ElementInfo != null)
             {
                 result += encodeHeader(BERCoderUtils.getTagValueForElement(elementInfo, TagClasses.ContextSpecific, ElementType.Constructed, UniversalTags.LastUniversal), sizeOfChoiceField, stream);
             }
@@ -247,7 +247,8 @@ namespace org.bn.coders
 			for (int i = 0; i < collection.Count; i++)
 			{
 				object item = collection[collection.Count - 1 - i];
-				ElementInfo info = new ElementInfo(item.GetType());
+				ElementInfo info = new ElementInfo();
+                info.AnnotatedClass = item.GetType();
                 info.ParentAnnotatedClass = elementInfo.AnnotatedClass;
 				sizeOfCollection += encodeClassType(item, stream, info);
 			}

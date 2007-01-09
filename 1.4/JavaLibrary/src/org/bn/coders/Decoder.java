@@ -37,11 +37,9 @@ import org.bn.annotations.*;
 public abstract class Decoder implements IDecoder {    
     public <T> T decode(InputStream stream, Class<T> objectClass) throws Exception {
 
-        ElementInfo elemInfo = 
-            new ElementInfo(
-                objectClass, 
-                objectClass.getAnnotation(ASN1Element.class)
-            );
+        ElementInfo elemInfo = new ElementInfo();
+        elemInfo.setAnnotatedClass(objectClass);
+        elemInfo.setASN1ElementInfo(objectClass.getAnnotation(ASN1Element.class));
         return (T)decodeClassType(decodeTag(stream),objectClass,elemInfo, stream).getValue();
     }
     
@@ -245,7 +243,9 @@ public abstract class Decoder implements IDecoder {
     
 
     protected DecodedObject decodeSequenceField(DecodedObject fieldTag, Object sequenceObj, Field field, InputStream stream, ElementInfo elementInfo, boolean optionalCheck) throws  Exception {
-        ElementInfo info = new ElementInfo(field, field.getAnnotation(ASN1Element.class));
+        ElementInfo info = new ElementInfo();
+        info.setAnnotatedClass(field);
+        info.setASN1ElementInfo(field.getAnnotation(ASN1Element.class));
         if(field.getType().isMemberClass()) {
             info.setParentObject(sequenceObj);
         }
@@ -271,7 +271,9 @@ public abstract class Decoder implements IDecoder {
         DecodedObject value = null;
         for ( Field field : objectClass.getDeclaredFields() ) {
             if(!field.isSynthetic()) {
-                ElementInfo info = new ElementInfo(field, field.getAnnotation(ASN1Element.class));
+                ElementInfo info = new ElementInfo();
+                info.setAnnotatedClass(field);
+                info.setASN1ElementInfo(field.getAnnotation(ASN1Element.class));
                 if(field.getType().isMemberClass()) {
                     info.setParentObject(choice);
                 }                
@@ -283,7 +285,7 @@ public abstract class Decoder implements IDecoder {
                 };
             }            
         }
-        if(value == null && elementInfo.getElement()!=null && !elementInfo.getElement().isOptional()) {
+        if(value == null && elementInfo.getASN1ElementInfo()!=null && !elementInfo.getASN1ElementInfo().isOptional()) {
             throw new  IllegalArgumentException ("The choice '" + objectClass.toString() + "' does not have a selected item!");
         }
         else

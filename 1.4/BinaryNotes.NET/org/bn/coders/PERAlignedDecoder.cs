@@ -283,7 +283,9 @@ namespace org.bn.coders
 				if (i + 1 == elementIndex)
 				{
 					System.Reflection.PropertyInfo field = fields[i];
-					ElementInfo info = new ElementInfo(field, CoderUtils.getAttribute<ASN1Element>(field));
+					ElementInfo info = new ElementInfo();
+                    info.AnnotatedClass = field;
+                    info.ASN1ElementInfo = CoderUtils.getAttribute<ASN1Element>(field);
                     val = decodeClassType(decodedTag, field.PropertyType, info, stream);
                     if(val != null)
 					    invokeSelectMethodForField(field, choice, val.Value);
@@ -291,7 +293,7 @@ namespace org.bn.coders
 				}
 				;
 			}
-            if (val == null && elementInfo.Element != null && !elementInfo.Element.IsOptional)
+            if (val == null && elementInfo.ASN1ElementInfo != null && !elementInfo.ASN1ElementInfo.IsOptional)
             {
 				throw new System.ArgumentException("The choice '" + objectClass.ToString() + "' does not have a selected item!");
 			}
@@ -581,7 +583,7 @@ namespace org.bn.coders
             ElementInfo elementItemInfo = new ElementInfo();
             elementItemInfo.ParentAnnotatedClass = elementInfo.AnnotatedClass;
             elementItemInfo.AnnotatedClass = paramType;
-            elementItemInfo.Element = null;
+            elementItemInfo.ASN1ElementInfo = null;
 
 
             for (int i = 0; i < countOfElements;i ++ )

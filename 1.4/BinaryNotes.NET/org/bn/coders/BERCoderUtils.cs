@@ -28,9 +28,9 @@ namespace org.bn.coders
 		{
 			int result = tagClass | elemenType | universalTag;
 			ASN1Element elementInfo = null;
-			if (info.Element != null)
+			if (info.ASN1ElementInfo != null)
 			{
-				elementInfo = info.Element;
+				elementInfo = info.ASN1ElementInfo;
 			}
 			else 
             if (info.isAttributePresent<ASN1Element>())

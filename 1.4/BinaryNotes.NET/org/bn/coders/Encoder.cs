@@ -29,11 +29,9 @@ namespace org.bn.coders
         public virtual void encode<T>(T obj, System.IO.Stream stream)
 		{
             object ob = (object)obj;
-			ElementInfo elemInfo = new ElementInfo(
-                obj.GetType(),
-                CoderUtils.getAttribute<ASN1Element>(obj.GetType())
-            );
-
+			ElementInfo elemInfo = new ElementInfo();
+            elemInfo.AnnotatedClass = obj.GetType();
+            elemInfo.ASN1ElementInfo = CoderUtils.getAttribute<ASN1Element>(obj.GetType());
 			int sizeOfEncodedBytes = encodeClassType(obj, stream, elemInfo);
 
 			if (sizeOfEncodedBytes == 0)
@@ -226,10 +224,9 @@ namespace org.bn.coders
 				object invokeObjResult = invokeGetterMethodForField(field, obj);
 				if (invokeObjResult != null)
 				{
-					ElementInfo info = new ElementInfo(
-                        field,
-                        CoderUtils.getAttribute<ASN1Element>(field)
-                    );
+					ElementInfo info = new ElementInfo();
+                    info.AnnotatedClass = field;
+                    info.ASN1ElementInfo = CoderUtils.getAttribute<ASN1Element>(field);
 					resultSize += encodeClassType(invokeObjResult, stream, info);
 				}
 				else
@@ -248,10 +245,9 @@ namespace org.bn.coders
 				{
 					selectedField = field;
 					object invokeObjResult = invokeGetterMethodForField(field, obj);
-                    ElementInfo info = new ElementInfo(
-                        field,
-                        CoderUtils.getAttribute<ASN1Element>(field)
-                    );
+                    ElementInfo info = new ElementInfo();
+                    info.AnnotatedClass = field;
+                    info.ASN1ElementInfo = CoderUtils.getAttribute<ASN1Element>(field);
                     resultSize += encodeClassType(invokeObjResult, stream, info);
 					break;
 				}

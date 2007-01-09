@@ -416,7 +416,9 @@ namespace org.bn.coders
 				elementIndex++;
                 if (invokeSelectedMethodForField(field, obj))
                 {
-                    info = new ElementInfo(field, CoderUtils.getAttribute<ASN1Element>(field));
+                    info = new ElementInfo();
+                    info.AnnotatedClass = field;
+                    info.ASN1ElementInfo = CoderUtils.getAttribute<ASN1Element>(field);
 					break;
 				}
 			}
@@ -507,7 +509,8 @@ namespace org.bn.coders
             for (int i = 0; i < collection.Count; i++)
             {
                 object itemObj = collection[i];
-                ElementInfo info = new ElementInfo(itemObj.GetType());
+                ElementInfo info = new ElementInfo();
+                info.AnnotatedClass = itemObj.GetType();
                 info.ParentAnnotatedClass = elementInfo.AnnotatedClass;
                 resultSize += encodeClassType(itemObj, stream, info);
             }
