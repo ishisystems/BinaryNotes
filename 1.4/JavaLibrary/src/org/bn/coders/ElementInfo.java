@@ -42,9 +42,7 @@ public class ElementInfo {
     }
     
     public void setASN1ElementInfoForClass(AnnotatedElement anElement) {
-        if(! (anElement instanceof IASN1PreparedElement)) {
-            this.element = anElement.getAnnotation(ASN1Element.class);
-        }
+        this.element = anElement.getAnnotation(ASN1Element.class);
     }
 
     public AnnotatedElement  getAnnotatedClass() {
@@ -54,18 +52,7 @@ public class ElementInfo {
     public void setAnnotatedClass(AnnotatedElement cls) {
         this.annotatedClass = cls;
     }
-    
-    public boolean isPreparedAnnotatedElement() {
-        if(annotatedClass instanceof IASN1PreparedElement) {
-            return true;
-        }
-        return false;
-    }
-    
-    public IASN1PreparedElement getPreparedAnnotatedElement() {
-        return (IASN1PreparedElement) annotatedClass;
-    }
-    
+        
     public void setGenericInfo(Type info) {
         this.genericInfo = info;
     }
