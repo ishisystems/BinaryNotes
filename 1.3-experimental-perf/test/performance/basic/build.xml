@@ -1,0 +1,74 @@
+<!--
+
+  To run:
+
+     ant -Dbn.package=<root of BinaryNotes installation.
+
+-->
+
+<project name="Bug" default="run">
+
+  <property name="bn.dist"    location="${bn.package}/Dist"/>
+  <property name="bn.bin"     location="${bn.dist}/bin"/>
+  <property name="bn.lib"     location="${bn.dist}/lib"/>
+  <property name="bn.depends" location="${bn.dist}/depends"/>
+
+  <path id="class.path">
+    <pathelement path="classes"/>
+    <pathelement path="${bn.depends}/lineargs.jar"/>
+    <pathelement path="${bn.depends}/antlr.jar"/>
+    <pathelement path="${bn.depends}/activation.jar"/>
+    <pathelement path="${bn.depends}/jaxb-api.jar"/>
+    <pathelement path="${bn.depends}/jaxb-impl.jar"/>
+    <pathelement path="${bn.depends}/jaxb1-impl.jar"/>
+    <pathelement path="${bn.depends}/jsr173_1.0_api.jar"/>
+    <pathelement path="${bn.lib}/java/binarynotes.jar"/>
+<!--     <pathelement path="${bn.lib}/java/binarynotesd.jar"/> -->
+    <pathelement path="${bn.bin}/bncompiler.jar"/>
+  </path>
+
+  <target name="init">
+    <mkdir dir="classes"/>
+    <mkdir dir="protocol"/>
+  </target>
+
+  <target name="clean">
+    <delete includeemptydirs="true" failonerror="false">
+      <fileset dir="classes" defaultexcludes="no"/>
+      <fileset dir="protocol" defaultexcludes="no"/>
+    </delete>
+  </target>
+
+  <target name="bncompile" depends="init">
+    <java classname="org.bn.compiler.Main" fork="true">
+      <classpath refid="class.path"/>
+      <arg value="-mp"/>
+      <arg value="${bn.bin}/modules"/>
+      <arg value="-m"/>
+      <arg value="java"/>
+      <arg value="-o"/>
+      <arg value="./protocol"/>
+      <arg value="-f"/>
+      <arg value="NOTICE.asn"/>
+      <arg value="-ns"/>
+      <arg value="protocol"/>
+    </java>
+  </target>
+
+  <target name="compile" depends="bncompile">
+    <javac srcdir="protocol" destdir="classes" debug="true">
+      <classpath refid="class.path"/>
+    </javac>
+    <javac srcdir="." destdir="classes" debug="true">
+      <classpath refid="class.path"/>
+    </javac>
+  </target>
+
+  <target name="run" depends="compile">
+    <java classname="Main" fork="true">
+<!--       <jvmarg value="-agentlib:hprof=cpu=samples,depth=16"/> -->
+      <classpath refid="class.path"/>
+    </java>
+  </target>
+
+</project>

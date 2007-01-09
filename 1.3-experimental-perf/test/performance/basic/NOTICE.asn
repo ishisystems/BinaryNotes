@@ -1,0 +1,36 @@
+NOTICE 
+
+DEFINITIONS IMPLICIT TAGS ::= BEGIN
+
+TestPrimitive ::= CHOICE
+{
+  testBoolean     [0]  BOOLEAN,
+  testByte        [1]  INTEGER,
+  testChar        [2]  UTF8String,
+  testInteger     [3]  INTEGER,
+  testShort       [4]  INTEGER,
+  testLong        [5]  INTEGER,
+  testFloat       [6]  REAL,   
+  testDouble      [7]  REAL,   
+  testOctetString [8]  OCTET STRING,
+  testString      [9]  UTF8String
+}
+
+TestEnum ::= UTF8String
+
+TestStruct ::= SEQUENCE OF TestValueType
+
+TestValueType ::= CHOICE
+{
+  testPrimitive [0] TestPrimitive,
+  testEnum      [2] TestEnum,
+  testStruct    [3] TestStruct,
+  testNull      [5] NULL
+}
+
+TestNotice ::= SEQUENCE
+{
+   testProperties [0] TestStruct
+}
+
+END
