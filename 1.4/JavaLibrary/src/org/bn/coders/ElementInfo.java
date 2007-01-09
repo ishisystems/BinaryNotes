@@ -42,7 +42,7 @@ public class ElementInfo {
     }
     
     public void setASN1ElementInfoForClass(AnnotatedElement anElement) {
-        if(! (anElement instanceof ICodingPreparedElement)) {
+        if(! (anElement instanceof IASN1PreparedElement)) {
             this.element = anElement.getAnnotation(ASN1Element.class);
         }
     }
@@ -55,15 +55,15 @@ public class ElementInfo {
         this.annotatedClass = cls;
     }
     
-    public boolean isEncodePreparedAnnotatedElement() {
-        if(annotatedClass instanceof ICodingPreparedElement) {
+    public boolean isPreparedAnnotatedElement() {
+        if(annotatedClass instanceof IASN1PreparedElement) {
             return true;
         }
         return false;
     }
     
-    public ICodingPreparedElement getCodingPreparedAnnotatedElement() {
-        return (ICodingPreparedElement) annotatedClass;
+    public IASN1PreparedElement getPreparedAnnotatedElement() {
+        return (IASN1PreparedElement) annotatedClass;
     }
     
     public void setGenericInfo(Type info) {
