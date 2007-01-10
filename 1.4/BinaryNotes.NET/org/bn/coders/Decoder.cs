@@ -105,10 +105,10 @@ namespace org.bn.coders
 				return decodeElement(decodedTag, objectClass, elementInfo, stream);
 			}
 			else
-				return decodeJavaElement(decodedTag, objectClass, elementInfo, stream);
+				return decodeCSElement(decodedTag, objectClass, elementInfo, stream);
 		}
 		
-		protected virtual DecodedObject<object> decodeJavaElement(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
+		protected virtual DecodedObject<object> decodeCSElement(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
 		{
 			if (elementInfo.AnnotatedClass.Equals(typeof(string)))
 			{
@@ -130,10 +130,10 @@ namespace org.bn.coders
 			{
 				return decodeBoolean(decodedTag, objectClass, elementInfo, stream);
 			}
-			/*if(objectClass.isArray()) {
-			return decodeOctetString(elementInfo, stream);
+            else if (elementInfo.AnnotatedClass.Equals(typeof(byte[])))
+            {
+                return decodeOctetString(decodedTag, objectClass, elementInfo, stream);
 			}
-			else*/
 			else
 				return null;
 		}

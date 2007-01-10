@@ -124,10 +124,10 @@ public abstract class Decoder implements IDecoder, IASN1TypesDecoder {
             return decodeBoolean(decodedTag, objectClass,elementInfo, stream);
         }        
         else
-        /*if(objectClass.isArray()) {
-            return decodeOctetString(elementInfo, stream);
+        if(elementInfo.getAnnotatedClass().equals(byte[].class)) {
+            return decodeOctetString(decodedTag, objectClass,elementInfo, stream);
         }
-        else*/
+        else
             return null;
     }
     
