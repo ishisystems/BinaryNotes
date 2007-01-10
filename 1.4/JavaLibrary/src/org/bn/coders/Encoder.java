@@ -182,7 +182,7 @@ public abstract class Encoder<T> implements IEncoder<T>, IASN1TypesEncoder {
         return false;
     }
     
-    protected int encodeSequence(Object object, OutputStream stream, ElementInfo elementInfo) throws Exception {
+    public int encodeSequence(Object object, OutputStream stream, ElementInfo elementInfo) throws Exception {
         int resultSize = 0;
         for ( Field field : object.getClass().getDeclaredFields() ) {
             resultSize += encodeSequenceField(object,field,stream,elementInfo);
@@ -245,7 +245,7 @@ public abstract class Encoder<T> implements IEncoder<T>, IASN1TypesEncoder {
         return info;
     }
 
-    protected int encodeChoice(Object object, OutputStream stream, ElementInfo elementInfo)  throws Exception {
+    public int encodeChoice(Object object, OutputStream stream, ElementInfo elementInfo)  throws Exception {
         int resultSize = 0;
         ElementInfo info = getChoiceSelectedElement(object);
         Object invokeObjResult = invokeGetterMethodForField((Field)info.getAnnotatedClass(),object);
@@ -278,12 +278,12 @@ public abstract class Encoder<T> implements IEncoder<T>, IASN1TypesEncoder {
         return resultSize;
     }
     
-    protected int encodeElement(Object object, OutputStream stream, ElementInfo elementInfo) throws Exception  {
+    public int encodeElement(Object object, OutputStream stream, ElementInfo elementInfo) throws Exception  {
         elementInfo.setAnnotatedClass(object.getClass());
         return encodeClassType(object,stream,elementInfo);
     }
     
-    protected int encodeBoxedType(Object object, OutputStream stream, ElementInfo elementInfo) throws Exception  {
+    public int encodeBoxedType(Object object, OutputStream stream, ElementInfo elementInfo) throws Exception  {
         Field field = object.getClass().getDeclaredField("value");
         elementInfo.setAnnotatedClass(field);
         if(field.isAnnotationPresent(ASN1Null.class)) {

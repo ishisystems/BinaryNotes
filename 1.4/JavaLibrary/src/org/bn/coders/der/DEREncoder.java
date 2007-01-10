@@ -38,7 +38,7 @@ public class DEREncoder<T> extends BEREncoder<T> {
     public DEREncoder() {
     }
 
-    protected int encodeSequence(Object object, OutputStream stream, 
+    public int encodeSequence(Object object, OutputStream stream, 
                                  ElementInfo elementInfo) throws Exception {
         ASN1Sequence seqInfo = elementInfo.getAnnotatedClass().getAnnotation(ASN1Sequence.class);
         if(!seqInfo.isSet())                                 

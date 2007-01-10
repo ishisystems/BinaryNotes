@@ -22,6 +22,8 @@ import java.io.OutputStream;
 
 public interface IASN1TypesEncoder {
     int encodeClassType(Object object, OutputStream stream, ElementInfo elementInfo) throws Exception;
+    int encodeSequence(Object object, OutputStream stream, ElementInfo elementInfo) throws Exception;
+    int encodeChoice(Object object, OutputStream stream, ElementInfo elementInfo)  throws Exception;
     int encodeEnum(Object object, OutputStream stream, ElementInfo elementInfo) throws Exception;
     int encodeEnumItem(Object enumConstant, Class enumClass, OutputStream stream, ElementInfo elementInfo) throws Exception ;
     int encodeBoolean(Object object, OutputStream stream, ElementInfo elementInfo) throws Exception;
@@ -33,4 +35,6 @@ public interface IASN1TypesEncoder {
     int encodeBitString(Object object, OutputStream steam, ElementInfo elementInfo) throws Exception ;
     int encodeString(Object object, OutputStream steam, ElementInfo elementInfo) throws Exception ;
     int encodeSequenceOf(Object object, OutputStream steam, ElementInfo elementInfo) throws Exception ;   
+    int encodeElement(Object object, OutputStream stream, ElementInfo elementInfo) throws Exception;
+    int encodeBoxedType(Object object, OutputStream stream, ElementInfo elementInfo) throws Exception;
 }

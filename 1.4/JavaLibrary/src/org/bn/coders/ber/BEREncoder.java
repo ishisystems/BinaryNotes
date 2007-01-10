@@ -57,7 +57,7 @@ public class BEREncoder<T> extends Encoder<T> {
         reverseStream.writeTo(stream);        
     }            
     
-    protected int encodeSequence(Object object, OutputStream stream, 
+    public int encodeSequence(Object object, OutputStream stream, 
                                  ElementInfo elementInfo) throws Exception {
         int resultSize = 0;
          for ( int i = 0;i<object.getClass().getDeclaredFields().length; i++) {
@@ -72,7 +72,7 @@ public class BEREncoder<T> extends Encoder<T> {
         return resultSize;
     }
 
-    protected int encodeChoice(Object object, OutputStream stream, 
+    public int encodeChoice(Object object, OutputStream stream, 
                                ElementInfo elementInfo)  throws Exception {
         int resultSize = 0;
         int sizeOfChoiceField =  super.encodeChoice ( object, stream , elementInfo );

@@ -364,7 +364,7 @@ public class PERAlignedEncoder<T> extends Encoder<T> {
         return (resultBitSize / 8) + (resultBitSize % 8 > 0 ? 1:0);
     }
     
-    protected int encodeSequence(Object object, OutputStream stream, 
+    public int encodeSequence(Object object, OutputStream stream, 
                                  ElementInfo elementInfo) throws Exception {        
         int resultSize = 0;
         ASN1Sequence seqInfo = elementInfo.getAnnotatedClass().getAnnotation(ASN1Sequence.class);
@@ -397,7 +397,7 @@ public class PERAlignedEncoder<T> extends Encoder<T> {
      * Where the choice has only one alternative, there is no encoding 
      * for the index.
      */
-    protected int encodeChoice(Object object, OutputStream stream, 
+    public int encodeChoice(Object object, OutputStream stream, 
                                ElementInfo elementInfo)  throws Exception {
         int resultSize = 0;
         doAlign(stream);

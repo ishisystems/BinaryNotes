@@ -275,7 +275,7 @@ public class PERAlignedDecoder extends Decoder {
         return result;        
     }
     
-    protected DecodedObject decodeChoice(DecodedObject decodedTag, 
+    public DecodedObject decodeChoice(DecodedObject decodedTag, 
                                          Class objectClass, 
                                          ElementInfo elementInfo, 
                                          InputStream stream) throws Exception {
@@ -317,7 +317,7 @@ public class PERAlignedDecoder extends Decoder {
         return preambleLen;    
     }
             
-    protected DecodedObject decodeSequence(DecodedObject decodedTag,Class objectClass, 
+    public DecodedObject decodeSequence(DecodedObject decodedTag,Class objectClass, 
                                            ElementInfo elementInfo, InputStream stream) throws Exception {
         // TO DO 
         // Decode sequence preamble

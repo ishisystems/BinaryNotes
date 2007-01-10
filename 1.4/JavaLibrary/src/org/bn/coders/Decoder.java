@@ -208,7 +208,7 @@ public abstract class Decoder implements IDecoder, IASN1TypesDecoder {
         }
     }
         
-    protected DecodedObject decodeSequence(DecodedObject decodedTag, Class objectClass, ElementInfo elementInfo, InputStream stream) throws Exception {        
+    public DecodedObject decodeSequence(DecodedObject decodedTag, Class objectClass, ElementInfo elementInfo, InputStream stream) throws Exception {
         Object sequence = createInstanceForElement(objectClass,elementInfo);
         initDefaultValues(sequence);
         
@@ -267,7 +267,7 @@ public abstract class Decoder implements IDecoder, IASN1TypesDecoder {
         }
     }
 
-    protected DecodedObject decodeChoice(DecodedObject decodedTag,Class objectClass, ElementInfo elementInfo, InputStream stream)  throws Exception {
+    public DecodedObject decodeChoice(DecodedObject decodedTag,Class objectClass, ElementInfo elementInfo, InputStream stream)  throws Exception {
         Object choice = createInstanceForElement(objectClass,elementInfo);
         DecodedObject value = null;
         for ( Field field : objectClass.getDeclaredFields() ) {
@@ -294,7 +294,7 @@ public abstract class Decoder implements IDecoder, IASN1TypesDecoder {
             return new DecodedObject(choice, value!=null ? value.getSize(): 0);
     }
         
-    protected DecodedObject decodeEnum(DecodedObject decodedTag,Class objectClass, ElementInfo elementInfo, InputStream stream) throws Exception  {
+    public DecodedObject decodeEnum(DecodedObject decodedTag,Class objectClass, ElementInfo elementInfo, InputStream stream) throws Exception  {
         Object result = objectClass.newInstance();
         Field field = objectClass.getDeclaredField("value");
 
@@ -324,12 +324,12 @@ public abstract class Decoder implements IDecoder, IASN1TypesDecoder {
         return new DecodedObject(result,itemValue.getSize());
     }    
 
-    protected DecodedObject decodeElement(DecodedObject decodedTag,Class objectClass, ElementInfo elementInfo, InputStream stream) throws Exception  {
+    public DecodedObject decodeElement(DecodedObject decodedTag,Class objectClass, ElementInfo elementInfo, InputStream stream) throws Exception  {
         elementInfo.setAnnotatedClass(objectClass);
         return decodeClassType(decodedTag, objectClass,elementInfo, stream);
     }
     
-    protected DecodedObject decodeBoxedType(DecodedObject decodedTag, Class objectClass, ElementInfo elementInfo, InputStream stream) throws Exception  {    
+    public DecodedObject decodeBoxedType(DecodedObject decodedTag, Class objectClass, ElementInfo elementInfo, InputStream stream) throws Exception  {    
         Object resultObj = createInstanceForElement(objectClass,elementInfo);
         
         DecodedObject result = new DecodedObject(resultObj);

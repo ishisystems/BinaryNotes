@@ -47,7 +47,7 @@ import org.bn.types.BitString;
 
 public class BERDecoder extends Decoder {
     
-    protected DecodedObject decodeSequence(DecodedObject decodedTag,Class objectClass, 
+    public DecodedObject decodeSequence(DecodedObject decodedTag,Class objectClass, 
                                            ElementInfo elementInfo, InputStream stream) throws Exception {
         boolean isSet = false;
         if(checkTagForObject(decodedTag, TagClass.Universal, ElementType.Constructed, UniversalTag.Sequence,elementInfo)) {
@@ -223,7 +223,7 @@ public class BERDecoder extends Decoder {
         return new DecodedObject(result,len.getValue()+len.getSize());
     }
     
-    protected DecodedObject decodeChoice(DecodedObject decodedTag, Class objectClass, 
+    public DecodedObject decodeChoice(DecodedObject decodedTag, Class objectClass, 
                                          ElementInfo elementInfo, 
                                    InputStream stream) throws Exception {        
         if(elementInfo.getASN1ElementInfo()!=null) {            
