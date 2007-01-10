@@ -404,21 +404,24 @@ namespace org.bn.coders.ber
                 return null;
             result = bt;
             int len = 1;
-            int tagClass = bt & 0xC0;
+            //int tagClass = bt & 0xC0;
             int tagValue = bt & 31;
             bool isPrimitive = (bt & 0x20) == 0;
             if (tagValue == UniversalTags.LastUniversal)
             {
-                tagValue = 0;
-                do
+                //tagValue = result;
+                bt = 0x80;
+                while ((bt & 0x80) != 0)
                 {
+                    result <<= 8;
                     bt = stream.ReadByte();
-                    tagValue = (tagValue << 7) | (bt & 0x7f);
-                    len++;
+                    if (bt > 0)
+                    {
+                        result |= bt;
+                        len++;
+                    }
                 }
-                while ((bt & 0x80) != 0);
-                tagValue = tagClass | tagValue;
-                result = tagValue;
+                //result = tagValue;
             }
             else
                 result = bt;

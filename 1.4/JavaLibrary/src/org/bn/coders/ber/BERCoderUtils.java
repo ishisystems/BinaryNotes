@@ -38,7 +38,24 @@ public class BERCoderUtils {
         if(elementInfo!=null) {
             if(elementInfo.hasTag()) {
                 tagClass = elementInfo.tagClass();
-                result = tagClass | elemenType | elementInfo.tag();
+                if (elementInfo.tag() <= 0x30) {
+                    result = tagClass | elemenType | elementInfo.tag();
+                }
+                else {
+                    result = tagClass | elemenType | 0x1F;
+                    if (elementInfo.tag() < 0x80) {
+                        result <<= 8;
+                        result |= elementInfo.tag() & 0x7F;
+                    }
+                    else
+                    if (elementInfo.tag() < 0x3FFF)
+                    {
+                        result <<= 16;
+                        result |= (((elementInfo.tag() & 0x3fff) >> 7) | 0x80) << 8;
+                        result |= ((elementInfo.tag() & 0x3fff) & 0x7f);                
+                    }
+                    //result |= elementInfo.Tag;
+                }
             }
         }
         return result;

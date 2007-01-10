@@ -288,32 +288,21 @@ public class BEREncoder<T> extends Encoder<T> {
         return resultSize;
     }
 
-    protected int encodeHeader(int tagValue, int contentLen, OutputStream stream) throws IOException {
+    protected int encodeHeader(int tagValue, int contentLen, OutputStream stream) throws Exception {
         int resultSize = encodeLength(contentLen, stream);
         resultSize += encodeTag(tagValue, stream);
         return resultSize;
     }
     
-    protected int encodeTag(int tagValue, OutputStream stream) throws IOException {
+    protected int encodeTag(int tagValue, OutputStream stream) throws Exception {
         int resultSize = 0;
-         if ( tagValue  < 255 && ((tagValue&0x1f) < UniversalTag.LastUniversal )) { // Short tag
-             stream.write((byte)tagValue);
-             resultSize++;
-         }
-         else { // Long tag
-            // First octet 
-            int tagValueT = tagValue;
-            stream.write(tagValueT & 0x1F); // 0001 1111
+        if (tagValue < 0xFF)
+        {
+            stream.write(tagValue);
             resultSize++;
-            tagValueT >>>= 7;            
-             while (tagValueT != 0) { 
-                 stream.write((byte) ((tagValueT & 0x7F)|0x80));
-                 tagValueT >>>= 7 ;
-                 resultSize++;
-             }
-             stream.write( (tagValue&0x7f) | UniversalTag.LastUniversal );
-             
-         }        
+        }
+        else
+            resultSize += encodeIntegerValue(tagValue, stream);
         return resultSize;
     }
 

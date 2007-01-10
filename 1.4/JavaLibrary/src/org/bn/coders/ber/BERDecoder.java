@@ -377,21 +377,24 @@ public class BERDecoder extends Decoder {
             return null;
         result = bt ;
         int len = 1;
-        int tagClass = bt & 0xC0;
+        //int tagClass = bt & 0xC0;
         int tagValue = bt & 31;
         boolean isPrimitive = (bt & 0x20) == 0;
         if (tagValue == UniversalTag.LastUniversal) 
         {
-                tagValue = 0;
-                do 
-                {
+                bt = 0x80;
+                while ((bt&0x80) != 0) {
+                    result <<= 8;
                     bt = stream.read();
-                    tagValue = (tagValue << 7) | (bt & 0x7f);
-                    len++;
-                } 
-                while ((bt&0x80) != 0);
-                tagValue= tagClass | tagValue;
-                result = tagValue;
+                    //tagValue = (tagValue << 7) | (bt & 0x7f);
+                     if (bt > 0)
+                     {
+                         result |= bt;
+                         len++;
+                     }
+                };
+                //tagValue= tagClass | tagValue;
+                //result = tagValue;
         }
         else
             result = bt;

@@ -43,10 +43,32 @@ namespace org.bn.coders.ber
 				if (elementInfo.HasTag)
 				{
 					tagClass = elementInfo.TagClass;
-					result = tagClass | elemenType | elementInfo.Tag;
+                    if (elementInfo.Tag <= 0x30)
+                    {
+                        result = tagClass | elemenType | elementInfo.Tag;
+                    }
+                    else
+                    {
+                        result = tagClass | elemenType | 0x1F;
+                        if (elementInfo.Tag < 0x80)
+                        {
+                            result <<= 8;
+                            result |= elementInfo.Tag&0x7F;
+                        }
+                        else
+                        if (elementInfo.Tag < 0x3FFF)
+                        {
+                            result <<= 16;
+                            result |= (((elementInfo.Tag & 0x3fff) >> 7) | 0x80) << 8;
+                            result |= ((elementInfo.Tag & 0x3fff) & 0x7f);
+                            
+                        }
+                        //result |= elementInfo.Tag;
+                    }
 				}
 			}
 			return result;
 		}
+
 	}
 }
