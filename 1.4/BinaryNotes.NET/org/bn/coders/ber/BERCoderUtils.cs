@@ -59,9 +59,16 @@ namespace org.bn.coders.ber
                         if (elementInfo.Tag < 0x3FFF)
                         {
                             result <<= 16;
-                            result |= (((elementInfo.Tag & 0x3fff) >> 7) | 0x80) << 8;
-                            result |= ((elementInfo.Tag & 0x3fff) & 0x7f);
-                            
+                            result |= (((elementInfo.Tag & 0x3FFF) >> 7) | 0x80) << 8;
+                            result |= ((elementInfo.Tag & 0x3FFF) & 0x7f);                            
+                        }
+                        else
+                        if (elementInfo.Tag < 0x3FFFF)
+                        {
+                            result <<= 24;
+                            result |= (((elementInfo.Tag & 0x3FFFF) >> 15) | 0x80) << 16;
+                            result |= (((elementInfo.Tag & 0x3FFFF) >> 7) | 0x80) << 8;
+                            result |= ((elementInfo.Tag & 0x3FFFF) & 0x3f);
                         }
                         //result |= elementInfo.Tag;
                     }

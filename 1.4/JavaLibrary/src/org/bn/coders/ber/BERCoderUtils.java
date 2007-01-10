@@ -54,6 +54,15 @@ public class BERCoderUtils {
                         result |= (((elementInfo.tag() & 0x3fff) >> 7) | 0x80) << 8;
                         result |= ((elementInfo.tag() & 0x3fff) & 0x7f);                
                     }
+                    else
+                    if (elementInfo.tag() < 0x3FFFF)
+                    {
+                        result <<= 24;
+                        result |= (((elementInfo.tag() & 0x3FFFF) >> 15) | 0x80) << 16;
+                        result |= (((elementInfo.tag() & 0x3FFFF) >> 7) | 0x80) << 8;
+                        result |= ((elementInfo.tag() & 0x3FFFF) & 0x3f);
+                    }
+                    
                     //result |= elementInfo.Tag;
                 }
             }
