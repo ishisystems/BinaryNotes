@@ -293,7 +293,15 @@ namespace test.org.bn.coders
             Assert.NotNull(encoder);
             printEncoded("EncodeTestLongTag: ",encoder, coderTestUtils.createTestLongTag());
             checkEncoded(encoder, coderTestUtils.createTestLongTag(), coderTestUtils.createTestLongTagBytes());                
-        }    
+        }
+
+        public void testEncodeTaggedSequence()
+        {
+            IEncoder encoder = newEncoder();
+            Assert.NotNull(encoder);
+            printEncoded("EncodeTestTaggedSequence: ", encoder, coderTestUtils.createTaggedSequence());
+            checkEncoded(encoder, coderTestUtils.createTaggedSequence(), coderTestUtils.createTaggedSequenceBytes());
+        }
 
 
 	}

@@ -336,6 +336,10 @@ namespace org.bn.coders
 			DecodedObject<object> result = new DecodedObject<object>(resultObj);
 			
 			PropertyInfo field = objectClass.GetProperty("Value");
+            if (elementInfo.ASN1ElementInfo == null)
+            {
+                elementInfo.ASN1ElementInfo = CoderUtils.getAttribute<ASN1Element>(field);
+            }
 			elementInfo.AnnotatedClass = field;
 			//elementInfo.setGenericInfo(field.getGenericType());
 			

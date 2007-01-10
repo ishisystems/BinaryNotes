@@ -5,6 +5,7 @@ ChangeLog
 							[!] 		- Important warning or note
 							{<component>}	- Component/Group that changed
 
+1.4.0	{lib}		[*] Fixed incorrect decoding BoxedTypes with specified tag definitions (Thanks to Chris Peterson)
 1.4.0	{lib}		[*] Fixed decoding octet string without specified attribute. (Thanks to Chris Peterson).
 1.4.0	{comp}		[+] Removed JAXB reference implementation from distrib (already in Java6)
 1.4.0	{all}		[+] Migrated to Java 6 

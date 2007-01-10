@@ -59,6 +59,7 @@ namespace Tests
             test.testEncodeTaggedSeqInSeq();
             test.testEncodeReals();
             test.testEncodeLongTag();
+            test.testEncodeTaggedSequence();
         }
 
         static void runDecoderTest(DecoderTest test)

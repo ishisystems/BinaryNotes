@@ -286,6 +286,10 @@ public abstract class Encoder<T> implements IEncoder<T>, IASN1TypesEncoder {
     public int encodeBoxedType(Object object, OutputStream stream, ElementInfo elementInfo) throws Exception  {
         Field field = object.getClass().getDeclaredField("value");
         elementInfo.setAnnotatedClass(field);
+        
+        if(elementInfo.getASN1ElementInfo()==null) {
+            elementInfo.setASN1ElementInfoForClass(field);
+        }
         if(field.isAnnotationPresent(ASN1Null.class)) {
             return encodeNull(object,stream,elementInfo);
         }

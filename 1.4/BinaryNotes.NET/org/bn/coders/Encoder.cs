@@ -306,6 +306,10 @@ namespace org.bn.coders
 		{
 			PropertyInfo field = obj.GetType().GetProperty("Value");
 			elementInfo.AnnotatedClass = field;
+            if (elementInfo.ASN1ElementInfo == null)
+            {
+                elementInfo.ASN1ElementInfo = CoderUtils.getAttribute<ASN1Element>(field);
+            }
 			if (CoderUtils.isAttributePresent<ASN1Null>(field))
 			{
 				return encodeNull(obj, stream, elementInfo);

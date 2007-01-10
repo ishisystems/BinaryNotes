@@ -339,8 +339,11 @@ public abstract class Decoder implements IDecoder, IASN1TypesDecoder {
         elementInfo.setGenericInfo(field.getGenericType());
         if(field.getType().isMemberClass()) {
             elementInfo.setParentObject(resultObj);
-        }                
+        }
         
+        if(elementInfo.getASN1ElementInfo()==null) {
+            elementInfo.setASN1ElementInfoForClass(field);
+        }
         
         DecodedObject value = null;
         if(field.isAnnotationPresent(ASN1Null.class)) {

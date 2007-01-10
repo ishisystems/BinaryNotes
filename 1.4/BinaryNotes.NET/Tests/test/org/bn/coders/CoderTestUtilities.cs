@@ -387,7 +387,16 @@ namespace test.org.bn.coders
             result.Value = (0xAAL);
             return result;
         }
-        public abstract byte[] createTestLongTagBytes();    
+        public abstract byte[] createTestLongTagBytes();
+
+        public TaggedSequence createTaggedSequence()
+        {
+            TaggedSequence result = new TaggedSequence();
+            result.Value = new TaggedSequence.TaggedSequenceSequenceType();
+            result.Value.Type1 = "AAA";
+            return result;
+        }
+        public abstract byte[] createTaggedSequenceBytes();    
 
 	}
 }

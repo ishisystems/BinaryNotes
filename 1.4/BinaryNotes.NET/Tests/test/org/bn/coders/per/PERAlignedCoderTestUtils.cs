@@ -225,5 +225,11 @@ namespace test.org.bn.coders.per
             return new byte[] { 0x02, 0x00, (byte)0xAA };
         }
 
+        public override byte[] createTaggedSequenceBytes()
+        {
+            return new byte[] { 0x80, 0x03, 0x41, 0x41, 0x41 };
+        }
+
+
 	}
 }
