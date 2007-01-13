@@ -37,7 +37,8 @@ import org.bn.metadata.ASN1ElementMetadata;
 import org.bn.metadata.ASN1NullMetadata;
 
 
-public abstract class Decoder implements IDecoder, IASN1TypesDecoder {    
+public abstract class Decoder implements IDecoder, IASN1TypesDecoder { 
+
     public <T> T decode(InputStream stream, Class<T> objectClass) throws Exception {
         ElementInfo elemInfo = new ElementInfo();
         elemInfo.setAnnotatedClass(objectClass);
@@ -215,17 +216,26 @@ public abstract class Decoder implements IDecoder, IASN1TypesDecoder {
                                                                               IllegalAccessException, 
                                                                               NoSuchMethodException, 
                                                                               InvocationTargetException {
+        Object result = null;
         if(elementInfo.hasPreparedInstance()) {
-            return elementInfo.getPreparedInstance();
-        }
-        else
-        if(objectClass.isMemberClass() && elementInfo.getParentObject()!=null) {
-            Constructor decl = objectClass.getDeclaredConstructor(elementInfo.getParentObject().getClass());
-            return decl.newInstance(elementInfo.getParentObject());
+            result= elementInfo.getPreparedInstance();
         }
         else {
-            return objectClass.newInstance();
+            if(elementInfo.hasPreparedInfo()) {
+                if(elementInfo.getPreparedInfo().isMemberClass() && elementInfo.getParentObject()!=null) {
+                    Constructor decl = objectClass.getDeclaredConstructor(elementInfo.getParentObject().getClass());
+                    result = decl.newInstance(elementInfo.getParentObject());
+                }
+            }
+            else
+            if(objectClass.isMemberClass() && elementInfo.getParentObject()!=null) {
+                Constructor decl = objectClass.getDeclaredConstructor(elementInfo.getParentObject().getClass());
+                result = decl.newInstance(elementInfo.getParentObject());
+            }
         }
+        if(result==null)
+            result = objectClass.newInstance();
+        return result;
     }
         
     public DecodedObject decodeSequence(DecodedObject decodedTag, Class objectClass, ElementInfo elementInfo, InputStream stream) throws Exception {

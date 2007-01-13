@@ -46,4 +46,6 @@ public interface IASN1PreparedElementData {
     Object invokeDoSelectMethod(Object object, Object param) throws Exception;
     Object invokeGetterMethod(Object object, Object param) throws Exception;
     Object invokeIsSelectedMethod(Object object, Object param) throws Exception;
+    
+    boolean isMemberClass();
 }

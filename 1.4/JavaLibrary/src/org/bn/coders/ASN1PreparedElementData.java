@@ -45,15 +45,18 @@ public class ASN1PreparedElementData implements IASN1PreparedElementData {
     private Method setterMethod = null;
     private Method doSelectedMethod = null;
     private Method isSelectedMethod = null;
+    private boolean memberClassFlag = false;
     
     public ASN1PreparedElementData(Class objectClass) {
         setupMetadata(objectClass, objectClass);
         setupConstructed(objectClass);
+        memberClassFlag = objectClass.isMemberClass();
     }
     
     public ASN1PreparedElementData(Class parentClass, Field field) {
         setupMetadata(field, field.getType());
         setupAccessors(parentClass, field);
+        memberClassFlag = field.getType().isMemberClass();
     }
 
     public ASN1PreparedElementData(Class parentClass, String fieldName) {
@@ -61,6 +64,7 @@ public class ASN1PreparedElementData implements IASN1PreparedElementData {
             Field field = parentClass.getDeclaredField(fieldName);
             setupMetadata(field, field.getType());
             setupAccessors(parentClass, field);
+            memberClassFlag = field.getType().isMemberClass();
         }
         catch(Exception ex) {
             ex = null;
@@ -285,5 +289,9 @@ public class ASN1PreparedElementData implements IASN1PreparedElementData {
 
     public Object invokeIsSelectedMethod(Object object, Object param) throws Exception {
         return isSelectedMethod.invoke(object);
+    }
+
+    public boolean isMemberClass() {
+        return this.memberClassFlag;
     }
 }
