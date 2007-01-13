@@ -16,7 +16,7 @@ import org.bn.types.*;
 
 
     @ASN1BoxedType ( name = "TestGT" )
-    public class TestGT {
+    public class TestGT implements IASN1PreparedElement {
     
             @ASN1String( name = "TestGT", 
         stringType = UniversalTag.GeneralizedTime , isUCS = false )
@@ -37,5 +37,15 @@ import org.bn.types.*;
             public String getValue() {
                 return this.value;
             }
+
+	    public void initWithDefaults() {
+	    }
+
+        private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(TestGT.class);
+        public IASN1PreparedElementData getPreparedData() {
+            return preparedData;
+        }
+
+
     }
             

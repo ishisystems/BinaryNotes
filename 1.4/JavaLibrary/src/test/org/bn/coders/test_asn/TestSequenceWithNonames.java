@@ -16,10 +16,10 @@ import org.bn.types.*;
 
 
     @ASN1Sequence ( name = "TestSequenceWithNonames", isSet = false )
-    public class TestSequenceWithNonames {
+    public class TestSequenceWithNonames implements IASN1PreparedElement {
             
        @ASN1Sequence ( name = "seq" , isSet = false )
-       public class SeqSequenceType {
+       public class SeqSequenceType implements IASN1PreparedElement {
                 @ASN1Integer( name = "" )
     
         @ASN1Element ( name = "it1", isOptional =  true , hasTag =  false  , hasDefaultValue =  false  )
@@ -48,8 +48,15 @@ import org.bn.types.*;
         public void initWithDefaults() {
             
         }
+
+        public IASN1PreparedElementData getPreparedData() {
+            return preparedData_SeqSequenceType;
+        }
+
                 
        }
+       private static IASN1PreparedElementData preparedData_SeqSequenceType = new ASN1PreparedElementData(SeqSequenceType.class);
+
        
                 
         @ASN1Element ( name = "seq", isOptional =  false , hasTag =  true, tag = 0 , hasDefaultValue =  false  )
@@ -60,7 +67,7 @@ import org.bn.types.*;
         
 
     @ASN1Choice ( name = "ch" )
-    public class ChChoiceType {
+    public class ChChoiceType implements IASN1PreparedElement {
             @ASN1Integer( name = "" )
     
         @ASN1Element ( name = "it1", isOptional =  false , hasTag =  true, tag = 0 , hasDefaultValue =  false  )
@@ -116,7 +123,18 @@ import org.bn.types.*;
         }
         
   
+
+	    public void initWithDefaults() {
+	    }
+
+        public IASN1PreparedElementData getPreparedData() {
+            return preparedData_ChChoiceType;
+        }
+
+
     }
+    private static IASN1PreparedElementData preparedData_ChChoiceType = new ASN1PreparedElementData(ChChoiceType.class);
+
                 
         @ASN1Element ( name = "ch", isOptional =  false , hasTag =  true, tag = 1 , hasDefaultValue =  false  )
     
@@ -124,7 +142,7 @@ import org.bn.types.*;
                 
   
        @ASN1Sequence ( name = "" , isSet = false )
-       public class SequenceType {
+       public class SequenceType implements IASN1PreparedElement {
                 @ASN1Integer( name = "" )
     
         @ASN1Element ( name = "it1", isOptional =  true , hasTag =  false  , hasDefaultValue =  false  )
@@ -153,8 +171,15 @@ import org.bn.types.*;
         public void initWithDefaults() {
             
         }
+
+        public IASN1PreparedElementData getPreparedData() {
+            return preparedData_SequenceType;
+        }
+
                 
        }
+       private static IASN1PreparedElementData preparedData_SequenceType = new ASN1PreparedElementData(SequenceType.class);
+
        
                 
 @ASN1SequenceOf( name = "", isSetOf = false ) 
@@ -207,6 +232,12 @@ import org.bn.types.*;
         public void initWithDefaults() {
             
         }
+
+        private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(TestSequenceWithNonames.class);
+        public IASN1PreparedElementData getPreparedData() {
+            return preparedData;
+        }
+
             
     }
             

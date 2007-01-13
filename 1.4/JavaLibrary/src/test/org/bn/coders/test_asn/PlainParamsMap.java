@@ -16,7 +16,7 @@ import org.bn.types.*;
 
 
     @ASN1Sequence ( name = "PlainParamsMap", isSet = false )
-    public class PlainParamsMap {
+    public class PlainParamsMap implements IASN1PreparedElement {
             
     @ASN1String( name = "", 
         stringType =  UniversalTag.PrintableString , isUCS = false )
@@ -64,6 +64,12 @@ import org.bn.types.*;
         public void initWithDefaults() {
             
         }
+
+        private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(PlainParamsMap.class);
+        public IASN1PreparedElementData getPreparedData() {
+            return preparedData;
+        }
+
             
     }
             

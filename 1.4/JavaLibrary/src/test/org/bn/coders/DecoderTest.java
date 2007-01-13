@@ -151,14 +151,6 @@ public abstract class DecoderTest extends TestCase {
         assertNotNull(seq);
     }
 
-    public void testSequenceWithNullDecode() throws Exception {
-        IDecoder decoder = newDecoder();
-        ByteArrayInputStream stream = 
-            new ByteArrayInputStream(coderTestUtils.createSeqWithNullBytes());
-        SequenceWithNull seq = decoder.decode(stream, SequenceWithNull.class);
-        assertNotNull(seq);
-    }
-
     public void testEnum() throws Exception {
         IDecoder decoder = newDecoder();
         ByteArrayInputStream stream = 
@@ -436,4 +428,13 @@ public abstract class DecoderTest extends TestCase {
         TestLongTag val = decoder.decode(stream, TestLongTag.class);
         assertEquals(val.getValue(), coderTestUtils.createTestLongTag().getValue());    
     }
+    
+    public void testSequenceWithNullDecode() throws Exception {
+        IDecoder decoder = newDecoder();
+        ByteArrayInputStream stream = 
+            new ByteArrayInputStream(coderTestUtils.createSeqWithNullBytes());
+        SequenceWithNull seq = decoder.decode(stream, SequenceWithNull.class);
+        assertNotNull(seq);
+    }
+    
 }

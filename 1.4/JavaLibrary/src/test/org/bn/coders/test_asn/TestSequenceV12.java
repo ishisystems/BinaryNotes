@@ -16,7 +16,7 @@ import org.bn.types.*;
 
 
     @ASN1Sequence ( name = "TestSequenceV12", isSet = false )
-    public class TestSequenceV12 {
+    public class TestSequenceV12 implements IASN1PreparedElement {
             
     @ASN1String( name = "", 
         stringType =  UniversalTag.PrintableString , isUCS = false )
@@ -219,6 +219,12 @@ import org.bn.types.*;
         setAttrBitStrDef(param_AttrBitStrDef);
     
         }
+
+        private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(TestSequenceV12.class);
+        public IASN1PreparedElementData getPreparedData() {
+            return preparedData;
+        }
+
             
     }
             

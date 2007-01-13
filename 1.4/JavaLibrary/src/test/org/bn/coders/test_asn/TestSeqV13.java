@@ -16,7 +16,7 @@ import org.bn.types.*;
 
 
     @ASN1Sequence ( name = "TestSeqV13", isSet = false )
-    public class TestSeqV13 {
+    public class TestSeqV13 implements IASN1PreparedElement {
             @ASN1Real( name = "" )
     
         @ASN1Element ( name = "field1", isOptional =  false , hasTag =  true, tag = 0 , hasDefaultValue =  false  )
@@ -174,6 +174,12 @@ import org.bn.types.*;
         public void initWithDefaults() {
             
         }
+
+        private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(TestSeqV13.class);
+        public IASN1PreparedElementData getPreparedData() {
+            return preparedData;
+        }
+
             
     }
             

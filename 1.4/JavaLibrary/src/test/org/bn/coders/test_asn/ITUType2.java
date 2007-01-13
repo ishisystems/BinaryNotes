@@ -16,7 +16,7 @@ import org.bn.types.*;
 
 
     @ASN1BoxedType ( name = "ITUType2" )
-    public class ITUType2 {
+    public class ITUType2 implements IASN1PreparedElement {
                 
         
         @ASN1Element ( name = "ITUType2", isOptional =  false , hasTag =  true, tag = 3, 
@@ -41,6 +41,15 @@ import org.bn.types.*;
             return this.value;
         }            
         
+
+	    public void initWithDefaults() {
+	    }
+
+        private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(ITUType2.class);
+        public IASN1PreparedElementData getPreparedData() {
+            return preparedData;
+        }
+
             
     }
             

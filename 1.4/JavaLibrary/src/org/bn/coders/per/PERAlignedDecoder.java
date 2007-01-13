@@ -32,19 +32,13 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.SortedMap;
 
-import org.bn.annotations.ASN1Element;
-import org.bn.annotations.ASN1EnumItem;
-import org.bn.annotations.ASN1Sequence;
-import org.bn.annotations.constraints.ASN1SizeConstraint;
-import org.bn.annotations.constraints.ASN1ValueRangeConstraint;
-import org.bn.coders.CoderUtils;
-import org.bn.coders.DecodedObject;
-import org.bn.coders.Decoder;
-import org.bn.coders.ElementInfo;
-import org.bn.coders.UniversalTag;
-import org.bn.types.BitString;
-import org.bn.utils.BitArrayInputStream;
-import org.bn.utils.BitArrayOutputStream;
+import org.bn.annotations.*;
+import org.bn.annotations.constraints.*;
+import org.bn.coders.*;
+import org.bn.metadata.ASN1SequenceOfMetadata;
+import org.bn.metadata.constraints.*;
+import org.bn.types.*;
+import org.bn.utils.*;
 
 public class PERAlignedDecoder extends Decoder {
     
@@ -258,7 +252,26 @@ public class PERAlignedDecoder extends Decoder {
     
     protected int decodeLength(ElementInfo elementInfo, InputStream stream) throws Exception {
         int result = 0;
-        BitArrayInputStream bitStream = (BitArrayInputStream)stream;        
+        BitArrayInputStream bitStream = (BitArrayInputStream)stream;
+        if(elementInfo.hasPreparedInfo()) {
+            if(elementInfo.getPreparedInfo().hasConstraint()) {
+                IASN1ConstraintMetadata constraint = elementInfo.getPreparedInfo().getConstraint();
+                if(constraint instanceof ASN1ValueRangeConstraintMetadata) {
+                    result = decodeConstraintLengthDeterminant(
+                        (int)((ASN1ValueRangeConstraintMetadata)constraint).getMin(), 
+                        (int)((ASN1ValueRangeConstraintMetadata)constraint).getMax(), 
+                        bitStream
+                    );                    
+                }
+                else 
+                if(constraint instanceof ASN1SizeConstraintMetadata) {
+                    result = (int)((ASN1SizeConstraintMetadata)constraint).getMax();
+                }
+            }
+            else               
+                result = decodeLengthDeterminant( bitStream);            
+        }
+        else
         if(elementInfo.getAnnotatedClass().isAnnotationPresent(ASN1ValueRangeConstraint.class)) {
             ASN1ValueRangeConstraint constraint = elementInfo.getAnnotatedClass().getAnnotation(ASN1ValueRangeConstraint.class);
             result = decodeConstraintLengthDeterminant((int)constraint.min(), (int)constraint.max(), bitStream);
@@ -267,7 +280,7 @@ public class PERAlignedDecoder extends Decoder {
         if(elementInfo.getAnnotatedClass().isAnnotationPresent(ASN1SizeConstraint.class)) {
             // For strictly definited size doesn't encode any len
             ASN1SizeConstraint constraint = elementInfo.getAnnotatedClass().getAnnotation(ASN1SizeConstraint.class);            
-            return (int)constraint.max();
+            result= (int)constraint.max();
         }
         else               
             result = decodeLengthDeterminant( bitStream);
@@ -281,7 +294,12 @@ public class PERAlignedDecoder extends Decoder {
                                          InputStream stream) throws Exception {
         Object choice = createInstanceForElement(objectClass,elementInfo);
         skipAlignedBits(stream);
-        Field[] fields = PERCoderUtils.getRealFields(objectClass).toArray( new Field[0]);
+        Field[] fields = null;
+        if(elementInfo.hasPreparedInfo()) {
+            fields = elementInfo.getPreparedInfo().getFields();
+        }
+        else
+            fields = PERCoderUtils.getRealFields(objectClass).toArray( new Field[0]);
         int elementIndex = (int)decodeConstraintNumber(1, fields.length , (BitArrayInputStream)stream);
         DecodedObject value = null;
         for (int i=0;i<elementIndex && i<fields.length;i++) { 
@@ -289,11 +307,14 @@ public class PERAlignedDecoder extends Decoder {
                 Field field = fields[i];
                 ElementInfo info = new ElementInfo();
                 info.setAnnotatedClass(field);
-                //info.setASN1ElementInfo(field.getAnnotation(ASN1Element.class));
-                 info.setASN1ElementInfoForClass(field);
+                if(elementInfo.hasPreparedInfo()) {
+                    info.setPreparedInfo(elementInfo.getPreparedInfo().getFieldMetadata(i));
+                }
+                else
+                    info.setASN1ElementInfoForClass(field);
                 info.setGenericInfo(field.getGenericType());            
                 value = decodeClassType(decodedTag, field.getType(),info,stream);
-                invokeSelectMethodForField(field, choice, value.getValue());
+                invokeSelectMethodForField(field, choice, value.getValue(), info);
                 break;
             };
         }
@@ -305,13 +326,18 @@ public class PERAlignedDecoder extends Decoder {
     }
     
     
-    protected int getSequencePreambleBitLen(Class objectClass) throws Exception {
+    protected int getSequencePreambleBitLen(Class objectClass, ElementInfo elementInfo) throws Exception {
         int preambleLen = 0;
-        for ( Field field : objectClass.getDeclaredFields()) {
+        ElementInfo info = new ElementInfo();
+        int fieldIdx=0;
+        for ( Field field : elementInfo.getFields(objectClass)) {
             if(!field.isSynthetic()) {
-                if(isOptionalField(field)) {
+                if(elementInfo.hasPreparedInfo())
+                    info.setPreparedInfo(elementInfo.getPreparedInfo().getFieldMetadata(fieldIdx));
+                if(CoderUtils.isOptionalField(field, info)) {
                     preambleLen++;
                 }
+                fieldIdx++;
             }
         }        
         return preambleLen;    
@@ -320,31 +346,41 @@ public class PERAlignedDecoder extends Decoder {
     public DecodedObject decodeSequence(DecodedObject decodedTag,Class objectClass, 
                                            ElementInfo elementInfo, InputStream stream) throws Exception {
         // TO DO 
-        // Decode sequence preamble
-        
-         ASN1Sequence seqInfo = elementInfo.getAnnotatedClass().getAnnotation(ASN1Sequence.class);
-         if(!seqInfo.isSet()) {        
+        // Decode sequence preamble       
+        if(!CoderUtils.isSequenceSet(elementInfo)) {
             BitArrayInputStream bitStream = (BitArrayInputStream)stream;
-            int preambleLen = getSequencePreambleBitLen(objectClass);
+            int preambleLen = getSequencePreambleBitLen(objectClass, elementInfo);
             int preamble = bitStream.readBits(preambleLen);
             int preambleCurrentBit = 32 - preambleLen;
             skipAlignedBits(stream);
             Object sequence = createInstanceForElement(objectClass,elementInfo);
-            initDefaultValues(sequence);            
+            initDefaultValues(sequence, elementInfo);            
             
-            for ( Field field : objectClass.getDeclaredFields()) {
+            int idx=0;            
+            IASN1PreparedElementData saveInfo = null;
+            //saveInfo = elementInfo.getPreparedInfo();
+            ElementInfo info = new ElementInfo();
+            for ( Field field : elementInfo.getFields(objectClass)) {
                 if(!field.isSynthetic()) {
-                    if(isOptionalField(field)) {
+                    //if(elementInfo.hasPreparedInfo()) {
+                    //    elementInfo.setPreparedInfo( saveInfo.getFieldMetadata(idx) );
+                    //}                
+                    if(elementInfo.hasPreparedInfo()) {
+                        info.setPreparedInfo(elementInfo.getPreparedInfo().getFieldMetadata(idx));
+                    }
+                    if(CoderUtils.isOptionalField(field, info)) {
                         if ( (preamble & (0x80000000 >>> preambleCurrentBit))!=0 ) {
-                             decodeSequenceField(null,sequence,field,stream,elementInfo,true);
+                             decodeSequenceField(null,sequence,idx,field,stream,elementInfo,true);
                         }
                         preambleCurrentBit++;
                     }
                     else {
-                        decodeSequenceField(null,sequence,field,stream,elementInfo,true);
-                    }
-                }
+                        decodeSequenceField(null,sequence,idx,field,stream,elementInfo,true);
+                    }                    
+                    idx++;
+                }                
             }
+            //elementInfo.setPreparedInfo(saveInfo);
             return new DecodedObject(sequence);
          }
          else {
@@ -397,16 +433,40 @@ public class PERAlignedDecoder extends Decoder {
     public DecodedObject decodeInteger(DecodedObject decodedTag, Class objectClass, 
                                           ElementInfo elementInfo, 
                                    InputStream stream) throws Exception {
+                                   
+        boolean hasConstraint = false;
+        long min = 0, max = 0;
+        
+        if(elementInfo.hasPreparedInfo()) {
+            if(elementInfo.getPreparedInfo().hasConstraint() 
+                && elementInfo.getPreparedInfo().getConstraint() instanceof ASN1ValueRangeConstraintMetadata) {
+                IASN1ConstraintMetadata constraint = elementInfo.getPreparedInfo().getConstraint();
+                hasConstraint  = true;
+                min = ((ASN1ValueRangeConstraintMetadata)constraint).getMin();
+                max = ((ASN1ValueRangeConstraintMetadata)constraint).getMax();
+            }
+        }
+        else
+        if(elementInfo.getAnnotatedClass().isAnnotationPresent(ASN1ValueRangeConstraint.class)) {
+            hasConstraint  = true;
+            ASN1ValueRangeConstraint constraint = elementInfo.getAnnotatedClass().getAnnotation(ASN1ValueRangeConstraint.class);            
+            min = constraint.min();
+            max = constraint.max();
+        }
+                                   
         if(objectClass.equals(Integer.class)) {
             DecodedObject<Integer> result = new DecodedObject<Integer>();
             BitArrayInputStream bitStream = (BitArrayInputStream)stream;
             int value = 0;
-            if(elementInfo.getAnnotatedClass().isAnnotationPresent(ASN1ValueRangeConstraint.class)) {
-                ASN1ValueRangeConstraint constraint = elementInfo.getAnnotatedClass().getAnnotation(ASN1ValueRangeConstraint.class);
-                value = (int)decodeConstraintNumber((int)constraint.min(), (int)constraint.max(), bitStream);
+            if(hasConstraint) {
+                value = (int)decodeConstraintNumber(
+                    (int)min, 
+                    (int)max, 
+                    bitStream
+                );                    
             }
-            else
-                value = decodeUnconstraintNumber(bitStream);
+            else               
+                value = (int)decodeUnconstraintNumber( bitStream);            
             result.setValue(value);
             return result;
         }
@@ -414,12 +474,15 @@ public class PERAlignedDecoder extends Decoder {
             DecodedObject<Long> result = new DecodedObject<Long>();
             BitArrayInputStream bitStream = (BitArrayInputStream)stream;
             long value = 0;
-            if(elementInfo.getAnnotatedClass().isAnnotationPresent(ASN1ValueRangeConstraint.class)) {
-                ASN1ValueRangeConstraint constraint = elementInfo.getAnnotatedClass().getAnnotation(ASN1ValueRangeConstraint.class);
-                value = decodeConstraintNumber(constraint.min(), constraint.max(), bitStream);
+            if(hasConstraint) {
+                value = decodeConstraintNumber(
+                    min, 
+                    max, 
+                    bitStream
+                );                    
             }
-            else
-                value = decodeUnconstraintNumber(bitStream);
+            else               
+                value = decodeUnconstraintNumber( bitStream);
             result.setValue(value);
             return result;            
         }
@@ -546,11 +609,16 @@ public class PERAlignedDecoder extends Decoder {
         if(countOfElements > 0) {
             ParameterizedType tp = (ParameterizedType)elementInfo.getGenericInfo();
             Class paramType = (Class)tp.getActualTypeArguments()[0];
-            elementInfo.setParentAnnotated(elementInfo.getAnnotatedClass());            
-            elementInfo.setAnnotatedClass(paramType);
-            elementInfo.setASN1ElementInfo(null);
+            ElementInfo info = new ElementInfo();
+            info.setAnnotatedClass(paramType);
+            info.setParentAnnotated(elementInfo.getAnnotatedClass());
+            if(elementInfo.hasPreparedInfo()) {
+                ASN1SequenceOfMetadata seqOfMeta = (ASN1SequenceOfMetadata)elementInfo.getPreparedInfo().getTypeMetadata();
+                info.setPreparedInfo( seqOfMeta.getItemClassMetadata() );
+            }
+            
             for(int i=0;i<countOfElements;i++) {
-                DecodedObject item=decodeClassType(null,paramType,elementInfo,stream);
+                DecodedObject item=decodeClassType(null,paramType,info,stream);
                 if(item!=null) {
                     result.add(item.getValue());
                 }
@@ -565,24 +633,25 @@ public class PERAlignedDecoder extends Decoder {
 
     private DecodedObject decodeSet(DecodedObject decodedTag, Class objectClass, ElementInfo elementInfo, InputStream stream) throws Exception {
         Object set = createInstanceForElement(objectClass,elementInfo);
-        SortedMap<Integer, Field> fieldOrder = CoderUtils.getSetOrder(set);
+        SortedMap<Integer, Field> fieldOrder = CoderUtils.getSetOrder(set.getClass());
     
         BitArrayInputStream bitStream = (BitArrayInputStream)stream;
-        int preambleLen = getSequencePreambleBitLen(objectClass);
+        int preambleLen = getSequencePreambleBitLen(objectClass, elementInfo);
         int preamble = bitStream.readBits(preambleLen);
         int preambleCurrentBit = 32 - preambleLen;
         skipAlignedBits(stream);
-        
+        int idx = 0;
         for ( Map.Entry<Integer, Field> item : fieldOrder.entrySet()) {
-            if(isOptionalField(item.getValue())) {
+            if(CoderUtils.isOptionalField(item.getValue(), elementInfo)) {
                 if ( (preamble & (0x80000000 >>> preambleCurrentBit))!=0 ) {
-                     decodeSequenceField(null,set,item.getValue(),stream,elementInfo,true);
+                     decodeSequenceField(null,set,idx,item.getValue(),stream,elementInfo,true);
                 }
                 preambleCurrentBit++;
             }
             else {
-                decodeSequenceField(null,set,item.getValue(),stream,elementInfo,true);
+                decodeSequenceField(null,set,idx,item.getValue(),stream,elementInfo,true);
             }
+            idx++;
         }
         return new DecodedObject(set);    
     }

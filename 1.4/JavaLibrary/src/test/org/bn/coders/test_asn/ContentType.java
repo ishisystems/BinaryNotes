@@ -18,7 +18,7 @@ import org.bn.types.*;
     @ASN1Enum (
         name = "ContentType"
     )
-    public class ContentType {        
+    public class ContentType implements IASN1PreparedElement {        
         public enum EnumType {
             
             @ASN1EnumItem ( name = "text_any", hasTag = true , tag = 100 )
@@ -61,5 +61,15 @@ import org.bn.types.*;
         public void setIntegerForm(Integer value) {
             integerForm = value;
         }
+
+	    public void initWithDefaults() {
+	    }
+
+        private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(ContentType.class);
+        public IASN1PreparedElementData getPreparedData() {
+            return preparedData;
+        }
+
+
     }
             

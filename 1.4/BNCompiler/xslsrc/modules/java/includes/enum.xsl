@@ -41,7 +41,7 @@
     @ASN1Enum (
         name = "<xsl:value-of select='$enumName'/>"
     )
-    public class <xsl:value-of select='$enumName'/> {        
+    public class <xsl:value-of select='$enumName'/> implements IASN1PreparedElement {        
         public enum EnumType {
             <xsl:call-template name="enumItems"/>
         }
@@ -64,6 +64,16 @@
         public void setIntegerForm(Integer value) {
             integerForm = value;
         }
+
+	    public void initWithDefaults() {
+	    }
+
+        private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(<xsl:value-of select='$enumName'/>.class);
+        public IASN1PreparedElementData getPreparedData() {
+            return preparedData;
+        }
+
+
     }
             <xsl:call-template name="footer"/>
         </xsltc:output>        

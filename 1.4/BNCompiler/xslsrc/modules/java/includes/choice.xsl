@@ -40,9 +40,19 @@
             <xsl:call-template name="header"/>
 
     @ASN1Choice ( name = "<xsl:value-of select='$choiceName'/>" )
-    public class <xsl:value-of select="$choiceName"/> {
+    public class <xsl:value-of select="$choiceName"/> implements IASN1PreparedElement {
             <xsl:call-template name="elements"/>
             <xsl:call-template name="choiceFunctions"/>
+
+	    public void initWithDefaults() {
+	    }
+
+        private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(<xsl:value-of select='$choiceName'/>.class);
+        public IASN1PreparedElementData getPreparedData() {
+            return preparedData;
+        }
+
+
     }
             <xsl:call-template name="footer"/>
         </xsltc:output>        

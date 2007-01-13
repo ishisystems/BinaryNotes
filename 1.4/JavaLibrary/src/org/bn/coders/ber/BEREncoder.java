@@ -18,31 +18,17 @@
  */
 package org.bn.coders.ber;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-
-import java.io.Serializable;
-
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-
-import java.util.ArrayList;
-
-import org.bn.annotations.ASN1Element;
-import org.bn.annotations.ASN1EnumItem;
-import org.bn.annotations.ASN1Sequence;
-import org.bn.annotations.ASN1SequenceOf;
-import org.bn.annotations.ASN1String;
-import org.bn.annotations.constraints.ASN1SizeConstraint;
-import org.bn.annotations.constraints.ASN1ValueRangeConstraint;
+import org.bn.annotations.*;
 import org.bn.coders.CoderUtils;
 import org.bn.coders.ElementInfo;
 import org.bn.coders.ElementType;
 import org.bn.coders.Encoder;
 import org.bn.coders.TagClass;
 import org.bn.coders.UniversalTag;
+import org.bn.metadata.ASN1SequenceOfMetadata;
 import org.bn.types.BitString;
 import org.bn.utils.ReverseByteArrayOutputStream;
 
@@ -55,17 +41,18 @@ public class BEREncoder<T> extends Encoder<T> {
         ReverseByteArrayOutputStream reverseStream = new ReverseByteArrayOutputStream();        
         super.encode(object, reverseStream);
         reverseStream.writeTo(stream);        
-    }            
+    }
     
     public int encodeSequence(Object object, OutputStream stream, 
                                  ElementInfo elementInfo) throws Exception {
         int resultSize = 0;
-         for ( int i = 0;i<object.getClass().getDeclaredFields().length; i++) {
-             Field field  = object.getClass().getDeclaredFields()[ object.getClass().getDeclaredFields().length - 1 - i];
-             resultSize+= encodeSequenceField(object,field,stream,elementInfo);
-         }
-        ASN1Sequence seqInfo = elementInfo.getAnnotatedClass().getAnnotation(ASN1Sequence.class);
-        if(!seqInfo.isSet())
+        Field[] fields = elementInfo.getFields(object.getClass());
+        
+        for ( int i = 0;i<fields.length; i++) {
+             Field field  = fields [ fields.length - 1 - i];
+             resultSize+= encodeSequenceField(object, fields.length - 1 - i, field,stream,elementInfo);
+        }
+        if(!CoderUtils.isSequenceSet(elementInfo))
             resultSize += encodeHeader (BERCoderUtils.getTagValueForElement (elementInfo,TagClass.Universal, ElementType.Constructed, UniversalTag.Sequence), resultSize, stream );
         else
             resultSize += encodeHeader (BERCoderUtils.getTagValueForElement (elementInfo,TagClass.Universal, ElementType.Constructed, UniversalTag.Set), resultSize, stream );
@@ -76,8 +63,10 @@ public class BEREncoder<T> extends Encoder<T> {
                                ElementInfo elementInfo)  throws Exception {
         int resultSize = 0;
         int sizeOfChoiceField =  super.encodeChoice ( object, stream , elementInfo );
-        if(elementInfo.getASN1ElementInfo()!=null) {
-            resultSize += encodeHeader (BERCoderUtils.getTagValueForElement (elementInfo,TagClass.ContextSpecific, ElementType.Constructed, UniversalTag.LastUniversal), sizeOfChoiceField, stream );
+        
+        if(elementInfo.getASN1ElementInfo()!=null 
+            || (elementInfo.hasPreparedInfo() && elementInfo.hasPreparedASN1ElementInfo()) ) {
+                resultSize += encodeHeader (BERCoderUtils.getTagValueForElement (elementInfo,TagClass.ContextSpecific, ElementType.Constructed, UniversalTag.LastUniversal), sizeOfChoiceField, stream );
         }        
         resultSize+= sizeOfChoiceField;
         return resultSize;
@@ -268,14 +257,17 @@ public class BEREncoder<T> extends Encoder<T> {
             ElementInfo info = new ElementInfo();
             info.setAnnotatedClass(obj.getClass());
             info.setParentAnnotated(elementInfo.getAnnotatedClass());
+            if(elementInfo.hasPreparedInfo()) {
+                ASN1SequenceOfMetadata seqOfMeta = (ASN1SequenceOfMetadata)elementInfo.getPreparedInfo().getTypeMetadata();
+                info.setPreparedInfo( seqOfMeta.getItemClassMetadata() );
+            }
             sizeOfCollection+=encodeClassType(obj,stream,info);
         }
         resultSize += sizeOfCollection;
         CoderUtils.checkConstraints(collection.length,elementInfo);
         resultSize += encodeLength(sizeOfCollection, stream);
         
-        ASN1SequenceOf seqInfo = elementInfo.getAnnotatedClass().getAnnotation(ASN1SequenceOf.class);
-        if(!seqInfo.isSetOf()) {
+        if(!CoderUtils.isSequenceSetOf(elementInfo)) {
             resultSize += encodeTag(BERCoderUtils.getTagValueForElement(elementInfo,TagClass.Universal, ElementType.Constructed, UniversalTag.Sequence),
                 stream
             );        

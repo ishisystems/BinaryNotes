@@ -16,7 +16,7 @@ import org.bn.types.*;
 
 
     @ASN1BoxedType ( name = "ContentPartHeaders" )
-    public class ContentPartHeaders {
+    public class ContentPartHeaders implements IASN1PreparedElement {
                 
             @ASN1SequenceOf( name = "ContentPartHeaders" , isSetOf = false)
             
@@ -44,5 +44,15 @@ import org.bn.types.*;
             public void add(ContentPartHeader item) {
                 value.add(item);
             }
+
+	    public void initWithDefaults() {
+	    }
+
+        private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(ContentPartHeaders.class);
+        public IASN1PreparedElementData getPreparedData() {
+            return preparedData;
+        }
+
+
     }
             

@@ -16,7 +16,7 @@ import org.bn.types.*;
 
 
     @ASN1Sequence ( name = "DataSeq", isSet = false )
-    public class DataSeq {
+    public class DataSeq implements IASN1PreparedElement {
             
         @ASN1Element ( name = "plain", isOptional =  false , hasTag =  true, tag = 0 , hasDefaultValue =  false  )
     
@@ -239,6 +239,12 @@ import org.bn.types.*;
         public void initWithDefaults() {
             
         }
+
+        private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(DataSeq.class);
+        public IASN1PreparedElementData getPreparedData() {
+            return preparedData;
+        }
+
             
     }
             

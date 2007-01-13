@@ -346,22 +346,24 @@ namespace org.bn.coders.ber
 			if (len.Value != 0)
 			{
 				int lenOfItems = 0;
-                elementInfo.ParentAnnotatedClass = elementInfo.AnnotatedClass;
-				elementInfo.AnnotatedClass = paramType;
-				elementInfo.ASN1ElementInfo = null;
+                int itemsCnt = 0;
+                ElementInfo info = new ElementInfo();
+                info.ParentAnnotatedClass = elementInfo.AnnotatedClass;
+                info.AnnotatedClass = paramType;
 				do 
 				{
 					DecodedObject<object> itemTag = decodeTag(stream);
-					DecodedObject<object> item = decodeClassType(itemTag, paramType, elementInfo, stream);
+					DecodedObject<object> item = decodeClassType(itemTag, paramType, info, stream);
 					if (item != null)
 					{
 						lenOfItems += item.Size + itemTag.Size;
                         MethodInfo method = param.GetType().GetMethod("Add");
                         method.Invoke(param, new object[] { item.Value });
+                        itemsCnt++;
 					}
 				}
 				while (lenOfItems < len.Value);
-                CoderUtils.checkConstraints(lenOfItems, elementInfo);
+                CoderUtils.checkConstraints(itemsCnt, elementInfo);
 			}
 			return new DecodedObject<object>(param, len.Value + len.Size);
 		}

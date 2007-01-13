@@ -16,11 +16,11 @@ import org.bn.types.*;
 
 
     @ASN1BoxedType ( name = "TaggedSeqInSeq" )
-    public class TaggedSeqInSeq {
+    public class TaggedSeqInSeq implements IASN1PreparedElement {
                 
         
        @ASN1Sequence ( name = "TaggedSeqInSeq" , isSet = false )
-       public class TaggedSeqInSeqSequenceType {
+       public class TaggedSeqInSeqSequenceType implements IASN1PreparedElement {
                 
         @ASN1Element ( name = "field", isOptional =  false , hasTag =  true, tag = 0 , hasDefaultValue =  false  )
     
@@ -44,8 +44,15 @@ import org.bn.types.*;
         public void initWithDefaults() {
             
         }
+
+        public IASN1PreparedElementData getPreparedData() {
+            return preparedData_TaggedSeqInSeqSequenceType;
+        }
+
                 
        }
+       private static IASN1PreparedElementData preparedData_TaggedSeqInSeqSequenceType = new ASN1PreparedElementData(TaggedSeqInSeqSequenceType.class);
+
        
                 
         @ASN1Element ( name = "TaggedSeqInSeq", isOptional =  false , hasTag =  true, tag = 4, 
@@ -70,6 +77,15 @@ import org.bn.types.*;
             return this.value;
         }            
         
+
+	    public void initWithDefaults() {
+	    }
+
+        private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(TaggedSeqInSeq.class);
+        public IASN1PreparedElementData getPreparedData() {
+            return preparedData;
+        }
+
             
     }
             

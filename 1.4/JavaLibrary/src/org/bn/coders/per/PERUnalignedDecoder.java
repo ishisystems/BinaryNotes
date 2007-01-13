@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.bn.annotations.ASN1String;
+import org.bn.coders.CoderUtils;
 import org.bn.coders.DecodedObject;
 import org.bn.coders.ElementInfo;
 import org.bn.coders.UniversalTag;
@@ -63,23 +64,13 @@ public class PERUnalignedDecoder extends PERAlignedDecoder {
                                          ElementInfo elementInfo, 
                                   InputStream stream) throws IOException, 
                                                                     Exception {
-     boolean is7Bit = false;
-     ASN1String strValueAnnotation = null;
-     if(elementInfo.getAnnotatedClass().isAnnotationPresent(ASN1String.class)) {
-         strValueAnnotation = elementInfo.getAnnotatedClass().getAnnotation(ASN1String.class);            
-     }
-     else
-     if(elementInfo.getParentAnnotated()!=null && elementInfo.getParentAnnotated().isAnnotationPresent(ASN1String.class)) {
-         strValueAnnotation = elementInfo.getParentAnnotated().getAnnotation(ASN1String.class);
-     }                
-     if(strValueAnnotation!=null) {
-         is7Bit = 
-             ( 
-                 strValueAnnotation.stringType() == UniversalTag.PrintableString || 
-                 strValueAnnotation.stringType() ==UniversalTag.VisibleString
-             )
-             ;
-     }        
+     int stringType = CoderUtils.getStringTagForElement(elementInfo);
+     boolean is7Bit = 
+         ( 
+             stringType == UniversalTag.PrintableString || 
+             stringType ==UniversalTag.VisibleString
+         )
+         ;
      if(!is7Bit)
          return super.decodeString(decodedTag, objectClass, elementInfo, stream);
      else {

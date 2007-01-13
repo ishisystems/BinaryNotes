@@ -37,6 +37,7 @@ import java.util.List;
 import org.bn.IEncoder;
 import org.bn.annotations.*;
 import org.bn.annotations.constraints.*;
+import org.bn.metadata.ASN1ElementMetadata;
 import org.bn.utils.ReverseByteArrayOutputStream;
 
 public abstract class Encoder<T> implements IEncoder<T>, IASN1TypesEncoder {
@@ -45,8 +46,15 @@ public abstract class Encoder<T> implements IEncoder<T>, IASN1TypesEncoder {
         ElementInfo elemInfo = new ElementInfo();
         elemInfo.setAnnotatedClass(object.getClass());
         //elemInfo.setASN1ElementInfo(object.getClass().getAnnotation(ASN1Element.class));
-        elemInfo.setASN1ElementInfoForClass(object.getClass());
-        int sizeOfEncodedBytes = encodeClassType(object, stream, elemInfo);
+        int sizeOfEncodedBytes = 0;
+        if(object instanceof IASN1PreparedElement) {
+            sizeOfEncodedBytes = encodePreparedElement(object, stream, elemInfo);
+        }
+        else {
+            elemInfo.setASN1ElementInfoForClass(object.getClass());
+            sizeOfEncodedBytes = encodeClassType(object, stream, elemInfo);
+        }
+        
         if( sizeOfEncodedBytes == 0) {
            throw new IllegalArgumentException("Unable to find any supported annotation for class type: " + object.getClass().toString());
         };
@@ -55,6 +63,14 @@ public abstract class Encoder<T> implements IEncoder<T>, IASN1TypesEncoder {
 
     public int encodeClassType(Object object, OutputStream stream, ElementInfo elementInfo) throws Exception {
         int resultSize = 0;
+        if(elementInfo.hasPreparedInfo()) {
+            resultSize+=elementInfo.getPreparedInfo().getTypeMetadata().encode(this,object, stream, elementInfo);
+        }        
+        else
+        if( object instanceof IASN1PreparedElement) {
+            resultSize+=encodePreparedElement(object, stream, elementInfo);
+        }
+        else
         if( elementInfo.getAnnotatedClass().isAnnotationPresent(ASN1SequenceOf.class) ) {
             resultSize+=encodeSequenceOf(object, stream, elementInfo);
         }        
@@ -142,102 +158,126 @@ public abstract class Encoder<T> implements IEncoder<T>, IASN1TypesEncoder {
         else
             return 0;
     }
-    
-    
-    protected Method findGetterMethodForField(Field field, Object object) throws NoSuchMethodException {
-        String getterMethodName = "get"+field.getName().toUpperCase().substring(0,1)+field.getName().substring(1);
-        return object.getClass().getMethod(getterMethodName,(java.lang.Class[])null);
-    }
-    
-    protected Object invokeGetterMethodForField(Field field, Object object) throws NoSuchMethodException, 
-                                                                      IllegalAccessException, 
-                                                                      InvocationTargetException {
-        Method method = findGetterMethodForField(field,object);
-        return method.invoke(object, (java.lang.Object[])null);
-    }
 
-    protected Method findSelectedMethodForField(Field field, Object object) throws NoSuchMethodException {
-        String methodName = "is"+field.getName().toUpperCase().substring(0,1)+field.getName().substring(1)+"Selected";
-        return object.getClass().getMethod(methodName,(java.lang.Class[])null);
-    }
-
-    protected boolean invokeSelectedMethodForField(Field field, Object object) throws NoSuchMethodException, 
-                                                                      IllegalAccessException, 
-                                                                      InvocationTargetException {
-        Method method = findSelectedMethodForField(field,object);
-        return (Boolean)method.invoke(object, (java.lang.Object[])null);
-    }
-    
-    protected void checkForOptionalField(Field field) throws Exception {
-        if(!isOptionalField(field))
-            throw new  IllegalArgumentException ("The mandatory field '" + field.getName() + "' does not have a value!");
-    }    
-    
-    protected boolean isOptionalField(Field field) {
-        if( field.isAnnotationPresent(ASN1Element.class) ) {
-            ASN1Element info = field.getAnnotation(ASN1Element.class);
-            if(info.isOptional() || info.hasDefaultValue())
-                return true;
+    public int encodePreparedElement(Object object, OutputStream stream, ElementInfo elementInfo) throws Exception {
+        IASN1PreparedElement preparedInstance = (IASN1PreparedElement)object;
+        elementInfo.setPreparedInstance(preparedInstance);
+        ASN1ElementMetadata elementDataSave = null;
+        if(elementInfo.hasPreparedASN1ElementInfo()) {
+            elementDataSave = elementInfo.getPreparedASN1ElementInfo();
         }        
-        return false;
+        elementInfo.setPreparedInfo(preparedInstance.getPreparedData());
+        //elementInfo.setPreparedASN1ElementInfo(preparedInstance.getPreparedData().getASN1ElementInfo());
+        if(elementDataSave!=null)
+            elementInfo.setPreparedASN1ElementInfo(elementDataSave);
+        return elementInfo.getPreparedInfo().getTypeMetadata().encode(
+            this, object, stream, elementInfo
+        );        
     }
+     
     
+    public Object invokeGetterMethodForField(Field field, Object object, ElementInfo elementInfo) throws Exception {
+        if(elementInfo!=null && elementInfo.hasPreparedInfo()) {
+            return elementInfo.getPreparedInfo().invokeGetterMethod(object, (java.lang.Object[])null);
+        }
+        else {    
+            Method method = CoderUtils.findGetterMethodForField(field,object.getClass());
+            return method.invoke(object, (java.lang.Object[])null);
+        }
+    }
+
+    public boolean invokeSelectedMethodForField(Field field, Object object, ElementInfo elementInfo) throws Exception {
+        if(elementInfo!=null && elementInfo.hasPreparedInfo()) {
+            return (Boolean)elementInfo.getPreparedInfo().invokeIsSelectedMethod(object, (java.lang.Object[])null);
+        }
+        else {
+            Method method = CoderUtils.findIsSelectedMethodForField(field,object.getClass());
+            return (Boolean)method.invoke(object, (java.lang.Object[])null);
+        }
+    }
+        
     public int encodeSequence(Object object, OutputStream stream, ElementInfo elementInfo) throws Exception {
         int resultSize = 0;
-        for ( Field field : object.getClass().getDeclaredFields() ) {
-            resultSize += encodeSequenceField(object,field,stream,elementInfo);
+
+        Field[] fields = null;
+        if(elementInfo.hasPreparedInfo()) {
+            fields = elementInfo.getPreparedInfo().getFields();
+        }
+        else {
+            fields = object.getClass().getDeclaredFields();
+        }
+        int fieldIdx = 0;
+        for ( Field field : fields ) {
+            resultSize += encodeSequenceField(object,fieldIdx++,field,stream,elementInfo);
         }
         return resultSize;
     }
 
-    protected int encodeSequenceField(Object object, Field field, OutputStream stream, ElementInfo elementInfo) throws  Exception {
+    protected int encodeSequenceField(Object object, int fieldIdx, Field field, OutputStream stream, ElementInfo elementInfo) throws  Exception {
         int resultSize = 0;
+        ElementInfo info = new ElementInfo();
+        info.setAnnotatedClass(field);
+        if(elementInfo.hasPreparedInfo()) {
+            info.setPreparedInfo(elementInfo.getPreparedInfo().getFieldMetadata(fieldIdx));
+        }
+        else
+            info.setASN1ElementInfoForClass(field);
+        
         if(field.isSynthetic())
             return resultSize;
-        if(field.isAnnotationPresent(ASN1Null.class)) {
+        if(CoderUtils.isNullField(field, info)) {
             return encodeNull(object,stream,elementInfo);
         }
         else {
-            Object invokeObjResult = invokeGetterMethodForField(field,object);
+            Object invokeObjResult = invokeGetterMethodForField(field,object, info);
+            
             if(invokeObjResult!=null) {
-                ElementInfo info = new ElementInfo();
-                info.setAnnotatedClass(field);
-                //info.setASN1ElementInfo(field.getAnnotation(ASN1Element.class));
-                info.setASN1ElementInfoForClass(field);
                 resultSize += encodeClassType(invokeObjResult, stream, info);
             }
             else
-                checkForOptionalField(field);
+                CoderUtils.checkForOptionalField(field, info);
         }
         return resultSize;
     }
     
-    protected boolean isSelectedChoiceItem(Field field, Object object) throws NoSuchMethodException, 
-                                                                 IllegalAccessException, 
-                                                                 InvocationTargetException {
-        if(invokeSelectedMethodForField(field,object)) {
+    protected boolean isSelectedChoiceItem(Field field, Object object, ElementInfo info) throws Exception {
+        if(invokeSelectedMethodForField(field,object,info)) {
             return true;
         }
         else
             return false;
     }
     
-    protected ElementInfo getChoiceSelectedElement(Object object) throws NoSuchMethodException, 
-                                                                       IllegalAccessException, 
-                                                                       InvocationTargetException {
-        ElementInfo info = null;                                                               
-        for ( Field field : object.getClass().getDeclaredFields() ) {
+    protected ElementInfo getChoiceSelectedElement(Object object, ElementInfo elementInfo) throws Exception {
+        ElementInfo info = null;                
+        
+        Field[] fields = null;
+        if(elementInfo.hasPreparedInfo()) {
+            fields = elementInfo.getPreparedInfo().getFields();
+        }
+        else {
+            fields = object.getClass().getDeclaredFields();
+        }
+        
+        int fieldIdx = 0;
+        for ( Field field : fields ) {            
             if(!field.isSynthetic()) {
-                if(isSelectedChoiceItem(field,object)) {
-                    //selectedField = field;
-                    //Object invokeObjResult = invokeGetterMethodForField(field,object);
-                    info = new ElementInfo();
-                    info.setAnnotatedClass(field);
-                    //info.setASN1ElementInfo(field.getAnnotation(ASN1Element.class));
+                info = new ElementInfo();
+                info.setAnnotatedClass(field);
+                if(elementInfo.hasPreparedInfo()) {
+                    info.setPreparedInfo(elementInfo.getPreparedInfo().getFieldMetadata(fieldIdx));
+                }
+                else
                     info.setASN1ElementInfoForClass(field);
+            
+                if(isSelectedChoiceItem(field,object,info)) {
                     break;
                 }
+                else {
+                    info = null;
+                }
             }
+            fieldIdx++;
         }
         if(info==null) {
             throw new  IllegalArgumentException ("The choice '" + object.toString() + "' does not have a selected item!");
@@ -247,8 +287,8 @@ public abstract class Encoder<T> implements IEncoder<T>, IASN1TypesEncoder {
 
     public int encodeChoice(Object object, OutputStream stream, ElementInfo elementInfo)  throws Exception {
         int resultSize = 0;
-        ElementInfo info = getChoiceSelectedElement(object);
-        Object invokeObjResult = invokeGetterMethodForField((Field)info.getAnnotatedClass(),object);
+        ElementInfo info = getChoiceSelectedElement(object, elementInfo);
+        Object invokeObjResult = invokeGetterMethodForField((Field)info.getAnnotatedClass(),object, info);
         resultSize+=encodeClassType(invokeObjResult, stream, info);
         return resultSize;
     }
@@ -257,7 +297,7 @@ public abstract class Encoder<T> implements IEncoder<T>, IASN1TypesEncoder {
     public int encodeEnum(Object object, OutputStream stream, ElementInfo elementInfo) throws Exception  {
         int resultSize = 0;
         Field field = object.getClass().getDeclaredField("value");
-        Object result = invokeGetterMethodForField( field, object);
+        Object result = invokeGetterMethodForField( field, object, null);
        
         Class enumClass = null;
         for(Class cls : object.getClass().getDeclaredClasses()) {
@@ -295,7 +335,7 @@ public abstract class Encoder<T> implements IEncoder<T>, IASN1TypesEncoder {
         }
         else {
             
-            return encodeClassType(invokeGetterMethodForField(field,object), stream, elementInfo);
+            return encodeClassType(invokeGetterMethodForField(field,object,elementInfo), stream, elementInfo);
         }
     }
 }

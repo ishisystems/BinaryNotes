@@ -41,15 +41,23 @@ public class DEREncoder<T> extends BEREncoder<T> {
     public int encodeSequence(Object object, OutputStream stream, 
                                  ElementInfo elementInfo) throws Exception {
         ASN1Sequence seqInfo = elementInfo.getAnnotatedClass().getAnnotation(ASN1Sequence.class);
-        if(!seqInfo.isSet())                                 
+        if(!CoderUtils.isSequenceSet(elementInfo)) {
             return super.encodeSequence(object, stream, elementInfo);
+        }
         else {
             int resultSize = 0;
-            SortedMap<Integer,Field> fieldOrder = CoderUtils.getSetOrder(object);            
-            Field[] fields = new Field[0];
-            fields = fieldOrder.values().toArray(fields);
-            for(int i=0;i < fields.length; i++) {
-                resultSize+=encodeSequenceField(object, fields[fields.length - 1 - i], stream, elementInfo);
+            Field[] fields = null;
+            if(elementInfo.hasPreparedInfo()) {
+                fields = elementInfo.getPreparedInfo().getFields();
+            }
+            else {
+                SortedMap<Integer,Field> fieldOrder = CoderUtils.getSetOrder(object.getClass());
+                fields = new Field[0];
+                fields = fieldOrder.values().toArray(fields);
+            }
+            
+            for(int i=0; i < fields.length; i++) {
+                resultSize+=encodeSequenceField(object, fields.length - 1 - i, fields[fields.length - 1 - i], stream, elementInfo);
             }
             resultSize += encodeHeader (BERCoderUtils.getTagValueForElement (elementInfo,TagClass.Universal, ElementType.Constructed, UniversalTag.Set), resultSize, stream );
             return resultSize;            

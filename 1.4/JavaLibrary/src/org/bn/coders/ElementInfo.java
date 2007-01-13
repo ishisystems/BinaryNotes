@@ -20,15 +20,20 @@ package org.bn.coders;
 
 import java.lang.reflect.AnnotatedElement;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 
 import org.bn.annotations.ASN1Element;
+import org.bn.metadata.ASN1ElementMetadata;
 
-public class ElementInfo {
+public final class ElementInfo {
     private ASN1Element element;
     private AnnotatedElement  annotatedClass, parentAnnotated;
     private Type genericInfo;
     private Object parentObject;
+    private IASN1PreparedElementData preparedInfo;
+    private IASN1PreparedElement preparedInstance;
+    private ASN1ElementMetadata preparedElementMetadata;
 
     public ElementInfo() {            
     }
@@ -75,5 +80,54 @@ public class ElementInfo {
 
     public void setParentObject(Object parentObject) {
         this.parentObject = parentObject;
+    }
+
+    public IASN1PreparedElementData getPreparedInfo() {
+        return preparedInfo;
+    }
+
+    public void setPreparedInfo(IASN1PreparedElementData preparedInfo) {
+        this.preparedInfo = preparedInfo;
+        if(preparedInfo!=null) {
+            setPreparedASN1ElementInfo(preparedInfo.getASN1ElementInfo());
+        }       
+    }
+    
+    
+    
+    public boolean hasPreparedInfo() {
+        return this.preparedInfo !=null;
+    }
+
+    public IASN1PreparedElement getPreparedInstance() {
+        return preparedInstance;
+    }
+
+    public void setPreparedInstance(IASN1PreparedElement preparedInstance) {
+        this.preparedInstance = preparedInstance;
+    }
+    
+    public boolean hasPreparedInstance() {
+        return this.preparedInstance!=null;
+    }
+    
+    public Field[] getFields(Class objClass) {
+        if(hasPreparedInfo()) {
+            return getPreparedInfo().getFields();
+        }
+        else
+            return objClass.getDeclaredFields();
+    }
+
+    public ASN1ElementMetadata getPreparedASN1ElementInfo() {
+        return preparedElementMetadata;
+    }
+
+    public void setPreparedASN1ElementInfo(ASN1ElementMetadata value) {
+        this.preparedElementMetadata = value;
+    }
+    
+    public boolean hasPreparedASN1ElementInfo() {
+        return this.preparedElementMetadata != null;
     }
 }

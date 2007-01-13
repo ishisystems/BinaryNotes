@@ -18,7 +18,7 @@ import org.bn.types.*;
     @ASN1Enum (
         name = "ContentSchema"
     )
-    public class ContentSchema {        
+    public class ContentSchema implements IASN1PreparedElement {        
         public enum EnumType {
             
             @ASN1EnumItem ( name = "multipart_any", hasTag = true , tag = 110 )
@@ -53,5 +53,15 @@ import org.bn.types.*;
         public void setIntegerForm(Integer value) {
             integerForm = value;
         }
+
+	    public void initWithDefaults() {
+	    }
+
+        private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(ContentSchema.class);
+        public IASN1PreparedElementData getPreparedData() {
+            return preparedData;
+        }
+
+
     }
             

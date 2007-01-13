@@ -32,18 +32,38 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
 import org.bn.annotations.*;
+import org.bn.metadata.ASN1AnyMetadata;
+import org.bn.metadata.ASN1ElementMetadata;
+import org.bn.metadata.ASN1NullMetadata;
 
 
 public abstract class Decoder implements IDecoder, IASN1TypesDecoder {    
     public <T> T decode(InputStream stream, Class<T> objectClass) throws Exception {
         ElementInfo elemInfo = new ElementInfo();
         elemInfo.setAnnotatedClass(objectClass);
-        //elemInfo.setASN1ElementInfo(objectClass.getAnnotation(ASN1Element.class));
-        elemInfo.setASN1ElementInfoForClass(objectClass);
-        return (T)decodeClassType(decodeTag(stream),objectClass,elemInfo, stream).getValue();
+        Object objectInstance = objectClass.newInstance();
+        
+        if(objectInstance instanceof IASN1PreparedElement) {
+            elemInfo.setPreparedInstance((IASN1PreparedElement)objectInstance);
+            return (T)decodePreparedElement(decodeTag(stream), objectClass,elemInfo, stream).getValue();        
+        }
+        else {
+            elemInfo.setASN1ElementInfoForClass(objectClass);
+            return (T)decodeClassType(decodeTag(stream),objectClass,elemInfo, stream).getValue();            
+        }        
     }
     
-    public DecodedObject decodeClassType(DecodedObject decodedTag, Class objectClass, ElementInfo elementInfo, InputStream stream) throws Exception {
+    public DecodedObject decodeClassType(DecodedObject decodedTag, Class objectClass, ElementInfo elementInfo, InputStream stream) throws Exception {       
+        if(CoderUtils.isImplements(objectClass,IASN1PreparedElement.class)) {
+            return decodePreparedElement(decodedTag, objectClass,elementInfo, stream);
+        }
+        else
+        if(elementInfo.hasPreparedInfo()) {
+            return elementInfo.getPreparedInfo().getTypeMetadata().decode(
+                this, decodedTag, objectClass, elementInfo, stream
+            );    
+        }
+        else
         if( elementInfo.getAnnotatedClass().isAnnotationPresent(ASN1SequenceOf.class) ) {
             return decodeSequenceOf(decodedTag, objectClass,elementInfo, stream);
         }        
@@ -131,66 +151,62 @@ public abstract class Decoder implements IDecoder, IASN1TypesDecoder {
             return null;
     }
     
-    protected Method findMethodForField(String methodName, Object object, Object param) throws NoSuchMethodException {
-        try {
-            return object.getClass().getMethod(methodName, new Class[] {param.getClass()});
-        }
-        catch(NoSuchMethodException ex) {
-            Method[] methods = object.getClass().getMethods();
-            for(Method method : methods) {
-                if(method.getName().equalsIgnoreCase(methodName)) {
-                    return method;
-                }
-            }
-            throw ex;
-        }
-    }    
+    public DecodedObject decodePreparedElement(DecodedObject decodedTag, Class objectClass, ElementInfo elementInfo, InputStream stream ) throws Exception {    
+        IASN1PreparedElementData saveInfo = elementInfo.getPreparedInfo();
     
-    protected Method findSetterMethodForField(Field field, Object object, Object param) throws NoSuchMethodException {
-        String methodName = "set"+field.getName().toUpperCase().substring(0,1)+field.getName().substring(1);
-        return findMethodForField(methodName, object, param);
-    }
-    
-    protected void invokeSetterMethodForField(Field field, Object object, Object param) throws Exception {
-        Method method = findSetterMethodForField(field,object, param);
-        method.invoke(object, param);
-    }
-
-    protected Method findSelectedMethodForField(Field field, Object object,Object param) throws NoSuchMethodException {
-        String methodName = "select"+field.getName().toUpperCase().substring(0,1)+field.getName().substring(1);
-        return findMethodForField(methodName, object, param);
-    }
-
-    protected void invokeSelectMethodForField(Field field, Object object, Object param) throws NoSuchMethodException, 
-                                                                      IllegalAccessException, 
-                                                                      InvocationTargetException {
-        Method method = findSelectedMethodForField(field,object, param);
-        method.invoke(object, param);
-    }
-    
-    protected boolean isOptionalField(Field field) {
-        if( field.isAnnotationPresent(ASN1Element.class) ) {
-            ASN1Element info = field.getAnnotation(ASN1Element.class);
-            if(info.isOptional() || info.hasDefaultValue())
-                return true;
+        IASN1PreparedElement preparedInstance = (IASN1PreparedElement) createInstanceForElement(objectClass,elementInfo);
+        
+        elementInfo.setPreparedInstance(preparedInstance);        
+        ASN1ElementMetadata elementDataSave = null;
+        if(elementInfo.hasPreparedASN1ElementInfo()) {
+            elementDataSave = elementInfo.getPreparedASN1ElementInfo();
         }        
-        return false;
+        elementInfo.setPreparedInfo(preparedInstance.getPreparedData());
+        elementInfo.setPreparedASN1ElementInfo(preparedInstance.getPreparedData().getASN1ElementInfo());
+        if(elementDataSave!=null)
+            elementInfo.setPreparedASN1ElementInfo(elementDataSave);
+        DecodedObject result= elementInfo.getPreparedInfo().getTypeMetadata().decode(
+            this, decodedTag, objectClass, elementInfo, stream
+        );    
+        elementInfo.setPreparedInfo(saveInfo);
+        return result;
+    }
+             
+    
+    public void invokeSetterMethodForField(Field field, Object object, Object param, ElementInfo elementInfo) throws Exception {
+        if(elementInfo!=null && elementInfo.hasPreparedInfo()) {
+            elementInfo.getPreparedInfo().invokeSetterMethod(object, param);
+        }
+        else {
+            Method method = CoderUtils.findSetterMethodForField(field,object.getClass(), param.getClass());
+            method.invoke(object, param);
+        }
+    }
+
+
+    public void invokeSelectMethodForField(Field field, Object object, Object param, ElementInfo elementInfo) throws Exception {
+        if(elementInfo!=null && elementInfo.hasPreparedInfo()) {
+            elementInfo.getPreparedInfo().invokeDoSelectMethod(object, param);
+        }
+        else {    
+            Method method = CoderUtils.findDoSelectMethodForField(field,object.getClass(), param.getClass());
+            method.invoke(object, param);
+        }
     }
     
     
-    protected void checkForOptionalField(Field field) throws Exception {
-        if( isOptionalField(field) )
-                return;
-        throw new  IllegalArgumentException ("The mandatory field '" + field.getName() + "' does not have a value!");
-    }
-    
-    protected void initDefaultValues(Object object) throws NoSuchMethodException, 
+    protected void initDefaultValues(Object object, ElementInfo elementInfo) throws NoSuchMethodException, 
                                                            IllegalAccessException, 
                                                            InvocationTargetException {
         try {
-            Method method = object.getClass().getMethod("initWithDefaults",(java.lang.Class[])null);        
-            if(method!=null)
-                method.invoke(object,(java.lang.Object[])null);
+            if(object instanceof IASN1PreparedElement ) {
+                ((IASN1PreparedElement)object).initWithDefaults();
+            }
+            else {
+                Method method = object.getClass().getMethod("initWithDefaults",(java.lang.Class[])null);        
+                if(method!=null)
+                    method.invoke(object,(java.lang.Object[])null);
+            }
         }
         catch(NoSuchMethodException ex){};
     }
@@ -199,6 +215,10 @@ public abstract class Decoder implements IDecoder, IASN1TypesDecoder {
                                                                               IllegalAccessException, 
                                                                               NoSuchMethodException, 
                                                                               InvocationTargetException {
+        if(elementInfo.hasPreparedInstance()) {
+            return elementInfo.getPreparedInstance();
+        }
+        else
         if(objectClass.isMemberClass() && elementInfo.getParentObject()!=null) {
             Constructor decl = objectClass.getDeclaredConstructor(elementInfo.getParentObject().getClass());
             return decl.newInstance(elementInfo.getParentObject());
@@ -209,24 +229,28 @@ public abstract class Decoder implements IDecoder, IASN1TypesDecoder {
     }
         
     public DecodedObject decodeSequence(DecodedObject decodedTag, Class objectClass, ElementInfo elementInfo, InputStream stream) throws Exception {
-        Object sequence = createInstanceForElement(objectClass,elementInfo);
-        initDefaultValues(sequence);
+        Object sequence = createInstanceForElement(objectClass, elementInfo);
+        initDefaultValues(sequence, elementInfo);
         
         DecodedObject fieldTag = decodeTag(stream);
         int sizeOfSequence = 0;
         if(fieldTag!=null)
             sizeOfSequence+=fieldTag.getSize();
         
-        Field[] fields =objectClass.getDeclaredFields();
-        for(int i=0; i<fields.length; i++) {        
+        Field[] fields = elementInfo.getFields(objectClass);
+        
+        for(int i=0; i<fields.length; i++) {
             Field field = fields[i];            
-            DecodedObject obj = decodeSequenceField(fieldTag,sequence,field,stream,elementInfo, true);
+            DecodedObject obj = decodeSequenceField(fieldTag,sequence,i, field,stream,elementInfo, true);
             if(obj!=null) {
                 sizeOfSequence+=obj.getSize();
                 
-                if(i!=fields.length-1 && fields[i+1].isAnnotationPresent(ASN1Any.class)) {
+                boolean isAny = false;
+                if(i!=fields.length-1) {
+                    isAny = CoderUtils.isAnyField(field, elementInfo);
                 }
-                else {
+                
+                if(!isAny) {
                     if(i<fields.length-1) {
                         fieldTag = decodeTag(stream);
                         if(fieldTag!=null) {                        
@@ -241,27 +265,31 @@ public abstract class Decoder implements IDecoder, IASN1TypesDecoder {
         return new DecodedObject(sequence,sizeOfSequence);
     }
     
-
-    protected DecodedObject decodeSequenceField(DecodedObject fieldTag, Object sequenceObj, Field field, InputStream stream, ElementInfo elementInfo, boolean optionalCheck) throws  Exception {
+    
+    protected DecodedObject decodeSequenceField(DecodedObject fieldTag, Object sequenceObj, int fieldIdx, Field field, InputStream stream, ElementInfo elementInfo, boolean optionalCheck) throws  Exception {
         ElementInfo info = new ElementInfo();
-        info.setAnnotatedClass(field);
-        //info.setASN1ElementInfo(field.getAnnotation(ASN1Element.class));
-        info.setASN1ElementInfoForClass(field);
+        info.setAnnotatedClass(field);        
         if(field.getType().isMemberClass()) {
             info.setParentObject(sequenceObj);
         }
         info.setGenericInfo(field.getGenericType());
-        if(field.isAnnotationPresent(ASN1Null.class)) {            
+        if(elementInfo.hasPreparedInfo()) {
+            info.setPreparedInfo(elementInfo.getPreparedInfo().getFieldMetadata(fieldIdx));
+        }
+        else
+            info.setASN1ElementInfoForClass(field);
+            
+        if(CoderUtils.isNullField(field,info)) {
             return decodeNull(fieldTag,field.getType(),info, stream);
         }
-        else {
+        else {            
             DecodedObject value = decodeClassType(fieldTag,field.getType(),info,stream);
             if(value!=null) {                
-                invokeSetterMethodForField(field, sequenceObj, value.getValue());
+                invokeSetterMethodForField(field, sequenceObj, value.getValue(),info);
             }
             else {
                 if(optionalCheck)
-                    checkForOptionalField(field);
+                    CoderUtils.checkForOptionalField(field, info);
             }
             return value;
         }
@@ -270,24 +298,34 @@ public abstract class Decoder implements IDecoder, IASN1TypesDecoder {
     public DecodedObject decodeChoice(DecodedObject decodedTag,Class objectClass, ElementInfo elementInfo, InputStream stream)  throws Exception {
         Object choice = createInstanceForElement(objectClass,elementInfo);
         DecodedObject value = null;
-        for ( Field field : objectClass.getDeclaredFields() ) {
-            if(!field.isSynthetic()) {
+        
+        Field[] fields = elementInfo.getFields(objectClass);
+        
+        int fieldIdx = 0;
+        for ( Field field : fields ) {            
+            if(!field.isSynthetic()) {                
                 ElementInfo info = new ElementInfo();
                 info.setAnnotatedClass(field);
-                //info.setASN1ElementInfo(field.getAnnotation(ASN1Element.class));
-                info.setASN1ElementInfoForClass(field);
+                if(elementInfo.hasPreparedInfo()) {
+                    info.setPreparedInfo(elementInfo.getPreparedInfo().getFieldMetadata(fieldIdx));
+                }
+                else
+                    info.setASN1ElementInfoForClass(field);
                 if(field.getType().isMemberClass()) {
                     info.setParentObject(choice);
                 }                
-                info.setGenericInfo(field.getGenericType());            
+                info.setGenericInfo(field.getGenericType());
+                
                 value = decodeClassType(decodedTag, field.getType(),info,stream);
+                fieldIdx++;
                 if(value!=null) {
-                    invokeSelectMethodForField(field, choice, value.getValue());
+                    invokeSelectMethodForField(field, choice, value.getValue(),info);
                     break;
                 };
+                
             }            
         }
-        if(value == null && elementInfo.getASN1ElementInfo()!=null && !elementInfo.getASN1ElementInfo().isOptional()) {
+        if(value == null && CoderUtils.isOptional(elementInfo)) {
             throw new  IllegalArgumentException ("The choice '" + objectClass.toString() + "' does not have a selected item!");
         }
         else
@@ -319,7 +357,7 @@ public abstract class Decoder implements IDecoder, IASN1TypesDecoder {
                     }
                 }
             }
-            invokeSetterMethodForField ( field, result, param.get(null)) ;
+            invokeSetterMethodForField ( field, result, param.get(null), null) ;
         }        
         return new DecodedObject(result,itemValue.getSize());
     }    
@@ -334,26 +372,38 @@ public abstract class Decoder implements IDecoder, IASN1TypesDecoder {
         
         DecodedObject result = new DecodedObject(resultObj);
         
-        Field field = objectClass.getDeclaredField("value");
+        Field field = null;
+        if(elementInfo.hasPreparedInfo()) {            
+            field = elementInfo.getPreparedInfo().getValueField();
+        }
+        else
+            field = objectClass.getDeclaredField("value");
         elementInfo.setAnnotatedClass(field);
         elementInfo.setGenericInfo(field.getGenericType());
         if(field.getType().isMemberClass()) {
             elementInfo.setParentObject(resultObj);
         }
         
-        if(elementInfo.getASN1ElementInfo()==null) {
-            elementInfo.setASN1ElementInfoForClass(field);
+        boolean isNull = false;
+        if(elementInfo.hasPreparedInfo()) {
+            isNull = elementInfo.getPreparedInfo().getTypeMetadata() instanceof ASN1NullMetadata;
+        }
+        else {
+            isNull = field.isAnnotationPresent(ASN1Null.class);        
+            if(elementInfo.getASN1ElementInfo()==null) {
+                elementInfo.setASN1ElementInfoForClass(field);
+            }
         }
         
         DecodedObject value = null;
-        if(field.isAnnotationPresent(ASN1Null.class)) {
+        if(isNull) {
             value = decodeNull(decodedTag, field.getType(),elementInfo,stream);
         }
         else {            
             value = decodeClassType(decodedTag, field.getType(), elementInfo, stream);
             if(value!=null) {
                 result.setSize(value.getSize());
-                invokeSetterMethodForField(field,resultObj,value.getValue());
+                invokeSetterMethodForField(field,resultObj,value.getValue(),elementInfo );
             }
             else
                 result = null;

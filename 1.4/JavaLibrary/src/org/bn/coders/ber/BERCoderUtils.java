@@ -21,51 +21,67 @@ package org.bn.coders.ber;
 import org.bn.annotations.ASN1Element;
 import org.bn.annotations.ASN1String;
 import org.bn.coders.ElementInfo;
+import org.bn.metadata.ASN1ElementMetadata;
 
 public class BERCoderUtils {
     
-    public static int getTagValueForElement(ElementInfo info, int tagClass, int elemenType, int universalTag) {
+    public static int getTagValueForElement(ElementInfo info, int tagClass, int elemenType, int universalTag) {        
         int result = tagClass | elemenType | universalTag;
-        ASN1Element elementInfo = null;
-        if(info.getASN1ElementInfo()!=null) {
-            elementInfo = info.getASN1ElementInfo();
+        if(info.hasPreparedInfo()) {
+            ASN1ElementMetadata meta = info.getPreparedASN1ElementInfo();
+            if(meta!=null && meta.hasTag()) {
+                result = getTagValue(tagClass,elemenType,universalTag, 
+                    meta.getTag(),
+                    meta.getTagClass()
+                );
+            }
         }
-        else
-        if(info.getAnnotatedClass().isAnnotationPresent(ASN1Element.class)) {
-            elementInfo = info.getAnnotatedClass().getAnnotation(ASN1Element.class);
-        }        
-        
-        if(elementInfo!=null) {
-            if(elementInfo.hasTag()) {
-                tagClass = elementInfo.tagClass();
-                if (elementInfo.tag() <= 0x30) {
-                    result = tagClass | elemenType | elementInfo.tag();
-                }
-                else {
-                    result = tagClass | elemenType | 0x1F;
-                    if (elementInfo.tag() < 0x80) {
-                        result <<= 8;
-                        result |= elementInfo.tag() & 0x7F;
-                    }
-                    else
-                    if (elementInfo.tag() < 0x3FFF)
-                    {
-                        result <<= 16;
-                        result |= (((elementInfo.tag() & 0x3fff) >> 7) | 0x80) << 8;
-                        result |= ((elementInfo.tag() & 0x3fff) & 0x7f);                
-                    }
-                    else
-                    if (elementInfo.tag() < 0x3FFFF)
-                    {
-                        result <<= 24;
-                        result |= (((elementInfo.tag() & 0x3FFFF) >> 15) | 0x80) << 16;
-                        result |= (((elementInfo.tag() & 0x3FFFF) >> 7) | 0x80) << 8;
-                        result |= ((elementInfo.tag() & 0x3FFFF) & 0x3f);
-                    }
-                    
-                    //result |= elementInfo.Tag;
+        else {
+            ASN1Element elementInfo = null;
+            if(info.getASN1ElementInfo()!=null) {
+                elementInfo = info.getASN1ElementInfo();
+            }
+            else
+            if(info.getAnnotatedClass().isAnnotationPresent(ASN1Element.class)) {
+                elementInfo = info.getAnnotatedClass().getAnnotation(ASN1Element.class);
+            }
+            
+            if(elementInfo!=null) {
+                if(elementInfo.hasTag()) {
+                    result = getTagValue(tagClass,elemenType,universalTag, elementInfo.tag(),elementInfo.tagClass());
                 }
             }
+        }
+        return result;
+    }
+    
+    public static int getTagValue(int tagClass, int elemenType, int universalTag, int userTag, int userTagClass) {
+        int result = tagClass | elemenType | universalTag;
+        tagClass = userTagClass;
+        if (userTag <= 0x30) {
+            result = tagClass | elemenType | userTag;
+        }
+        else {
+            result = tagClass | elemenType | 0x1F;
+            if (userTag < 0x80) {
+                result <<= 8;
+                result |= userTag & 0x7F;
+            }
+            else
+            if (userTag < 0x3FFF)
+            {
+                result <<= 16;
+                result |= (((userTag & 0x3fff) >> 7) | 0x80) << 8;
+                result |= ((userTag & 0x3fff) & 0x7f);                
+            }
+            else
+            if (userTag < 0x3FFFF)
+            {
+                result <<= 24;
+                result |= (((userTag & 0x3FFFF) >> 15) | 0x80) << 16;
+                result |= (((userTag & 0x3FFFF) >> 7) | 0x80) << 8;
+                result |= ((userTag & 0x3FFFF) & 0x3f);
+            }        
         }
         return result;
     }

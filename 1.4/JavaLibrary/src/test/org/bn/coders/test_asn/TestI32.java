@@ -16,7 +16,7 @@ import org.bn.types.*;
 
 
     @ASN1BoxedType ( name = "TestI32" )
-    public class TestI32 {
+    public class TestI32 implements IASN1PreparedElement {
     
             @ASN1Integer( name = "TestI32" )
             @ASN1ValueRangeConstraint ( 
@@ -39,5 +39,15 @@ import org.bn.types.*;
             public Long getValue() {
                 return this.value;
             }
+
+	    public void initWithDefaults() {
+	    }
+
+        private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(TestI32.class);
+        public IASN1PreparedElementData getPreparedData() {
+            return preparedData;
+        }
+
+
     }
             

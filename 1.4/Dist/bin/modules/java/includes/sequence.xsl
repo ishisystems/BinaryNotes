@@ -42,7 +42,7 @@
             <xsl:call-template name="header"/>
 
     @ASN1Sequence ( name = "<xsl:value-of select='$sequenceName'/>", isSet = <xsl:choose><xsl:when test="isSequence = 'false'">true</xsl:when><xsl:otherwise>false</xsl:otherwise></xsl:choose> )
-    public class <xsl:value-of select="$sequenceName"/> {
+    public class <xsl:value-of select="$sequenceName"/> implements IASN1PreparedElement {
             <xsl:call-template name="elements"/>            
             <xsl:call-template name="sequenceFunctions"/>
                     
@@ -51,6 +51,12 @@
         public void initWithDefaults() {
             <xsl:call-template name="elementDefaults"/>
         }
+
+        private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(<xsl:value-of select='$sequenceName'/>.class);
+        public IASN1PreparedElementData getPreparedData() {
+            return preparedData;
+        }
+
             
     }
             <xsl:call-template name="footer"/>

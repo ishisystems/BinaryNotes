@@ -22,6 +22,7 @@ import java.io.OutputStream;
 
 import org.bn.annotations.ASN1String;
 import org.bn.annotations.constraints.ASN1ValueRangeConstraint;
+import org.bn.coders.CoderUtils;
 import org.bn.coders.ElementInfo;
 import org.bn.coders.UniversalTag;
 import org.bn.utils.BitArrayOutputStream;
@@ -62,23 +63,13 @@ public class PERUnalignedEncoder<T> extends PERAlignedEncoder<T> {
     public int encodeString(Object object, OutputStream stream, 
                                ElementInfo elementInfo) throws Exception {        
                     
-        boolean is7Bit = false;
-        ASN1String strValueAnnotation = null;
-        if(elementInfo.getAnnotatedClass().isAnnotationPresent(ASN1String.class)) {
-            strValueAnnotation = elementInfo.getAnnotatedClass().getAnnotation(ASN1String.class);            
-        }
-        else
-        if(elementInfo.getParentAnnotated()!=null && elementInfo.getParentAnnotated().isAnnotationPresent(ASN1String.class)) {
-            strValueAnnotation = elementInfo.getParentAnnotated().getAnnotation(ASN1String.class);
-        }                
-        if(strValueAnnotation!=null) {
-            is7Bit = 
-                ( 
-                    strValueAnnotation.stringType() == UniversalTag.PrintableString || 
-                    strValueAnnotation.stringType() ==UniversalTag.VisibleString
-                )
-                ;
-        }   
+        int stringType = CoderUtils.getStringTagForElement(elementInfo);
+        boolean is7Bit = 
+            ( 
+                stringType == UniversalTag.PrintableString || 
+                stringType ==UniversalTag.VisibleString
+            )
+            ;
         int resultSize = 0;
         if(!is7Bit)
             resultSize = super.encodeString(object, stream, elementInfo);

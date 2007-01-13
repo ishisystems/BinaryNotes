@@ -16,7 +16,7 @@ import org.bn.types.*;
 
 
     @ASN1BoxedType ( name = "TaggedNullSequence" )
-    public class TaggedNullSequence {
+    public class TaggedNullSequence implements IASN1PreparedElement {
                 
         
         @ASN1Null ( name = "TaggedNullSequence" ) 
@@ -26,6 +26,15 @@ import org.bn.types.*;
         private Object  value;        
 
         
+
+	    public void initWithDefaults() {
+	    }
+
+        private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(TaggedNullSequence.class);
+        public IASN1PreparedElementData getPreparedData() {
+            return preparedData;
+        }
+
             
     }
             

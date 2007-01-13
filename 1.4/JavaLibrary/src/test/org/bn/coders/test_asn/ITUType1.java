@@ -16,7 +16,7 @@ import org.bn.types.*;
 
 
     @ASN1BoxedType ( name = "ITUType1" )
-    public class ITUType1 {
+    public class ITUType1 implements IASN1PreparedElement {
     
             @ASN1String( name = "ITUType1", 
         stringType =  UniversalTag.VisibleString , isUCS = false )
@@ -37,5 +37,15 @@ import org.bn.types.*;
             public String getValue() {
                 return this.value;
             }
+
+	    public void initWithDefaults() {
+	    }
+
+        private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(ITUType1.class);
+        public IASN1PreparedElementData getPreparedData() {
+            return preparedData;
+        }
+
+
     }
             

@@ -16,7 +16,7 @@ import org.bn.types.*;
 
 
     @ASN1BoxedType ( name = "TestOCT" )
-    public class TestOCT {
+    public class TestOCT implements IASN1PreparedElement {
     
             @ASN1OctetString( name = "TestOCT" )
             
@@ -44,5 +44,15 @@ import org.bn.types.*;
             public byte[] getValue() {
                 return this.value;
             }
+
+	    public void initWithDefaults() {
+	    }
+
+        private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(TestOCT.class);
+        public IASN1PreparedElementData getPreparedData() {
+            return preparedData;
+        }
+
+
     }
             

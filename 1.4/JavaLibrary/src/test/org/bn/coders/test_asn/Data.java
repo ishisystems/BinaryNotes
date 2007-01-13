@@ -16,7 +16,7 @@ import org.bn.types.*;
 
 
     @ASN1Choice ( name = "Data" )
-    public class Data {
+    public class Data implements IASN1PreparedElement {
             
         @ASN1Element ( name = "plain", isOptional =  false , hasTag =  true, tag = 0 , hasDefaultValue =  false  )
     
@@ -332,5 +332,15 @@ import org.bn.types.*;
         }
         
   
+
+	    public void initWithDefaults() {
+	    }
+
+        private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(Data.class);
+        public IASN1PreparedElementData getPreparedData() {
+            return preparedData;
+        }
+
+
     }
             

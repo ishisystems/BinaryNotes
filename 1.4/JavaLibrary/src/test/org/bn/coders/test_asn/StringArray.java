@@ -16,7 +16,7 @@ import org.bn.types.*;
 
 
     @ASN1BoxedType ( name = "StringArray" )
-    public class StringArray {
+    public class StringArray implements IASN1PreparedElement {
                 
             @ASN1SequenceOf( name = "StringArray" , isSetOf = false)
             
@@ -47,5 +47,15 @@ import org.bn.types.*;
             public void add(String item) {
                 value.add(item);
             }
+
+	    public void initWithDefaults() {
+	    }
+
+        private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(StringArray.class);
+        public IASN1PreparedElementData getPreparedData() {
+            return preparedData;
+        }
+
+
     }
             

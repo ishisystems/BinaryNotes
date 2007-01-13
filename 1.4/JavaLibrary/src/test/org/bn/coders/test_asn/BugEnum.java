@@ -16,7 +16,7 @@ import org.bn.types.*;
 
 
     @ASN1BoxedType ( name = "BugEnum" )
-    public class BugEnum {
+    public class BugEnum implements IASN1PreparedElement {
     
             @ASN1Integer( name = "BugEnum" )
             
@@ -36,5 +36,15 @@ import org.bn.types.*;
             public Long getValue() {
                 return this.value;
             }
+
+	    public void initWithDefaults() {
+	    }
+
+        private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(BugEnum.class);
+        public IASN1PreparedElementData getPreparedData() {
+            return preparedData;
+        }
+
+
     }
             

@@ -16,7 +16,7 @@ import org.bn.types.*;
 
 
     @ASN1Sequence ( name = "SequenceWithNull", isSet = false )
-    public class SequenceWithNull {
+    public class SequenceWithNull implements IASN1PreparedElement {
             
     @ASN1String( name = "", 
         stringType =  UniversalTag.PrintableString , isUCS = false )
@@ -71,6 +71,12 @@ import org.bn.types.*;
         public void initWithDefaults() {
             
         }
+
+        private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(SequenceWithNull.class);
+        public IASN1PreparedElementData getPreparedData() {
+            return preparedData;
+        }
+
             
     }
             

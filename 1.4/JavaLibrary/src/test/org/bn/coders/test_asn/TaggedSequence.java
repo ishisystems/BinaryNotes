@@ -16,11 +16,11 @@ import org.bn.types.*;
 
 
     @ASN1BoxedType ( name = "TaggedSequence" )
-    public class TaggedSequence {
+    public class TaggedSequence implements IASN1PreparedElement {
                 
         
        @ASN1Sequence ( name = "TaggedSequence" , isSet = false )
-       public class TaggedSequenceSequenceType {
+       public class TaggedSequenceSequenceType implements IASN1PreparedElement {
                 
     @ASN1String( name = "", 
         stringType =  UniversalTag.VisibleString , isUCS = false )
@@ -51,8 +51,15 @@ import org.bn.types.*;
         public void initWithDefaults() {
             
         }
+
+        public IASN1PreparedElementData getPreparedData() {
+            return preparedData_TaggedSequenceSequenceType;
+        }
+
                 
        }
+       private static IASN1PreparedElementData preparedData_TaggedSequenceSequenceType = new ASN1PreparedElementData(TaggedSequenceSequenceType.class);
+
        
                 
         @ASN1Element ( name = "TaggedSequence", isOptional =  false , hasTag =  true, tag = 8, 
@@ -77,6 +84,15 @@ import org.bn.types.*;
             return this.value;
         }            
         
+
+	    public void initWithDefaults() {
+	    }
+
+        private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(TaggedSequence.class);
+        public IASN1PreparedElementData getPreparedData() {
+            return preparedData;
+        }
+
             
     }
             

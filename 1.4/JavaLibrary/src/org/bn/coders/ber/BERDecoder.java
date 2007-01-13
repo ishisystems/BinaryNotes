@@ -19,31 +19,14 @@
 package org.bn.coders.ber;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 
-import java.lang.reflect.Array;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.GenericArrayType;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-
-import java.lang.reflect.TypeVariable;
-
+import java.lang.reflect.*;
 import java.util.Collection;
 import java.util.LinkedList;
-
-import org.bn.annotations.ASN1Any;
-import org.bn.annotations.ASN1Element;
-import org.bn.coders.CoderUtils;
-import org.bn.coders.DecodedObject;
-import org.bn.coders.Decoder;
-import org.bn.coders.ElementInfo;
-import org.bn.coders.ElementType;
-import org.bn.coders.TagClass;
-import org.bn.coders.UniversalTag;
-import org.bn.types.BitString;
+import org.bn.coders.*;
+import org.bn.metadata.ASN1SequenceOfMetadata;
+import org.bn.types.*;
 
 public class BERDecoder extends Decoder {
     
@@ -74,27 +57,30 @@ public class BERDecoder extends Decoder {
     protected DecodedObject decodeSet(DecodedObject decodedTag,Class objectClass, 
                                       ElementInfo elementInfo, Integer len,InputStream stream) throws Exception {
         Object set = createInstanceForElement(objectClass,elementInfo);
-        initDefaultValues(set);
+        initDefaultValues(set, elementInfo);
 
         DecodedObject fieldTag = decodeTag(stream);
         int sizeOfSet = 0;
         if(fieldTag!=null)
             sizeOfSet+=fieldTag.getSize();
 
-        Field[] fields =objectClass.getDeclaredFields();
+        Field[] fields = elementInfo.getFields(objectClass);
 
         boolean fieldEncoded = false; 
         do {
             
             for(int i=0; i<fields.length; i++) {        
                 Field field = fields[i];
-                DecodedObject obj = decodeSequenceField(fieldTag,set,field,stream,elementInfo, false);
+                DecodedObject obj = decodeSequenceField(fieldTag,set,i, field,stream,elementInfo, false);
                 if(obj!=null) {
                     fieldEncoded = true;
                     sizeOfSet +=obj.getSize();                
-                    if(i!=fields.length-1 && fields[i+1].isAnnotationPresent(ASN1Any.class)) {
+                    boolean isAny = false;
+                    if(i!=fields.length-1) {
+                        isAny = CoderUtils.isAnyField(field, elementInfo);
                     }
-                    else {
+                    
+                    if(!isAny) {
                         fieldTag = decodeTag(stream);
                         if(fieldTag!=null)
                             sizeOfSet += fieldTag.getSize();
@@ -225,8 +211,9 @@ public class BERDecoder extends Decoder {
     
     public DecodedObject decodeChoice(DecodedObject decodedTag, Class objectClass, 
                                          ElementInfo elementInfo, 
-                                   InputStream stream) throws Exception {        
-        if(elementInfo.getASN1ElementInfo()!=null) {            
+                                   InputStream stream) throws Exception {   
+        
+        if(elementInfo.getASN1ElementInfo()!=null || (elementInfo.hasPreparedInfo() && elementInfo.hasPreparedASN1ElementInfo())) {
             if(!checkTagForObject(decodedTag, TagClass.ContextSpecific, ElementType.Constructed, UniversalTag.LastUniversal, elementInfo))
                 return null;
             DecodedObject<Integer> lenOfChild = decodeLength(stream);
@@ -326,20 +313,33 @@ public class BERDecoder extends Decoder {
         DecodedObject<Integer> len = decodeLength(stream);
         if(len.getValue()!=0) {
             int lenOfItems = 0;
+            int cntOfItems = 0;
             ParameterizedType tp = (ParameterizedType)elementInfo.getGenericInfo();
             Class paramType = (Class)tp.getActualTypeArguments()[0];
-            elementInfo.setAnnotatedClass(paramType);
-            elementInfo.setASN1ElementInfo(null);
+            ElementInfo info = new ElementInfo();
+            info.setAnnotatedClass(paramType);
+            info.setParentAnnotated(elementInfo.getAnnotatedClass());
+            if(elementInfo.hasPreparedInfo()) {
+                ASN1SequenceOfMetadata seqOfMeta = (ASN1SequenceOfMetadata)elementInfo.getPreparedInfo().getTypeMetadata();
+                info.setPreparedInfo( seqOfMeta.getItemClassMetadata() );
+            }
+            
+            //elementInfo.setASN1ElementInfo(null);
+            //if(elementInfo.hasPreparedInfo()) {
+            //    elementInfo.getPreparedInfo().setASN1ElementInfo(null);
+            //    elementInfo.setPreparedInstance(null);
+            //}
             do {
                 DecodedObject itemTag = decodeTag(stream);
-                DecodedObject item=decodeClassType(itemTag,paramType,elementInfo,stream);
+                DecodedObject item=decodeClassType(itemTag,paramType,info,stream);
                 if(item!=null) {
                     lenOfItems+=item.getSize()+itemTag.getSize();
                     result.add(item.getValue());
+                    cntOfItems++;
                 }
             }
             while(lenOfItems < len.getValue());
-            CoderUtils.checkConstraints(lenOfItems ,elementInfo);            
+            CoderUtils.checkConstraints ( cntOfItems ,elementInfo );
         }
         return new DecodedObject(result, len.getValue() + len.getSize());
     }    
@@ -392,6 +392,8 @@ public class BERDecoder extends Decoder {
                          result |= bt;
                          len++;
                      }
+                     else
+                        break;
                 };
                 //tagValue= tagClass | tagValue;
                 //result = tagValue;

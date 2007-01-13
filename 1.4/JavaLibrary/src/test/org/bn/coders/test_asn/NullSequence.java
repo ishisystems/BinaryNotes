@@ -16,6 +16,15 @@ import org.bn.types.*;
 
         @ASN1Null ( name = "NullSequence" ) 
     
-    public class NullSequence {                    
+    public class NullSequence implements IASN1PreparedElement {                    
+	    public void initWithDefaults() {
+	    }
+
+        private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(NullSequence.class);
+        public IASN1PreparedElementData getPreparedData() {
+            return preparedData;
+        }
+
+
     }
             

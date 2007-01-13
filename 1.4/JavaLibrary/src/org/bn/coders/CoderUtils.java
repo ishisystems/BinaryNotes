@@ -20,13 +20,24 @@ package org.bn.coders;
 
 import java.lang.reflect.Field;
 
+import java.lang.reflect.Method;
+
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import org.bn.annotations.ASN1Any;
 import org.bn.annotations.ASN1Element;
+import org.bn.annotations.ASN1Null;
+import org.bn.annotations.ASN1Sequence;
+import org.bn.annotations.ASN1SequenceOf;
 import org.bn.annotations.ASN1String;
 import org.bn.annotations.constraints.ASN1SizeConstraint;
 import org.bn.annotations.constraints.ASN1ValueRangeConstraint;
+import org.bn.metadata.ASN1AnyMetadata;
+import org.bn.metadata.ASN1NullMetadata;
+import org.bn.metadata.ASN1SequenceMetadata;
+import org.bn.metadata.ASN1SequenceOfMetadata;
+import org.bn.metadata.ASN1StringMetadata;
 import org.bn.types.*;
 
 public class CoderUtils {
@@ -140,10 +151,10 @@ public class CoderUtils {
            return result;
     }    
     
-    public static SortedMap<Integer,Field> getSetOrder(Object object){
+    public static SortedMap<Integer,Field> getSetOrder(Class objectClass){
         SortedMap<Integer, Field> fieldOrder = new TreeMap<Integer,Field>();
-        final int tagNA = -1;
-        for ( Field field : object.getClass().getDeclaredFields() ) {
+        final int tagNA = -1;        
+        for ( Field field : objectClass.getDeclaredFields() ) {
             ASN1Element element = field.getAnnotation(ASN1Element.class);
             if(element!=null) {
                 if(element.hasTag())
@@ -157,6 +168,10 @@ public class CoderUtils {
     
     public static  int getStringTagForElement(ElementInfo elementInfo) {
         int result = UniversalTag.PrintableString;
+        if(elementInfo.hasPreparedInfo()) {            
+            result = ((ASN1StringMetadata)elementInfo.getPreparedInfo().getTypeMetadata()).getStringType();
+        }
+        else
         if(elementInfo.getAnnotatedClass().isAnnotationPresent(ASN1String.class)) {
             ASN1String value = elementInfo.getAnnotatedClass().getAnnotation(ASN1String.class);
             result = value.stringType();
@@ -171,16 +186,147 @@ public class CoderUtils {
     }
     
     public static void checkConstraints(long value, ElementInfo elementInfo) throws Exception {
-        if(elementInfo.getAnnotatedClass().isAnnotationPresent(ASN1ValueRangeConstraint.class)) {
-            ASN1ValueRangeConstraint constraint = elementInfo.getAnnotatedClass().getAnnotation(ASN1ValueRangeConstraint.class);
-            if(value> constraint.max() || value<constraint.min() )
-                throw new Exception("Length of '"+elementInfo.getAnnotatedClass().toString()+"' out of bound");
+        if(elementInfo.hasPreparedInfo()) {
+            if(elementInfo.getPreparedInfo().hasConstraint())
+                if(!elementInfo.getPreparedInfo().getConstraint().checkValue(value))
+                    throw new Exception("Length of '"+elementInfo.getAnnotatedClass().toString()+"' out of bound");
         }
-        if(elementInfo.getAnnotatedClass().isAnnotationPresent(ASN1SizeConstraint.class)) {
-            ASN1SizeConstraint constraint = elementInfo.getAnnotatedClass().getAnnotation(ASN1SizeConstraint.class);
-            if(value!= constraint.max())
-                throw new Exception("Length of '"+elementInfo.getAnnotatedClass().toString()+"' out of bound");
-        }        
+        else {
+            if(elementInfo.getAnnotatedClass().isAnnotationPresent(ASN1ValueRangeConstraint.class)) {
+                ASN1ValueRangeConstraint constraint = elementInfo.getAnnotatedClass().getAnnotation(ASN1ValueRangeConstraint.class);
+                if(value> constraint.max() || value<constraint.min() )
+                    throw new Exception("Length of '"+elementInfo.getAnnotatedClass().toString()+"' out of bound");
+            }
+            if(elementInfo.getAnnotatedClass().isAnnotationPresent(ASN1SizeConstraint.class)) {
+                ASN1SizeConstraint constraint = elementInfo.getAnnotatedClass().getAnnotation(ASN1SizeConstraint.class);
+                if(value!= constraint.max())
+                    throw new Exception("Length of '"+elementInfo.getAnnotatedClass().toString()+"' out of bound");
+            }        
+        }
     }
     
+    public static boolean isImplements(Class objectClass, Class interfaceClass) {
+        for(Class item: objectClass.getInterfaces()) {
+            if(item.equals(interfaceClass)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public static boolean isAnyField(Field field, ElementInfo elementInfo) {
+        boolean isAny = false;
+        if(elementInfo.hasPreparedInfo()) {
+            isAny = elementInfo.getPreparedInfo().getTypeMetadata() instanceof ASN1AnyMetadata;
+        }
+        else
+            isAny = field.isAnnotationPresent(ASN1Any.class);        
+        return isAny;
+    }
+
+    public static boolean isNullField(Field field, ElementInfo elementInfo) {
+        boolean isNull = false;
+        if(elementInfo.hasPreparedInfo()) {
+            isNull = elementInfo.getPreparedInfo().getTypeMetadata() instanceof ASN1NullMetadata;
+        }
+        else {
+            isNull = field.isAnnotationPresent(ASN1Null.class);
+        }        
+        return isNull;
+    }
+        
+    
+    public static boolean isOptionalField(Field field, ElementInfo elementInfo) {
+        if(elementInfo.hasPreparedInfo()) {
+            if(elementInfo.hasPreparedASN1ElementInfo())
+                return elementInfo.getPreparedASN1ElementInfo().isOptional() || elementInfo.getPreparedASN1ElementInfo().hasDefaultValue() ;
+            return false;
+        }
+        else
+        if( field.isAnnotationPresent(ASN1Element.class) ) {
+            ASN1Element info = field.getAnnotation(ASN1Element.class);
+            if(info.isOptional() || info.hasDefaultValue())
+                return true;
+        }        
+        return false;
+    }
+    
+    public static boolean isOptional(ElementInfo elementInfo) {
+        boolean result = false;
+        if(elementInfo.hasPreparedInfo()) {
+            result = elementInfo.getPreparedASN1ElementInfo().isOptional() || elementInfo.getPreparedASN1ElementInfo().hasDefaultValue() ;
+        }
+        else
+            result= elementInfo.getASN1ElementInfo()!=null && elementInfo.getASN1ElementInfo().isOptional();
+        return result;
+    }
+    
+    
+    public static void checkForOptionalField(Field field, ElementInfo elementInfo) throws Exception {
+        if( isOptionalField(field, elementInfo) )
+                return;
+        throw new  IllegalArgumentException ("The mandatory field '" + field.getName() + "' does not have a value!");
+    }
+        
+        
+    public static boolean isSequenceSet(ElementInfo elementInfo) {
+        boolean isEqual = false;
+        if(elementInfo.hasPreparedInfo()) {
+            isEqual = ((ASN1SequenceMetadata)elementInfo.getPreparedInfo().getTypeMetadata()).isSet();
+        }
+        else {
+            ASN1Sequence seq = elementInfo.getAnnotatedClass().getAnnotation(ASN1Sequence.class);
+            isEqual = seq.isSet();
+        }        
+        return isEqual;
+    }
+
+    public static boolean isSequenceSetOf(ElementInfo elementInfo) {
+        boolean isEqual = false;
+        if(elementInfo.hasPreparedInfo()) {
+            isEqual = ((ASN1SequenceOfMetadata)elementInfo.getPreparedInfo().getTypeMetadata()).isSetOf();
+        }
+        else {
+            ASN1SequenceOf seq = elementInfo.getAnnotatedClass().getAnnotation(ASN1SequenceOf.class);
+            isEqual = seq.isSetOf();
+        }        
+        return isEqual;
+    }
+    
+    public static Method findMethodForField(String methodName, Class objectClass, Class paramClass ) throws NoSuchMethodException {
+        try {
+            return objectClass.getMethod(methodName, new Class[] {paramClass});
+        }
+        catch(NoSuchMethodException ex) {
+            Method[] methods = objectClass.getClass().getMethods();
+            for(Method method : methods) {
+                if(method.getName().equalsIgnoreCase(methodName)) {
+                    return method;
+                }
+            }
+            throw ex;
+        }
+    }      
+    
+    public static Method findSetterMethodForField(Field field, Class objectClass, Class paramClass) throws NoSuchMethodException {
+        String methodName = "set"+field.getName().toUpperCase().substring(0,1)+field.getName().substring(1);
+        return findMethodForField(methodName, objectClass, paramClass);
+    }
+    
+    public static Method findDoSelectMethodForField(Field field, Class objectClass, Class paramClass) throws NoSuchMethodException {
+        String methodName = "select"+field.getName().toUpperCase().substring(0,1)+field.getName().substring(1);
+        return findMethodForField(methodName, objectClass, paramClass);
+    }
+    
+    
+    public static Method findGetterMethodForField(Field field, Class objectClass) throws NoSuchMethodException {
+        String getterMethodName = "get"+field.getName().toUpperCase().substring(0,1)+field.getName().substring(1);
+        return objectClass.getMethod(getterMethodName,(java.lang.Class[])null);
+    }
+
+    public static Method findIsSelectedMethodForField(Field field, Class objectClass) throws NoSuchMethodException {
+        String methodName = "is"+field.getName().toUpperCase().substring(0,1)+field.getName().substring(1)+"Selected";
+        return objectClass.getMethod(methodName,(java.lang.Class[])null);
+    }    
+        
 }

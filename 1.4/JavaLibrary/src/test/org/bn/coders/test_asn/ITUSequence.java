@@ -16,7 +16,7 @@ import org.bn.types.*;
 
 
     @ASN1Sequence ( name = "ITUSequence", isSet = false )
-    public class ITUSequence {
+    public class ITUSequence implements IASN1PreparedElement {
             
     @ASN1String( name = "", 
         stringType =  UniversalTag.VisibleString , isUCS = false )
@@ -155,6 +155,12 @@ import org.bn.types.*;
         public void initWithDefaults() {
             
         }
+
+        private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(ITUSequence.class);
+        public IASN1PreparedElementData getPreparedData() {
+            return preparedData;
+        }
+
             
     }
             

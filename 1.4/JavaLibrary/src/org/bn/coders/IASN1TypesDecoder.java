@@ -20,6 +20,8 @@ package org.bn.coders;
 
 import java.io.InputStream;
 
+import java.lang.reflect.Field;
+
 public interface IASN1TypesDecoder {
     DecodedObject decodeTag(InputStream stream) throws Exception ;
     DecodedObject decodeClassType(DecodedObject decodedTag, Class objectClass, ElementInfo elementInfo, InputStream stream) throws Exception;
@@ -38,4 +40,7 @@ public interface IASN1TypesDecoder {
     DecodedObject decodeEnumItem(DecodedObject decodedTag, Class objectClass, Class enumClass, ElementInfo elementInfo, InputStream stream) throws Exception ;
     DecodedObject decodeBoxedType(DecodedObject decodedTag, Class objectClass, ElementInfo elementInfo, InputStream stream) throws Exception;
     DecodedObject decodeElement(DecodedObject decodedTag,Class objectClass, ElementInfo elementInfo, InputStream stream) throws Exception;
+    DecodedObject decodePreparedElement(DecodedObject decodedTag,Class objectClass, ElementInfo elementInfo, InputStream stream) throws Exception;
+    void invokeSetterMethodForField(Field field, Object object, Object param, ElementInfo elementInfo) throws Exception;
+    void invokeSelectMethodForField(Field field, Object object, Object param, ElementInfo elementInfo) throws Exception;
 }

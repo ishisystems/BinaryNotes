@@ -29,10 +29,11 @@
 
     <xsl:template name="sequenceDecl">
 	<xsl:param name="elementName"/>
+	<xsl:variable name="sequenceName"><xsl:call-template name="toUpperFirstLetter"><xsl:with-param name="input" select="$elementName"/></xsl:call-template>SequenceType</xsl:variable>        
             <xsl:if test="typeReference/isSequence = 'true'">
                 <xsl:for-each select="typeReference">
        @ASN1Sequence ( name = "<xsl:value-of select='$elementName'/>" , isSet = <xsl:choose><xsl:when test="isSequence = 'false'">true</xsl:when><xsl:otherwise>false</xsl:otherwise></xsl:choose> )
-       public class <xsl:call-template name="toUpperFirstLetter"><xsl:with-param name="input" select="$elementName"/></xsl:call-template>SequenceType {
+       public class <xsl:value-of select="$sequenceName"/> implements IASN1PreparedElement {
                 <xsl:call-template name="elements"/>
                 <xsl:call-template name="sequenceFunctions"/>
                 
@@ -40,8 +41,15 @@
         public void initWithDefaults() {
             <xsl:call-template name="elementDefaults"/>
         }
+
+        public IASN1PreparedElementData getPreparedData() {
+            return preparedData_<xsl:value-of select='$sequenceName'/>;
+        }
+
                 
        }
+       private static IASN1PreparedElementData preparedData_<xsl:value-of select='$sequenceName'/> = new ASN1PreparedElementData(<xsl:value-of select='$sequenceName'/>.class);
+
        
                 </xsl:for-each>
             </xsl:if>

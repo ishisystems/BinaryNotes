@@ -16,7 +16,7 @@ import org.bn.types.*;
 
 
     @ASN1Sequence ( name = "SetWithDefault", isSet = true )
-    public class SetWithDefault {
+    public class SetWithDefault implements IASN1PreparedElement {
             @ASN1Integer( name = "" )
     
         @ASN1Element ( name = "nodefault", isOptional =  false , hasTag =  true, tag = 2 , hasDefaultValue =  false  )
@@ -82,6 +82,12 @@ import org.bn.types.*;
         setDefault3(param_Default3);
     
         }
+
+        private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(SetWithDefault.class);
+        public IASN1PreparedElementData getPreparedData() {
+            return preparedData;
+        }
+
             
     }
             

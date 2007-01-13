@@ -16,7 +16,7 @@ import org.bn.types.*;
 
 
     @ASN1Sequence ( name = "SequenceWithDefault", isSet = false )
-    public class SequenceWithDefault {
+    public class SequenceWithDefault implements IASN1PreparedElement {
             @ASN1Integer( name = "" )
     
         @ASN1Element ( name = "nodefault", isOptional =  false , hasTag =  true, tag = 0 , hasDefaultValue =  false  )
@@ -39,7 +39,7 @@ import org.bn.types.*;
                 
   
        @ASN1Sequence ( name = "withSeqDef" , isSet = false )
-       public class WithSeqDefSequenceType {
+       public class WithSeqDefSequenceType implements IASN1PreparedElement {
                 
     @ASN1String( name = "", 
         stringType =  UniversalTag.PrintableString , isUCS = false )
@@ -86,8 +86,15 @@ import org.bn.types.*;
         public void initWithDefaults() {
             
         }
+
+        public IASN1PreparedElementData getPreparedData() {
+            return preparedData_WithSeqDefSequenceType;
+        }
+
                 
        }
+       private static IASN1PreparedElementData preparedData_WithSeqDefSequenceType = new ASN1PreparedElementData(WithSeqDefSequenceType.class);
+
        
                 
         @ASN1Element ( name = "withSeqDef", isOptional =  false , hasTag =  true, tag = 3 , hasDefaultValue =  true  )
@@ -328,6 +335,12 @@ import org.bn.types.*;
         setWithSeqOf3(param_WithSeqOf3);
     
         }
+
+        private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(SequenceWithDefault.class);
+        public IASN1PreparedElementData getPreparedData() {
+            return preparedData;
+        }
+
             
     }
             

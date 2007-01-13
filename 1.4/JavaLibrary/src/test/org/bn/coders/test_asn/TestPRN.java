@@ -16,7 +16,7 @@ import org.bn.types.*;
 
 
     @ASN1BoxedType ( name = "TestPRN" )
-    public class TestPRN {
+    public class TestPRN implements IASN1PreparedElement {
     
             @ASN1String( name = "TestPRN", 
         stringType =  UniversalTag.PrintableString , isUCS = false )
@@ -37,5 +37,15 @@ import org.bn.types.*;
             public String getValue() {
                 return this.value;
             }
+
+	    public void initWithDefaults() {
+	    }
+
+        private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(TestPRN.class);
+        public IASN1PreparedElementData getPreparedData() {
+            return preparedData;
+        }
+
+
     }
             

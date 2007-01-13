@@ -16,7 +16,7 @@ import org.bn.types.*;
 
 
     @ASN1Choice ( name = "BugPrimitive" )
-    public class BugPrimitive {
+    public class BugPrimitive implements IASN1PreparedElement {
             @ASN1Boolean( name = "" )
     
         @ASN1Element ( name = "bugBoolean", isOptional =  false , hasTag =  true, tag = 0 , hasDefaultValue =  false  )
@@ -72,5 +72,15 @@ import org.bn.types.*;
         }
         
   
+
+	    public void initWithDefaults() {
+	    }
+
+        private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(BugPrimitive.class);
+        public IASN1PreparedElementData getPreparedData() {
+            return preparedData;
+        }
+
+
     }
             

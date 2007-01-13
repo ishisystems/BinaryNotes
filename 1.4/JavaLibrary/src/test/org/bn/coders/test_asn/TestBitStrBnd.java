@@ -16,7 +16,7 @@ import org.bn.types.*;
 
 
     @ASN1BoxedType ( name = "TestBitStrBnd" )
-    public class TestBitStrBnd {
+    public class TestBitStrBnd implements IASN1PreparedElement {
     
             @ASN1BitString( name = "TestBitStrBnd" )
             @ASN1ValueRangeConstraint ( 
@@ -39,5 +39,14 @@ import org.bn.types.*;
             public BitString getValue() {
                 return this.value;
             }
+
+	    public void initWithDefaults() {
+	    }
+
+        private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(TestBitStrBnd.class);
+        public IASN1PreparedElementData getPreparedData() {
+            return preparedData;
+        }
+
     }
             

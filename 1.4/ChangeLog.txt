@@ -5,8 +5,13 @@ ChangeLog
 							[!] 		- Important warning or note
 							{<component>}	- Component/Group that changed
 
+1.4.0	{all}		[!] Added prepared metadata feature for generated classes 
+			    by BNComplier and highly improved performance (Reflection API is minimized). 			    
+			    Older style only with metadata is supported too.
+1.4.0	{lib}		[*] Fixed incorrect constraint checks when BER SequenceOf decoding
 1.4.0	{lib]		[*] Fixed incorrect long tag decode for BER
-1.4.0	{lib}		[*] Fixed incorrect BER decoding BoxedTypes with specified tag definitions (Thanks to Chris Peterson)
+1.4.0	{lib}		[*] Fixed incorrect BER decoding BoxedTypes 
+			    with specified tag definitions (Thanks to Chris Peterson)
 1.4.0	{lib}		[*] Fixed decoding octet string without specified attribute. (Thanks to Chris Peterson).
 1.4.0	{comp}		[+] Removed JAXB reference implementation from distrib (already in Java6)
 1.4.0	{all}		[+] Migrated to Java 6 

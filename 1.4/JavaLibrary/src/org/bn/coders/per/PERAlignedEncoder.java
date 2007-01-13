@@ -26,19 +26,15 @@ import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Map;
 import java.util.SortedMap;
-import java.util.TreeMap;
-import org.bn.annotations.ASN1Element;
-import org.bn.annotations.ASN1EnumItem;
-import org.bn.annotations.ASN1Sequence;
-import org.bn.annotations.ASN1String;
-import org.bn.annotations.constraints.ASN1SizeConstraint;
-import org.bn.annotations.constraints.ASN1ValueRangeConstraint;
-import org.bn.coders.CoderUtils;
-import org.bn.coders.ElementInfo;
-import org.bn.coders.Encoder;
-import org.bn.coders.UniversalTag;
-import org.bn.types.BitString;
-import org.bn.utils.BitArrayOutputStream;
+import org.bn.annotations.*;
+import org.bn.annotations.constraints.*;
+import org.bn.coders.*;
+import org.bn.metadata.ASN1SequenceOfMetadata;
+import org.bn.metadata.constraints.ASN1SizeConstraintMetadata;
+import org.bn.metadata.constraints.ASN1ValueRangeConstraintMetadata;
+import org.bn.metadata.constraints.IASN1ConstraintMetadata;
+import org.bn.types.*;
+import org.bn.utils.*;
 
 public class PERAlignedEncoder<T> extends Encoder<T> {
 
@@ -252,23 +248,40 @@ public class PERAlignedEncoder<T> extends Encoder<T> {
     public int encodeInteger(Object object, OutputStream stream, 
                                 ElementInfo elementInfo) throws Exception {
         int result = 0;
+        boolean hasConstraint = false;
+        long min = 0, max = 0;
+        
+        if(elementInfo.hasPreparedInfo()) {
+            if(elementInfo.getPreparedInfo().hasConstraint() 
+                && elementInfo.getPreparedInfo().getConstraint() instanceof ASN1ValueRangeConstraintMetadata) {
+                IASN1ConstraintMetadata constraint = elementInfo.getPreparedInfo().getConstraint();
+                hasConstraint  = true;
+                min = ((ASN1ValueRangeConstraintMetadata)constraint).getMin();
+                max = ((ASN1ValueRangeConstraintMetadata)constraint).getMax();
+            }
+        }
+        else
+        if(elementInfo.getAnnotatedClass().isAnnotationPresent(ASN1ValueRangeConstraint.class)) {
+            hasConstraint  = true;
+            ASN1ValueRangeConstraint constraint = elementInfo.getAnnotatedClass().getAnnotation(ASN1ValueRangeConstraint.class);            
+            min = constraint.min();
+            max = constraint.max();
+        }
         
         if(object instanceof Integer) {
             Integer value = (Integer) object;
             BitArrayOutputStream bitStream = (BitArrayOutputStream)stream;
-            if(elementInfo.getAnnotatedClass().isAnnotationPresent(ASN1ValueRangeConstraint.class)) {
-                ASN1ValueRangeConstraint constraint = elementInfo.getAnnotatedClass().getAnnotation(ASN1ValueRangeConstraint.class);
-                result += encodeConstraintNumber(value, constraint.min(), constraint.max(), bitStream);
+            if(hasConstraint) {
+                result += encodeConstraintNumber(value, (int)min, (int)max, bitStream);
             }
             else
-                result += encodeUnconstraintNumber(value, bitStream);        
+                result += encodeUnconstraintNumber(value, bitStream);                              
         }
         else {
             Long value = (Long) object;
             BitArrayOutputStream bitStream = (BitArrayOutputStream)stream;
-            if(elementInfo.getAnnotatedClass().isAnnotationPresent(ASN1ValueRangeConstraint.class)) {
-                ASN1ValueRangeConstraint constraint = elementInfo.getAnnotatedClass().getAnnotation(ASN1ValueRangeConstraint.class);
-                result += encodeConstraintNumber(value, constraint.min(), constraint.max(), bitStream);
+            if(hasConstraint) {
+                result += encodeConstraintNumber(value, min, max, bitStream);
             }
             else
                 result += encodeUnconstraintNumber(value, bitStream);                  
@@ -335,7 +348,25 @@ public class PERAlignedEncoder<T> extends Encoder<T> {
     public int encodeLength(int value, ElementInfo elementInfo, OutputStream stream) throws Exception {
         int resultSize = 0;
         BitArrayOutputStream bitStream = (BitArrayOutputStream)stream;
-        CoderUtils.checkConstraints(value ,elementInfo);        
+        CoderUtils.checkConstraints(value ,elementInfo);
+        if(elementInfo.hasPreparedInfo()) {
+            if(elementInfo.getPreparedInfo().hasConstraint()) {
+                IASN1ConstraintMetadata constraint = elementInfo.getPreparedInfo().getConstraint();
+                if(constraint instanceof ASN1ValueRangeConstraintMetadata) {
+                    resultSize += encodeConstraintLengthDeterminant(value, 
+                        (int)((ASN1ValueRangeConstraintMetadata)constraint).getMin(), 
+                        (int)((ASN1ValueRangeConstraintMetadata)constraint).getMax(), 
+                        bitStream
+                    );                    
+                }
+                else 
+                if(constraint instanceof ASN1SizeConstraintMetadata) {                    
+                }                
+            }
+            else               
+                resultSize += encodeLengthDeterminant(value, bitStream);       
+        }
+        else
         if(elementInfo.getAnnotatedClass().isAnnotationPresent(ASN1ValueRangeConstraint.class)) {
             ASN1ValueRangeConstraint constraint = elementInfo.getAnnotatedClass().getAnnotation(ASN1ValueRangeConstraint.class);
             resultSize += encodeConstraintLengthDeterminant(value, (int)constraint.min(), (int)constraint.max(), bitStream);
@@ -351,13 +382,21 @@ public class PERAlignedEncoder<T> extends Encoder<T> {
     }
     
     
-    protected int encodeSequencePreamble(Object object,Field[] fields, OutputStream stream) throws Exception {
+    protected int encodeSequencePreamble(Object object, Field[] fields, ElementInfo elementInfo, OutputStream stream) throws Exception {
         int resultBitSize = 0;
+        ElementInfo info = new ElementInfo();
+        int fieldIdx = 0;
         for ( Field field : fields) {
-            if(isOptionalField(field)) {
-                Object invokeObjResult = invokeGetterMethodForField(field,object);
-                ((BitArrayOutputStream)stream).writeBit( invokeObjResult !=null);
-                resultBitSize+=1;
+            if(!field.isSynthetic()) {        
+                if(elementInfo.hasPreparedInfo())
+                    info.setPreparedInfo(elementInfo.getPreparedInfo().getFieldMetadata(fieldIdx));
+            
+                if(CoderUtils.isOptionalField(field,info)) {
+                    Object invokeObjResult = invokeGetterMethodForField(field,object, info);
+                    ((BitArrayOutputStream)stream).writeBit( invokeObjResult !=null);
+                    resultBitSize+=1;
+                }
+                fieldIdx++;
             }
         }
         doAlign(stream);
@@ -367,9 +406,8 @@ public class PERAlignedEncoder<T> extends Encoder<T> {
     public int encodeSequence(Object object, OutputStream stream, 
                                  ElementInfo elementInfo) throws Exception {        
         int resultSize = 0;
-        ASN1Sequence seqInfo = elementInfo.getAnnotatedClass().getAnnotation(ASN1Sequence.class);
-        if(!seqInfo.isSet()) {
-            resultSize += encodeSequencePreamble(object, object.getClass().getDeclaredFields(), stream);
+        if(!CoderUtils.isSequenceSet(elementInfo)) {
+            resultSize += encodeSequencePreamble(object, elementInfo.getFields( object.getClass()), elementInfo, stream);
             resultSize += super.encodeSequence(object,stream,elementInfo);
         }
         else {        
@@ -378,8 +416,8 @@ public class PERAlignedEncoder<T> extends Encoder<T> {
         return resultSize;
     }    
     
-    protected int encodeChoicePreamble(Object object, OutputStream stream, int elementIndex) throws Exception {
-        return encodeConstraintNumber(elementIndex,1, PERCoderUtils.getRealFieldsCount(object.getClass()), (BitArrayOutputStream)stream);
+    protected int encodeChoicePreamble(Object object, OutputStream stream, int elementIndex, ElementInfo elementInfo) throws Exception {
+        return encodeConstraintNumber(elementIndex,1, PERCoderUtils.getRealFieldsCount(object.getClass(), elementInfo), (BitArrayOutputStream)stream);
     }
 
     /**
@@ -403,25 +441,31 @@ public class PERAlignedEncoder<T> extends Encoder<T> {
         doAlign(stream);
         ElementInfo info = null;
         int elementIndex = 0;
+        int fieldIdx = 0;
         for ( Field field : object.getClass().getDeclaredFields() ) {
-            if(!field.isSynthetic()) {
+            if(!field.isSynthetic()) {                                
                 elementIndex++;
-                if(isSelectedChoiceItem(field,object)) {
-                    //selectedField = field;
-                    //Object invokeObjResult = invokeGetterMethodForField(field,object);
-                    info = new ElementInfo();
-                    info.setAnnotatedClass(field);
-                    //info.setASN1ElementInfo(field.getAnnotation(ASN1Element.class));
-                     info.setASN1ElementInfoForClass(field);
+                info = new ElementInfo();
+                info.setAnnotatedClass(field);
+                if(elementInfo.hasPreparedInfo()) {
+                    info.setPreparedInfo(elementInfo.getPreparedInfo().getFieldMetadata(fieldIdx));
+                }
+                else {
+                    info.setASN1ElementInfoForClass(field);
+                }                
+                if(isSelectedChoiceItem(field,object, info)) {
                     break;
-                }            
+                }
+                else
+                    info = null;
+                fieldIdx++;
             }
         }
         if(info==null) {
             throw new  IllegalArgumentException ("The choice '" + object.toString() + "' does not have a selected item!");
         }        
-        Object invokeObjResult = invokeGetterMethodForField((Field)info.getAnnotatedClass(),object);
-        resultSize+=encodeChoicePreamble(object,stream,elementIndex);
+        Object invokeObjResult = invokeGetterMethodForField((Field)info.getAnnotatedClass(),object, info);
+        resultSize+=encodeChoicePreamble(object,stream, elementIndex, elementInfo);
         resultSize+=encodeClassType(invokeObjResult, stream, info);
         return resultSize;
     }    
@@ -533,6 +577,11 @@ public class PERAlignedEncoder<T> extends Encoder<T> {
             ElementInfo info = new ElementInfo();
             info.setAnnotatedClass(obj.getClass());
             info.setParentAnnotated(elementInfo.getAnnotatedClass());
+            if(elementInfo.hasPreparedInfo()) {
+                ASN1SequenceOfMetadata seqOfMeta = (ASN1SequenceOfMetadata)elementInfo.getPreparedInfo().getTypeMetadata();
+                info.setPreparedInfo( seqOfMeta.getItemClassMetadata() );
+            }
+            
             resultSize+=encodeClassType(obj,stream,info);
         }
         return resultSize;
@@ -550,12 +599,20 @@ public class PERAlignedEncoder<T> extends Encoder<T> {
     protected int encodeSet(Object object, OutputStream stream, 
                             ElementInfo elementInfo) throws Exception {
         int resultSize = 0;
-        SortedMap<Integer,Field> fieldOrder = CoderUtils.getSetOrder(object);
-        Field[] fields = new Field[0];
-        resultSize += encodeSequencePreamble(object, fieldOrder.values().toArray(fields), stream);        
+        Field[] fields = null;
+        if(elementInfo.hasPreparedInfo()) {
+            fields = elementInfo.getPreparedInfo().getFields();
+        }
+        else {
+            SortedMap<Integer,Field> fieldOrder = CoderUtils.getSetOrder(object.getClass());
+            fields = new Field[0];
+            fields = fieldOrder.values().toArray(fields);
+        }
+        resultSize += encodeSequencePreamble(object, fields, elementInfo, stream);        
         
-        for ( Map.Entry<Integer, Field> item : fieldOrder.entrySet()) {
-            resultSize+=encodeSequenceField(object, item.getValue(), stream, elementInfo);
+        int fieldIdx = 0;
+        for(int i=0;i < fields.length; i++) {
+            resultSize+= encodeSequenceField(object, fieldIdx++, fields[i], stream, elementInfo);
         }
         return resultSize;
     }

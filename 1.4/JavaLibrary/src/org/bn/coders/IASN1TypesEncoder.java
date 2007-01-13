@@ -20,6 +20,8 @@ package org.bn.coders;
 
 import java.io.OutputStream;
 
+import java.lang.reflect.Field;
+
 public interface IASN1TypesEncoder {
     int encodeClassType(Object object, OutputStream stream, ElementInfo elementInfo) throws Exception;
     int encodeSequence(Object object, OutputStream stream, ElementInfo elementInfo) throws Exception;
@@ -37,4 +39,7 @@ public interface IASN1TypesEncoder {
     int encodeSequenceOf(Object object, OutputStream steam, ElementInfo elementInfo) throws Exception ;   
     int encodeElement(Object object, OutputStream stream, ElementInfo elementInfo) throws Exception;
     int encodeBoxedType(Object object, OutputStream stream, ElementInfo elementInfo) throws Exception;
+    int encodePreparedElement(Object object, OutputStream stream, ElementInfo elementInfo) throws Exception;
+    Object invokeGetterMethodForField(Field field, Object object, ElementInfo elementInfo) throws Exception;
+    boolean invokeSelectedMethodForField(Field field, Object object, ElementInfo elementInfo) throws Exception;
 }

@@ -26,6 +26,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.bn.annotations.ASN1Element;
+import org.bn.coders.ElementInfo;
 
 public class PERCoderUtils {
     public static int getMaxBitLength(long value) {
@@ -37,11 +38,16 @@ public class PERCoderUtils {
         return bitCnt;
     }    
     
-    public static int getRealFieldsCount(Class objectClass) {
-        int result = 0;        
-        for(Field item: objectClass.getDeclaredFields()) {
-            if(!item.isSynthetic())
-                result++;
+    public static int getRealFieldsCount(Class objectClass, ElementInfo info) {
+        int result = 0;            
+        if(info.hasPreparedInfo()) {
+            result = info.getPreparedInfo().getFields().length;
+        }
+        else {
+            for(Field item: objectClass.getDeclaredFields()) {
+                if(!item.isSynthetic())
+                    result++;
+            }
         }
         return result;
     }
