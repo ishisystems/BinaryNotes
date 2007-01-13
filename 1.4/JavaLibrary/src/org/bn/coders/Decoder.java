@@ -163,10 +163,9 @@ public abstract class Decoder implements IDecoder, IASN1TypesDecoder {
             elementDataSave = elementInfo.getPreparedASN1ElementInfo();
         }        
         elementInfo.setPreparedInfo(preparedInstance.getPreparedData());
-        elementInfo.setPreparedASN1ElementInfo(preparedInstance.getPreparedData().getASN1ElementInfo());
         if(elementDataSave!=null)
             elementInfo.setPreparedASN1ElementInfo(elementDataSave);
-        DecodedObject result= elementInfo.getPreparedInfo().getTypeMetadata().decode(
+        DecodedObject result= preparedInstance.getPreparedData().getTypeMetadata().decode(
             this, decodedTag, objectClass, elementInfo, stream
         );    
         elementInfo.setPreparedInfo(saveInfo);

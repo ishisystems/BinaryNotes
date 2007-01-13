@@ -170,7 +170,7 @@ public abstract class Encoder<T> implements IEncoder<T>, IASN1TypesEncoder {
         //elementInfo.setPreparedASN1ElementInfo(preparedInstance.getPreparedData().getASN1ElementInfo());
         if(elementDataSave!=null)
             elementInfo.setPreparedASN1ElementInfo(elementDataSave);
-        return elementInfo.getPreparedInfo().getTypeMetadata().encode(
+        return preparedInstance.getPreparedData().getTypeMetadata().encode(
             this, object, stream, elementInfo
         );        
     }
