@@ -30,7 +30,7 @@ import org.bn.annotations.constraints.*;
 import org.bn.metadata.*;
 import org.bn.metadata.constraints.*;
 
-public class ASN1PreparedElementData implements IASN1PreparedElementData {
+public final class ASN1PreparedElementData implements IASN1PreparedElementData {
     private ASN1Metadata typeMeta;
     private ASN1ElementMetadata elementInfo;
     
