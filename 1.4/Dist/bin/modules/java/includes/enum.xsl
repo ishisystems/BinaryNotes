@@ -38,6 +38,7 @@
         <xsltc:output file="{$outputDirectory}/{$enumName}.java">
             <xsl:call-template name="header"/>
 
+    @ASN1PreparedElement
     @ASN1Enum (
         name = "<xsl:value-of select='$enumName'/>"
     )

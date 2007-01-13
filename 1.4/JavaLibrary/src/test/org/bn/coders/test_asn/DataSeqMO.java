@@ -15,6 +15,7 @@ import org.bn.types.*;
 
 
 
+    @ASN1PreparedElement
     @ASN1Sequence ( name = "DataSeqMO", isSet = false )
     public class DataSeqMO implements IASN1PreparedElement {
             

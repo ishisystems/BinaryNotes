@@ -15,6 +15,7 @@ import org.bn.types.*;
 
 
 
+    @ASN1PreparedElement
     @ASN1BoxedType ( name = "DataSeqArray" )
     public class DataSeqArray implements IASN1PreparedElement {
                 

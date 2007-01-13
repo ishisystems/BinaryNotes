@@ -45,7 +45,7 @@ public abstract class Decoder implements IDecoder, IASN1TypesDecoder {
         Object objectInstance = objectClass.newInstance();
         
         if(objectInstance instanceof IASN1PreparedElement) {
-            elemInfo.setPreparedInstance((IASN1PreparedElement)objectInstance);
+            elemInfo.setPreparedInstance(objectInstance);
             return (T)decodePreparedElement(decodeTag(stream), objectClass,elemInfo, stream).getValue();        
         }
         else {
@@ -54,12 +54,12 @@ public abstract class Decoder implements IDecoder, IASN1TypesDecoder {
         }        
     }
     
-    public DecodedObject decodeClassType(DecodedObject decodedTag, Class objectClass, ElementInfo elementInfo, InputStream stream) throws Exception {       
+    public DecodedObject decodeClassType(DecodedObject decodedTag, Class objectClass, ElementInfo elementInfo, InputStream stream) throws Exception {
         if(CoderUtils.isImplements(objectClass,IASN1PreparedElement.class)) {
             return decodePreparedElement(decodedTag, objectClass,elementInfo, stream);
         }
-        else
-        if(elementInfo.hasPreparedInfo()) {
+        else 
+        if(elementInfo.hasPreparedInfo()) {            
             return elementInfo.getPreparedInfo().getTypeMetadata().decode(
                 this, decodedTag, objectClass, elementInfo, stream
             );    
@@ -279,15 +279,17 @@ public abstract class Decoder implements IDecoder, IASN1TypesDecoder {
     protected DecodedObject decodeSequenceField(DecodedObject fieldTag, Object sequenceObj, int fieldIdx, Field field, InputStream stream, ElementInfo elementInfo, boolean optionalCheck) throws  Exception {
         ElementInfo info = new ElementInfo();
         info.setAnnotatedClass(field);        
-        if(field.getType().isMemberClass()) {
-            info.setParentObject(sequenceObj);
-        }
+        
         info.setGenericInfo(field.getGenericType());
         if(elementInfo.hasPreparedInfo()) {
             info.setPreparedInfo(elementInfo.getPreparedInfo().getFieldMetadata(fieldIdx));
         }
         else
             info.setASN1ElementInfoForClass(field);
+            
+        if(CoderUtils.isMemberClass(field.getType(),info)) {
+            info.setParentObject(sequenceObj);
+        }            
             
         if(CoderUtils.isNullField(field,info)) {
             return decodeNull(fieldTag,field.getType(),info, stream);
@@ -321,7 +323,8 @@ public abstract class Decoder implements IDecoder, IASN1TypesDecoder {
                 }
                 else
                     info.setASN1ElementInfoForClass(field);
-                if(field.getType().isMemberClass()) {
+                if(CoderUtils.isMemberClass(field.getType(),info)) {
+                //if(field.getType().isMemberClass()) {
                     info.setParentObject(choice);
                 }                
                 info.setGenericInfo(field.getGenericType());
@@ -390,7 +393,8 @@ public abstract class Decoder implements IDecoder, IASN1TypesDecoder {
             field = objectClass.getDeclaredField("value");
         elementInfo.setAnnotatedClass(field);
         elementInfo.setGenericInfo(field.getGenericType());
-        if(field.getType().isMemberClass()) {
+        //if(field.getType().isMemberClass()) {
+        if(CoderUtils.isMemberClass(field.getType(),elementInfo)) {
             elementInfo.setParentObject(resultObj);
         }
         

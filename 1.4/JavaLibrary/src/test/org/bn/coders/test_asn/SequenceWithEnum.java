@@ -15,6 +15,7 @@ import org.bn.types.*;
 
 
 
+    @ASN1PreparedElement
     @ASN1Sequence ( name = "SequenceWithEnum", isSet = false )
     public class SequenceWithEnum implements IASN1PreparedElement {
             

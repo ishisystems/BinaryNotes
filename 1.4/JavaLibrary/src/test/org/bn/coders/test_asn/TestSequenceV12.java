@@ -15,6 +15,7 @@ import org.bn.types.*;
 
 
 
+    @ASN1PreparedElement
     @ASN1Sequence ( name = "TestSequenceV12", isSet = false )
     public class TestSequenceV12 implements IASN1PreparedElement {
             

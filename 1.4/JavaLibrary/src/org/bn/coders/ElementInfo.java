@@ -32,7 +32,7 @@ public final class ElementInfo {
     private Type genericInfo;
     private Object parentObject;
     private IASN1PreparedElementData preparedInfo;
-    private IASN1PreparedElement preparedInstance;
+    private Object preparedInstance;
     private ASN1ElementMetadata preparedElementMetadata;
 
     public ElementInfo() {            
@@ -93,17 +93,15 @@ public final class ElementInfo {
         }       
     }
     
-    
-    
     public boolean hasPreparedInfo() {
         return this.preparedInfo !=null;
     }
 
-    public IASN1PreparedElement getPreparedInstance() {
+    public Object getPreparedInstance() {
         return preparedInstance;
     }
 
-    public void setPreparedInstance(IASN1PreparedElement preparedInstance) {
+    public void setPreparedInstance(Object preparedInstance) {
         this.preparedInstance = preparedInstance;
     }
     

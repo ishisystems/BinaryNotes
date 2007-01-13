@@ -15,6 +15,7 @@ import org.bn.types.*;
 
 
 
+    @ASN1PreparedElement
     @ASN1Choice ( name = "BugPrimitive" )
     public class BugPrimitive implements IASN1PreparedElement {
             @ASN1Boolean( name = "" )

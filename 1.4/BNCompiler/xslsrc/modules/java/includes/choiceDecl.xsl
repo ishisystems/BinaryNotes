@@ -33,7 +33,7 @@
             <xsl:if test="typeReference/isChoice = 'true'">
                 <xsl:for-each select="typeReference">
         
-
+    @ASN1PreparedElement
     @ASN1Choice ( name = "<xsl:value-of select='$elementName'/>" )
     public class <xsl:value-of select="$choiceName"/> implements IASN1PreparedElement {
             <xsl:call-template name="elements"/>

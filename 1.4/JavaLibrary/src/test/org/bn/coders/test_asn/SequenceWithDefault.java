@@ -15,6 +15,7 @@ import org.bn.types.*;
 
 
 
+    @ASN1PreparedElement
     @ASN1Sequence ( name = "SequenceWithDefault", isSet = false )
     public class SequenceWithDefault implements IASN1PreparedElement {
             @ASN1Integer( name = "" )
@@ -38,6 +39,8 @@ import org.bn.types.*;
 	private Long withIntDef = null;
                 
   
+
+       @ASN1PreparedElement
        @ASN1Sequence ( name = "withSeqDef" , isSet = false )
        public class WithSeqDefSequenceType implements IASN1PreparedElement {
                 

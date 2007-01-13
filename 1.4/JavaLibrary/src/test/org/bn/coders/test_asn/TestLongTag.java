@@ -15,6 +15,7 @@ import org.bn.types.*;
 
 
 
+    @ASN1PreparedElement
     @ASN1BoxedType ( name = "TestLongTag" )
     public class TestLongTag implements IASN1PreparedElement {
                 

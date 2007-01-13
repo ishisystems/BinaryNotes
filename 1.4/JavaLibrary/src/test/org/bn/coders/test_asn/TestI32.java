@@ -15,6 +15,7 @@ import org.bn.types.*;
 
 
 
+    @ASN1PreparedElement
     @ASN1BoxedType ( name = "TestI32" )
     public class TestI32 implements IASN1PreparedElement {
     

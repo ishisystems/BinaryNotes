@@ -15,9 +15,12 @@ import org.bn.types.*;
 
 
 
+    @ASN1PreparedElement
     @ASN1Sequence ( name = "TestSequenceWithNonames", isSet = false )
     public class TestSequenceWithNonames implements IASN1PreparedElement {
             
+
+       @ASN1PreparedElement
        @ASN1Sequence ( name = "seq" , isSet = false )
        public class SeqSequenceType implements IASN1PreparedElement {
                 @ASN1Integer( name = "" )
@@ -65,7 +68,7 @@ import org.bn.types.*;
                 
   
         
-
+    @ASN1PreparedElement
     @ASN1Choice ( name = "ch" )
     public class ChChoiceType implements IASN1PreparedElement {
             @ASN1Integer( name = "" )
@@ -141,6 +144,8 @@ import org.bn.types.*;
 	private ChChoiceType ch = null;
                 
   
+
+       @ASN1PreparedElement
        @ASN1Sequence ( name = "" , isSet = false )
        public class SequenceType implements IASN1PreparedElement {
                 @ASN1Integer( name = "" )

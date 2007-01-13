@@ -15,6 +15,7 @@ import org.bn.types.*;
 
 
 
+    @ASN1PreparedElement
     @ASN1BoxedType ( name = "TaggedNullSequence" )
     public class TaggedNullSequence implements IASN1PreparedElement {
                 

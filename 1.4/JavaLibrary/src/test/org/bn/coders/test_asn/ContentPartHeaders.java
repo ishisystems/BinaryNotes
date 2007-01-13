@@ -15,6 +15,7 @@ import org.bn.types.*;
 
 
 
+    @ASN1PreparedElement
     @ASN1BoxedType ( name = "ContentPartHeaders" )
     public class ContentPartHeaders implements IASN1PreparedElement {
                 

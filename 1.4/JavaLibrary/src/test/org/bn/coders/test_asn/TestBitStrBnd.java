@@ -15,6 +15,7 @@ import org.bn.types.*;
 
 
 
+    @ASN1PreparedElement
     @ASN1BoxedType ( name = "TestBitStrBnd" )
     public class TestBitStrBnd implements IASN1PreparedElement {
     

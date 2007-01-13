@@ -15,6 +15,7 @@ import org.bn.types.*;
 
 
 
+    @ASN1PreparedElement
     @ASN1BoxedType ( name = "BugEnum" )
     public class BugEnum implements IASN1PreparedElement {
     

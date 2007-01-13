@@ -35,6 +35,7 @@
         <xsltc:output file="{$outputDirectory}/{$boxedName}.java">
             <xsl:call-template name="header"/>
 
+    @ASN1PreparedElement
     @ASN1BoxedType ( name = "<xsl:value-of select='$boxedName'/>" )
     public class <xsl:value-of select="$boxedName"/> implements IASN1PreparedElement {
     

@@ -15,10 +15,13 @@ import org.bn.types.*;
 
 
 
+    @ASN1PreparedElement
     @ASN1BoxedType ( name = "TaggedSeqInSeq" )
     public class TaggedSeqInSeq implements IASN1PreparedElement {
                 
         
+
+       @ASN1PreparedElement
        @ASN1Sequence ( name = "TaggedSeqInSeq" , isSet = false )
        public class TaggedSeqInSeqSequenceType implements IASN1PreparedElement {
                 

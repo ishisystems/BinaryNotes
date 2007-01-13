@@ -15,6 +15,7 @@ import org.bn.types.*;
 
 
 
+    @ASN1PreparedElement
     @ASN1Sequence ( name = "PlainParamsMap", isSet = false )
     public class PlainParamsMap implements IASN1PreparedElement {
             

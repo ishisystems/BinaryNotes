@@ -36,6 +36,7 @@
             <xsl:call-template name="header"/>
 
     <xsl:call-template name="nullDecl"/>
+    @ASN1PreparedElement
     public class <xsl:value-of select="$boxedName"/> implements IASN1PreparedElement {                    
 	    public void initWithDefaults() {
 	    }

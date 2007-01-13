@@ -15,6 +15,7 @@ import org.bn.types.*;
 
 
 
+    @ASN1PreparedElement
     @ASN1BoxedType ( name = "TestUnicodeStr" )
     public class TestUnicodeStr implements IASN1PreparedElement {
     

@@ -15,6 +15,7 @@ import org.bn.types.*;
 
 
 
+    @ASN1PreparedElement
     @ASN1Sequence ( name = "ITUSequence", isSet = false )
     public class ITUSequence implements IASN1PreparedElement {
             

@@ -15,6 +15,7 @@ import org.bn.types.*;
 
 
 
+    @ASN1PreparedElement
     @ASN1Sequence ( name = "BugSequenceType", isSet = false )
     public class BugSequenceType implements IASN1PreparedElement {
             @ASN1Boolean( name = "" )

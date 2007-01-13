@@ -32,6 +32,8 @@
 	<xsl:variable name="sequenceName"><xsl:call-template name="toUpperFirstLetter"><xsl:with-param name="input" select="$elementName"/></xsl:call-template>SequenceType</xsl:variable>        
             <xsl:if test="typeReference/isSequence = 'true'">
                 <xsl:for-each select="typeReference">
+
+       @ASN1PreparedElement
        @ASN1Sequence ( name = "<xsl:value-of select='$elementName'/>" , isSet = <xsl:choose><xsl:when test="isSequence = 'false'">true</xsl:when><xsl:otherwise>false</xsl:otherwise></xsl:choose> )
        public class <xsl:value-of select="$sequenceName"/> implements IASN1PreparedElement {
                 <xsl:call-template name="elements"/>

@@ -15,6 +15,7 @@ import org.bn.types.*;
 
 
 
+    @ASN1PreparedElement
     @ASN1BoxedType ( name = "DataArray" )
     public class DataArray implements IASN1PreparedElement {
                 

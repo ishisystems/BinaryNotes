@@ -15,6 +15,7 @@ import org.bn.types.*;
 
 
 
+    @ASN1PreparedElement
     @ASN1Sequence ( name = "ContentPartHeader", isSet = false )
     public class ContentPartHeader implements IASN1PreparedElement {
             

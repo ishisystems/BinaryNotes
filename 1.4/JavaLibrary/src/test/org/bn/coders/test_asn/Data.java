@@ -15,6 +15,7 @@ import org.bn.types.*;
 
 
 
+    @ASN1PreparedElement
     @ASN1Choice ( name = "Data" )
     public class Data implements IASN1PreparedElement {
             

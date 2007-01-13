@@ -15,6 +15,7 @@ import org.bn.types.*;
 
 
 
+    @ASN1PreparedElement
     @ASN1Choice ( name = "BugValueType" )
     public class BugValueType implements IASN1PreparedElement {
             

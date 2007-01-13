@@ -16,6 +16,7 @@ import org.bn.types.*;
 
         @ASN1Null ( name = "NullSequence" ) 
     
+    @ASN1PreparedElement
     public class NullSequence implements IASN1PreparedElement {                    
 	    public void initWithDefaults() {
 	    }

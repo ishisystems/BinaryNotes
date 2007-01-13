@@ -15,6 +15,7 @@ import org.bn.types.*;
 
 
 
+    @ASN1PreparedElement
     @ASN1BoxedType ( name = "TestOCT" )
     public class TestOCT implements IASN1PreparedElement {
     

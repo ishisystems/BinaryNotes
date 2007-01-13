@@ -15,6 +15,7 @@ import org.bn.types.*;
 
 
 
+    @ASN1PreparedElement
     @ASN1BoxedType ( name = "ITUType2" )
     public class ITUType2 implements IASN1PreparedElement {
                 

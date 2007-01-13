@@ -28,6 +28,7 @@ import java.util.TreeMap;
 import org.bn.annotations.ASN1Any;
 import org.bn.annotations.ASN1Element;
 import org.bn.annotations.ASN1Null;
+import org.bn.annotations.ASN1PreparedElement;
 import org.bn.annotations.ASN1Sequence;
 import org.bn.annotations.ASN1SequenceOf;
 import org.bn.annotations.ASN1String;
@@ -205,13 +206,14 @@ public class CoderUtils {
         }
     }
     
-    public static boolean isImplements(Class objectClass, Class interfaceClass) {
-        for(Class item: objectClass.getInterfaces()) {
+    public static boolean isImplements(Class objectClass, Class interfaceClass) {        
+        return objectClass.isAnnotationPresent(ASN1PreparedElement.class);
+        /*for(Class item: objectClass.getInterfaces()) {
             if(item.equals(interfaceClass)) {
                 return true;
             }
         }
-        return false;
+        return false;*/
     }
     
     public static boolean isAnyField(Field field, ElementInfo elementInfo) {
@@ -328,5 +330,13 @@ public class CoderUtils {
         String methodName = "is"+field.getName().toUpperCase().substring(0,1)+field.getName().substring(1)+"Selected";
         return objectClass.getMethod(methodName,(java.lang.Class[])null);
     }    
-        
+    
+    public static boolean isMemberClass(Class objectClass, ElementInfo elementInfo) {
+        //return objectClass.isMemberClass();
+        if(elementInfo.hasPreparedInfo()) {
+            return elementInfo.getPreparedInfo().isMemberClass();
+        }
+        else
+            return objectClass.isMemberClass();
+    }
 }

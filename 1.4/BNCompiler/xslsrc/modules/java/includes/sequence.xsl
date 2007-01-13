@@ -41,6 +41,7 @@
         <xsltc:output file="{$outputDirectory}/{$sequenceName}.java">
             <xsl:call-template name="header"/>
 
+    @ASN1PreparedElement
     @ASN1Sequence ( name = "<xsl:value-of select='$sequenceName'/>", isSet = <xsl:choose><xsl:when test="isSequence = 'false'">true</xsl:when><xsl:otherwise>false</xsl:otherwise></xsl:choose> )
     public class <xsl:value-of select="$sequenceName"/> implements IASN1PreparedElement {
             <xsl:call-template name="elements"/>            

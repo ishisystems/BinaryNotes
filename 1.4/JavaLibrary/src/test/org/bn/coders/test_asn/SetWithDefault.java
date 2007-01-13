@@ -15,6 +15,7 @@ import org.bn.types.*;
 
 
 
+    @ASN1PreparedElement
     @ASN1Sequence ( name = "SetWithDefault", isSet = true )
     public class SetWithDefault implements IASN1PreparedElement {
             @ASN1Integer( name = "" )

@@ -15,6 +15,7 @@ import org.bn.types.*;
 
 
 
+    @ASN1PreparedElement
     @ASN1Sequence ( name = "TestRecursiveDefinetion", isSet = false )
     public class TestRecursiveDefinetion implements IASN1PreparedElement {
             

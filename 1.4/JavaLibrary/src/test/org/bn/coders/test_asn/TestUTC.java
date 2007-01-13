@@ -15,6 +15,7 @@ import org.bn.types.*;
 
 
 
+    @ASN1PreparedElement
     @ASN1BoxedType ( name = "TestUTC" )
     public class TestUTC implements IASN1PreparedElement {
     

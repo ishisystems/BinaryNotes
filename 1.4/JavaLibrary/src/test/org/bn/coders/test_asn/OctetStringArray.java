@@ -15,6 +15,7 @@ import org.bn.types.*;
 
 
 
+    @ASN1PreparedElement
     @ASN1BoxedType ( name = "OctetStringArray" )
     public class OctetStringArray implements IASN1PreparedElement {
                 

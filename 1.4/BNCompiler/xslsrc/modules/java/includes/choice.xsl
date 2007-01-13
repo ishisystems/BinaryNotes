@@ -39,6 +39,7 @@
         <xsltc:output file="{$outputDirectory}/{$choiceName}.java">
             <xsl:call-template name="header"/>
 
+    @ASN1PreparedElement
     @ASN1Choice ( name = "<xsl:value-of select='$choiceName'/>" )
     public class <xsl:value-of select="$choiceName"/> implements IASN1PreparedElement {
             <xsl:call-template name="elements"/>

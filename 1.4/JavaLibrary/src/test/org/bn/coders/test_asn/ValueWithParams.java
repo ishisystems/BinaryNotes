@@ -15,6 +15,7 @@ import org.bn.types.*;
 
 
 
+    @ASN1PreparedElement
     @ASN1Sequence ( name = "ValueWithParams", isSet = false )
     public class ValueWithParams implements IASN1PreparedElement {
             

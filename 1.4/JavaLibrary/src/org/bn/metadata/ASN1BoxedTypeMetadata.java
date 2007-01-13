@@ -76,11 +76,11 @@ public class ASN1BoxedTypeMetadata  extends ASN1FieldMetadata {
     public DecodedObject decode(IASN1TypesDecoder decoder, DecodedObject decodedTag, Class objectClass, ElementInfo elementInfo, InputStream stream) throws Exception {
         //return decoder.decodeBoxedType(decodedTag,objectClass,elementInfo,stream);
          IASN1PreparedElementData saveInfo = elementInfo.getPreparedInfo();            
-         IASN1PreparedElement instance =  elementInfo.getPreparedInstance();
+         IASN1PreparedElement instance =  (IASN1PreparedElement)elementInfo.getPreparedInstance();
          ASN1ElementMetadata saveElemInfo = elementInfo.getPreparedASN1ElementInfo();        
          elementInfo.setPreparedInfo(valueFieldMeta);
          elementInfo.setGenericInfo(valueField.getGenericType());
-         if(valueField.getType().isMemberClass()) {
+         if(elementInfo.getPreparedInfo().isMemberClass()) {
             elementInfo.setParentObject(elementInfo.getPreparedInstance());
          }                
         
