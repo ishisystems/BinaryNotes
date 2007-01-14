@@ -73,10 +73,12 @@ namespace org.bn.mq
 			{
                 return new InMemoryStorage<T>(properties);
 			}
+#if !PocketPC
 			else if (storageType.ToUpper().Equals("SQL".ToUpper()))
 			{
                 return new SQLStorage<T>(properties);
 			}
+#endif
 			else
 				return null;
 		}

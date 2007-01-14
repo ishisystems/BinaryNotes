@@ -121,14 +121,23 @@ namespace org.bn.mq.impl
 
         public object deserialize(System.IO.BinaryReader binaryReader)
         {
+#if !PocketPC
             System.Runtime.Serialization.Formatters.Binary.BinaryFormatter formatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
             return formatter.Deserialize(binaryReader.BaseStream);
+#else
+            throw new Exception("Unable to supported serialization of objects on CF!");
+#endif
         }
 
         public void serialize(System.IO.Stream stream, object objectToSend)
         {
+#if !PocketPC
             System.Runtime.Serialization.Formatters.Binary.BinaryFormatter formatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
             formatter.Serialize(stream, objectToSend);
+#else
+            throw new Exception("Unable to supported serialization of objects on CF!");
+#endif
+
         }
 
 

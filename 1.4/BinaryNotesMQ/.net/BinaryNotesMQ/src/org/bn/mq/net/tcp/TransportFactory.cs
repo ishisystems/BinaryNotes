@@ -125,7 +125,7 @@ namespace org.bn.mq.net.tcp
             writerThreadBody.stop();
             //readerThreadBody.stop();
             writerStorage.close();
-            if(writerThread.IsAlive)
+            //if(writerThread.IsAlive) - not supported on CF
                 writerThread.Join();
 
             //readerThread.Join();

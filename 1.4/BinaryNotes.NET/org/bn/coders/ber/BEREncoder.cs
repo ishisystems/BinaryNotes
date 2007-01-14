@@ -158,7 +158,12 @@ namespace org.bn.coders.ber
             Double value = (Double) obj;
             //CoderUtils.checkConstraints(value,elementInfo);
             int szOfInt = 0;
+#if PocketPC
+            byte[] dblValAsBytes =  System.BitConverter.GetBytes(value);
+            long asLong = System.BitConverter.ToInt64(dblValAsBytes, 0);
+#else            
             long asLong = System.BitConverter.DoubleToInt64Bits(value);
+#endif
             if (value == Double.PositiveInfinity)
             { // positive infinity
                 stream.WriteByte(0x40); // 01000000 Value is PLUS-INFINITY

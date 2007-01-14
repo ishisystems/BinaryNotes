@@ -308,7 +308,13 @@ namespace org.bn.coders.per
             BitArrayOutputStream bitStream = (BitArrayOutputStream)stream;
             Double value = (Double) obj;
             //CoderUtils.checkConstraints(value,elementInfo);
+
+#if PocketPC
+            byte[] dblValAsBytes =  System.BitConverter.GetBytes(value);
+            long asLong = System.BitConverter.ToInt64(dblValAsBytes, 0);
+#else            
             long asLong = System.BitConverter.DoubleToInt64Bits(value);
+#endif
             if(value == Double.PositiveInfinity ) { // positive infinity
                 result+=encodeLengthDeterminant(1,bitStream);
                 doAlign(stream);

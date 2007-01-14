@@ -101,10 +101,10 @@ namespace org.bn.mq.net.tcp
             connector.stop();
             try
             {
-                if(connectorThread.IsAlive)
-                    connectorThread.Join();
+                //if(connectorThread.IsAlive) - CF is not supported!
+                connectorThread.Join();
             }
-            catch (System.Threading.ThreadInterruptedException e)
+            catch (Exception e)
             {
                 // TODO
             }

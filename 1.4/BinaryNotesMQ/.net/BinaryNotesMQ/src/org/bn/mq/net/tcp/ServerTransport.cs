@@ -110,7 +110,11 @@ namespace org.bn.mq.net.tcp
 		{
 			lock (addr)
 			{
-                return serverChannel != null && serverChannel.IsBound;
+                return serverChannel != null 
+#if !PocketPC
+                    && serverChannel.IsBound
+#endif
+                ;
 			}
 		}
 		

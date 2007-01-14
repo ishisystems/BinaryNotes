@@ -5,6 +5,8 @@ ChangeLog
 							[!] 		- Important warning or note
 							{<component>}	- Component/Group that changed
 
+1.4.0	{lib}		[+] Added supports for .NET CF 2 for BNMQ (without support for SQLStorage)
+1.4.0	{lib}		[+] Added library supports for .NET Compact Framework 2.0
 1.4.0	{all}		[!] Added prepared metadata feature for generated classes 
 			    by BNComplier and highly improved performance (Reflection API is minimized).
 			    Older style only with metadata is supported too.

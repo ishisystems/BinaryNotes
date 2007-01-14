@@ -94,7 +94,7 @@ namespace org.bn.mq.net.tcp
 			{
 				awaitConnectEvent.WaitOne();
 			}
-			catch (System.Threading.ThreadInterruptedException e)
+			catch (Exception e)
 			{
 				// TODO
 			}

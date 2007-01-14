@@ -526,7 +526,12 @@ namespace org.bn.coders.per
                     {
                         lValue = (long)((ulong)lValue | 0x8000000000000000L);
                     }
+#if PocketPC
+                    byte[] dblValAsBytes = System.BitConverter.GetBytes(lValue);
+                    result = System.BitConverter.ToDouble(dblValAsBytes, 0);
+#else            
                     result = System.BitConverter.Int64BitsToDouble(lValue);
+#endif
                 }
             return new DecodedObject<object>(result, szResult);
         }

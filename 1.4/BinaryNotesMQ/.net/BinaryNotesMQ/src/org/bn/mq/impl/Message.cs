@@ -23,7 +23,9 @@ using org.bn.mq.net;
 
 namespace org.bn.mq.impl
 {	
+#if !PocketPC
 	[Serializable]
+#endif
 	public class Message<T> : IMessage<T>
 	{	
 		private string id;

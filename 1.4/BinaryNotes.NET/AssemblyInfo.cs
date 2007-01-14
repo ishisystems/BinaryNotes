@@ -11,7 +11,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyDescription("BinaryNotes Library")]
 [assembly: AssemblyCompany("http://bnotes.sf.net")]
 [assembly: AssemblyProduct("BinaryNotes")]
-[assembly: AssemblyCopyright("(c) Abdulla G. Abdurakhmanov")]
+[assembly: AssemblyCopyright("Copyright © 2007 Abdulla G. Abdurakhmanov")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

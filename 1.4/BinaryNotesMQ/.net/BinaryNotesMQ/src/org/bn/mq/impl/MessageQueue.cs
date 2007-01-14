@@ -74,7 +74,7 @@ namespace org.bn.mq.impl
 		private int callCurId = 0;
 		private Thread senderThread;
 
-		private bool stopThreadFlag = false;
+		private bool stopThreadFlag = true;
 		protected internal AutoResetEvent awaitMessageEvent = new AutoResetEvent(false);
 		protected internal IDictionary<String, IConsumer<T> > consumers = new Dictionary<String, IConsumer<T>>();
 		
@@ -294,19 +294,19 @@ namespace org.bn.mq.impl
 		public virtual void  stop()
 		{
 			lock (this)
-			{
-				stopThreadFlag = true;
+			{				
 				try
 				{
-					if (senderThread.IsAlive)
+                    if (!stopThreadFlag)//if (senderThread.IsAlive) - don't support CF
 					{
+                        stopThreadFlag = true;
 						awaitMessageEvent.Set();
 						this.transport.delConnectionListener(this);
 						this.transport.delReader(this);
 						senderThread.Join();
 					}
 				}
-				catch (ThreadInterruptedException e)
+				catch (Exception e)
 				{
 					Console.WriteLine(e);
 				}
@@ -317,9 +317,10 @@ namespace org.bn.mq.impl
 		{
 			lock (this)
 			{
-				stopThreadFlag = false;
-				if (!senderThread.IsAlive)
+				
+				if (stopThreadFlag)//!senderThread.IsAlive) CF not support isAlive
 				{
+                    stopThreadFlag = false;
 					senderThread.Start();
 				}
 			}
