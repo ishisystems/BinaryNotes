@@ -14,8 +14,9 @@ using org.bn.types;
 namespace test.org.bn.coders.test_asn {
 
 
+    [ASN1PreparedElement]
     [ASN1BoxedType ( Name = "BugEnum" )]
-    public class BugEnum {
+    public class BugEnum: IASN1PreparedElement {
     
             private long val;
             
@@ -33,6 +34,17 @@ namespace test.org.bn.coders.test_asn {
             public BugEnum(long value) {
                 this.Value = value;
             }            
+
+            public void initWithDefaults()
+	    {
+	    }
+
+
+            private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(typeof(BugEnum));
+            public IASN1PreparedElementData PreparedData {
+            	get { return preparedData; }
+            }
+
     }
             
 }

@@ -14,8 +14,9 @@ using org.bn.types;
 namespace test.org.bn.coders.test_asn {
 
 
+    [ASN1PreparedElement]
     [ASN1BoxedType ( Name = "TestIR" )]
-    public class TestIR {
+    public class TestIR: IASN1PreparedElement {
     
             private int val;
             
@@ -36,6 +37,17 @@ namespace test.org.bn.coders.test_asn {
             public TestIR(int value) {
                 this.Value = value;
             }            
+
+            public void initWithDefaults()
+	    {
+	    }
+
+
+            private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(typeof(TestIR));
+            public IASN1PreparedElementData PreparedData {
+            	get { return preparedData; }
+            }
+
     }
             
 }

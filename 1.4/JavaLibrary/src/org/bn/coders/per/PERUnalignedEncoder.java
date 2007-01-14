@@ -63,15 +63,8 @@ public class PERUnalignedEncoder<T> extends PERAlignedEncoder<T> {
     public int encodeString(Object object, OutputStream stream, 
                                ElementInfo elementInfo) throws Exception {        
                     
-        int stringType = CoderUtils.getStringTagForElement(elementInfo);
-        boolean is7Bit = 
-            ( 
-                stringType == UniversalTag.PrintableString || 
-                stringType ==UniversalTag.VisibleString
-            )
-            ;
         int resultSize = 0;
-        if(!is7Bit)
+        if(!PERCoderUtils.is7BitEncodedString(elementInfo))
             resultSize = super.encodeString(object, stream, elementInfo);
         else {
             

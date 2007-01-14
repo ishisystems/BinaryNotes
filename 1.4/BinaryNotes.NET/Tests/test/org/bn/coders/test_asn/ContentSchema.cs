@@ -14,8 +14,9 @@ using org.bn.types;
 namespace test.org.bn.coders.test_asn {
 
 
+    [ASN1PreparedElement]
     [ASN1Enum ( Name = "ContentSchema")]
-    public class ContentSchema {        
+    public class ContentSchema : IASN1PreparedElement {        
         public enum EnumType {
             
             [ASN1EnumItem ( Name = "multipart_any", HasTag = true , Tag = 110 )]
@@ -39,6 +40,17 @@ namespace test.org.bn.coders.test_asn {
             get { return val; }
             set { val = value; }
         }        
+
+            public void initWithDefaults()
+	    {
+	    }
+
+
+            private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(typeof(ContentSchema));
+            public IASN1PreparedElementData PreparedData {
+            	get { return preparedData; }
+            }
+
                 
     }
             

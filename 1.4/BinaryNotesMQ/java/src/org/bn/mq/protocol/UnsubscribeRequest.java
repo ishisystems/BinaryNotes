@@ -15,8 +15,9 @@ import org.bn.types.*;
 
 
 
+    @ASN1PreparedElement
     @ASN1Sequence ( name = "UnsubscribeRequest", isSet = false )
-    public class UnsubscribeRequest {
+    public class UnsubscribeRequest implements IASN1PreparedElement {
             
     @ASN1String( name = "", 
         stringType = UniversalTag.UTF8String , isUCS = false )
@@ -68,6 +69,12 @@ import org.bn.types.*;
         public void initWithDefaults() {
             
         }
+
+        private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(UnsubscribeRequest.class);
+        public IASN1PreparedElementData getPreparedData() {
+            return preparedData;
+        }
+
             
     }
             

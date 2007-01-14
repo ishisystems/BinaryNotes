@@ -19,6 +19,7 @@
 using System;
 using System.Reflection;
 using org.bn.attributes;
+using org.bn.metadata;
 
 namespace org.bn.coders
 {	
@@ -45,6 +46,54 @@ namespace org.bn.coders
             get { return annotatedClass; }
             set { annotatedClass = value; }
         }
+
+        private IASN1PreparedElementData preparedInfo;
+        public IASN1PreparedElementData PreparedInfo
+        {
+            get { return preparedInfo; }
+            set { 
+                preparedInfo = value;
+                if (preparedInfo != null)
+                {
+                    PreparedASN1ElementInfo = preparedInfo.ASN1ElementInfo;
+                }       
+            }
+        }
+        public bool hasPreparedInfo()
+        {
+            return this.preparedInfo != null;
+        }
+
+
+        private Object preparedInstance;
+        public Object PreparedInstance
+        {
+            get { return preparedInstance; }
+            set { preparedInstance = value; }
+        }
+        
+        private ASN1ElementMetadata preparedElementMetadata;
+        public ASN1ElementMetadata PreparedASN1ElementInfo
+        {
+            get { return preparedElementMetadata; }
+            set { preparedElementMetadata = value; }
+        }
+
+        public bool hasPreparedASN1ElementInfo()
+        {
+            return this.preparedElementMetadata != null;
+        }
+
+        public PropertyInfo[] getProperties(Type objClass)
+        {
+            if (hasPreparedInfo())
+            {
+                return PreparedInfo.Properties;
+            }
+            else
+                return objClass.GetProperties();
+        }
+
 
         public ElementInfo()
         {

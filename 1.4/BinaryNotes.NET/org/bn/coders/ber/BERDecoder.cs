@@ -21,6 +21,7 @@ using System.Reflection;
 using System.Collections.Generic;
 using org.bn.utils;
 using org.bn.attributes;
+using org.bn.metadata;
 using org.bn.types;
 
 namespace org.bn.coders.ber
@@ -28,7 +29,7 @@ namespace org.bn.coders.ber
 	
 	public class BERDecoder:Decoder
 	{		
-		protected override DecodedObject<object> decodeSequence(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
+		public override DecodedObject<object> decodeSequence(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
 		{
             bool isSet = false;
             if(checkTagForObject(decodedTag,TagClasses.Universal, ElementType.Constructed,UniversalTags.Sequence,elementInfo)) {
@@ -53,14 +54,14 @@ namespace org.bn.coders.ber
 
         protected virtual DecodedObject<object> decodeSet(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, int len, System.IO.Stream stream)
         {
-            object sequence = Activator.CreateInstance(objectClass);
+            object sequence = createInstanceForElement(objectClass,elementInfo);
             initDefaultValues(sequence);
             DecodedObject<object> fieldTag = decodeTag(stream);
             int sizeOfSequence = 0;
             if (fieldTag != null)
                 sizeOfSequence += fieldTag.Size;
             PropertyInfo[] fields =
-                objectClass.GetProperties();
+                elementInfo.getProperties(objectClass);
 
             bool fieldEncoded = false;
             do
@@ -69,17 +70,19 @@ namespace org.bn.coders.ber
                 {
                     PropertyInfo field = fields[i];
                     DecodedObject<object> obj = decodeSequenceField(
-                        fieldTag, sequence, field, stream, elementInfo, false
+                        fieldTag, sequence, i, field, stream, elementInfo, false
                     );
                     if (obj != null)
                     {
                         fieldEncoded = true;
                         sizeOfSequence += obj.Size;
 
-                        if (i != fields.Length - 1 && CoderUtils.isAttributePresent<ASN1Any>(fields[i + 1]))
+                        bool isAny = false;
+                        if(i!=fields.Length-1) 
                         {
+                            isAny = CoderUtils.isAnyField(field, elementInfo);
                         }
-                        else
+                        if(!isAny)
                         {
                             fieldTag = decodeTag(stream);
                             if (fieldTag != null)
@@ -97,9 +100,9 @@ namespace org.bn.coders.ber
             return new DecodedObject<object>(sequence, sizeOfSequence);
         }
 
-        protected override DecodedObject<object> decodeChoice(DecodedObject<object> decodedTag, Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
+        public override DecodedObject<object> decodeChoice(DecodedObject<object> decodedTag, Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
         {
-            if (elementInfo.ASN1ElementInfo != null)
+            if(elementInfo.ASN1ElementInfo!=null || (elementInfo.hasPreparedInfo() && elementInfo.hasPreparedASN1ElementInfo()))
             {
                 if (!checkTagForObject(decodedTag, TagClasses.ContextSpecific, ElementType.Constructed, UniversalTags.LastUniversal, elementInfo))
                     return null;
@@ -115,14 +118,14 @@ namespace org.bn.coders.ber
 
 		
 		
-		protected override DecodedObject<object> decodeEnumItem(DecodedObject<object> decodedTag, System.Type objectClass, System.Type enumClass, ElementInfo elementInfo, System.IO.Stream stream)
+		public override DecodedObject<object> decodeEnumItem(DecodedObject<object> decodedTag, System.Type objectClass, System.Type enumClass, ElementInfo elementInfo, System.IO.Stream stream)
 		{
 			if (!checkTagForObject(decodedTag, TagClasses.Universal, ElementType.Primitive, UniversalTags.Enumerated, elementInfo))
 				return null;
 			return decodeIntegerValue(stream);
 		}
 		
-		protected override DecodedObject<object> decodeBoolean(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
+		public override DecodedObject<object> decodeBoolean(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
 		{
 			if (!checkTagForObject(decodedTag, TagClasses.Universal, ElementType.Primitive, UniversalTags.Boolean, elementInfo))
 				return null;
@@ -135,7 +138,7 @@ namespace org.bn.coders.ber
 			return result;
 		}
 		
-		protected override DecodedObject<object> decodeAny(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
+		public override DecodedObject<object> decodeAny(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
 		{
 			System.IO.MemoryStream anyStream = new System.IO.MemoryStream(1024);
 			byte[] buffer = new byte[1024];
@@ -151,17 +154,17 @@ namespace org.bn.coders.ber
 			return new DecodedObject<object>(anyStream.ToArray(), len);
 		}
 		
-		protected override DecodedObject<object> decodeNull(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
+		public override DecodedObject<object> decodeNull(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
 		{
 			if (!checkTagForObject(decodedTag, TagClasses.Universal, ElementType.Primitive, UniversalTags.Null, elementInfo))
 				return null;
 			stream.ReadByte(); // ignore null length
-            object obj = System.Activator.CreateInstance(objectClass);
+            object obj = createInstanceForElement(objectClass, elementInfo);
 			DecodedObject<object> result = new DecodedObject<object>(obj, 1);
 			return result;
 		}
 		
-		protected override DecodedObject<object> decodeInteger(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
+		public override DecodedObject<object> decodeInteger(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
 		{
 			if (!checkTagForObject(decodedTag, TagClasses.Universal, ElementType.Primitive, UniversalTags.Integer, elementInfo))
 				return null;
@@ -179,7 +182,7 @@ namespace org.bn.coders.ber
             }
 		}
 
-        protected override DecodedObject<object> decodeReal(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
+        public override DecodedObject<object> decodeReal(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
         {
             if (!checkTagForObject(decodedTag, TagClasses.Universal, ElementType.Primitive, UniversalTags.Real, elementInfo))
                 return null;
@@ -285,7 +288,7 @@ namespace org.bn.coders.ber
             return result;
         }
 		
-		protected override DecodedObject<object> decodeOctetString(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
+		public override DecodedObject<object> decodeOctetString(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
 		{
 			if (!checkTagForObject(decodedTag, TagClasses.Universal, ElementType.Primitive, UniversalTags.OctetString, elementInfo))
 				return null;
@@ -296,7 +299,7 @@ namespace org.bn.coders.ber
 			return new DecodedObject<object>(byteBuf, len.Value + len.Size);
 		}
 
-		protected override DecodedObject<object> decodeBitString(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
+		public override DecodedObject<object> decodeBitString(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
 		{
 			if (!checkTagForObject(decodedTag, TagClasses.Universal, ElementType.Primitive, UniversalTags.Bitstring, elementInfo))
 				return null;
@@ -308,7 +311,7 @@ namespace org.bn.coders.ber
 			return new DecodedObject<object>( new BitString(byteBuf,trailBitCnt), len.Value + len.Size);
 		}
 		
-		protected override DecodedObject<object> decodeString(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
+		public override DecodedObject<object> decodeString(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
 		{
 			if (!checkTagForObject(decodedTag, TagClasses.Universal, ElementType.Primitive, CoderUtils.getStringTagForElement(elementInfo), elementInfo))
 				return null;
@@ -332,7 +335,7 @@ namespace org.bn.coders.ber
 			return new DecodedObject<object>(result, len.Value + len.Size);
 		}
 		
-		protected override DecodedObject<object> decodeSequenceOf(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
+		public override DecodedObject<object> decodeSequenceOf(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
 		{
 			if (!checkTagForObject(decodedTag, TagClasses.Universal, ElementType.Constructed, UniversalTags.Sequence, elementInfo))
 				return null;
@@ -350,14 +353,20 @@ namespace org.bn.coders.ber
                 ElementInfo info = new ElementInfo();
                 info.ParentAnnotatedClass = elementInfo.AnnotatedClass;
                 info.AnnotatedClass = paramType;
+
+                if(elementInfo.hasPreparedInfo()) 
+                {
+                    ASN1SequenceOfMetadata seqOfMeta = (ASN1SequenceOfMetadata)elementInfo.PreparedInfo.TypeMetadata;
+                    info.PreparedInfo = ( seqOfMeta.getItemClassMetadata() );
+                }
 				do 
 				{
 					DecodedObject<object> itemTag = decodeTag(stream);
 					DecodedObject<object> item = decodeClassType(itemTag, paramType, info, stream);
+                    MethodInfo method = param.GetType().GetMethod("Add");
 					if (item != null)
 					{
-						lenOfItems += item.Size + itemTag.Size;
-                        MethodInfo method = param.GetType().GetMethod("Add");
+						lenOfItems += item.Size + itemTag.Size;                        
                         method.Invoke(param, new object[] { item.Value });
                         itemsCnt++;
 					}
@@ -398,7 +407,7 @@ namespace org.bn.coders.ber
 			return new DecodedObject<int>(result, len);
 		}
 		
-		protected override DecodedObject<object> decodeTag(System.IO.Stream stream)
+		public override DecodedObject<object> decodeTag(System.IO.Stream stream)
 		{
             int result = 0;
             int bt = stream.ReadByte();
@@ -406,12 +415,10 @@ namespace org.bn.coders.ber
                 return null;
             result = bt;
             int len = 1;
-            //int tagClass = bt & 0xC0;
             int tagValue = bt & 31;
             bool isPrimitive = (bt & 0x20) == 0;
             if (tagValue == UniversalTags.LastUniversal)
             {
-                //tagValue = result;
                 bt = 0x80;
                 while ((bt & 0x80) != 0)
                 {
@@ -422,8 +429,9 @@ namespace org.bn.coders.ber
                         result |= bt;
                         len++;
                     }
+                    else
+                        break;
                 }
-                //result = tagValue;
             }
             else
                 result = bt;

@@ -26,7 +26,9 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.bn.annotations.ASN1Element;
+import org.bn.coders.CoderUtils;
 import org.bn.coders.ElementInfo;
+import org.bn.coders.UniversalTag;
 
 public class PERCoderUtils {
     public static int getMaxBitLength(long value) {
@@ -59,6 +61,17 @@ public class PERCoderUtils {
                 result.add(item);
         }
         return result;
+    }
+    
+    public static boolean is7BitEncodedString(ElementInfo elementInfo) {
+        int stringType = CoderUtils.getStringTagForElement(elementInfo);
+        boolean is7Bit = 
+            ( 
+                stringType == UniversalTag.PrintableString || 
+                stringType ==UniversalTag.VisibleString
+            )
+            ;
+        return is7Bit;
     }
     
 }

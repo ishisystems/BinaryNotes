@@ -14,8 +14,9 @@ using org.bn.types;
 namespace test.org.bn.coders.test_asn {
 
 
+    [ASN1PreparedElement]
     [ASN1BoxedType ( Name = "SetOfTest" ) ]
-    public class SetOfTest {
+    public class SetOfTest : IASN1PreparedElement {
 
 	    private System.Collections.Generic.ICollection<Data> val = null; 
             
@@ -34,6 +35,17 @@ namespace test.org.bn.coders.test_asn {
             public void Add(Data item) {
                 this.Value.Add(item);
             }
+
+            public void initWithDefaults()
+	    {
+	    }
+
+
+            private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(typeof(SetOfTest));
+            public IASN1PreparedElementData PreparedData {
+            	get { return preparedData; }
+            }
+
     }
             
 }

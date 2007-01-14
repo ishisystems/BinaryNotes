@@ -14,8 +14,9 @@ using org.bn.types;
 namespace test.org.bn.coders.test_asn {
 
 
+    [ASN1PreparedElement]
     [ASN1Sequence ( Name = "SetWithDefault", IsSet = true  )]
-    public class SetWithDefault {
+    public class SetWithDefault : IASN1PreparedElement {
             
         
 	private long nodefault_ ;
@@ -65,6 +66,13 @@ namespace test.org.bn.coders.test_asn {
         Default3 = param_Default3;
     
             }
+
+
+            private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(typeof(SetWithDefault));
+            public IASN1PreparedElementData PreparedData {
+            	get { return preparedData; }
+            }
+
             
     }
             

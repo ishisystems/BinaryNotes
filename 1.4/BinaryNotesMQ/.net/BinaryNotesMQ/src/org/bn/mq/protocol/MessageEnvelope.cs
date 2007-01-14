@@ -14,8 +14,9 @@ using org.bn.types;
 namespace org.bn.mq.protocol {
 
 
+    [ASN1PreparedElement]
     [ASN1Sequence ( Name = "MessageEnvelope", IsSet = false  )]
-    public class MessageEnvelope {
+    public class MessageEnvelope : IASN1PreparedElement {
             
         
 	private string id_ ;
@@ -68,6 +69,13 @@ namespace org.bn.mq.protocol {
         DeliveryReportReq = param_DeliveryReportReq;
     
             }
+
+
+            private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(typeof(MessageEnvelope));
+            public IASN1PreparedElementData PreparedData {
+            	get { return preparedData; }
+            }
+
             
     }
             

@@ -14,8 +14,9 @@ using org.bn.types;
 namespace test.org.bn.coders.test_asn {
 
 
+    [ASN1PreparedElement]
     [ASN1Sequence ( Name = "TestSequenceV12", IsSet = false  )]
-    public class TestSequenceV12 {
+    public class TestSequenceV12 : IASN1PreparedElement {
             
         
 	private string attrSimple_ ;
@@ -180,6 +181,13 @@ namespace test.org.bn.coders.test_asn {
         AttrBitStrDef = param_AttrBitStrDef;
     
             }
+
+
+            private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(typeof(TestSequenceV12));
+            public IASN1PreparedElementData PreparedData {
+            	get { return preparedData; }
+            }
+
             
     }
             

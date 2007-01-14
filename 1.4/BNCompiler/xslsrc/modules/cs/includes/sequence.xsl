@@ -41,14 +41,22 @@
         <xsltc:output file="{$outputDirectory}/{$sequenceName}.cs">
             <xsl:call-template name="header"/>
 
+    [ASN1PreparedElement]
     [ASN1Sequence ( Name = "<xsl:value-of select='$sequenceName'/>", IsSet = <xsl:choose><xsl:when test="isSequence = 'false'">true</xsl:when><xsl:otherwise>false</xsl:otherwise></xsl:choose>  )]
-    public class <xsl:value-of select="$sequenceName"/> {
+    public class <xsl:value-of select="$sequenceName"/> : IASN1PreparedElement {
             <xsl:call-template name="elements"/>            
             <xsl:call-template name="sequenceFunctions"/>
 
             public void initWithDefaults() {
                 <xsl:call-template name="elementDefaults"/>
             }
+
+
+            private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(typeof(<xsl:value-of select='$sequenceName'/>));
+            public IASN1PreparedElementData PreparedData {
+            	get { return preparedData; }
+            }
+
             
     }
             <xsl:call-template name="footer"/>

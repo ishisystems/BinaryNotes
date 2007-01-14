@@ -35,8 +35,21 @@
         <xsltc:output file="{$outputDirectory}/{$boxedName}.cs">
             <xsl:call-template name="header"/>
 
+    [ASN1PreparedElement]
     <xsl:call-template name="nullDecl"/>
-    public class <xsl:value-of select="$boxedName"/> {                    
+    public class <xsl:value-of select="$boxedName"/>: IASN1PreparedElement {                    
+
+            public void initWithDefaults()
+	    {
+	    }
+
+            private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(typeof(<xsl:value-of select='$boxedName'/>));
+            public IASN1PreparedElementData PreparedData {
+            	get { return preparedData; }
+            }
+
+
+
     }
             <xsl:call-template name="footer"/>
         </xsltc:output>        

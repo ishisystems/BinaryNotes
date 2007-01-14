@@ -21,6 +21,7 @@ using System.Reflection;
 using System.Collections.Generic;
 using org.bn.utils;
 using org.bn.attributes;
+using org.bn.metadata;
 using org.bn.types;
 
 namespace org.bn.coders.ber
@@ -39,18 +40,17 @@ namespace org.bn.coders.ber
 			reverseStream.WriteTo(stream);
 		}
 
-        protected override int encodeSequence(object obj, System.IO.Stream stream, ElementInfo elementInfo)
+        public override int encodeSequence(object obj, System.IO.Stream stream, ElementInfo elementInfo)
 		{
 			int resultSize = 0;
-            PropertyInfo[] fields = obj.GetType().GetProperties();
+            PropertyInfo[] fields = elementInfo.getProperties(obj.GetType());
             for (int i = 0; i < fields.Length; i++)
 			{
                 PropertyInfo field = fields[fields.Length - 1 - i];
-				resultSize += encodeSequenceField(obj, field, stream, elementInfo);
+                resultSize += encodeSequenceField(obj, fields.Length - 1 - i, field, stream, elementInfo);
 			}
 
-            ASN1Sequence seqInfo = elementInfo.getAttribute<ASN1Sequence>();
-            if (!seqInfo.IsSet)
+            if(!CoderUtils.isSequenceSet(elementInfo)) 
             {
                 resultSize += encodeHeader(
                     BERCoderUtils.getTagValueForElement(
@@ -73,11 +73,11 @@ namespace org.bn.coders.ber
 			return resultSize;
 		}
 
-        protected override int encodeChoice(object obj, System.IO.Stream stream, ElementInfo elementInfo)
+        public override int encodeChoice(object obj, System.IO.Stream stream, ElementInfo elementInfo)
 		{
 			int result = 0;
 			int sizeOfChoiceField = base.encodeChoice(obj, stream, elementInfo);
-            if (elementInfo.ASN1ElementInfo != null)
+            if (elementInfo.ASN1ElementInfo != null || (elementInfo.hasPreparedInfo() && elementInfo.hasPreparedASN1ElementInfo()) )
             {
                 result += encodeHeader(BERCoderUtils.getTagValueForElement(elementInfo, TagClasses.ContextSpecific, ElementType.Constructed, UniversalTags.LastUniversal), sizeOfChoiceField, stream);
             }
@@ -85,7 +85,7 @@ namespace org.bn.coders.ber
 			return result;
 		}
 
-        protected override int encodeEnumItem(object enumConstant, Type enumClass, System.IO.Stream stream, ElementInfo elementInfo)
+        public override int encodeEnumItem(object enumConstant, Type enumClass, System.IO.Stream stream, ElementInfo elementInfo)
 		{
 			int resultSize = 0;
             ASN1EnumItem enumObj = //elementInfo.AnnotatedClass.getAnnotation(typeof(ASN1EnumItem));
@@ -96,8 +96,8 @@ namespace org.bn.coders.ber
 			resultSize += encodeTag(BERCoderUtils.getTagValueForElement(elementInfo, TagClasses.Universal, ElementType.Primitive, UniversalTags.Enumerated), stream);
 			return resultSize;
 		}
-		
-		protected override int encodeBoolean(object obj, System.IO.Stream stream, ElementInfo elementInfo)
+
+        public override int encodeBoolean(object obj, System.IO.Stream stream, ElementInfo elementInfo)
 		{
 			int resultSize = 1;
             bool value = (bool)obj;
@@ -107,8 +107,8 @@ namespace org.bn.coders.ber
 			resultSize += encodeTag(BERCoderUtils.getTagValueForElement(elementInfo, TagClasses.Universal, ElementType.Primitive, UniversalTags.Boolean), stream);
 			return resultSize;
 		}
-		
-		protected override int encodeAny(object obj, System.IO.Stream stream, ElementInfo elementInfo)
+
+        public override int encodeAny(object obj, System.IO.Stream stream, ElementInfo elementInfo)
 		{
 			int resultSize = 0, sizeOfString = 0;
 			byte[] buffer = (byte[]) obj;
@@ -129,8 +129,8 @@ namespace org.bn.coders.ber
 			}
 			return resultSize;
 		}
-		
-		protected override int encodeInteger(object obj, System.IO.Stream stream, ElementInfo elementInfo)
+
+        public override int encodeInteger(object obj, System.IO.Stream stream, ElementInfo elementInfo)
 		{
 			int resultSize = 0;
             int szOfInt = 0;
@@ -152,7 +152,7 @@ namespace org.bn.coders.ber
 			return resultSize;
 		}
 
-        protected override int encodeReal(object obj, System.IO.Stream stream, ElementInfo elementInfo)
+        public override int encodeReal(object obj, System.IO.Stream stream, ElementInfo elementInfo)
         {
             int resultSize = 0;
             Double value = (Double) obj;
@@ -201,8 +201,8 @@ namespace org.bn.coders.ber
             resultSize += encodeTag(BERCoderUtils.getTagValueForElement(elementInfo, TagClasses.Universal, ElementType.Primitive, UniversalTags.Real), stream);
             return resultSize;
         }
-				
-		protected override int encodeOctetString(object obj, System.IO.Stream stream, ElementInfo elementInfo)
+
+        public override int encodeOctetString(object obj, System.IO.Stream stream, ElementInfo elementInfo)
 		{
 			int resultSize = 0, sizeOfString = 0;
 			byte[] buffer = (byte[]) obj;
@@ -216,8 +216,8 @@ namespace org.bn.coders.ber
 			resultSize += encodeTag(BERCoderUtils.getTagValueForElement(elementInfo, TagClasses.Universal, ElementType.Primitive, UniversalTags.OctetString), stream);
 			return resultSize;
 		}
-		
-		protected override int encodeString(object obj, System.IO.Stream stream, ElementInfo elementInfo)
+
+        public override int encodeString(object obj, System.IO.Stream stream, ElementInfo elementInfo)
 		{
 			int resultSize = 0, sizeOfString = 0;
             byte[] buffer = null;
@@ -235,12 +235,11 @@ namespace org.bn.coders.ber
 			resultSize += encodeTag(BERCoderUtils.getTagValueForElement(elementInfo, TagClasses.Universal, ElementType.Primitive, CoderUtils.getStringTagForElement(elementInfo)), stream);
 			return resultSize;
 		}
-		
-		protected override int encodeSequenceOf(object obj, System.IO.Stream stream, ElementInfo elementInfo)
+
+        public override int encodeSequenceOf(object obj, System.IO.Stream stream, ElementInfo elementInfo)
 		{
 			int resultSize = 0;
             System.Collections.IList collection = (System.Collections.IList)obj;
-            //System.Collections.ICollection collection = (System.Collections.ICollection)obj;
             CoderUtils.checkConstraints(collection.Count, elementInfo);
             
             int sizeOfCollection = 0;
@@ -250,13 +249,19 @@ namespace org.bn.coders.ber
 				ElementInfo info = new ElementInfo();
                 info.AnnotatedClass = item.GetType();
                 info.ParentAnnotatedClass = elementInfo.AnnotatedClass;
+
+                if (elementInfo.hasPreparedInfo())
+                {
+                    ASN1SequenceOfMetadata seqOfMeta = (ASN1SequenceOfMetadata)elementInfo.PreparedInfo.TypeMetadata;
+                    info.PreparedInfo = (seqOfMeta.getItemClassMetadata());
+                }
+
 				sizeOfCollection += encodeClassType(item, stream, info);
 			}
 			resultSize += sizeOfCollection;
 			resultSize += encodeLength(sizeOfCollection, stream);
 
-            ASN1SequenceOf seqInfo = elementInfo.getAttribute<ASN1SequenceOf>();
-            if (!seqInfo.IsSetOf)
+            if(!CoderUtils.isSequenceSetOf(elementInfo))
             {
                 resultSize += encodeTag(BERCoderUtils.getTagValueForElement(elementInfo, TagClasses.Universal, ElementType.Constructed, UniversalTags.Sequence), stream);
             }
@@ -332,8 +337,8 @@ namespace org.bn.coders.ber
 			}
 			return resultSize;
 		}
-		
-		protected override int encodeNull(object obj, System.IO.Stream stream, ElementInfo elementInfo)
+
+        public override int encodeNull(object obj, System.IO.Stream stream, ElementInfo elementInfo)
 		{
 			stream.WriteByte((byte) 0);
 			int resultSize = 1;
@@ -341,7 +346,8 @@ namespace org.bn.coders.ber
 			return resultSize;
 		}
 
-        protected override int encodeBitString(Object obj, System.IO.Stream stream, ElementInfo elementInfo) {
+        public override int encodeBitString(Object obj, System.IO.Stream stream, ElementInfo elementInfo)
+        {
             int resultSize = 0, sizeOfString = 0;
             BitString str = (BitString)obj;
             CoderUtils.checkConstraints(str.getLength()*8-str.TrailBitsCnt , elementInfo);

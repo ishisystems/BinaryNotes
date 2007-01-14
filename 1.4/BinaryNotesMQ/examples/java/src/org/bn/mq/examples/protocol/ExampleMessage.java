@@ -15,8 +15,9 @@ import org.bn.types.*;
 
 
 
+    @ASN1PreparedElement
     @ASN1Sequence ( name = "ExampleMessage", isSet = false )
-    public class ExampleMessage {
+    public class ExampleMessage implements IASN1PreparedElement {
             
     @ASN1String( name = "", 
         stringType =  UniversalTag.PrintableString , isUCS = false )
@@ -107,6 +108,12 @@ import org.bn.types.*;
         setField4(param_Field4);
     
         }
+
+        private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(ExampleMessage.class);
+        public IASN1PreparedElementData getPreparedData() {
+            return preparedData;
+        }
+
             
     }
             

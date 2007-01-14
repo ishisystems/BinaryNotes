@@ -14,8 +14,9 @@ using org.bn.types;
 namespace test.org.bn.coders.test_asn {
 
 
+    [ASN1PreparedElement]
     [ASN1BoxedType ( Name = "TestReal" )]
-    public class TestReal {
+    public class TestReal : IASN1PreparedElement {
     
             private double val;
             
@@ -33,6 +34,17 @@ namespace test.org.bn.coders.test_asn {
             public TestReal(double value) {
                 this.Value = value;
             }            
+
+            public void initWithDefaults()
+	    {
+	    }
+
+
+            private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(typeof(TestReal));
+            public IASN1PreparedElementData PreparedData {
+            	get { return preparedData; }
+            }
+
     }
             
 }

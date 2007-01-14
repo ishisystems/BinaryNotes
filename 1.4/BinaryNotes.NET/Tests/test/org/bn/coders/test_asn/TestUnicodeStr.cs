@@ -14,8 +14,9 @@ using org.bn.types;
 namespace test.org.bn.coders.test_asn {
 
 
+    [ASN1PreparedElement]
     [ASN1BoxedType ( Name = "TestUnicodeStr") ]
-    public class TestUnicodeStr {
+    public class TestUnicodeStr: IASN1PreparedElement {
 
             private String val;
     
@@ -34,6 +35,17 @@ namespace test.org.bn.coders.test_asn {
             public TestUnicodeStr(String val) {
                 this.val = val;
             }            
+
+            public void initWithDefaults()
+	    {
+	    }
+
+
+            private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(typeof(TestUnicodeStr));
+            public IASN1PreparedElementData PreparedData {
+            	get { return preparedData; }
+            }
+
     }
             
 }

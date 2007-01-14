@@ -14,8 +14,9 @@ using org.bn.types;
 namespace org.bn.mq.protocol {
 
 
+    [ASN1PreparedElement]
     [ASN1Sequence ( Name = "SubscribeResult", IsSet = false  )]
-    public class SubscribeResult {
+    public class SubscribeResult : IASN1PreparedElement {
             
         
 	private SubscribeResultCode code_ ;
@@ -54,6 +55,13 @@ namespace org.bn.mq.protocol {
             public void initWithDefaults() {
                 
             }
+
+
+            private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(typeof(SubscribeResult));
+            public IASN1PreparedElementData PreparedData {
+            	get { return preparedData; }
+            }
+
             
     }
             

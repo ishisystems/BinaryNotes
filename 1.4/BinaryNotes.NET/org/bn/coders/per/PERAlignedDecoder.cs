@@ -22,6 +22,8 @@ using System.Collections.Generic;
 using org.bn.utils;
 using org.bn.attributes;
 using org.bn.attributes.constraints;
+using org.bn.metadata;
+using org.bn.metadata.constraints;
 using org.bn.types;
 
 namespace org.bn.coders.per
@@ -254,6 +256,28 @@ namespace org.bn.coders.per
         {
             int result = 0;
             BitArrayInputStream bitStream = (BitArrayInputStream)stream;
+
+            if(elementInfo.hasPreparedInfo()) 
+            {
+                if(elementInfo.PreparedInfo.hasConstraint()) 
+                {
+                    IASN1ConstraintMetadata constraint = elementInfo.PreparedInfo.Constraint;
+                    if(constraint is ASN1ValueRangeConstraintMetadata) {
+                        result = decodeConstraintLengthDeterminant(
+                            (int)((ASN1ValueRangeConstraintMetadata)constraint).Min,
+                            (int)((ASN1ValueRangeConstraintMetadata)constraint).Max,
+                            bitStream
+                        );
+                    }
+                    else
+                    if(constraint is ASN1SizeConstraintMetadata) {
+                        result = (int)((ASN1SizeConstraintMetadata)constraint).Max;
+                    }
+                }
+                else
+                    result = decodeLengthDeterminant( bitStream);
+            }
+            else
             if (elementInfo.isAttributePresent<ASN1ValueRangeConstraint>())
             {
                 ASN1ValueRangeConstraint constraint = elementInfo.getAttribute<ASN1ValueRangeConstraint>();
@@ -270,12 +294,12 @@ namespace org.bn.coders.per
             CoderUtils.checkConstraints(result, elementInfo);
             return result;
         }
-		
-		protected override DecodedObject<object> decodeChoice(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
+
+        public override DecodedObject<object> decodeChoice(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
 		{
-			object choice = System.Activator.CreateInstance(objectClass);
+            object choice = createInstanceForElement(objectClass, elementInfo); 
 			skipAlignedBits(stream);
-			System.Reflection.PropertyInfo[] fields = objectClass.GetProperties();
+			PropertyInfo[] fields = elementInfo.getProperties(objectClass);
 			int elementIndex = (int)decodeConstraintNumber(1, fields.Length, (BitArrayInputStream) stream);
 			DecodedObject<object> val = null;
 			for (int i = 0; i < elementIndex && i < fields.Length; i++)
@@ -285,15 +309,19 @@ namespace org.bn.coders.per
 					System.Reflection.PropertyInfo field = fields[i];
 					ElementInfo info = new ElementInfo();
                     info.AnnotatedClass = field;
-                    info.ASN1ElementInfo = CoderUtils.getAttribute<ASN1Element>(field);
+                    if(elementInfo.hasPreparedInfo()) {
+                        info.PreparedInfo  = elementInfo.PreparedInfo.getPropertyMetadata(i);
+                    }
+                    else
+                        info.ASN1ElementInfo = CoderUtils.getAttribute<ASN1Element>(field);
                     val = decodeClassType(decodedTag, field.PropertyType, info, stream);
                     if(val != null)
-					    invokeSelectMethodForField(field, choice, val.Value);
+					    invokeSelectMethodForField(field, choice, val.Value, info);
 					break;
 				}
 				;
 			}
-            if (val == null && elementInfo.ASN1ElementInfo != null && !elementInfo.ASN1ElementInfo.IsOptional)
+            if (val == null && !CoderUtils.isOptional(elementInfo))
             {
 				throw new System.ArgumentException("The choice '" + objectClass.ToString() + "' does not have a selected item!");
 			}
@@ -302,84 +330,78 @@ namespace org.bn.coders.per
 		}
 		
 		
-		protected virtual int getSequencePreambleBitLen(System.Type objectClass)
+		protected virtual int getSequencePreambleBitLen(Type objectClass, ElementInfo elementInfo)
 		{
 			int preambleLen = 0;
-            foreach ( PropertyInfo field in objectClass.GetProperties()) 
+            ElementInfo info = new ElementInfo();
+            int fieldIdx = 0;
+            foreach (PropertyInfo field in elementInfo.getProperties(objectClass)) 
             {
-				if (isOptionalField(field))
+                if (elementInfo.hasPreparedInfo())
+                    info.PreparedInfo = elementInfo.PreparedInfo.getPropertyMetadata(fieldIdx);
+
+				if (CoderUtils.isOptionalField(field,info))
 				{
 					preambleLen++;
 				}
+                fieldIdx++;
 			}
 			
 			return preambleLen;
 		}
-		
-		protected override DecodedObject<object> decodeSequence(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
-		{
-            ASN1Sequence seqInfo = elementInfo.getAttribute<ASN1Sequence>();
-            if (!seqInfo.IsSet)
-            {
-                BitArrayInputStream bitStream = (BitArrayInputStream)stream;
-                int preambleLen = getSequencePreambleBitLen(objectClass);
-                int preamble = bitStream.readBits(preambleLen);
-                int preambleCurrentBit = 32 - preambleLen;
-                skipAlignedBits(stream);
-                object sequence = System.Activator.CreateInstance(objectClass);
-                initDefaultValues(sequence);
-                foreach (PropertyInfo field in objectClass.GetProperties())
-                {
-                    if (isOptionalField(field))
-                    {
-                        if ((preamble & (0x80000000 >> preambleCurrentBit)) != 0)
-                        {
-                            decodeSequenceField(null, sequence, field, stream, elementInfo, true);
-                        }
-                        preambleCurrentBit++;
-                    }
-                    else
-                    {
-                        decodeSequenceField(null, sequence, field, stream, elementInfo, true);
-                    }
-                }
-                return new DecodedObject<object>(sequence);
-            }
-            else
-                return decodeSet(decodedTag, objectClass, elementInfo, stream);
-		}
 
-        protected DecodedObject<object> decodeSet(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
-        {
+        public override DecodedObject<object> decodeSequence(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
+		{
             BitArrayInputStream bitStream = (BitArrayInputStream)stream;
-            int preambleLen = getSequencePreambleBitLen(objectClass);
+            int preambleLen = getSequencePreambleBitLen(objectClass, elementInfo);
             int preamble = bitStream.readBits(preambleLen);
             int preambleCurrentBit = 32 - preambleLen;
             skipAlignedBits(stream);
-            object sequence = System.Activator.CreateInstance(objectClass);
+            object sequence = createInstanceForElement(objectClass, elementInfo);
             initDefaultValues(sequence);
-            SortedList<int,PropertyInfo> fieldOrder = CoderUtils.getSetOrder(sequence);
+            ElementInfo info = new ElementInfo();
+            int idx = 0;
+            PropertyInfo[] fields = null;
 
-            foreach (PropertyInfo field in fieldOrder.Values)
+            if(!CoderUtils.isSequenceSet(elementInfo) || elementInfo.hasPreparedInfo())
             {
-                if (isOptionalField(field))
+                fields = elementInfo.getProperties(objectClass);
+            }
+            else
+            {
+                SortedList<int,PropertyInfo> fieldOrder = CoderUtils.getSetOrder(sequence.GetType());
+                fields = new PropertyInfo[fieldOrder.Values.Count];
+                fieldOrder.Values.CopyTo(fields,0);
+            }
+
+            foreach (PropertyInfo field in fields)
+            {
+                if(elementInfo.hasPreparedInfo()) 
+                {
+                    info.PreparedInfo = elementInfo.PreparedInfo.getPropertyMetadata(idx);
+                }
+                if(CoderUtils.isOptionalField(field, info))
                 {
                     if ((preamble & (0x80000000 >> preambleCurrentBit)) != 0)
                     {
-                        decodeSequenceField(null, sequence, field, stream, elementInfo, true);
+                        decodeSequenceField(null, sequence, idx, field, stream, elementInfo, true);
                     }
                     preambleCurrentBit++;
                 }
                 else
                 {
-                    decodeSequenceField(null, sequence, field, stream, elementInfo, true);
+                    decodeSequenceField(null, sequence, idx, field, stream, elementInfo, true);
                 }
+                idx++;
             }
             return new DecodedObject<object>(sequence);
-        }
-		
-		
-		protected override DecodedObject<object> decodeEnumItem(DecodedObject<object> decodedTag, System.Type objectClass, System.Type enumClass, ElementInfo elementInfo, System.IO.Stream stream)
+/*            }
+            else
+                return decodeSet(decodedTag, objectClass, elementInfo, stream);*/
+		}
+
+
+        public override DecodedObject<object> decodeEnumItem(DecodedObject<object> decodedTag, System.Type objectClass, System.Type enumClass, ElementInfo elementInfo, System.IO.Stream stream)
 		{			
 			int min = 0, max = enumClass.GetFields().Length;
 			int enumItemIdx = (int)decodeConstraintNumber(min, max, (BitArrayInputStream) stream);
@@ -400,7 +422,7 @@ namespace org.bn.coders.per
 			return result;
 		}
 		
-		protected override DecodedObject<object> decodeBoolean(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
+		public override DecodedObject<object> decodeBoolean(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
 		{
 			DecodedObject<object> result = new DecodedObject<object>();
 			BitArrayInputStream bitStream = (BitArrayInputStream) stream;
@@ -408,25 +430,48 @@ namespace org.bn.coders.per
 			return result;
 		}
 		
-		protected override DecodedObject<object> decodeAny(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
+		public override DecodedObject<object> decodeAny(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
 		{
 			return null;
 		}
 		
-		protected override DecodedObject<object> decodeNull(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
+		public override DecodedObject<object> decodeNull(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
 		{
-			return new DecodedObject<object>(System.Activator.CreateInstance(objectClass));
+			return new DecodedObject<object>(createInstanceForElement(objectClass, elementInfo));
 		}
 		
-		protected override DecodedObject<object> decodeInteger(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
+		public override DecodedObject<object> decodeInteger(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
 		{
+            bool hasConstraint = false;
+            long min = 0, max = 0;
+
+            if(elementInfo.hasPreparedInfo()) 
+            {
+                if(elementInfo.PreparedInfo.hasConstraint() 
+                    && elementInfo.PreparedInfo.Constraint is ASN1ValueRangeConstraintMetadata) 
+                {
+                    IASN1ConstraintMetadata constraint = elementInfo.PreparedInfo.Constraint;
+                    hasConstraint  = true;
+                    min = ((ASN1ValueRangeConstraintMetadata)constraint).Min;
+                    max = ((ASN1ValueRangeConstraintMetadata)constraint).Max;
+                }
+            }
+            else
+            if (elementInfo.isAttributePresent<ASN1ValueRangeConstraint>())
+            {
+                hasConstraint  = true;
+                ASN1ValueRangeConstraint constraint = elementInfo.getAttribute<ASN1ValueRangeConstraint>();
+                min = constraint.Min;
+                max = constraint.Max;
+            }
+
 			DecodedObject<object> result = new DecodedObject<object>();
 			BitArrayInputStream bitStream = (BitArrayInputStream) stream;
 			int val = 0;
-            if (elementInfo.isAttributePresent<ASN1ValueRangeConstraint>())
+            if (hasConstraint)
             {
                 ASN1ValueRangeConstraint constraint = elementInfo.getAttribute<ASN1ValueRangeConstraint>();
-                val = (int)decodeConstraintNumber(constraint.Min, constraint.Max, bitStream);
+                val = (int)decodeConstraintNumber(min, max, bitStream);
 			}
 			else
 				val = decodeUnconstraintNumber(bitStream);
@@ -434,7 +479,7 @@ namespace org.bn.coders.per
 			return result;
 		}
 
-        protected override DecodedObject<object> decodeReal(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
+        public override DecodedObject<object> decodeReal(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
         {
             BitArrayInputStream bitStream = (BitArrayInputStream)stream;
             int len = decodeLengthDeterminant(bitStream);
@@ -487,7 +532,7 @@ namespace org.bn.coders.per
         }
 		
 		
-		protected override DecodedObject<object> decodeOctetString(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
+		public override DecodedObject<object> decodeOctetString(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
 		{
 			DecodedObject<object> result = new DecodedObject<object>();
 			int sizeOfString = decodeLength(elementInfo,stream);
@@ -503,7 +548,7 @@ namespace org.bn.coders.per
 			return result;
 		}
 
-        protected override DecodedObject<object> decodeBitString(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
+        public override DecodedObject<object> decodeBitString(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
         {
             DecodedObject<object> result = new DecodedObject<object>();
             skipAlignedBits(stream);
@@ -546,7 +591,7 @@ namespace org.bn.coders.per
 		}
 		
 		
-		protected override DecodedObject<object> decodeString(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
+		public override DecodedObject<object> decodeString(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
 		{
 			DecodedObject<object> result = new DecodedObject<object>();
 			int strLen = decodeLength(elementInfo, stream);
@@ -571,7 +616,7 @@ namespace org.bn.coders.per
 			return result;
 		}
 		
-		protected override DecodedObject<object> decodeSequenceOf(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
+		public override DecodedObject<object> decodeSequenceOf(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
 		{
 
             Type paramType = (System.Type)objectClass.GetGenericArguments()[0];
@@ -583,15 +628,21 @@ namespace org.bn.coders.per
             ElementInfo elementItemInfo = new ElementInfo();
             elementItemInfo.ParentAnnotatedClass = elementInfo.AnnotatedClass;
             elementItemInfo.AnnotatedClass = paramType;
-            elementItemInfo.ASN1ElementInfo = null;
+            if(elementInfo.hasPreparedInfo()) 
+            {
+                ASN1SequenceOfMetadata seqOfMeta = (ASN1SequenceOfMetadata)elementInfo.PreparedInfo.TypeMetadata;
+                elementItemInfo.PreparedInfo = seqOfMeta.getItemClassMetadata();
+            }
+            else
+                elementItemInfo.ASN1ElementInfo = null;
 
-
+            MethodInfo method = param.GetType().GetMethod("Add");
             for (int i = 0; i < countOfElements;i ++ )
             {
                 DecodedObject<object> item = decodeClassType(null, paramType, elementItemInfo, stream);
                 if (item != null)
                 {
-                    MethodInfo method = param.GetType().GetMethod("Add");
+                    
                     method.Invoke(param, new object[] { item.Value });
                 }
             }
@@ -599,7 +650,7 @@ namespace org.bn.coders.per
             return new DecodedObject<object>(param);
 		}
 		
-		protected override DecodedObject<object> decodeTag(System.IO.Stream stream)
+		public override DecodedObject<object> decodeTag(System.IO.Stream stream)
 		{
 			return null;
 		}

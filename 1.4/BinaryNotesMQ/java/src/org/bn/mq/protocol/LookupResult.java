@@ -15,8 +15,9 @@ import org.bn.types.*;
 
 
 
+    @ASN1PreparedElement
     @ASN1Sequence ( name = "LookupResult", isSet = false )
-    public class LookupResult {
+    public class LookupResult implements IASN1PreparedElement {
             
         @ASN1Element ( name = "code", isOptional =  false , hasTag =  false  , hasDefaultValue =  false  )
     
@@ -65,6 +66,12 @@ import org.bn.types.*;
         public void initWithDefaults() {
             
         }
+
+        private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(LookupResult.class);
+        public IASN1PreparedElementData getPreparedData() {
+            return preparedData;
+        }
+
             
     }
             

@@ -14,8 +14,9 @@ using org.bn.types;
 namespace test.org.bn.coders.test_asn {
 
 
+    [ASN1PreparedElement]
     [ASN1BoxedType ( Name = "TestUTC") ]
-    public class TestUTC {
+    public class TestUTC: IASN1PreparedElement {
 
             private String val;
     
@@ -34,6 +35,17 @@ namespace test.org.bn.coders.test_asn {
             public TestUTC(String val) {
                 this.val = val;
             }            
+
+            public void initWithDefaults()
+	    {
+	    }
+
+
+            private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(typeof(TestUTC));
+            public IASN1PreparedElementData PreparedData {
+            	get { return preparedData; }
+            }
+
     }
             
 }

@@ -14,8 +14,9 @@ using org.bn.types;
 namespace test.org.bn.coders.test_asn {
 
 
+    [ASN1PreparedElement]
     [ASN1Choice ( Name = "BugPrimitive") ]
-    public class BugPrimitive {
+    public class BugPrimitive : IASN1PreparedElement {
             
         
 	private bool bugBoolean_ ;
@@ -81,6 +82,16 @@ namespace test.org.bn.coders.test_asn {
         }
         
   
+
+            public void initWithDefaults()
+	    {
+	    }
+
+            private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(typeof(BugPrimitive));
+            public IASN1PreparedElementData PreparedData {
+            	get { return preparedData; }
+            }
+
     }
             
 }

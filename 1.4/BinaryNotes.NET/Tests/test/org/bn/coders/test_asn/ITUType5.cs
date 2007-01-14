@@ -14,8 +14,9 @@ using org.bn.types;
 namespace test.org.bn.coders.test_asn {
 
 
+    [ASN1PreparedElement]
     [ASN1BoxedType ( Name = "ITUType5") ]
-    public class ITUType5 {
+    public class ITUType5: IASN1PreparedElement {
             
            
         private ITUType2  val;
@@ -36,6 +37,17 @@ namespace test.org.bn.coders.test_asn {
         public ITUType5 ()
         {
         }
+
+            public void initWithDefaults()
+	    {
+	    }
+
+
+            private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(typeof(ITUType5));
+            public IASN1PreparedElementData PreparedData {
+            	get { return preparedData; }
+            }
+
         
     }
             

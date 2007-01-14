@@ -20,21 +20,48 @@ using System;
 using System.Reflection;
 using System.IO;
 using org.bn.attributes;
+using org.bn.metadata;
 
 namespace org.bn.coders
 {	
-	public abstract class Decoder : IDecoder
+	public abstract class Decoder : IASN1TypesDecoder, IDecoder
 	{		
         public virtual T decode<T>(Stream stream) {
             Type objectClass = typeof(T);
+
             ElementInfo elemInfo = new ElementInfo();
             elemInfo.AnnotatedClass = objectClass;
-            elemInfo.ASN1ElementInfo = CoderUtils.getAttribute<ASN1Element>(objectClass);
-            return (T)decodeClassType(decodeTag(stream),objectClass,elemInfo, stream).Value;
+            object objectInstance = null;
+            if (objectClass.IsSubclassOf(typeof(IASN1PreparedElement)))
+            {
+                objectInstance = createInstanceForElement(objectClass, elemInfo);
+            }
+
+            if (objectInstance!=null && objectInstance is IASN1PreparedElement)
+            {
+                elemInfo.PreparedInstance = objectInstance;
+                return (T)decodePreparedElement(decodeTag(stream), objectClass, elemInfo, stream).Value;
+            }
+            else
+            {
+                elemInfo.ASN1ElementInfo = CoderUtils.getAttribute<ASN1Element>(objectClass);
+                return (T)decodeClassType(decodeTag(stream), objectClass, elemInfo, stream).Value;
+            }            
         }
 		
-		protected virtual DecodedObject<object> decodeClassType(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
+		public virtual DecodedObject<object> decodeClassType(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
 		{
+            if(CoderUtils.isImplements(objectClass,typeof(IASN1PreparedElement))) 
+            {
+                return decodePreparedElement(decodedTag, objectClass,elementInfo, stream);
+            }
+            else
+            if(elementInfo.hasPreparedInfo()) {
+                return elementInfo.PreparedInfo.TypeMetadata.decode(
+                    this, decodedTag, objectClass, elementInfo, stream
+                );
+            }
+            else
             if (elementInfo.isAttributePresent<ASN1SequenceOf>())
             {
                 return decodeSequenceOf(decodedTag, objectClass, elementInfo, stream);
@@ -107,8 +134,8 @@ namespace org.bn.coders
 			else
 				return decodeCSElement(decodedTag, objectClass, elementInfo, stream);
 		}
-		
-		protected virtual DecodedObject<object> decodeCSElement(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
+
+        public virtual DecodedObject<object> decodeCSElement(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
 		{
 			if (elementInfo.AnnotatedClass.Equals(typeof(string)))
 			{
@@ -137,76 +164,100 @@ namespace org.bn.coders
 			else
 				return null;
 		}
-					
-		protected virtual void  invokeSetterMethodForField(PropertyInfo field, object obj, object param)
-		{
+
+        public DecodedObject<object> decodePreparedElement(DecodedObject<object> decodedTag, Type objectClass, ElementInfo elementInfo, Stream stream ) {    
+            IASN1PreparedElementData saveInfo = elementInfo.PreparedInfo;        
+            IASN1PreparedElement preparedInstance = (IASN1PreparedElement) createInstanceForElement(objectClass,elementInfo);
+            
+            elementInfo.PreparedInstance = preparedInstance;
+            ASN1ElementMetadata elementDataSave = null;
+            if(elementInfo.hasPreparedASN1ElementInfo()) {
+                elementDataSave = elementInfo.PreparedASN1ElementInfo;
+            }        
+            elementInfo.PreparedInfo = preparedInstance.PreparedData;
+            if(elementDataSave!=null)
+                elementInfo.PreparedASN1ElementInfo = elementDataSave;
+            DecodedObject<object> result= preparedInstance.PreparedData.TypeMetadata.decode(
+                this, decodedTag, objectClass, elementInfo, stream
+            );    
+            elementInfo.PreparedInfo = saveInfo;
+            return result;
+        }
+
+
+        public void invokeSetterMethodForField(PropertyInfo field, object obj, object param, ElementInfo info)
+        {
             field.SetValue(obj, param, null);
-		}
-
-        protected virtual MethodInfo findSelectMethodForField(PropertyInfo field, object obj)
-        {
-            string methodName = "select" + field.Name.ToUpper().Substring(0, (1) - (0)) + field.Name.Substring(1);
-            return obj.GetType().GetMethod(methodName);
         }
 
-        protected virtual void invokeSelectMethodForField(PropertyInfo field, object obj, object param)
+        public void invokeSelectMethodForField(PropertyInfo field, object obj, object param, ElementInfo info)
         {
-            MethodInfo method = findSelectMethodForField(field, obj);
-            method.Invoke(obj, new object[] { param });
-        }
-
-        protected bool isOptionalField(PropertyInfo field)
-        {
-            if (CoderUtils.isAttributePresent<ASN1Element>(field))
+            if (info.hasPreparedInfo())
             {
-                ASN1Element info = CoderUtils.getAttribute<ASN1Element>(field);
-                if (info.IsOptional || info.HasDefaultValue )
-                    return true;
+                info.PreparedInfo.invokeDoSelectMethod(obj, param);
             }
-            return false;
+            else
+            {
+                MethodInfo method = CoderUtils.findDoSelectMethodForField(field, obj.GetType());
+                method.Invoke(obj, new object[] { param });
+            }
         }
 
-
-        protected virtual void checkForOptionalField(PropertyInfo field)
+        public virtual void initDefaultValues(object obj)
         {
-            if(!isOptionalField(field))
-                throw new System.ArgumentException("The mandatory field '" + field.Name + "' does not have a value!");
-        }
-
-        protected virtual void initDefaultValues(object obj) {
             try {
-                string methodName = "initWithDefaults";
-                MethodInfo method = obj.GetType().GetMethod(methodName);
-                method.Invoke(obj,null);
+                if (obj is IASN1PreparedElement)
+                {
+                    ((IASN1PreparedElement)obj).initWithDefaults();
+                }
+                else
+                {
+                    string methodName = "initWithDefaults";
+                    MethodInfo method = obj.GetType().GetMethod(methodName);
+                    method.Invoke(obj, null);
+                }
             }
             catch(Exception ){};
         }
 
-		
-		protected virtual DecodedObject<object> decodeSequence(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
+        public object createInstanceForElement(Type objectClass, ElementInfo info)
+        {
+            if(info.PreparedInstance!=null)
+            {
+                return info.PreparedInstance;
+            }
+            else
+                return Activator.CreateInstance(objectClass);
+        }
+
+
+
+        public virtual DecodedObject<object> decodeSequence(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
 		{
-			object sequence = Activator.CreateInstance(objectClass);
+			object sequence = createInstanceForElement(objectClass, elementInfo);
             initDefaultValues(sequence);
 			DecodedObject<object> fieldTag = decodeTag(stream);
 			int sizeOfSequence = 0;
 			if (fieldTag != null)
 				sizeOfSequence += fieldTag.Size;
-			PropertyInfo[] fields = 
-                objectClass.GetProperties();
+			PropertyInfo[] fields = elementInfo.getProperties(objectClass);
+
 			for (int i = 0; i < fields.Length; i++)
 			{
 				PropertyInfo field = fields[i];
 				DecodedObject<object> obj = decodeSequenceField(
-                    fieldTag, sequence, field, stream, elementInfo,true
+                    fieldTag, sequence, i, field, stream, elementInfo,true
                 );
 				if (obj != null)
 				{
 					sizeOfSequence += obj.Size;
 					
-					if (i != fields.Length - 1 && CoderUtils.isAttributePresent<ASN1Any>(fields[i + 1]))
-					{
-					}
-					else
+                    bool isAny = false;
+                    if(i!=fields.Length-1) {
+                        isAny = CoderUtils.isAnyField(field, elementInfo);
+                    }
+
+                    if(!isAny)
 					{
                         if (i < fields.Length - 1)
                         {
@@ -224,15 +275,19 @@ namespace org.bn.coders
 			}
 			return new DecodedObject<object>(sequence, sizeOfSequence);
 		}
-		
-		protected virtual DecodedObject<object> decodeSequenceField(DecodedObject<object> fieldTag, object sequenceObj, PropertyInfo field, System.IO.Stream stream, ElementInfo elementInfo, bool checkOptional)
+
+        public virtual DecodedObject<object> decodeSequenceField(DecodedObject<object> fieldTag, object sequenceObj, int fieldIdx, PropertyInfo field, System.IO.Stream stream, ElementInfo elementInfo, bool checkOptional)
 		{
             ElementInfo info = new ElementInfo();
             info.AnnotatedClass = field;
-            info.ASN1ElementInfo = CoderUtils.getAttribute<ASN1Element>(field);
+            if(elementInfo.hasPreparedInfo()) 
+            {
+                info.PreparedInfo = elementInfo.PreparedInfo.getPropertyMetadata(fieldIdx);
+            }
+            else
+                info.ASN1ElementInfo = CoderUtils.getAttribute<ASN1Element>(field);
             
-            //info.setGenericInfo(field.getGenericType());
-			if (CoderUtils.isAttributePresent<ASN1Null>(field))
+			if(CoderUtils.isNullField(field,info))
 			{
 				return decodeNull(fieldTag, field.PropertyType, info, stream);
 			}
@@ -241,45 +296,54 @@ namespace org.bn.coders
                 DecodedObject<object> val = decodeClassType(fieldTag, field.PropertyType, info, stream);
 				if (val != null)
 				{
-					invokeSetterMethodForField(field, sequenceObj, val.Value);
+					invokeSetterMethodForField(field, sequenceObj, val.Value, info);
 				}
 				else
 				{
                     if(checkOptional)
-					    checkForOptionalField(field);
+					    CoderUtils.checkForOptionalField(field,info);
 				}
 				return val;
 			}
 		}
-		
-		protected virtual DecodedObject<object> decodeChoice(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
+
+        public virtual DecodedObject<object> decodeChoice(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
 		{
-			object choice = System.Activator.CreateInstance(objectClass);
+			object choice = createInstanceForElement(objectClass, elementInfo);
 			DecodedObject<object> val = null;
-			foreach(PropertyInfo field in objectClass.GetProperties())
+            PropertyInfo[] fields = elementInfo.getProperties(objectClass);
+            int fieldIdx = 0;
+			foreach(PropertyInfo field in fields)
 			{
                 ElementInfo info = new ElementInfo();
                 info.AnnotatedClass = field;
-                info.ASN1ElementInfo = CoderUtils.getAttribute<ASN1Element>(field);
+                if (elementInfo.hasPreparedInfo())
+                {
+                    info.PreparedInfo = elementInfo.PreparedInfo.getPropertyMetadata(fieldIdx);
+                }
+                else
+                    info.ASN1ElementInfo = CoderUtils.getAttribute<ASN1Element>(field);
+
                 val = decodeClassType(decodedTag, field.PropertyType, info, stream);
+                fieldIdx++;
 				if (val != null)
 				{
-					invokeSelectMethodForField(field, choice, val.Value);
+					invokeSelectMethodForField(field, choice, val.Value, info);
 					break;
 				}
 				;
 			}
-			if (val == null && elementInfo.ASN1ElementInfo != null && !elementInfo.ASN1ElementInfo.IsOptional)
+			if (val == null && !CoderUtils.isOptional(elementInfo))
 			{
 				throw new System.ArgumentException("The choice '" + objectClass.ToString() + "' does not have a selected item!");
 			}
 			else
 				return new DecodedObject<object>(choice, val != null?val.Size:0);
 		}
-		
-		protected virtual DecodedObject<object> decodeEnum(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
+
+        public virtual DecodedObject<object> decodeEnum(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
 		{
-			object result = System.Activator.CreateInstance(objectClass);
+			object result = createInstanceForElement(objectClass, elementInfo);
             Type enumClass = null;
             foreach (MemberInfo member in objectClass.GetMembers())
             {
@@ -315,23 +379,23 @@ namespace org.bn.coders
 					    }
 			        }
 		        }
-				invokeSetterMethodForField(field, result, param.GetValue(null));
+				invokeSetterMethodForField(field, result, param.GetValue(null) , null);
 			}
 			return new DecodedObject<object>(result, itemValue.Size);
 		}
-		
-		protected abstract DecodedObject<object> decodeEnumItem(DecodedObject<object> decodedTag, System.Type objectClass, System.Type enumClass, ElementInfo elementInfo, System.IO.Stream stream);
-		
-		
-		protected virtual DecodedObject<object> decodeElement(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
+
+        public abstract DecodedObject<object> decodeEnumItem(DecodedObject<object> decodedTag, System.Type objectClass, System.Type enumClass, ElementInfo elementInfo, System.IO.Stream stream);
+
+
+        public virtual DecodedObject<object> decodeElement(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
 		{
 			elementInfo.AnnotatedClass = objectClass;
 			return decodeClassType(decodedTag, objectClass, elementInfo, stream);
 		}
-		
-		protected virtual DecodedObject<object> decodeBoxedType(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
+
+        public virtual DecodedObject<object> decodeBoxedType(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
 		{
-			object resultObj = System.Activator.CreateInstance(objectClass);
+			object resultObj = createInstanceForElement(objectClass, elementInfo);
 			
 			DecodedObject<object> result = new DecodedObject<object>(resultObj);
 			
@@ -354,7 +418,7 @@ namespace org.bn.coders
 				if (val != null)
 				{
 					result.Size = val.Size;
-					invokeSetterMethodForField(field, resultObj, val.Value);
+					invokeSetterMethodForField(field, resultObj, val.Value, elementInfo);
 				}
 				else
 					result = null;
@@ -362,25 +426,25 @@ namespace org.bn.coders
 			return result;
 		}
 
-        protected abstract DecodedObject<object> decodeBoolean(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream);
+        public abstract DecodedObject<object> decodeBoolean(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream);
 
-        protected abstract DecodedObject<object> decodeAny(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream);
+        public abstract DecodedObject<object> decodeAny(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream);
 
-        protected abstract DecodedObject<object> decodeNull(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream);
+        public abstract DecodedObject<object> decodeNull(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream);
 
-        protected abstract DecodedObject<object> decodeInteger(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream);
+        public abstract DecodedObject<object> decodeInteger(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream);
 
-        protected abstract DecodedObject<object> decodeReal(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream);
+        public abstract DecodedObject<object> decodeReal(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream);
 
-        protected abstract DecodedObject<object> decodeOctetString(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream);
+        public abstract DecodedObject<object> decodeOctetString(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream);
 
-        protected abstract DecodedObject<object> decodeBitString(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream);
+        public abstract DecodedObject<object> decodeBitString(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream);
 
-        protected abstract DecodedObject<object> decodeString(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream);
+        public abstract DecodedObject<object> decodeString(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream);
 
-        protected abstract DecodedObject<object> decodeSequenceOf(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream);
+        public abstract DecodedObject<object> decodeSequenceOf(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream);
 
-        protected abstract DecodedObject<object> decodeTag(System.IO.Stream stream);
+        public abstract DecodedObject<object> decodeTag(System.IO.Stream stream);
 
 
 	}

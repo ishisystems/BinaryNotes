@@ -24,6 +24,7 @@ import java.io.InputStream;
 
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 
 import java.util.Collection;
@@ -318,7 +319,7 @@ public class PERAlignedDecoder extends Decoder {
                 break;
             };
         }
-        if(value == null && elementInfo.getASN1ElementInfo()!=null && !elementInfo.getASN1ElementInfo().isOptional()) {
+        if(value == null && !CoderUtils.isOptional(elementInfo)) {
             throw new  IllegalArgumentException ("The choice '" + objectClass.toString() + "' does not have a selected item!");
         }
         else
@@ -346,46 +347,47 @@ public class PERAlignedDecoder extends Decoder {
     public DecodedObject decodeSequence(DecodedObject decodedTag,Class objectClass, 
                                            ElementInfo elementInfo, InputStream stream) throws Exception {
         // TO DO 
-        // Decode sequence preamble       
-        if(!CoderUtils.isSequenceSet(elementInfo)) {
-            BitArrayInputStream bitStream = (BitArrayInputStream)stream;
-            int preambleLen = getSequencePreambleBitLen(objectClass, elementInfo);
-            int preamble = bitStream.readBits(preambleLen);
-            int preambleCurrentBit = 32 - preambleLen;
-            skipAlignedBits(stream);
-            Object sequence = createInstanceForElement(objectClass,elementInfo);
-            initDefaultValues(sequence, elementInfo);            
-            
-            int idx=0;            
-            IASN1PreparedElementData saveInfo = null;
-            //saveInfo = elementInfo.getPreparedInfo();
-            ElementInfo info = new ElementInfo();
-            for ( Field field : elementInfo.getFields(objectClass)) {
-                if(!field.isSynthetic()) {
-                    //if(elementInfo.hasPreparedInfo()) {
-                    //    elementInfo.setPreparedInfo( saveInfo.getFieldMetadata(idx) );
-                    //}                
-                    if(elementInfo.hasPreparedInfo()) {
-                        info.setPreparedInfo(elementInfo.getPreparedInfo().getFieldMetadata(idx));
-                    }
-                    if(CoderUtils.isOptionalField(field, info)) {
-                        if ( (preamble & (0x80000000 >>> preambleCurrentBit))!=0 ) {
-                             decodeSequenceField(null,sequence,idx,field,stream,elementInfo,true);
-                        }
-                        preambleCurrentBit++;
-                    }
-                    else {
-                        decodeSequenceField(null,sequence,idx,field,stream,elementInfo,true);
-                    }                    
-                    idx++;
-                }                
-            }
-            //elementInfo.setPreparedInfo(saveInfo);
-            return new DecodedObject(sequence);
+        // Decode sequence preamble               
+         BitArrayInputStream bitStream = (BitArrayInputStream)stream;
+         int preambleLen = getSequencePreambleBitLen(objectClass, elementInfo);
+         int preamble = bitStream.readBits(preambleLen);
+         int preambleCurrentBit = 32 - preambleLen;
+         skipAlignedBits(stream);
+         Object sequence = createInstanceForElement(objectClass,elementInfo);
+         initDefaultValues(sequence, elementInfo);            
+         Field[] fields = null;
+         if(!CoderUtils.isSequenceSet(elementInfo) || elementInfo.hasPreparedInfo()) {
+            fields = elementInfo.getFields(objectClass);
          }
          else {
-             return decodeSet(decodedTag, objectClass, elementInfo, stream);
+             SortedMap<Integer,Field> fieldOrder = CoderUtils.getSetOrder(objectClass);
+             fields = new Field[0];
+             fields = fieldOrder.values().toArray(fields);
          }
+         int idx=0;            
+         ElementInfo info = new ElementInfo();
+         for ( Field field : fields ) {
+             if(!field.isSynthetic()) {
+                 if(elementInfo.hasPreparedInfo()) {
+                     info.setPreparedInfo(elementInfo.getPreparedInfo().getFieldMetadata(idx));
+                 }
+                 if(CoderUtils.isOptionalField(field, info)) {
+                     if ( (preamble & (0x80000000 >>> preambleCurrentBit))!=0 ) {
+                          decodeSequenceField(null,sequence,idx,field,stream,elementInfo,true);
+                     }
+                     preambleCurrentBit++;
+                 }
+                 else {
+                     decodeSequenceField(null,sequence,idx,field,stream,elementInfo,true);
+                 }                    
+                 idx++;
+             }                
+         }
+        return new DecodedObject(sequence);
+/*         }
+         else {
+             return decodeSet(decodedTag, objectClass, elementInfo, stream);
+         }*/
     }
     
     
@@ -630,30 +632,6 @@ public class PERAlignedDecoder extends Decoder {
     public DecodedObject decodeTag(InputStream stream) throws Exception {
         return null;
     }
-
-    private DecodedObject decodeSet(DecodedObject decodedTag, Class objectClass, ElementInfo elementInfo, InputStream stream) throws Exception {
-        Object set = createInstanceForElement(objectClass,elementInfo);
-        SortedMap<Integer, Field> fieldOrder = CoderUtils.getSetOrder(set.getClass());
     
-        BitArrayInputStream bitStream = (BitArrayInputStream)stream;
-        int preambleLen = getSequencePreambleBitLen(objectClass, elementInfo);
-        int preamble = bitStream.readBits(preambleLen);
-        int preambleCurrentBit = 32 - preambleLen;
-        skipAlignedBits(stream);
-        int idx = 0;
-        for ( Map.Entry<Integer, Field> item : fieldOrder.entrySet()) {
-            if(CoderUtils.isOptionalField(item.getValue(), elementInfo)) {
-                if ( (preamble & (0x80000000 >>> preambleCurrentBit))!=0 ) {
-                     decodeSequenceField(null,set,idx,item.getValue(),stream,elementInfo,true);
-                }
-                preambleCurrentBit++;
-            }
-            else {
-                decodeSequenceField(null,set,idx,item.getValue(),stream,elementInfo,true);
-            }
-            idx++;
-        }
-        return new DecodedObject(set);    
-    }
 }
 

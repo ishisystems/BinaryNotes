@@ -14,8 +14,9 @@ using org.bn.types;
 namespace org.bn.mq.protocol {
 
 
+    [ASN1PreparedElement]
     [ASN1Enum ( Name = "LookupResultCode")]
-    public class LookupResultCode {        
+    public class LookupResultCode : IASN1PreparedElement {        
         public enum EnumType {
             
             [ASN1EnumItem ( Name = "success", HasTag = true , Tag = 0 )]
@@ -35,6 +36,17 @@ namespace org.bn.mq.protocol {
             get { return val; }
             set { val = value; }
         }        
+
+            public void initWithDefaults()
+	    {
+	    }
+
+
+            private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(typeof(LookupResultCode));
+            public IASN1PreparedElementData PreparedData {
+            	get { return preparedData; }
+            }
+
                 
     }
             

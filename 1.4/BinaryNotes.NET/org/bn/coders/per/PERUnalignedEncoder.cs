@@ -64,26 +64,10 @@ namespace org.bn.coders.per
 			}
 			return result;
 		}
-		
-		protected override int encodeString(System.Object obj, System.IO.Stream stream, ElementInfo elementInfo)
-		{					
-			bool is7Bit = false;
-			ASN1String strValueAnnotation = null;
-			if (elementInfo.isAttributePresent<ASN1String>())
-			{
-				strValueAnnotation = elementInfo.getAttribute<ASN1String>();
-			}
-			else if (elementInfo.ParentAnnotatedClass != null && elementInfo.isParentAttributePresent<ASN1String>())
-			{
-				strValueAnnotation = elementInfo.getParentAttribute<ASN1String>();
-			}
-			if (strValueAnnotation != null)
-			{
-				is7Bit = 
-                    (strValueAnnotation.StringType == org.bn.coders.UniversalTags.PrintableString || 
-                    strValueAnnotation.StringType == org.bn.coders.UniversalTags.VisibleString);
-			}
-			if (!is7Bit)
+
+        public override int encodeString(System.Object obj, System.IO.Stream stream, ElementInfo elementInfo)
+		{
+            if (!PERCoderUtils.is7BitEncodedString(elementInfo))
 				return base.encodeString(obj, stream, elementInfo);
 			else
 			{

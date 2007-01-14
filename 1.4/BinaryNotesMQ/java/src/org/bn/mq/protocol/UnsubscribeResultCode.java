@@ -15,10 +15,11 @@ import org.bn.types.*;
 
 
 
+    @ASN1PreparedElement
     @ASN1Enum (
         name = "UnsubscribeResultCode"
     )
-    public class UnsubscribeResultCode {        
+    public class UnsubscribeResultCode implements IASN1PreparedElement {        
         public enum EnumType {
             
             @ASN1EnumItem ( name = "success", hasTag = true , tag = 0 )
@@ -53,5 +54,15 @@ import org.bn.types.*;
         public void setIntegerForm(Integer value) {
             integerForm = value;
         }
+
+	    public void initWithDefaults() {
+	    }
+
+        private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(UnsubscribeResultCode.class);
+        public IASN1PreparedElementData getPreparedData() {
+            return preparedData;
+        }
+
+
     }
             

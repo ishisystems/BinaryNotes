@@ -337,7 +337,7 @@ public abstract class Decoder implements IDecoder, IASN1TypesDecoder {
                 
             }            
         }
-        if(value == null && CoderUtils.isOptional(elementInfo)) {
+        if(value == null && !CoderUtils.isOptional(elementInfo)) {
             throw new  IllegalArgumentException ("The choice '" + objectClass.toString() + "' does not have a selected item!");
         }
         else

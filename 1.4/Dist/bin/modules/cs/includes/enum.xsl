@@ -38,8 +38,9 @@
         <xsltc:output file="{$outputDirectory}/{$enumName}.cs">
             <xsl:call-template name="header"/>
 
+    [ASN1PreparedElement]
     [ASN1Enum ( Name = "<xsl:value-of select='$enumName'/>")]
-    public class <xsl:value-of select='$enumName'/> {        
+    public class <xsl:value-of select='$enumName'/> : IASN1PreparedElement {        
         public enum EnumType {
             <xsl:call-template name="enumItems"/>
         }
@@ -51,6 +52,17 @@
             get { return val; }
             set { val = value; }
         }        
+
+            public void initWithDefaults()
+	    {
+	    }
+
+
+            private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(typeof(<xsl:value-of select='$enumName'/>));
+            public IASN1PreparedElementData PreparedData {
+            	get { return preparedData; }
+            }
+
                 
     }
             <xsl:call-template name="footer"/>

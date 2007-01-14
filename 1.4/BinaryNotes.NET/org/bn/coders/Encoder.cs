@@ -20,19 +20,30 @@ using System;
 using System.Reflection;
 using System.IO;
 using org.bn.attributes;
+using org.bn.metadata;
 
 namespace org.bn.coders
 {
 	
-	public abstract class Encoder: IEncoder
+	public abstract class Encoder: IASN1TypesEncoder, IEncoder
 	{
         public virtual void encode<T>(T obj, System.IO.Stream stream)
 		{
             object ob = (object)obj;
 			ElementInfo elemInfo = new ElementInfo();
             elemInfo.AnnotatedClass = obj.GetType();
-            elemInfo.ASN1ElementInfo = CoderUtils.getAttribute<ASN1Element>(obj.GetType());
-			int sizeOfEncodedBytes = encodeClassType(obj, stream, elemInfo);
+            int sizeOfEncodedBytes = 0;
+
+            if(obj is IASN1PreparedElement) 
+            {
+                sizeOfEncodedBytes = encodePreparedElement(obj, stream, elemInfo);
+            }
+            else 
+            {
+                elemInfo.ASN1ElementInfo = CoderUtils.getAttribute<ASN1Element>(obj.GetType());
+			    sizeOfEncodedBytes = encodeClassType(obj, stream, elemInfo);
+            }
+
 
 			if (sizeOfEncodedBytes == 0)
 			{
@@ -40,9 +51,17 @@ namespace org.bn.coders
 			};
 		}
 		
-		protected virtual int encodeClassType(object obj, System.IO.Stream stream, ElementInfo elementInfo)
+		public virtual int encodeClassType(object obj, System.IO.Stream stream, ElementInfo elementInfo)
 		{
 			int resultSize = 0;
+            if(elementInfo.hasPreparedInfo()) {
+                resultSize+=elementInfo.PreparedInfo.TypeMetadata.encode(this,obj, stream, elementInfo);
+            }        
+            else
+            if( obj is IASN1PreparedElement) {
+                resultSize+=encodePreparedElement(obj, stream, elementInfo);
+            }
+            else
             if (elementInfo.isAttributePresent<ASN1SequenceOf>())
             {
                 resultSize += encodeSequenceOf(obj, stream, elementInfo);
@@ -117,7 +136,7 @@ namespace org.bn.coders
 			return resultSize;
 		}
 		
-		protected internal virtual int encodeCSElement(object obj, System.IO.Stream stream, ElementInfo info)
+		public virtual int encodeCSElement(object obj, System.IO.Stream stream, ElementInfo info)
 		{
 			if (obj.GetType().Equals(typeof(string)))
 			{
@@ -151,15 +170,33 @@ namespace org.bn.coders
 				return 0;
 		}
 
-        protected virtual MethodInfo findPresentMethodForField(PropertyInfo field, object obj)
-        {
-            string methodName = "is" + field.Name.ToUpper().Substring(0, (1) - (0)) + field.Name.Substring(1) + "Present";
-            return obj.GetType().GetMethod(methodName, new System.Type[0]);
+        public int encodePreparedElement(object obj , Stream stream, ElementInfo elementInfo) {
+            IASN1PreparedElement preparedInstance = (IASN1PreparedElement)obj;
+            elementInfo.PreparedInstance = (preparedInstance);
+            ASN1ElementMetadata elementDataSave = null;
+            if(elementInfo.hasPreparedASN1ElementInfo()) {
+                elementDataSave = elementInfo.PreparedASN1ElementInfo;
+            }        
+            elementInfo.PreparedInfo = (preparedInstance.PreparedData);
+            if(elementDataSave!=null)
+                elementInfo.PreparedASN1ElementInfo = (elementDataSave);
+            return preparedInstance.PreparedData.TypeMetadata.encode(
+                this, obj, stream, elementInfo
+            );        
         }
-						
-		protected virtual object invokeGetterMethodForField(PropertyInfo field, object obj)
+
+			
+		public virtual object invokeGetterMethodForField(PropertyInfo field, object obj, ElementInfo info)
 		{
-            MethodInfo method = findPresentMethodForField(field, obj);
+            MethodInfo method = null;
+            if (info!=null && info.hasPreparedInfo())
+            {
+                method = info.PreparedInfo.IsPresentMethod;
+            }
+            else 
+            {
+                method = CoderUtils.findIsPresentMethodForField(field, obj.GetType());
+            }
             if (method!=null)
             {
                 if ((bool)method.Invoke(obj, null))
@@ -172,100 +209,109 @@ namespace org.bn.coders
             return field.GetValue(obj, null);
 		}
 		
-		protected virtual MethodInfo findSelectedMethodForField(PropertyInfo field, object obj)
-		{
-			string methodName = "is" + field.Name.ToUpper().Substring(0, (1) - (0)) + field.Name.Substring(1) + "Selected";
-			return obj.GetType().GetMethod(methodName, new System.Type[0]);
-		}
-
 		
-		protected virtual bool invokeSelectedMethodForField(PropertyInfo field, object obj)
+		public virtual bool invokeSelectedMethodForField(PropertyInfo field, object obj, ElementInfo info)
 		{
-			MethodInfo method = findSelectedMethodForField(field, obj);
-			return (bool)method.Invoke(obj, null);
-		}
-
-        protected bool isOptionalField(PropertyInfo field)
-        {
-            if (CoderUtils.isAttributePresent<ASN1Element>(field))
+            if (info!=null && info.hasPreparedInfo())
             {
-                ASN1Element info = CoderUtils.getAttribute<ASN1Element>(field);
-                if (info.IsOptional || info.HasDefaultValue)
-                    return true;
+                return (bool)info.PreparedInfo.invokeIsSelectedMethod (obj, null);
             }
-            return false;
-        }
-		
-		protected virtual void  checkForOptionalField(PropertyInfo field)
-		{
-            if(!isOptionalField(field))
-			    throw new System.ArgumentException("The mandatory field '" + field.Name + "' does not have a value!");
+            else
+            {
+                MethodInfo method = CoderUtils.findIsSelectedMethodForField(field, obj.GetType());
+                return (bool)method.Invoke(obj, null);
+            }
 		}
 		
-		protected virtual int encodeSequence(object obj, System.IO.Stream stream, ElementInfo elementInfo)
+		public virtual int encodeSequence(object obj, System.IO.Stream stream, ElementInfo elementInfo)
 		{
 			int resultSize = 0;
-			foreach(PropertyInfo field in obj.GetType().GetProperties())
+            PropertyInfo[] fields = elementInfo.getProperties(obj.GetType());
+            int fieldIdx = 0;
+            foreach (PropertyInfo field in fields)
 			{
-				resultSize += encodeSequenceField(obj, field, stream, elementInfo);
+				resultSize += encodeSequenceField(obj, fieldIdx++, field, stream, elementInfo);
 			}
 			return resultSize;
 		}
 		
-		protected virtual int encodeSequenceField(object obj, PropertyInfo field, System.IO.Stream stream, ElementInfo elementInfo)
+		public virtual int encodeSequenceField(object obj, int fieldIdx, PropertyInfo field, System.IO.Stream stream, ElementInfo elementInfo)
 		{
+            ElementInfo info = new ElementInfo();
+            info.AnnotatedClass = field;
+
+            if (elementInfo.hasPreparedInfo())
+            {
+                info.PreparedInfo = elementInfo.PreparedInfo.getPropertyMetadata(fieldIdx);
+            }
+            else
+                info.ASN1ElementInfo = CoderUtils.getAttribute<ASN1Element>(field);
+
 			int resultSize = 0;
-            if (CoderUtils.isAttributePresent<ASN1Null>(field))
+            if (CoderUtils.isNullField (field, info))
 			{
 				return encodeNull(obj, stream, elementInfo);
 			}
 			else
 			{
-				object invokeObjResult = invokeGetterMethodForField(field, obj);
+				object invokeObjResult = invokeGetterMethodForField(field, obj, info);
 				if (invokeObjResult != null)
 				{
-					ElementInfo info = new ElementInfo();
-                    info.AnnotatedClass = field;
-                    info.ASN1ElementInfo = CoderUtils.getAttribute<ASN1Element>(field);
 					resultSize += encodeClassType(invokeObjResult, stream, info);
 				}
 				else
-					checkForOptionalField(field);
+					CoderUtils.checkForOptionalField(field, info);
 			}
 			return resultSize;
 		}
-		
-		protected virtual int encodeChoice(object obj, System.IO.Stream stream, ElementInfo elementInfo)
-		{
-			int resultSize = 0;
-			PropertyInfo selectedField = null;
-			foreach(PropertyInfo field in obj.GetType().GetProperties())
-			{
-				if (invokeSelectedMethodForField(field, obj))
-				{
-					selectedField = field;
-					object invokeObjResult = invokeGetterMethodForField(field, obj);
-                    ElementInfo info = new ElementInfo();
-                    info.AnnotatedClass = field;
+
+        protected ElementInfo getChoiceSelectedElement(Object obj, ElementInfo elementInfo) {
+            ElementInfo info = null;                
+            
+            PropertyInfo[] fields = elementInfo.getProperties(obj.GetType());
+
+            int fieldIdx = 0;
+            foreach ( PropertyInfo field in fields ) 
+            {
+                info = new ElementInfo();
+                info.AnnotatedClass = field;
+                if(elementInfo.hasPreparedInfo()) {
+                    info.PreparedInfo = (elementInfo.PreparedInfo.getPropertyMetadata(fieldIdx));
+                }
+                else
                     info.ASN1ElementInfo = CoderUtils.getAttribute<ASN1Element>(field);
-                    resultSize += encodeClassType(invokeObjResult, stream, info);
-					break;
-				}
-			}
-			if (selectedField == null)
-			{
-				throw new System.ArgumentException("The choice '" + obj.ToString() + "' does not have a selected item!");
-			}
-			return resultSize;
+            
+                if (invokeSelectedMethodForField(field, obj, info)) {
+                    break;
+                }
+                else {
+                    info = null;
+                }
+                fieldIdx++;
+            }
+            
+            if(info==null) {
+                throw new System.ArgumentException("The choice '" + obj.ToString() + "' does not have a selected item!");
+            }        
+            return info;
+        }
+		
+		public virtual int encodeChoice(object obj, System.IO.Stream stream, ElementInfo elementInfo)
+		{
+            int resultSize = 0;
+            ElementInfo info = getChoiceSelectedElement(obj, elementInfo);
+            Object invokeObjResult = invokeGetterMethodForField((PropertyInfo)info.AnnotatedClass,obj, info);
+            resultSize+=encodeClassType(invokeObjResult, stream, info);
+            return resultSize;
 		}
 		
 		
-		protected virtual int encodeEnum(object obj, System.IO.Stream stream, ElementInfo elementInfo)
+		public virtual int encodeEnum(object obj, System.IO.Stream stream, ElementInfo elementInfo)
 		{
 			int resultSize = 0;
 			PropertyInfo field = 
                 obj.GetType().GetProperty("Value");
-			object result = invokeGetterMethodForField(field, obj);
+			object result = invokeGetterMethodForField(field, obj, null);
             Type enumClass = null;
 			
 			foreach(MemberInfo member in obj.GetType().GetMembers())
@@ -294,15 +340,15 @@ namespace org.bn.coders
 			return resultSize;
 		}
 		
-		protected abstract int encodeEnumItem(object enumConstant, Type enumClass, System.IO.Stream stream, ElementInfo elementInfo);		
+		public abstract int encodeEnumItem(object enumConstant, Type enumClass, System.IO.Stream stream, ElementInfo elementInfo);		
 		
-		protected virtual int encodeElement(object obj, System.IO.Stream stream, ElementInfo elementInfo)
+		public virtual int encodeElement(object obj, System.IO.Stream stream, ElementInfo elementInfo)
 		{
 			elementInfo.AnnotatedClass = obj.GetType();
 			return encodeClassType(obj, stream, elementInfo);
 		}
 		
-		protected virtual int encodeBoxedType(object obj, System.IO.Stream stream, ElementInfo elementInfo)
+		public virtual int encodeBoxedType(object obj, System.IO.Stream stream, ElementInfo elementInfo)
 		{
 			PropertyInfo field = obj.GetType().GetProperty("Value");
 			elementInfo.AnnotatedClass = field;
@@ -315,27 +361,27 @@ namespace org.bn.coders
 				return encodeNull(obj, stream, elementInfo);
 			}
 			else
-			{				
-				return encodeClassType(invokeGetterMethodForField(field, obj), stream, elementInfo);
+			{
+                return encodeClassType(invokeGetterMethodForField(field, obj, elementInfo), stream, elementInfo);
 			}
 		}
 		
-		protected abstract int encodeBoolean(object obj, System.IO.Stream stream, ElementInfo elementInfo);
+		public abstract int encodeBoolean(object obj, System.IO.Stream stream, ElementInfo elementInfo);
 		
-		protected abstract int encodeAny(object obj, System.IO.Stream stream, ElementInfo elementInfo);
+		public abstract int encodeAny(object obj, System.IO.Stream stream, ElementInfo elementInfo);
 		
-		protected abstract int encodeNull(object obj, System.IO.Stream stream, ElementInfo elementInfo);
+		public abstract int encodeNull(object obj, System.IO.Stream stream, ElementInfo elementInfo);
 		
-		protected abstract int encodeInteger(object obj, System.IO.Stream steam, ElementInfo elementInfo);
+		public abstract int encodeInteger(object obj, System.IO.Stream steam, ElementInfo elementInfo);
 
-        protected abstract int encodeReal(object obj, System.IO.Stream steam, ElementInfo elementInfo);
+        public abstract int encodeReal(object obj, System.IO.Stream steam, ElementInfo elementInfo);
 
-		protected abstract int encodeOctetString(object obj, System.IO.Stream steam, ElementInfo elementInfo);
+		public abstract int encodeOctetString(object obj, System.IO.Stream steam, ElementInfo elementInfo);
 
-        protected abstract int encodeBitString(object obj, System.IO.Stream steam, ElementInfo elementInfo);
+        public abstract int encodeBitString(object obj, System.IO.Stream steam, ElementInfo elementInfo);
 		
-		protected abstract int encodeString(object obj, System.IO.Stream steam, ElementInfo elementInfo);
+		public abstract int encodeString(object obj, System.IO.Stream steam, ElementInfo elementInfo);
 		
-		protected abstract int encodeSequenceOf(object obj, System.IO.Stream steam, ElementInfo elementInfo);
+		public abstract int encodeSequenceOf(object obj, System.IO.Stream steam, ElementInfo elementInfo);
 	}
 }

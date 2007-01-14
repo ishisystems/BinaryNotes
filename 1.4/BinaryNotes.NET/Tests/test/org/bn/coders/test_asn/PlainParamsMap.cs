@@ -14,8 +14,9 @@ using org.bn.types;
 namespace test.org.bn.coders.test_asn {
 
 
+    [ASN1PreparedElement]
     [ASN1Sequence ( Name = "PlainParamsMap", IsSet = false  )]
-    public class PlainParamsMap {
+    public class PlainParamsMap : IASN1PreparedElement {
             
         
 	private string param_name_ ;
@@ -49,6 +50,13 @@ namespace test.org.bn.coders.test_asn {
             public void initWithDefaults() {
                 
             }
+
+
+            private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(typeof(PlainParamsMap));
+            public IASN1PreparedElementData PreparedData {
+            	get { return preparedData; }
+            }
+
             
     }
             

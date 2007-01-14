@@ -15,10 +15,11 @@ import org.bn.types.*;
 
 
 
+    @ASN1PreparedElement
     @ASN1Enum (
         name = "DeliveredStatus"
     )
-    public class DeliveredStatus {        
+    public class DeliveredStatus implements IASN1PreparedElement {        
         public enum EnumType {
             
             @ASN1EnumItem ( name = "unknown", hasTag = true , tag = 0 )
@@ -51,5 +52,15 @@ import org.bn.types.*;
         public void setIntegerForm(Integer value) {
             integerForm = value;
         }
+
+	    public void initWithDefaults() {
+	    }
+
+        private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(DeliveredStatus.class);
+        public IASN1PreparedElementData getPreparedData() {
+            return preparedData;
+        }
+
+
     }
             

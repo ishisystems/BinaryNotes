@@ -13,9 +13,24 @@ using org.bn.types;
 
 namespace test.org.bn.coders.test_asn {
 
+
+    [ASN1PreparedElement]
+    
         [ASN1Null ( Name = "NullSequence" )]
     
-    public class NullSequence {                    
+    public class NullSequence: IASN1PreparedElement {                    
+
+            public void initWithDefaults()
+	    {
+	    }
+
+            private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(typeof(NullSequence));
+            public IASN1PreparedElementData PreparedData {
+            	get { return preparedData; }
+            }
+
+
+
     }
             
 }

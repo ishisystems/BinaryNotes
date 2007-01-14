@@ -34,8 +34,9 @@
         <xsltc:output file="{$outputDirectory}/{$boxedName}.cs">
             <xsl:call-template name="header"/>
 
+    [ASN1PreparedElement]
     [ASN1BoxedType ( Name = "<xsl:value-of select='$boxedName'/>") ]
-    public class <xsl:value-of select="$boxedName"/> {
+    public class <xsl:value-of select="$boxedName"/> : IASN1PreparedElement {
     
             private BitString val = null;
 
@@ -55,6 +56,17 @@
             public <xsl:value-of select="$boxedName"/>(BitString value) {
                 this.Value = value;
             }            
+
+
+            public void initWithDefaults()
+	    {
+	    }
+
+            private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(typeof(<xsl:value-of select='$boxedName'/>));
+            public IASN1PreparedElementData PreparedData {
+            	get { return preparedData; }
+            }
+
     }
             <xsl:call-template name="footer"/>
         </xsltc:output>        

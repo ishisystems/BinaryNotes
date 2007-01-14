@@ -41,5 +41,16 @@ namespace org.bn.coders.per
 			return bitCnt;
 		}
 
+        public static bool is7BitEncodedString(ElementInfo info)
+        {
+            bool is7Bit = false;
+            int stringType = CoderUtils.getStringTagForElement(info);
+            is7Bit = (
+                stringType == org.bn.coders.UniversalTags.PrintableString
+                || stringType == org.bn.coders.UniversalTags.VisibleString
+            );
+            return is7Bit;
+        }
+
 	}
 }

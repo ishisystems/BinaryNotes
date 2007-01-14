@@ -28,13 +28,25 @@
 
     <xsl:template name="choiceDecl">
 	<xsl:param name="elementName"/>        
+	<xsl:variable name="choiceName"><xsl:call-template name="toUpperFirstLetter"><xsl:with-param name="input" select="$elementName"/></xsl:call-template>ChoiceType</xsl:variable>
             <xsl:if test="typeReference/isChoice = 'true'">
                 <xsl:for-each select="typeReference">
-        
+
+    [ASN1PreparedElement]    
     [ASN1Choice ( Name = "<xsl:value-of select='$elementName'/>" )]
-    public class <xsl:call-template name="toUpperFirstLetter"><xsl:with-param name="input" select="$elementName"/></xsl:call-template>ChoiceType {
+    public class <xsl:value-of select='$choiceName'/> : IASN1PreparedElement  {
             <xsl:call-template name="choiceElements"/>
             <xsl:call-template name="choiceFunctions"/>
+
+            public void initWithDefaults()
+	    {
+	    }
+
+            private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(typeof(<xsl:value-of select='$choiceName'/>));
+            public IASN1PreparedElementData PreparedData {
+            	get { return preparedData; }
+            }
+
     }
                 </xsl:for-each>
             </xsl:if>

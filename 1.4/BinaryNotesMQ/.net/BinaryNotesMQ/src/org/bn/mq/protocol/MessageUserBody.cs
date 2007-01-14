@@ -14,8 +14,9 @@ using org.bn.types;
 namespace org.bn.mq.protocol {
 
 
+    [ASN1PreparedElement]
     [ASN1Sequence ( Name = "MessageUserBody", IsSet = false  )]
-    public class MessageUserBody {
+    public class MessageUserBody : IASN1PreparedElement {
             
         
 	private byte[] userBody_ ;
@@ -83,6 +84,13 @@ namespace org.bn.mq.protocol {
             public void initWithDefaults() {
                 
             }
+
+
+            private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(typeof(MessageUserBody));
+            public IASN1PreparedElementData PreparedData {
+            	get { return preparedData; }
+            }
+
             
     }
             

@@ -61,27 +61,10 @@ namespace org.bn.coders.per
 			return result;
 		}
 		
-		protected override DecodedObject<object> decodeString(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
+		public override DecodedObject<object> decodeString(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
 		{
-			bool is7Bit = false;
-			ASN1String strValueAnnotation = null;
-			if (elementInfo.isAttributePresent<ASN1String>())
-			{
-				strValueAnnotation = elementInfo.getAttribute<ASN1String>();
-			}
-			else if (elementInfo.ParentAnnotatedClass != null && elementInfo.isParentAttributePresent<ASN1String>())
-			{
-				strValueAnnotation = elementInfo.getParentAttribute<ASN1String>();
-			}
-			if (strValueAnnotation != null)
-			{
-				is7Bit = (
-                    strValueAnnotation.StringType == org.bn.coders.UniversalTags.PrintableString 
-                    || strValueAnnotation.StringType == org.bn.coders.UniversalTags.VisibleString
-                );
-			}
-			if (!is7Bit)
-				return base.decodeString(decodedTag, objectClass, elementInfo, stream);
+            if (!PERCoderUtils.is7BitEncodedString(elementInfo)) 
+                return base.decodeString(decodedTag, objectClass, elementInfo, stream);
 			else
 			{
                 DecodedObject<object> result = new DecodedObject<object>();

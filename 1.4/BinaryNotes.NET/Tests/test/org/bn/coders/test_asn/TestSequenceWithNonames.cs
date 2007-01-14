@@ -14,14 +14,16 @@ using org.bn.types;
 namespace test.org.bn.coders.test_asn {
 
 
+    [ASN1PreparedElement]
     [ASN1Sequence ( Name = "TestSequenceWithNonames", IsSet = false  )]
-    public class TestSequenceWithNonames {
+    public class TestSequenceWithNonames : IASN1PreparedElement {
             
         
 	private SeqSequenceType seq_ ;
 	
+       [ASN1PreparedElement]
        [ASN1Sequence ( Name = "seq", IsSet = false  )]
-       public class SeqSequenceType {
+       public class SeqSequenceType : IASN1PreparedElement {
                 
         
 	private long it1_ ;
@@ -47,6 +49,12 @@ namespace test.org.bn.coders.test_asn {
                 public void initWithDefaults() {
                     
                 }
+
+            private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(typeof(SeqSequenceType));
+            public IASN1PreparedElementData PreparedData {
+            	get { return preparedData; }
+            }
+
                 
        }
                 
@@ -63,9 +71,10 @@ namespace test.org.bn.coders.test_asn {
         
 	private ChChoiceType ch_ ;
 	
-        
+
+    [ASN1PreparedElement]    
     [ASN1Choice ( Name = "ch" )]
-    public class ChChoiceType {
+    public class ChChoiceType : IASN1PreparedElement  {
             
         
 	private long it1_ ;
@@ -131,6 +140,16 @@ namespace test.org.bn.coders.test_asn {
         }
         
   
+
+            public void initWithDefaults()
+	    {
+	    }
+
+            private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(typeof(ChChoiceType));
+            public IASN1PreparedElementData PreparedData {
+            	get { return preparedData; }
+            }
+
     }
                 
         [ASN1Element ( Name = "ch", IsOptional =  false , HasTag =  true, Tag = 1 , HasDefaultValue =  false )  ]
@@ -146,8 +165,9 @@ namespace test.org.bn.coders.test_asn {
         
 	private System.Collections.Generic.ICollection<SequenceType> seqf_ ;
 	
+       [ASN1PreparedElement]
        [ASN1Sequence ( Name = "", IsSet = false  )]
-       public class SequenceType {
+       public class SequenceType : IASN1PreparedElement {
                 
         
 	private long it1_ ;
@@ -173,6 +193,12 @@ namespace test.org.bn.coders.test_asn {
                 public void initWithDefaults() {
                     
                 }
+
+            private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(typeof(SequenceType));
+            public IASN1PreparedElementData PreparedData {
+            	get { return preparedData; }
+            }
+
                 
        }
                 
@@ -193,6 +219,13 @@ namespace test.org.bn.coders.test_asn {
             public void initWithDefaults() {
                 
             }
+
+
+            private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(typeof(TestSequenceWithNonames));
+            public IASN1PreparedElementData PreparedData {
+            	get { return preparedData; }
+            }
+
             
     }
             

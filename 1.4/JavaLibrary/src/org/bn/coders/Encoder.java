@@ -199,13 +199,7 @@ public abstract class Encoder<T> implements IEncoder<T>, IASN1TypesEncoder {
     public int encodeSequence(Object object, OutputStream stream, ElementInfo elementInfo) throws Exception {
         int resultSize = 0;
 
-        Field[] fields = null;
-        if(elementInfo.hasPreparedInfo()) {
-            fields = elementInfo.getPreparedInfo().getFields();
-        }
-        else {
-            fields = object.getClass().getDeclaredFields();
-        }
+        Field[] fields = elementInfo.getFields(object.getClass());
         int fieldIdx = 0;
         for ( Field field : fields ) {
             resultSize += encodeSequenceField(object,fieldIdx++,field,stream,elementInfo);
@@ -251,14 +245,8 @@ public abstract class Encoder<T> implements IEncoder<T>, IASN1TypesEncoder {
     protected ElementInfo getChoiceSelectedElement(Object object, ElementInfo elementInfo) throws Exception {
         ElementInfo info = null;                
         
-        Field[] fields = null;
-        if(elementInfo.hasPreparedInfo()) {
-            fields = elementInfo.getPreparedInfo().getFields();
-        }
-        else {
-            fields = object.getClass().getDeclaredFields();
-        }
-        
+        Field[] fields = elementInfo.getFields(object.getClass());
+
         int fieldIdx = 0;
         for ( Field field : fields ) {            
             if(!field.isSynthetic()) {

@@ -15,8 +15,9 @@ import org.bn.types.*;
 
 
 
+    @ASN1PreparedElement
     @ASN1Sequence ( name = "SubscribeRequest", isSet = false )
-    public class SubscribeRequest {
+    public class SubscribeRequest implements IASN1PreparedElement {
             
     @ASN1String( name = "", 
         stringType = UniversalTag.UTF8String , isUCS = false )
@@ -109,6 +110,12 @@ import org.bn.types.*;
         setPersistence(param_Persistence);
     
         }
+
+        private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(SubscribeRequest.class);
+        public IASN1PreparedElementData getPreparedData() {
+            return preparedData;
+        }
+
             
     }
             

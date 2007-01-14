@@ -133,6 +133,7 @@
     <Compile Include="org\bn\attributes\ASN1OctetString.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="org\bn\attributes\ASN1PreparedElement.cs" />
     <Compile Include="org\bn\attributes\ASN1Real.cs" />
     <Compile Include="org\bn\attributes\ASN1Sequence.cs">
       <SubType>Code</SubType>
@@ -156,6 +157,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="org\bn\CoderFactory.cs" />
+    <Compile Include="org\bn\coders\ASN1PreparedElementData.cs" />
     <Compile Include="org\bn\coders\ber\BERCoderUtils.cs" />
     <Compile Include="org\bn\coders\ber\BERDecoder.cs" />
     <Compile Include="org\bn\coders\ber\BEREncoder.cs" />
@@ -175,6 +177,10 @@
     <Compile Include="org\bn\coders\Encoder.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="org\bn\coders\IASN1PreparedElement.cs" />
+    <Compile Include="org\bn\coders\IASN1PreparedElementData.cs" />
+    <Compile Include="org\bn\coders\IASN1TypesDecoder.cs" />
+    <Compile Include="org\bn\coders\IASN1TypesEncoder.cs" />
     <Compile Include="org\bn\coders\per\PERAlignedDecoder.cs" />
     <Compile Include="org\bn\coders\per\PERAlignedEncoder.cs" />
     <Compile Include="org\bn\coders\per\PERCoderUtils.cs" />
@@ -192,6 +198,28 @@
     <Compile Include="org\bn\IEncoder.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="org\bn\metadata\ASN1AnyMetadata.cs" />
+    <Compile Include="org\bn\metadata\ASN1BitStringMetadata.cs" />
+    <Compile Include="org\bn\metadata\ASN1BooleanMetadata.cs" />
+    <Compile Include="org\bn\metadata\ASN1BoxedTypeMetadata.cs" />
+    <Compile Include="org\bn\metadata\ASN1ChoiceMetadata.cs" />
+    <Compile Include="org\bn\metadata\ASN1ElementMetadata.cs" />
+    <Compile Include="org\bn\metadata\ASN1EnumItemMetadata.cs" />
+    <Compile Include="org\bn\metadata\ASN1EnumMetadata.cs" />
+    <Compile Include="org\bn\metadata\ASN1FieldMetadata.cs" />
+    <Compile Include="org\bn\metadata\ASN1IntegerMetadata.cs" />
+    <Compile Include="org\bn\metadata\ASN1Metadata.cs" />
+    <Compile Include="org\bn\metadata\ASN1NullMetadata.cs" />
+    <Compile Include="org\bn\metadata\ASN1OctetStringMetadata.cs" />
+    <Compile Include="org\bn\metadata\ASN1RealMetadata.cs" />
+    <Compile Include="org\bn\metadata\ASN1SequenceMetadata.cs" />
+    <Compile Include="org\bn\metadata\ASN1SequenceOfMetadata.cs" />
+    <Compile Include="org\bn\metadata\ASN1StringMetadata.cs" />
+    <Compile Include="org\bn\metadata\ASN1TypeMetadata.cs" />
+    <Compile Include="org\bn\metadata\constraints\ASN1SizeConstraintMetadata.cs" />
+    <Compile Include="org\bn\metadata\constraints\ASN1ValueRangeConstraintMetadata.cs" />
+    <Compile Include="org\bn\metadata\constraints\IASN1ConstraintMetadata.cs" />
+    <Compile Include="org\bn\metadata\IASN1Metadata.cs" />
     <Compile Include="org\bn\types\BitString.cs" />
     <Compile Include="org\bn\utils\BitArrayInputStream.cs" />
     <Compile Include="org\bn\utils\BitArrayOutputStream.cs" />

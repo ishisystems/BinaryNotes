@@ -14,8 +14,9 @@ using org.bn.types;
 namespace org.bn.mq.protocol {
 
 
+    [ASN1PreparedElement]
     [ASN1Sequence ( Name = "SubscribeRequest", IsSet = false  )]
-    public class SubscribeRequest {
+    public class SubscribeRequest : IASN1PreparedElement {
             
         
 	private string consumerId_ ;
@@ -86,6 +87,13 @@ namespace org.bn.mq.protocol {
         Persistence = param_Persistence;
     
             }
+
+
+            private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(typeof(SubscribeRequest));
+            public IASN1PreparedElementData PreparedData {
+            	get { return preparedData; }
+            }
+
             
     }
             

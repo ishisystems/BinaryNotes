@@ -64,14 +64,7 @@ public class PERUnalignedDecoder extends PERAlignedDecoder {
                                          ElementInfo elementInfo, 
                                   InputStream stream) throws IOException, 
                                                                     Exception {
-     int stringType = CoderUtils.getStringTagForElement(elementInfo);
-     boolean is7Bit = 
-         ( 
-             stringType == UniversalTag.PrintableString || 
-             stringType ==UniversalTag.VisibleString
-         )
-         ;
-     if(!is7Bit)
+     if(!PERCoderUtils.is7BitEncodedString(elementInfo))
          return super.decodeString(decodedTag, objectClass, elementInfo, stream);
      else {
             DecodedObject<String> result = new DecodedObject<String>();

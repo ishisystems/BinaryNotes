@@ -22,6 +22,8 @@ using System.Collections.Generic;
 using org.bn.utils;
 using org.bn.attributes;
 using org.bn.attributes.constraints;
+using org.bn.metadata;
+using org.bn.metadata.constraints;
 using org.bn.types;
 
 namespace org.bn.coders.per
@@ -249,17 +251,39 @@ namespace org.bn.coders.per
 			return result;
 		}
 		
-		protected override int encodeInteger(object obj, System.IO.Stream stream, ElementInfo elementInfo)
+		public override int encodeInteger(object obj, System.IO.Stream stream, ElementInfo elementInfo)
 		{
 			int result = 0;
+            bool hasConstraint = false;
+            long min = 0, max = 0;
+
+            if (elementInfo.hasPreparedInfo())
+            {
+                if (elementInfo.PreparedInfo.hasConstraint()
+                    && elementInfo.PreparedInfo.Constraint is ASN1ValueRangeConstraintMetadata)
+                {
+                    IASN1ConstraintMetadata constraint = elementInfo.PreparedInfo.Constraint;
+                    hasConstraint = true;
+                    min = ((ASN1ValueRangeConstraintMetadata)constraint).Min;
+                    max = ((ASN1ValueRangeConstraintMetadata)constraint).Max;
+                }
+            }
+            else
+            if (elementInfo.isAttributePresent<ASN1ValueRangeConstraint>())
+            {
+                hasConstraint = true;
+                ASN1ValueRangeConstraint constraint = elementInfo.getAttribute<ASN1ValueRangeConstraint>();
+                min = constraint.Min;
+                max = constraint.Max;
+            }
+
             if (obj.GetType().Equals(typeof(int)))
             {
                 int val = (int)obj;
                 BitArrayOutputStream bitStream = (BitArrayOutputStream)stream;
-                if (elementInfo.isAttributePresent<ASN1ValueRangeConstraint>())
+                if (hasConstraint)
                 {
-                    ASN1ValueRangeConstraint constraint = elementInfo.getAttribute<ASN1ValueRangeConstraint>();
-                    result += encodeConstraintNumber(val, constraint.Min, constraint.Max, bitStream);
+                    result += encodeConstraintNumber(val, min, max, bitStream);
                 }
                 else
                     result += encodeUnconstraintNumber(val, bitStream);
@@ -268,10 +292,9 @@ namespace org.bn.coders.per
             {
                 long val = (long)obj;
                 BitArrayOutputStream bitStream = (BitArrayOutputStream)stream;
-                if (elementInfo.isAttributePresent<ASN1ValueRangeConstraint>())
+                if (hasConstraint)
                 {
-                    ASN1ValueRangeConstraint constraint = elementInfo.getAttribute<ASN1ValueRangeConstraint>();
-                    result += encodeConstraintNumber(val, constraint.Min, constraint.Max, bitStream);
+                    result += encodeConstraintNumber(val, min, max, bitStream);
                 }
                 else
                     result += encodeUnconstraintNumber(val, bitStream);
@@ -279,7 +302,7 @@ namespace org.bn.coders.per
 			return result;
 		}
 
-        protected override int encodeReal(object obj, System.IO.Stream stream, ElementInfo elementInfo)
+        public override int encodeReal(object obj, System.IO.Stream stream, ElementInfo elementInfo)
         {
             int result = 0;
             BitArrayOutputStream bitStream = (BitArrayOutputStream)stream;
@@ -339,44 +362,73 @@ namespace org.bn.coders.per
             CoderUtils.checkConstraints(val, elementInfo);
             int resultSize = 0;
             BitArrayOutputStream bitStream = (BitArrayOutputStream)stream;
-            if (elementInfo.isAttributePresent<ASN1ValueRangeConstraint>())
+            if (elementInfo.hasPreparedInfo())
             {
-                ASN1ValueRangeConstraint constraint = elementInfo.getAttribute<ASN1ValueRangeConstraint>();
-                resultSize += encodeConstraintLengthDeterminant(val, (int)constraint.Min, (int)constraint.Max, bitStream);
+                if (elementInfo.PreparedInfo.hasConstraint())
+                {
+                    IASN1ConstraintMetadata constraint = elementInfo.PreparedInfo.Constraint;
+                    if (constraint is ASN1ValueRangeConstraintMetadata)
+                    {
+                        resultSize += encodeConstraintLengthDeterminant(
+                            val,
+                            (int)((ASN1ValueRangeConstraintMetadata)constraint).Min,
+                            (int)((ASN1ValueRangeConstraintMetadata)constraint).Max,
+                            bitStream
+                        );
+                    }
+                    else
+                    if (constraint is ASN1SizeConstraintMetadata)
+                    {
+                    }
+                }
+                else
+                    resultSize += encodeLengthDeterminant(val, bitStream);
             }
             else
-            if (elementInfo.isAttributePresent<ASN1SizeConstraint>())
             {
-                ASN1SizeConstraint constraint = elementInfo.getAttribute<ASN1SizeConstraint>();
+                if (elementInfo.isAttributePresent<ASN1ValueRangeConstraint>())
+                {
+                    ASN1ValueRangeConstraint constraint = elementInfo.getAttribute<ASN1ValueRangeConstraint>();
+                    resultSize += encodeConstraintLengthDeterminant(val, (int)constraint.Min, (int)constraint.Max, bitStream);
+                }
+                else
+                    if (elementInfo.isAttributePresent<ASN1SizeConstraint>())
+                    {
+                        ASN1SizeConstraint constraint = elementInfo.getAttribute<ASN1SizeConstraint>();
+                    }
+                    else
+                        resultSize += encodeLengthDeterminant(val, bitStream);
             }
-            else
-                resultSize += encodeLengthDeterminant(val, bitStream);            
             return resultSize;
         }
-		
-		protected virtual int encodeSequencePreamble(object obj, PropertyInfo[] fields, System.IO.Stream stream)
+
+        public virtual int encodeSequencePreamble(object obj, PropertyInfo[] fields, System.IO.Stream stream, ElementInfo elementInfo)
 		{
 			int resultBitSize = 0;
+            ElementInfo info = new ElementInfo();
+            int fieldIdx = 0;
             foreach (PropertyInfo field in fields) // obj.GetType().GetProperties()
             {
-                if (isOptionalField(field))
+                if(elementInfo.hasPreparedInfo())
+                    info.PreparedInfo = elementInfo.PreparedInfo.getPropertyMetadata(fieldIdx);
+                if(CoderUtils.isOptionalField(field,info))
 				{
-					object invokeObjResult = invokeGetterMethodForField(field, obj);
+					object invokeObjResult = invokeGetterMethodForField(field, obj, info);
 					((BitArrayOutputStream) stream).writeBit(invokeObjResult != null);
 					resultBitSize += 1;
 				}
+                fieldIdx++;
 			}
 			doAlign(stream);
 			return (resultBitSize / 8) + (resultBitSize % 8 > 0?1:0);
 		}
-		
-		protected override int encodeSequence(object obj, System.IO.Stream stream, ElementInfo elementInfo)
+
+        public override int encodeSequence(object obj, System.IO.Stream stream, ElementInfo elementInfo)
 		{
 			int resultSize = 0;
-            ASN1Sequence seqInfo = elementInfo.getAttribute<ASN1Sequence>();
-            if (!seqInfo.IsSet)
+            if(!CoderUtils.isSequenceSet(elementInfo))
             {
-                resultSize += encodeSequencePreamble(obj, obj.GetType().GetProperties(), stream);
+                resultSize += encodeSequencePreamble(obj, elementInfo.getProperties(obj.GetType()), stream, elementInfo);
                 resultSize += base.encodeSequence(obj, stream, elementInfo);
             }
             else
@@ -385,10 +437,10 @@ namespace org.bn.coders.per
             }			
 			return resultSize;
 		}
-		
-		protected virtual int encodeChoicePreamble(object obj, System.IO.Stream stream, int elementIndex)
+
+        public virtual int encodeChoicePreamble(object obj, System.IO.Stream stream, int elementIndex, ElementInfo elementInfo)
 		{
-            return encodeConstraintNumber(elementIndex, 1, obj.GetType().GetProperties().Length, (BitArrayOutputStream)stream);
+            return encodeConstraintNumber(elementIndex, 1, elementInfo.getProperties(obj.GetType()).Length, (BitArrayOutputStream)stream);
 		}
 		
 		/// <summary> Encoding of the choice structure
@@ -405,34 +457,44 @@ namespace org.bn.coders.per
 		/// Where the choice has only one alternative, there is no encoding 
 		/// for the index.
 		/// </summary>
-		protected override int encodeChoice(object obj, System.IO.Stream stream, ElementInfo elementInfo)
+        public override int encodeChoice(object obj, System.IO.Stream stream, ElementInfo elementInfo)
 		{
 			int resultSize = 0;
 			doAlign(stream);
-			ElementInfo info = null;
+            ElementInfo info = null;
+
 			int elementIndex = 0;
-			foreach(PropertyInfo field in obj.GetType().GetProperties())
+            int fieldIdx = 0;
+			foreach(PropertyInfo field in elementInfo.getProperties(obj.GetType()))
 			{
+                info = new ElementInfo();
+                info.AnnotatedClass = field;
+
 				elementIndex++;
-                if (invokeSelectedMethodForField(field, obj))
-                {
-                    info = new ElementInfo();
-                    info.AnnotatedClass = field;
+                if (elementInfo.hasPreparedInfo())
+                    info.PreparedInfo = elementInfo.PreparedInfo.getPropertyMetadata(fieldIdx);
+                else
                     info.ASN1ElementInfo = CoderUtils.getAttribute<ASN1Element>(field);
-					break;
-				}
+
+                if (invokeSelectedMethodForField(field, obj, info))
+                {
+                    break;
+                }
+                else
+                    info = null;
+                fieldIdx++;
 			}
 			if (info == null)
 			{
 				throw new System.ArgumentException("The choice '" + obj.ToString() + "' does not have a selected item!");
 			}
-			object invokeObjResult = invokeGetterMethodForField((System.Reflection.PropertyInfo) info.AnnotatedClass, obj);
-			resultSize += encodeChoicePreamble(obj, stream, elementIndex);
+			object invokeObjResult = invokeGetterMethodForField((System.Reflection.PropertyInfo)info.AnnotatedClass, obj,info);
+			resultSize += encodeChoicePreamble(obj, stream, elementIndex, elementInfo);
 			resultSize += encodeClassType(invokeObjResult, stream, info);
 			return resultSize;
 		}
-		
-		protected override int encodeEnumItem(object enumConstant, System.Type enumClass, System.IO.Stream stream, ElementInfo elementInfo)
+
+        public override int encodeEnumItem(object enumConstant, System.Type enumClass, System.IO.Stream stream, ElementInfo elementInfo)
 		{
 			ASN1EnumItem enumObj = elementInfo.getAttribute<ASN1EnumItem>();
 			int min = 0, max = enumClass.GetFields().Length, val = 0;
@@ -448,16 +510,16 @@ namespace org.bn.coders.per
 			}
 			return encodeConstraintNumber(val, min, max, (BitArrayOutputStream) stream);
 		}
-		
-		protected override int encodeBoolean(object obj, System.IO.Stream stream, ElementInfo elementInfo)
+
+        public override int encodeBoolean(object obj, System.IO.Stream stream, ElementInfo elementInfo)
 		{
 			int resultSize = 1;
 			BitArrayOutputStream bitStream = (BitArrayOutputStream) stream;
 			bitStream.writeBit((System.Boolean) obj);
 			return resultSize;
 		}
-		
-		protected override int encodeAny(object obj, System.IO.Stream stream, ElementInfo elementInfo)
+
+        public override int encodeAny(object obj, System.IO.Stream stream, ElementInfo elementInfo)
 		{
 			int resultSize = 0, sizeOfString = 0;
 			byte[] buffer = (byte[]) obj;
@@ -466,8 +528,8 @@ namespace org.bn.coders.per
 			resultSize += sizeOfString;
 			return resultSize;
 		}
-		
-		protected override int encodeOctetString(object obj, System.IO.Stream stream, ElementInfo elementInfo)
+
+        public override int encodeOctetString(object obj, System.IO.Stream stream, ElementInfo elementInfo)
 		{
 			int resultSize = 0, sizeOfString = 0;
 			byte[] buffer = (byte[]) obj;
@@ -480,8 +542,8 @@ namespace org.bn.coders.per
 			}
 			return resultSize;
 		}
-		
-		protected override int encodeString(object obj, System.IO.Stream stream, ElementInfo elementInfo)
+
+        public override int encodeString(object obj, System.IO.Stream stream, ElementInfo elementInfo)
 		{
 			int resultSize = 0;
 
@@ -500,8 +562,8 @@ namespace org.bn.coders.per
 			}
 			return resultSize;
 		}
-				
-		protected override int encodeSequenceOf(object obj, System.IO.Stream stream, ElementInfo elementInfo)
+
+        public override int encodeSequenceOf(object obj, System.IO.Stream stream, ElementInfo elementInfo)
 		{
             System.Collections.IList collection = (System.Collections.IList)obj;
             int resultSize = encodeLength(collection.Count, elementInfo, stream);
@@ -512,12 +574,19 @@ namespace org.bn.coders.per
                 ElementInfo info = new ElementInfo();
                 info.AnnotatedClass = itemObj.GetType();
                 info.ParentAnnotatedClass = elementInfo.AnnotatedClass;
+
+                if (elementInfo.hasPreparedInfo())
+                {
+                    ASN1SequenceOfMetadata seqOfMeta = (ASN1SequenceOfMetadata)elementInfo.PreparedInfo.TypeMetadata;
+                    info.PreparedInfo = (seqOfMeta.getItemClassMetadata());
+                }
+
                 resultSize += encodeClassType(itemObj, stream, info);
             }
 			return resultSize;
 		}
-		
-		protected override int encodeNull(object obj, System.IO.Stream stream, ElementInfo elementInfo)
+
+        public override int encodeNull(object obj, System.IO.Stream stream, ElementInfo elementInfo)
 		{
 			return 0;
 		}
@@ -527,22 +596,33 @@ namespace org.bn.coders.per
 			((BitArrayOutputStream) stream).align();
 		}
 
-        protected virtual int encodeSet(object obj, System.IO.Stream stream, ElementInfo elementInfo)
+        public virtual int encodeSet(object obj, System.IO.Stream stream, ElementInfo elementInfo)
         {
             int resultSize = 0;
-            SortedList<int, PropertyInfo> fieldOrder = CoderUtils.getSetOrder(obj);
-            //TO DO Performance optimization need (unnecessary copy)
-            PropertyInfo[] fields = new PropertyInfo[fieldOrder.Count];
-            fieldOrder.Values.CopyTo(fields,0);
-            resultSize += encodeSequencePreamble(obj, fields, stream);
+            PropertyInfo[] fields = null;
+            if (elementInfo.hasPreparedInfo())
+            {
+                fields = elementInfo.getProperties(obj.GetType());
+            }
+            else
+            {
+                SortedList<int, PropertyInfo> fieldOrder = CoderUtils.getSetOrder(obj.GetType());
+                //TO DO Performance optimization need (unnecessary copy)
+                fields = new PropertyInfo[fieldOrder.Count];
+                fieldOrder.Values.CopyTo(fields, 0);
+            }
+            
+            resultSize += encodeSequencePreamble(obj, fields, stream, elementInfo);
+            int fieldIdx = 0;
             foreach (PropertyInfo field in fields)
             {
-                resultSize += encodeSequenceField(obj, field, stream, elementInfo);
+                resultSize += encodeSequenceField(obj, fieldIdx++, field, stream, elementInfo);
             }
             return resultSize;
         }
 
-        protected override int encodeBitString(Object obj, System.IO.Stream stream, ElementInfo elementInfo) {    
+        public override int encodeBitString(Object obj, System.IO.Stream stream, ElementInfo elementInfo)
+        {    
             /*NOTE – (Tutorial) Bitstrings constrained to a fixed length less than or equal to 16 bits do not cause octet alignment. Larger
             bitstrings are octet-aligned in the ALIGNED variant. If the length is fixed by constraints and the upper bound is less than 64K,
             there is no explicit length encoding, otherwise a length encoding is included which can take any of the forms specified earlier for

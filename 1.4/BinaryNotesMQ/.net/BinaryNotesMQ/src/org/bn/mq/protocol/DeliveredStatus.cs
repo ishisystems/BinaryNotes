@@ -14,8 +14,9 @@ using org.bn.types;
 namespace org.bn.mq.protocol {
 
 
+    [ASN1PreparedElement]
     [ASN1Enum ( Name = "DeliveredStatus")]
-    public class DeliveredStatus {        
+    public class DeliveredStatus : IASN1PreparedElement {        
         public enum EnumType {
             
             [ASN1EnumItem ( Name = "unknown", HasTag = true , Tag = 0 )]
@@ -37,6 +38,17 @@ namespace org.bn.mq.protocol {
             get { return val; }
             set { val = value; }
         }        
+
+            public void initWithDefaults()
+	    {
+	    }
+
+
+            private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(typeof(DeliveredStatus));
+            public IASN1PreparedElementData PreparedData {
+            	get { return preparedData; }
+            }
+
                 
     }
             

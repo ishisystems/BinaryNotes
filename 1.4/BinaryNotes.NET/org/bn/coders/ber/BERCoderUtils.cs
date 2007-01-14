@@ -19,6 +19,7 @@
 using System;
 using System.Reflection;
 using org.bn.attributes;
+using org.bn.metadata;
 
 namespace org.bn.coders.ber
 {	
@@ -27,55 +28,74 @@ namespace org.bn.coders.ber
 		public static int getTagValueForElement(ElementInfo info, int tagClass, int elemenType, int universalTag)
 		{
 			int result = tagClass | elemenType | universalTag;
-			ASN1Element elementInfo = null;
-			if (info.ASN1ElementInfo != null)
-			{
-				elementInfo = info.ASN1ElementInfo;
-			}
-			else 
-            if (info.isAttributePresent<ASN1Element>())
-			{
-				elementInfo = info.getAttribute<ASN1Element>();
-			}
-			
-			if (elementInfo != null)
-			{
-				if (elementInfo.HasTag)
-				{
-					tagClass = elementInfo.TagClass;
-                    if (elementInfo.Tag <= 0x30)
-                    {
-                        result = tagClass | elemenType | elementInfo.Tag;
-                    }
-                    else
-                    {
-                        result = tagClass | elemenType | 0x1F;
-                        if (elementInfo.Tag < 0x80)
-                        {
-                            result <<= 8;
-                            result |= elementInfo.Tag&0x7F;
-                        }
-                        else
-                        if (elementInfo.Tag < 0x3FFF)
-                        {
-                            result <<= 16;
-                            result |= (((elementInfo.Tag & 0x3FFF) >> 7) | 0x80) << 8;
-                            result |= ((elementInfo.Tag & 0x3FFF) & 0x7f);                            
-                        }
-                        else
-                        if (elementInfo.Tag < 0x3FFFF)
-                        {
-                            result <<= 24;
-                            result |= (((elementInfo.Tag & 0x3FFFF) >> 15) | 0x80) << 16;
-                            result |= (((elementInfo.Tag & 0x3FFFF) >> 7) | 0x80) << 8;
-                            result |= ((elementInfo.Tag & 0x3FFFF) & 0x3f);
-                        }
-                        //result |= elementInfo.Tag;
+            if(info.hasPreparedInfo()) 
+            {
+                ASN1ElementMetadata meta = info.PreparedASN1ElementInfo;
+                if(meta!=null && meta.HasTag) {
+                    result = getTagValue(tagClass,elemenType,universalTag,
+                        meta.Tag,
+                        meta.TagClass
+                    );
+                }
+            }
+            else 
+            {
+			    ASN1Element elementInfo = null;
+			    if (info.ASN1ElementInfo != null)
+			    {
+				    elementInfo = info.ASN1ElementInfo;
+			    }
+			    else 
+                if (info.isAttributePresent<ASN1Element>())
+			    {
+				    elementInfo = info.getAttribute<ASN1Element>();
+			    }
+    			
+			    if (elementInfo != null)
+			    {
+				    if (elementInfo.HasTag)
+				    {
+                        result = getTagValue(tagClass,elemenType,universalTag, elementInfo.Tag,elementInfo.TagClass);
                     }
 				}
 			}
 			return result;
 		}
+
+        public static int getTagValue(int tagClass, int elemenType, int universalTag, int userTag, int userTagClass)
+        {
+            int result = tagClass | elemenType | universalTag;
+            tagClass = userTagClass;
+            if (userTag <= 0x30)
+            {
+                result = tagClass | elemenType | userTag;
+            }
+            else
+            {
+                result = tagClass | elemenType | 0x1F;
+                if (userTag < 0x80)
+                {
+                    result <<= 8;
+                    result |= userTag & 0x7F;
+                }
+                else
+                    if (userTag < 0x3FFF)
+                    {
+                        result <<= 16;
+                        result |= (((userTag & 0x3FFF) >> 7) | 0x80) << 8;
+                        result |= ((userTag & 0x3FFF) & 0x7f);
+                    }
+                    else
+                        if (userTag < 0x3FFFF)
+                        {
+                            result <<= 24;
+                            result |= (((userTag & 0x3FFFF) >> 15) | 0x80) << 16;
+                            result |= (((userTag & 0x3FFFF) >> 7) | 0x80) << 8;
+                            result |= ((userTag & 0x3FFFF) & 0x3f);
+                        }
+            }
+            return result;
+        }
 
 	}
 }

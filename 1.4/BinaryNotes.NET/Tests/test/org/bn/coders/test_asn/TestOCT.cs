@@ -14,8 +14,9 @@ using org.bn.types;
 namespace test.org.bn.coders.test_asn {
 
 
+    [ASN1PreparedElement]
     [ASN1BoxedType ( Name = "TestOCT") ]
-    public class TestOCT {
+    public class TestOCT: IASN1PreparedElement {
     
             private byte[] val = null;
 
@@ -37,6 +38,17 @@ namespace test.org.bn.coders.test_asn {
             public TestOCT(BitString value) {
                 this.Value = value.Value;
             }                        
+
+            public void initWithDefaults()
+	    {
+	    }
+
+
+            private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(typeof(TestOCT));
+            public IASN1PreparedElementData PreparedData {
+            	get { return preparedData; }
+            }
+
     }
             
 }

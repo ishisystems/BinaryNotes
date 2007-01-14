@@ -15,8 +15,9 @@ import org.bn.types.*;
 
 
 
+    @ASN1PreparedElement
     @ASN1Sequence ( name = "AliveRequest", isSet = false )
-    public class AliveRequest {
+    public class AliveRequest implements IASN1PreparedElement {
             @ASN1Integer( name = "" )
     
         @ASN1Element ( name = "timestamp", isOptional =  false , hasTag =  false  , hasDefaultValue =  false  )
@@ -42,6 +43,12 @@ import org.bn.types.*;
         public void initWithDefaults() {
             
         }
+
+        private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(AliveRequest.class);
+        public IASN1PreparedElementData getPreparedData() {
+            return preparedData;
+        }
+
             
     }
             

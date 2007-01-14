@@ -14,8 +14,9 @@ using org.bn.types;
 namespace test.org.bn.coders.test_asn {
 
 
+    [ASN1PreparedElement]
     [ASN1BoxedType ( Name = "TaggedNullSequence") ]
-    public class TaggedNullSequence {
+    public class TaggedNullSequence: IASN1PreparedElement {
             
            
         private object  val;
@@ -36,6 +37,17 @@ namespace test.org.bn.coders.test_asn {
         public TaggedNullSequence ()
         {
         }
+
+            public void initWithDefaults()
+	    {
+	    }
+
+
+            private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(typeof(TaggedNullSequence));
+            public IASN1PreparedElementData PreparedData {
+            	get { return preparedData; }
+            }
+
         
     }
             

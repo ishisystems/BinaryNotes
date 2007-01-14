@@ -15,8 +15,9 @@ import org.bn.types.*;
 
 
 
+    @ASN1PreparedElement
     @ASN1Choice ( name = "MessageBody" )
-    public class MessageBody {
+    public class MessageBody implements IASN1PreparedElement {
             
         @ASN1Element ( name = "messageUserBody", isOptional =  false , hasTag =  true, tag = 0 , hasDefaultValue =  false  )
     
@@ -378,5 +379,15 @@ import org.bn.types.*;
         }
         
   
+
+	    public void initWithDefaults() {
+	    }
+
+        private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(MessageBody.class);
+        public IASN1PreparedElementData getPreparedData() {
+            return preparedData;
+        }
+
+
     }
             

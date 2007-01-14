@@ -27,21 +27,29 @@ namespace org.bn.coders.der
 {
     class DEREncoder: BEREncoder
     {
-        protected override int encodeSequence(Object obj, System.IO.Stream stream, ElementInfo elementInfo) {
-            ASN1Sequence seqInfo = elementInfo.getAttribute<ASN1Sequence>();
-            if(!seqInfo.IsSet)
+        public override int encodeSequence(Object obj, System.IO.Stream stream, ElementInfo elementInfo)
+        {
+            if(!CoderUtils.isSequenceSet(elementInfo))
                 return base.encodeSequence(obj, stream, elementInfo);
             else {
                 int resultSize = 0;
-                SortedList<int, PropertyInfo> fieldOrder = CoderUtils.getSetOrder(obj);
-                //TO DO Performance optimization need (unnecessary copy)
-                PropertyInfo[] fields = new PropertyInfo[fieldOrder.Count];
-                fieldOrder.Values.CopyTo(fields, 0);
+                PropertyInfo[] fields = null;
+                if (elementInfo.hasPreparedInfo())
+                {
+                    fields = elementInfo.getProperties(obj.GetType());
+                }
+                else
+                {
+                    SortedList<int, PropertyInfo> fieldOrder = CoderUtils.getSetOrder(obj.GetType());
+                    //TO DO Performance optimization need (unnecessary copy)
+                    fields = new PropertyInfo[fieldOrder.Count];
+                    fieldOrder.Values.CopyTo(fields, 0);
+                }
 
                 for (int i = 0; i < fields.Length; i++)
                 {
                     PropertyInfo field = fields[fields.Length - 1 - i];
-                    resultSize += encodeSequenceField(obj, field, stream, elementInfo);
+                    resultSize += encodeSequenceField(obj, fields.Length - 1 - i, field, stream, elementInfo);
                 }
 
                 resultSize += encodeHeader(

@@ -15,8 +15,9 @@ import org.bn.types.*;
 
 
 
+    @ASN1PreparedElement
     @ASN1Sequence ( name = "MessageEnvelope", isSet = false )
-    public class MessageEnvelope {
+    public class MessageEnvelope implements IASN1PreparedElement {
             
     @ASN1String( name = "", 
         stringType =  UniversalTag.PrintableString , isUCS = false )
@@ -85,6 +86,12 @@ import org.bn.types.*;
         setDeliveryReportReq(param_DeliveryReportReq);
     
         }
+
+        private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(MessageEnvelope.class);
+        public IASN1PreparedElementData getPreparedData() {
+            return preparedData;
+        }
+
             
     }
             

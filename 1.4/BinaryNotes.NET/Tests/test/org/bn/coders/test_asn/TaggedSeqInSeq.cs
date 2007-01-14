@@ -14,15 +14,17 @@ using org.bn.types;
 namespace test.org.bn.coders.test_asn {
 
 
+    [ASN1PreparedElement]
     [ASN1BoxedType ( Name = "TaggedSeqInSeq") ]
-    public class TaggedSeqInSeq {
+    public class TaggedSeqInSeq: IASN1PreparedElement {
             
            
         private TaggedSeqInSeqSequenceType  val;
 
         
+       [ASN1PreparedElement]
        [ASN1Sequence ( Name = "TaggedSeqInSeq", IsSet = false  )]
-       public class TaggedSeqInSeqSequenceType {
+       public class TaggedSeqInSeqSequenceType : IASN1PreparedElement {
                 
         
 	private PlainParamsMap field_ ;
@@ -41,6 +43,12 @@ namespace test.org.bn.coders.test_asn {
                 public void initWithDefaults() {
                     
                 }
+
+            private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(typeof(TaggedSeqInSeqSequenceType));
+            public IASN1PreparedElementData PreparedData {
+            	get { return preparedData; }
+            }
+
                 
        }
                 
@@ -60,6 +68,17 @@ namespace test.org.bn.coders.test_asn {
         public TaggedSeqInSeq ()
         {
         }
+
+            public void initWithDefaults()
+	    {
+	    }
+
+
+            private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(typeof(TaggedSeqInSeq));
+            public IASN1PreparedElementData PreparedData {
+            	get { return preparedData; }
+            }
+
         
     }
             

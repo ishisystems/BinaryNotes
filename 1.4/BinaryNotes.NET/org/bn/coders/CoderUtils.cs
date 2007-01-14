@@ -22,7 +22,10 @@ using System.Text;
 using System.Reflection;
 using org.bn.attributes;
 using org.bn.attributes.constraints;
+using org.bn.metadata;
+using org.bn.metadata.constraints;
 using org.bn.types;
+
 
 namespace org.bn.coders
 {
@@ -179,11 +182,11 @@ namespace org.bn.coders
            return new BitString(resultBuf,hasTrailBits?4:0);
         }
 
-        public static SortedList<int, PropertyInfo> getSetOrder(Object obj)
+        public static SortedList<int, PropertyInfo> getSetOrder(Type objClass)
         {
             SortedList<int, PropertyInfo> fieldOrder = new SortedList<int, PropertyInfo>();
             const int tagNA = -1;
-            foreach (PropertyInfo field in obj.GetType().GetProperties())
+            foreach (PropertyInfo field in objClass.GetProperties())
             {
                 ASN1Element element = CoderUtils.getAttribute<ASN1Element>(field);
                 if (element != null)
@@ -200,6 +203,10 @@ namespace org.bn.coders
         public static int getStringTagForElement(ElementInfo elementInfo)
         {
             int result = UniversalTags.PrintableString;
+            if(elementInfo.hasPreparedInfo()) {
+                result = ((ASN1StringMetadata)elementInfo.PreparedInfo.TypeMetadata).StringType;
+            }
+            else
             if (elementInfo.isAttributePresent<ASN1String>())
             {
                 ASN1String val = elementInfo.getAttribute<ASN1String>();
@@ -210,21 +217,135 @@ namespace org.bn.coders
 
         public static void checkConstraints(long val, ElementInfo elementInfo)
         {
-            if (elementInfo.isAttributePresent<ASN1ValueRangeConstraint>())
+            if(elementInfo.hasPreparedInfo()) 
             {
-                ASN1ValueRangeConstraint constraint = elementInfo.getAttribute<ASN1ValueRangeConstraint>();
-                if (val > constraint.Max || val < constraint.Min)
-                    throw new Exception("Length of '" + elementInfo.AnnotatedClass.ToString() + "' out of bound");
+                if(elementInfo.PreparedInfo.hasConstraint())
+                    if(!elementInfo.PreparedInfo.Constraint.checkValue(val))
+                        throw new Exception("Length of '" + elementInfo.AnnotatedClass.ToString() + "' out of bound");
             }
-            else
-            if (elementInfo.isAttributePresent<ASN1SizeConstraint>())
-            {
-                ASN1SizeConstraint constraint = elementInfo.getAttribute<ASN1SizeConstraint>();
-                if (val != constraint.Max)
-                    throw new Exception("Length of '" + elementInfo.AnnotatedClass.ToString() + "' out of bound");
+            else {
+                if (elementInfo.isAttributePresent<ASN1ValueRangeConstraint>())
+                {
+                    ASN1ValueRangeConstraint constraint = elementInfo.getAttribute<ASN1ValueRangeConstraint>();
+                    if (val > constraint.Max || val < constraint.Min)
+                        throw new Exception("Length of '" + elementInfo.AnnotatedClass.ToString() + "' out of bound");
+                }
+                else
+                if (elementInfo.isAttributePresent<ASN1SizeConstraint>())
+                {
+                    ASN1SizeConstraint constraint = elementInfo.getAttribute<ASN1SizeConstraint>();
+                    if (val != constraint.Max)
+                        throw new Exception("Length of '" + elementInfo.AnnotatedClass.ToString() + "' out of bound");
+                }
             }
         }
 
+        public static bool isImplements(ICustomAttributeProvider objectClass, Type interfaceClass) {        
+            return isAttributePresent<ASN1PreparedElement>(objectClass);// isAnnotationPresent(ASN1PreparedElement.class);
+            /*for(Class item: objectClass.getInterfaces()) {
+                if(item.equals(interfaceClass)) {
+                    return true;
+                }
+            }
+            return false;*/
+        }
+        
+        public static bool isAnyField(ICustomAttributeProvider field, ElementInfo elementInfo) {
+            bool isAny = false;
+            if(elementInfo.hasPreparedInfo()) {
+                isAny = elementInfo.PreparedInfo.TypeMetadata is ASN1AnyMetadata;
+            }
+            else
+                isAny = isAttributePresent<ASN1Any>(field);//. isAnnotationPresent(.class);        
+            return isAny;
+        }
+
+        public static bool isNullField(ICustomAttributeProvider field, ElementInfo elementInfo) {
+            bool isNull = false;
+            if(elementInfo.hasPreparedInfo()) {
+                isNull = elementInfo.PreparedInfo.TypeMetadata is ASN1NullMetadata;
+            }
+            else {
+                isNull = isAttributePresent<ASN1Null>(field);
+            }        
+            return isNull;
+        }
+            
+        
+        public static bool isOptionalField(ICustomAttributeProvider field, ElementInfo elementInfo) {
+            if(elementInfo.hasPreparedInfo()) {
+                if(elementInfo.hasPreparedASN1ElementInfo())
+                    return elementInfo.PreparedASN1ElementInfo.IsOptional || 
+                        elementInfo.PreparedASN1ElementInfo.HasDefaultValue ;
+                return false;
+            }
+            else
+            if( isAttributePresent<ASN1Element> (field)) {
+                ASN1Element info = getAttribute<ASN1Element>(field);
+                if(info.IsOptional || info.HasDefaultValue)
+                    return true;
+            }        
+            return false;
+        }
+        
+        public static bool isOptional(ElementInfo elementInfo) {
+            bool result = false;
+            if(elementInfo.hasPreparedInfo()) {
+                result = elementInfo.PreparedASN1ElementInfo.IsOptional 
+                    || elementInfo.PreparedASN1ElementInfo.HasDefaultValue ;
+            }
+            else
+                result= elementInfo.ASN1ElementInfo!=null && elementInfo.ASN1ElementInfo.IsOptional;
+            return result;
+        }
+        
+        
+        public static void checkForOptionalField(PropertyInfo field, ElementInfo elementInfo) {
+            if( isOptionalField(field, elementInfo) )
+                    return;
+            throw new  Exception ("The mandatory field '" + field.Name + "' does not have a value!");
+        }
+            
+            
+        public static bool isSequenceSet(ElementInfo elementInfo) {
+            bool isEqual = false;
+            if(elementInfo.hasPreparedInfo()) {
+                isEqual = ((ASN1SequenceMetadata)elementInfo.PreparedInfo.TypeMetadata).IsSet;
+            }
+            else {
+                ASN1Sequence seq = getAttribute<ASN1Sequence>(elementInfo.AnnotatedClass);
+                isEqual = seq.IsSet;
+            }        
+            return isEqual;
+        }
+
+        public static bool isSequenceSetOf(ElementInfo elementInfo) {
+            bool isEqual = false;
+            if(elementInfo.hasPreparedInfo()) {
+                isEqual = ((ASN1SequenceOfMetadata)elementInfo.PreparedInfo.TypeMetadata).IsSetOf;
+            }
+            else {
+                ASN1SequenceOf seq = getAttribute<ASN1SequenceOf>(elementInfo.AnnotatedClass);
+                isEqual = seq.IsSetOf;
+            }        
+            return isEqual;
+        }
+
+        public static MethodInfo findDoSelectMethodForField(PropertyInfo field, Type objClass) {
+            string methodName = "select" + field.Name.ToUpper().Substring(0, (1) - (0)) + field.Name.Substring(1);
+            return objClass.GetMethod(methodName);
+        }
+
+        public static MethodInfo findIsSelectedMethodForField(PropertyInfo field, Type objClass) {
+            string methodName = "is" + field.Name.ToUpper().Substring(0, (1) - (0)) + field.Name.Substring(1) + "Selected";
+            return objClass.GetMethod(methodName);
+        }
+
+        public static MethodInfo findIsPresentMethodForField(PropertyInfo field, Type objClass)
+        {
+            string methodName = "is" + field.Name.ToUpper().Substring(0, (1) - (0)) + field.Name.Substring(1) + "Present";
+            return objClass.GetMethod(methodName, new System.Type[0]);
+        }                
 
     }
 }

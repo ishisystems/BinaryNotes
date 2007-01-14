@@ -14,8 +14,9 @@ using org.bn.types;
 namespace org.bn.mq.protocol {
 
 
+    [ASN1PreparedElement]
     [ASN1Sequence ( Name = "AliveRequest", IsSet = false  )]
-    public class AliveRequest {
+    public class AliveRequest : IASN1PreparedElement {
             
         
 	private long timestamp_ ;
@@ -35,6 +36,13 @@ namespace org.bn.mq.protocol {
             public void initWithDefaults() {
                 
             }
+
+
+            private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(typeof(AliveRequest));
+            public IASN1PreparedElementData PreparedData {
+            	get { return preparedData; }
+            }
+
             
     }
             

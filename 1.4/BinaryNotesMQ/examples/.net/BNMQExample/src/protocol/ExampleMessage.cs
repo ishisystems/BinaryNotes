@@ -14,8 +14,9 @@ using org.bn.types;
 namespace org.bn.mq.examples.protocol {
 
 
+    [ASN1PreparedElement]
     [ASN1Sequence ( Name = "ExampleMessage", IsSet = false  )]
-    public class ExampleMessage {
+    public class ExampleMessage : IASN1PreparedElement {
             
         
 	private string field1_ ;
@@ -86,6 +87,13 @@ namespace org.bn.mq.examples.protocol {
         Field4 = param_Field4;
     
             }
+
+
+            private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(typeof(ExampleMessage));
+            public IASN1PreparedElementData PreparedData {
+            	get { return preparedData; }
+            }
+
             
     }
             

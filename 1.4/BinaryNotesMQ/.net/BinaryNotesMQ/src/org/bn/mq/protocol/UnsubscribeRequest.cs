@@ -14,8 +14,9 @@ using org.bn.types;
 namespace org.bn.mq.protocol {
 
 
+    [ASN1PreparedElement]
     [ASN1Sequence ( Name = "UnsubscribeRequest", IsSet = false  )]
-    public class UnsubscribeRequest {
+    public class UnsubscribeRequest : IASN1PreparedElement {
             
         
 	private string consumerId_ ;
@@ -55,6 +56,13 @@ namespace org.bn.mq.protocol {
             public void initWithDefaults() {
                 
             }
+
+
+            private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(typeof(UnsubscribeRequest));
+            public IASN1PreparedElementData PreparedData {
+            	get { return preparedData; }
+            }
+
             
     }
             

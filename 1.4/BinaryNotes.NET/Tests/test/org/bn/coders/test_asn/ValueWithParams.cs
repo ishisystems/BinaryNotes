@@ -14,8 +14,9 @@ using org.bn.types;
 namespace test.org.bn.coders.test_asn {
 
 
+    [ASN1PreparedElement]
     [ASN1Sequence ( Name = "ValueWithParams", IsSet = false  )]
-    public class ValueWithParams {
+    public class ValueWithParams : IASN1PreparedElement {
             
         
 	private string value_ ;
@@ -57,6 +58,13 @@ namespace test.org.bn.coders.test_asn {
             public void initWithDefaults() {
                 
             }
+
+
+            private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(typeof(ValueWithParams));
+            public IASN1PreparedElementData PreparedData {
+            	get { return preparedData; }
+            }
+
             
     }
             

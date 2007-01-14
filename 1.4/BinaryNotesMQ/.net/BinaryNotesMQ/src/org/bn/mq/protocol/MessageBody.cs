@@ -14,8 +14,9 @@ using org.bn.types;
 namespace org.bn.mq.protocol {
 
 
+    [ASN1PreparedElement]
     [ASN1Choice ( Name = "MessageBody") ]
-    public class MessageBody {
+    public class MessageBody : IASN1PreparedElement {
             
         
 	private MessageUserBody messageUserBody_ ;
@@ -422,6 +423,16 @@ namespace org.bn.mq.protocol {
         }
         
   
+
+            public void initWithDefaults()
+	    {
+	    }
+
+            private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(typeof(MessageBody));
+            public IASN1PreparedElementData PreparedData {
+            	get { return preparedData; }
+            }
+
     }
             
 }

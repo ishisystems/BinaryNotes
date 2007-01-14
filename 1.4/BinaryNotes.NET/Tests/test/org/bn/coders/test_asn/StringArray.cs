@@ -14,8 +14,9 @@ using org.bn.types;
 namespace test.org.bn.coders.test_asn {
 
 
+    [ASN1PreparedElement]
     [ASN1BoxedType ( Name = "StringArray" ) ]
-    public class StringArray {
+    public class StringArray : IASN1PreparedElement {
 
 	    private System.Collections.Generic.ICollection<string> val = null; 
             
@@ -35,6 +36,17 @@ namespace test.org.bn.coders.test_asn {
             public void Add(string item) {
                 this.Value.Add(item);
             }
+
+            public void initWithDefaults()
+	    {
+	    }
+
+
+            private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(typeof(StringArray));
+            public IASN1PreparedElementData PreparedData {
+            	get { return preparedData; }
+            }
+
     }
             
 }
