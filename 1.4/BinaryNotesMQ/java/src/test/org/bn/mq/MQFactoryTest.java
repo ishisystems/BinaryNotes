@@ -58,10 +58,12 @@ public class MQFactoryTest extends TestCase {
             serverConnection  = bus.create(new URI("bnmq://127.0.0.1:3333"));
             ISupplier supplier =  serverConnection.createSupplier("TestSupplier");
             queue = supplier.createQueue("myqueues/queue", String.class);
-            serverConnection.addListener(new TestMQConnectionListener());            
+            serverConnection.addListener(new TestMQConnectionListener());
+            serverConnection.start();
             
             clientConnection  = bus.connect(new URI("bnmq://127.0.0.1:3333"));
             clientConnection.addListener(new TestMQConnectionListener());
+            clientConnection.start();
             IRemoteSupplier remSupplier =  clientConnection.lookup("TestSupplier");
             IRemoteMessageQueue<String> remQueue = remSupplier.lookupQueue("myqueues/queue", String.class);            
             remQueue.addConsumer(new TestConsumer());
@@ -110,9 +112,11 @@ public class MQFactoryTest extends TestCase {
             ISupplier supplier =  serverConnection.createSupplier("TestSupplier");
             queue = supplier.createQueue("myqueues/queue", String.class);
             serverConnection.addListener(new TestMQConnectionListener());
+            serverConnection.start();
             
             clientConnection  = bus.connect(new URI("bnmq://127.0.0.1:3333"));
             clientConnection.addListener(new TestMQConnectionListener());
+            clientConnection.start();
             IRemoteSupplier remSupplier =  clientConnection.lookup("TestSupplier");
             IRemoteMessageQueue<String> remQueue = remSupplier.lookupQueue("myqueues/queue", String.class);
             remQueue.addConsumer(new TestRPCConsumer());
@@ -171,9 +175,12 @@ public class MQFactoryTest extends TestCase {
             queueStorage = persistStorage.createQueueStorage("MyQueue");
             queue = supplier.createQueue("myqueues/queue", String.class,queueStorage);
             serverConnection.addListener(new TestMQConnectionListener());
+            serverConnection.start();
             
             clientConnection  = bus.connect(new URI("bnmq://127.0.0.1:3333"));
             clientConnection.addListener(new TestMQConnectionListener());
+            clientConnection.start();
+            
             IRemoteSupplier remSupplier =  clientConnection.lookup("TestSupplier");
             IRemoteMessageQueue<String> remQueue = remSupplier.lookupQueue("myqueues/queue", String.class);
             remQueue.addConsumer(new TestPersistenceConsumer(),true);
@@ -188,6 +195,7 @@ public class MQFactoryTest extends TestCase {
             
             clientConnection  = bus.connect(new URI("bnmq://127.0.0.1:3333"));
             clientConnection.addListener(new TestMQConnectionListener());
+            clientConnection.start();
             remSupplier =  clientConnection.lookup("TestSupplier");
             remQueue = remSupplier.lookupQueue("myqueues/queue", String.class);
             remQueue.addConsumer(new TestPersistenceConsumer(),true);

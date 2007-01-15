@@ -33,6 +33,7 @@ namespace org.bn.mq
 		IRemoteSupplier lookup(string supplierName);		
 		ISupplier createSupplier(string supplierName);
 		void  removeSupplier(ISupplier supplier);
-		void  close();
+        void start();
+		void close();
 	}
 }

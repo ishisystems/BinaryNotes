@@ -47,6 +47,7 @@ namespace org.bn.mq.net
 		void  delReader(ITransportReader listener);
 		
 		bool isAvailable();
-		void  close();
+        void start();
+		void close();
 	}
 }

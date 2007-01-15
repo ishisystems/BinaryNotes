@@ -40,7 +40,8 @@ namespace test.org.bn.mq.net.tcp {
             try {
                 conFactory.TransportMessageCoderFactory = new ASN1TransportMessageCoderFactory();
                 ITransport transport = conFactory.getServerTransport(new Uri(connectionString));
-                Assert.NotNull(transport);                
+                Assert.NotNull(transport);
+                transport.start();
                 Thread.Sleep(500);
                 transport.close();
             }
@@ -57,9 +58,11 @@ namespace test.org.bn.mq.net.tcp {
                 conFactory.TransportMessageCoderFactory = new ASN1TransportMessageCoderFactory();
                 ITransport server = conFactory.getServerTransport(new Uri(connectionString));
                 Assert.NotNull(server);
+                server.start();
                 ITransport client = conFactory.getClientTransport(new Uri(connectionString));
                 Assert.NotNull(client);
-                Thread.Sleep(500);
+                client.start();
+
                 byte[] buffer = new byte[] { 0x01, 0x02, 0x03, 0x04 };
                 for(int i=0;i<255;i++) {
                     client.sendAsync(buffer);

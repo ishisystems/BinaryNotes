@@ -53,7 +53,12 @@ public class ServerTransport extends Transport {
         serverChannel = ServerSocketChannel.open();
         serverChannel.configureBlocking(false);
         serverChannel.socket().setReuseAddress(true);
-        serverChannel.socket().bind(new InetSocketAddress( getAddr().getHost(), getAddr().getPort()));        
+        serverChannel.socket().bind(new InetSocketAddress( getAddr().getHost(), getAddr().getPort()));  
+        acceptorFactory.getAcceptorStorage().addTransport(this);
+    }
+    
+    public void start() throws IOException {
+        startListener();
     }
     
     public void close() {        

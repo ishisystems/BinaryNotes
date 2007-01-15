@@ -50,6 +50,10 @@ public class MQConnection implements IMQConnection, ITransportConnectionListener
         transport.addConnectionListener(this);
         transport.addReader(this);
     }
+    
+    public void start() throws Exception {
+        this.transport.start();
+    }
 
     public IRemoteSupplier lookup(String supplierName) throws Exception {
         LookupRequest request = new LookupRequest();

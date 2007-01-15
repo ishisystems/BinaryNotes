@@ -54,12 +54,14 @@ namespace test.org.bn.mq.net
                 MessageListener ml = new MessageListener(this);
                 server.addConnectionListener(ml);
                 server.addReader(ml);
+                server.start();
                 
                 ITransport client = conFactory.getClientTransport(new Uri(connectionString));
                 ml = new MessageListener(this);
                 client.addConnectionListener(ml);
                 client.addReader(ml);
                 Assert.NotNull(client);
+                client.start();
                     
                 client.send(createMessage("AAAaasasasasassas"));
                 client.sendAsync(createMessage("Two"));
@@ -86,9 +88,11 @@ namespace test.org.bn.mq.net
                 server.addConnectionListener(cl);
                 server.addReader(cl);
                 Thread.Sleep(500);
+                server.start();
                 
                 ITransport client = conFactory.getClientTransport(new Uri(connectionString));
                 Assert.NotNull(client);
+                client.start();
                 MessageEnvelope result = client.call(createMessage("Call"), 10);
                 Console.WriteLine("Result call received with Id:"+result.Id+" has been received successfully");
                 client.close();
@@ -112,12 +116,14 @@ namespace test.org.bn.mq.net
                 CallMessageListener cl = new CallMessageListener(this);
                 server.addConnectionListener(cl);
                 server.addReader(cl);
-                Thread.Sleep(500);
+                server.start();
                 
                 ITransport client = conFactory.getClientTransport(new Uri(connectionString));
                 Assert.NotNull(client);
+                client.start();
                 client.callAsync(createMessage("CallAsync"), new AsyncCallMessageListener());
                 Thread.Sleep(500);
+
                 client.close();
                 server.close();
                 

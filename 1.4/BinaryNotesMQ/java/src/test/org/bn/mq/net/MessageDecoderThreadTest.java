@@ -62,12 +62,15 @@ public class MessageDecoderThreadTest extends TestCase {
             MessageListener ml = new MessageListener(this);
             server.addConnectionListener(ml);
             server.addReader(ml);
+            server.start();
             
             ITransport client = conFactory.getClientTransport(new URI(connectionString));
+            assertNotNull(client);            
             ml = new MessageListener(this);
             client.addConnectionListener(ml);
             client.addReader(ml);
-            assertNotNull(client);
+            client.start();
+
                 
             client.send(createMessage("AAAaasasasasassas"));
             client.sendAsync(createMessage("Two"));
@@ -87,16 +90,20 @@ public class MessageDecoderThreadTest extends TestCase {
         TransportFactory conFactory = new TransportFactory();
         try {
             conFactory.setTransportMessageCoderFactory(new ASN1TransportMessageCoderFactory());
-            
+            System.out.println("[testCall] created server");
             ITransport server = conFactory.getServerTransport(new URI(connectionString));
             assertNotNull(server);
             CallMessageListener cl = new CallMessageListener(this);
             server.addConnectionListener(cl);
             server.addReader(cl);
-            Thread.sleep(500);
+            server.start();
+            System.out.println("[testCall] server started");
             
             ITransport client = conFactory.getClientTransport(new URI(connectionString));
             assertNotNull(client);
+            client.start();
+            System.out.println("[testCall] client started");
+            
             MessageEnvelope result = client.call(createMessage("Call"), 10);
             System.out.println("Result call received with Id:"+result.getId()+" has been received successfully");
             client.close();
@@ -120,10 +127,12 @@ public class MessageDecoderThreadTest extends TestCase {
             CallMessageListener cl = new CallMessageListener(this);
             server.addConnectionListener(cl);
             server.addReader(cl);
-            Thread.sleep(500);
+            server.start();
             
             ITransport client = conFactory.getClientTransport(new URI(connectionString));
             assertNotNull(client);
+            client.start();
+            
             client.callAsync(createMessage("CallAsync"), new AsyncCallMessageListener());
             Thread.sleep(500);
             client.close();
@@ -133,7 +142,7 @@ public class MessageDecoderThreadTest extends TestCase {
         finally {
             conFactory.close();
         }
-        System.out.println("Finished: testCall");
+        System.out.println("Finished: testAsyncCall");
     }    
 
     private class MessageListener implements ITransportConnectionListener, ITransportReader {         

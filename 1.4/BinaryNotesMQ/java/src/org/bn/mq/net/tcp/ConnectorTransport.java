@@ -76,7 +76,13 @@ public class ConnectorTransport extends Transport {
     
     protected void onTransportClosed() {
         factory.getConnectorStorage().addDisconnectedTransport(this);
-    }    
+    }
+    
+    public void start() 
+    {
+        factory.getConnectorStorage().addAwaitingTransport(this);
+        finishConnect();
+    }
     
     public void close() {
         super.close();

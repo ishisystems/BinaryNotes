@@ -91,6 +91,13 @@ public class AcceptorStorage {
     
     
     public void close() {
+        try {
+            selector.close();
+        }
+        catch (IOException e) {
+            e = null;
+        }
+    
         synchronized(acceptKeys) {
             for(Map.Entry<ServerTransport,SelectionKey> entry: acceptKeys.entrySet()) {
                 entry.getKey().close();
@@ -98,12 +105,6 @@ public class AcceptorStorage {
             }
             acceptKeys.clear();
         }    
-        try {
-            selector.close();
-        }
-        catch (IOException e) {
-            e = null;
-        }
     }
 
     public List<ServerTransport> waitTransports() throws IOException {

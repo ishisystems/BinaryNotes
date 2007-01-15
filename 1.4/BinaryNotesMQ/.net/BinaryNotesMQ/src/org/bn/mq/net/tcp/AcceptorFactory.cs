@@ -41,7 +41,7 @@ namespace org.bn.mq.net.tcp
 		protected internal virtual ServerTransport createTransport(Uri addr)
 		{
 			ServerTransport transport = new ServerTransport(addr, this);
-			transport.startListener();
+			//transport.startListener();
 			return transport;
 		}
 		

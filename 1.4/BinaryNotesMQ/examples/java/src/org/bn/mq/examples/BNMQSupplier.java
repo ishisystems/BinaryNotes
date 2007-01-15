@@ -123,7 +123,7 @@ public class BNMQSupplier {
         try {
             serverConnection  = bus.create(new URI("bnmq://127.0.0.1:3333"));
             serverConnection.addListener(new MQConnectionListener());
-            System.out.println("Listener created successfully");
+            
             ISupplier supplier =  serverConnection.createSupplier("ExampleSupplier");
             System.out.println("Supplier created successfully");
 
@@ -137,6 +137,8 @@ public class BNMQSupplier {
             
             queue = supplier.createQueue("myqueues/queue", ExampleMessage.class,queueStorage);
             System.out.println("MessageQueue created successfully");
+            serverConnection.start();
+            System.out.println("Listener created successfully");
             
             dispatcher = new QueueDispatcher(queue);
             dispatcher.start();
@@ -151,6 +153,11 @@ public class BNMQSupplier {
             e.printStackTrace();
         }
         finally {
+            if(serverConnection!=null) {
+                System.out.println("Trying to close listener");
+                serverConnection.close();
+            }
+        
             if(queue!=null) {
                 System.out.println("Trying to stop queue");
                 queue.stop();
@@ -158,10 +165,6 @@ public class BNMQSupplier {
             if(queueStorage!=null) {
                 System.out.println("Trying to close queue storage");
                 queueStorage.close();
-            }
-            if(serverConnection!=null) {
-                System.out.println("Trying to close listener");
-                serverConnection.close();
             }
                 
             if(bus!=null) {

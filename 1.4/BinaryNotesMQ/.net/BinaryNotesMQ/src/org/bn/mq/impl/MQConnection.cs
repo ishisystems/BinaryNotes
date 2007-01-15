@@ -85,6 +85,11 @@ namespace org.bn.mq.impl
 				suppliers.Remove(supplier.Id);
 			}
 		}
+
+        public void start()
+        {
+            transport.start();
+        }
 		
 		public virtual void  close()
 		{

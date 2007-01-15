@@ -41,10 +41,13 @@ namespace test.org.bn.mq
                 serverConnection  = bus.create(new Uri("bnmq://127.0.0.1:3333"));
                 ISupplier supplier =  serverConnection.createSupplier("TestSupplier");
                 queue = supplier.createQueue<String>("myqueues/queue");
-                serverConnection.addListener(new TestMQConnectionListener());            
+                serverConnection.addListener(new TestMQConnectionListener());
+                serverConnection.start();
                 
                 clientConnection  = bus.connect(new Uri("bnmq://127.0.0.1:3333"));
                 clientConnection.addListener(new TestMQConnectionListener());
+                clientConnection.start();
+
                 IRemoteSupplier remSupplier =  clientConnection.lookup("TestSupplier");
                 IRemoteMessageQueue<String> remQueue = remSupplier.lookupQueue<String>("myqueues/queue");
                 remQueue.addConsumer(new TestConsumer());
@@ -87,9 +90,11 @@ namespace test.org.bn.mq
                 ISupplier supplier =  serverConnection.createSupplier("TestSupplier");
                 queue = supplier.createQueue<String>("myqueues/queue");
                 serverConnection.addListener(new TestMQConnectionListener());
+                serverConnection.start();
                 
                 clientConnection  = bus.connect(new Uri("bnmq://127.0.0.1:3333"));
                 clientConnection.addListener(new TestMQConnectionListener());
+                clientConnection.start();
                 IRemoteSupplier remSupplier =  clientConnection.lookup("TestSupplier");
                 IRemoteMessageQueue<String> remQueue = remSupplier.lookupQueue<String>("myqueues/queue");
                 remQueue.addConsumer(new TestRPCConsumer());
@@ -146,9 +151,11 @@ namespace test.org.bn.mq
                 queueStorage = persistStorage.createQueueStorage("MyQueue");
                 queue = supplier.createQueue<String>("myqueues/queue", queueStorage);
                 serverConnection.addListener(new TestMQConnectionListener());
+                serverConnection.start();
                 
                 clientConnection  = bus.connect(new Uri("bnmq://127.0.0.1:3333"));
                 clientConnection.addListener(new TestMQConnectionListener());
+                clientConnection.start();
                 IRemoteSupplier remSupplier =  clientConnection.lookup("TestSupplier");
                 IRemoteMessageQueue<String> remQueue = remSupplier.lookupQueue<String>("myqueues/queue");
                 remQueue.addConsumer(new TestPersistenceConsumer(),true);
@@ -163,6 +170,7 @@ namespace test.org.bn.mq
                 
                 clientConnection  = bus.connect(new Uri("bnmq://127.0.0.1:3333"));
                 clientConnection.addListener(new TestMQConnectionListener());
+                clientConnection.start();
                 remSupplier =  clientConnection.lookup("TestSupplier");
                 remQueue = remSupplier.lookupQueue<String>("myqueues/queue");
                 remQueue.addConsumer(new TestPersistenceConsumer(),true);

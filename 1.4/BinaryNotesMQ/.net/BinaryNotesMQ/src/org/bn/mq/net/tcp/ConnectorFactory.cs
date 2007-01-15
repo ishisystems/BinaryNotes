@@ -74,11 +74,11 @@ namespace org.bn.mq.net.tcp
 				transport = createTransport(addr);
 				created = true;
 			}
-			if (created)
+			/*if (created)
 			{
 				connectorStorage.addAwaitingTransport(transport);
 				transport.finishConnect();
-			}
+			}*/
 			return transport;
 		}
 		
@@ -89,14 +89,17 @@ namespace org.bn.mq.net.tcp
 
         public void close()
         {
+            IList<ConnectorTransport> tempCreatedTransports = null;
             lock (createdTransports)
             {
-                foreach (ConnectorTransport item in createdTransports)
-                {
-                    item.close();
-                }
+                tempCreatedTransports = new List<ConnectorTransport>(createdTransports);
                 createdTransports.Clear();
             }
+            foreach (ConnectorTransport item in tempCreatedTransports)
+            {
+                item.close();
+            }
+
             connectorStorage.close();
             connector.stop();
             try

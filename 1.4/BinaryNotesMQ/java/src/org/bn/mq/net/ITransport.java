@@ -48,5 +48,7 @@ public interface ITransport {
     void setUnhandledMessagesReader(ITransportReader listener);
     
     boolean isAvailable();
+    
+    void start() throws Exception;
     void close();
 }

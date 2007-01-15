@@ -64,6 +64,11 @@ public interface IMQConnection {
     URI getAddr();
     
     /**
+     * Start connection
+     */
+    void start() throws Exception;
+    
+    /**
      * Close & destroy current connection
      */
     void close();

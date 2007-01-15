@@ -35,6 +35,9 @@ public class ServerClientTransport extends Transport {
         this.serverTransport = server;
     }
     
+    public void start() {
+        // do nothing for client socket
+    }
     
     protected void fireReceivedData(ByteBuffer packet) throws Exception {
         try {

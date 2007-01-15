@@ -52,6 +52,10 @@ namespace org.bn.mq.net.tcp
 				throw ex;
 			}
 		}
+
+        public override void start()
+        {
+        }
 		
 		protected internal override void  onTransportClosed()
 		{

@@ -100,8 +100,7 @@ namespace org.bn.mq.examples
             QueueDispatcher dispatcher = null;
             try {
                 serverConnection  = bus.create(new Uri("bnmq://127.0.0.1:3333"));
-                serverConnection.addListener(new MQConnectionListener());
-                Console.WriteLine("Listener created successfully");
+                serverConnection.addListener(new MQConnectionListener());                
                 ISupplier supplier =  serverConnection.createSupplier("ExampleSupplier");
                 Console.WriteLine("Supplier created successfully");
 
@@ -115,6 +114,9 @@ namespace org.bn.mq.examples
                 
                 queue = supplier.createQueue<ExampleMessage>("myqueues/queue", queueStorage);
                 Console.WriteLine("MessageQueue created successfully");
+
+                serverConnection.start();
+                Console.WriteLine("Listener created successfully");
                 
                 dispatcher = new QueueDispatcher(queue);
                 dispatcher.start();
@@ -129,17 +131,22 @@ namespace org.bn.mq.examples
                 Console.WriteLine(e.ToString());
             }
             finally {
-                if(queue!=null) {
+                if (serverConnection != null)
+                {
+                    Console.WriteLine("Trying to close listener");
+                    serverConnection.close();
+                }
+
+                if(queue!=null) 
+                {
                     Console.WriteLine("Trying to stop queue");
                     queue.stop();
                 }
-                if(queueStorage!=null) {
+
+                if(queueStorage!=null) 
+                {
                     Console.WriteLine("Trying to close queue storage");
                     queueStorage.close();
-                }
-                if(serverConnection!=null) {
-                    Console.WriteLine("Trying to close listener");
-                    serverConnection.close();
                 }
                     
                 if(bus!=null) {

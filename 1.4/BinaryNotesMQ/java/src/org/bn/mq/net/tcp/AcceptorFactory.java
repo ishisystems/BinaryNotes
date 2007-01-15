@@ -48,9 +48,13 @@ public class AcceptorFactory extends SocketFactory {
     
     protected ServerTransport createTransport(URI addr) throws IOException {        
         ServerTransport transport = new ServerTransport (addr, this);
-        transport.startListener();
-        acceptorStorage.addTransport(transport);
+        //transport.startListener();
+        //acceptorStorage.addTransport(transport);
         return transport;
+    }
+    
+    public AcceptorStorage getAcceptorStorage() {
+        return this.acceptorStorage;
     }
            
     public ITransport getTransport(URI addr) throws IOException {

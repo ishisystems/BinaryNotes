@@ -91,8 +91,9 @@ public class BNMQConsumer {
             System.out.println("Creating connector");
             clientConnection  = bus.connect(new URI("bnmq://127.0.0.1:3333"));            
             clientConnection.addListener(new MQConnectionListener());
+            clientConnection.start();
             
-            doSubscribe();
+            //doSubscribe();
             System.out.println("Please enter to exit");
             System.in.read();
             System.out.println("Trying to stop example queue dispatcher");

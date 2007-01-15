@@ -74,6 +74,12 @@ namespace org.bn.mq.net.tcp
             }
 		}
 
+        public override void start()
+        {
+            factory.ConnectorStorage.addAwaitingTransport(this);
+            this.finishConnect();
+        }
+
         public override void close()
         {
             base.close();

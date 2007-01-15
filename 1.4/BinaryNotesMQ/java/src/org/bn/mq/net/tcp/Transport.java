@@ -48,7 +48,7 @@ import org.bn.mq.net.ITransportMessageCoder;
 import org.bn.mq.net.ITransportReader;
 import org.bn.mq.protocol.MessageEnvelope;
 
-public abstract class Transport implements ITransport  {
+public abstract class Transport implements ITransport {
     private URI addr;
     private SocketChannel socket = null;
     protected ReadWriteLock socketLock =  new ReentrantReadWriteLock();

@@ -75,6 +75,11 @@ namespace org.bn.mq.net.tcp
                  */
 			}
 		}
+
+        public override void start()
+        {
+            startListener();
+        }
 		
 		public override void  close()
 		{
@@ -120,31 +125,37 @@ namespace org.bn.mq.net.tcp
 		
 		public virtual void acceptClient(IAsyncResult asyncResult)
 		{
-            if (isAvailable())
+            lock (addr)
             {
-                try
+                if (isAvailable())
                 {
-                    Socket listener = (Socket)asyncResult.AsyncState;
-                    Socket clientSocket = listener.EndAccept(asyncResult);
-                    if (clientSocket != null)
+                    try
                     {
-                        ServerClientTransport transport =
-                            new ServerClientTransport(
-                                new Uri("bnmq://" + clientSocket.RemoteEndPoint.ToString()),
-                            this,
-                            acceptorFactory
-                        );
-                        transport.setSocket(clientSocket);
-                        lock (clients)
+                        Socket listener = (Socket)asyncResult.AsyncState;
+                        if (asyncResult.IsCompleted)
                         {
-                            clients.Add(transport);
-                            fireConnectedEvent(transport);
+                            Socket clientSocket = listener.EndAccept(asyncResult);
+                            if (clientSocket != null)
+                            {
+                                ServerClientTransport transport =
+                                    new ServerClientTransport(
+                                        new Uri("bnmq://" + clientSocket.RemoteEndPoint.ToString()),
+                                    this,
+                                    acceptorFactory
+                                );
+                                transport.setSocket(clientSocket);
+                                lock (clients)
+                                {
+                                    clients.Add(transport);
+                                    fireConnectedEvent(transport);
+                                }
+                            }
                         }
                     }
-                }
-                finally
-                {
-                    serverChannel.BeginAccept(this.acceptClient, serverChannel);
+                    finally
+                    {
+                        serverChannel.BeginAccept(this.acceptClient, serverChannel);
+                    }
                 }
             }
 		}

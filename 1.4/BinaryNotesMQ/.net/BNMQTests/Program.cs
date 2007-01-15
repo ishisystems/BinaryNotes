@@ -32,20 +32,20 @@ namespace test.org.bn.mq
         void startTransportFactoryTests()
         {
             new TransportFactoryTest().testGetServerTransport();
-            new TransportFactoryTest().testSendRecvServerTransport();
+            //new TransportFactoryTest().testSendRecvServerTransport();
         }
 
         void startTests()
         {
-            //startTransportFactoryTests();
-            //startMessageDecoderTests();
+            startTransportFactoryTests();
+            startMessageDecoderTests();
             startMQFactoryTests();
         }
 
         private void startMQFactoryTests()
         {
-            //new MQFactoryTest().testCreatingObjects();
-            //new MQFactoryTest().testRPCStyle();
+            new MQFactoryTest().testCreatingObjects();
+            new MQFactoryTest().testRPCStyle();
             new MQFactoryTest().testPersistence();
         }
 

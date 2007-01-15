@@ -68,11 +68,11 @@ public class ConnectorFactory extends SocketFactory {
                 created = true;
             //}
         }
-        if(created) {
+/*        if(created) {
             connectorStorage.addAwaitingTransport(transport);
             //connectorsExecutor.execute(connector);
             transport.finishConnect();
-        }
+        }*/
         return transport;
     }
     
@@ -86,12 +86,14 @@ public class ConnectorFactory extends SocketFactory {
     }
     
     public void close() {        
-        synchronized (createdTransports) {
-            for(ConnectorTransport item: createdTransports) {
-                item.close();
-            }
-            createdTransports.clear();
+        List<ConnectorTransport> tempCreatedTransports = new LinkedList<ConnectorTransport>();
+        synchronized (createdTransports) {            
+            tempCreatedTransports.addAll(createdTransports);
+            createdTransports.clear();           
         }
+        for(ConnectorTransport item: tempCreatedTransports) {
+            item.close();
+        }        
         connectorStorage.close();
         connector.stop();
         try {

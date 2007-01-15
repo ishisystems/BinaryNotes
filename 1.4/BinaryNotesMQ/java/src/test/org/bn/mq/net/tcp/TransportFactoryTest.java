@@ -41,8 +41,9 @@ public class TransportFactoryTest extends TestCase {
         TransportFactory conFactory = new TransportFactory();
         try {
             conFactory.setTransportMessageCoderFactory(new ASN1TransportMessageCoderFactory());
-            ITransport transport = conFactory.getServerTransport(new URI(connectionString));
+            ITransport transport = conFactory.getServerTransport(new URI(connectionString));            
             assertNotNull(transport);
+            transport.start();
             Thread.sleep(500);
             transport.close();
         }
@@ -61,8 +62,10 @@ public class TransportFactoryTest extends TestCase {
             conFactory.setTransportMessageCoderFactory(new ASN1TransportMessageCoderFactory());
             ITransport server = conFactory.getServerTransport(new URI(connectionString));
             assertNotNull(server);
+            server.start();
             ITransport client = conFactory.getClientTransport(new URI(connectionString));
             assertNotNull(client);
+            client.start();
             Thread.sleep(500);
             final byte[] buffer = new byte[] { 0x01, 0x02, 0x03, 0x04 };
             for(int i=0;i<255;i++) {

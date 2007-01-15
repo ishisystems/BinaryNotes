@@ -81,8 +81,9 @@ namespace org.bn.mq.examples
                 Console.WriteLine("Creating connector");
                 clientConnection  = bus.connect(new Uri("bnmq://127.0.0.1:3333"));            
                 clientConnection.addListener(new MQConnectionListener(this));
+                clientConnection.start();
                 
-                doSubscribe();
+                //doSubscribe();
                 Console.WriteLine("Please enter to exit");
                 Console.ReadKey();
                 //System.in.read();

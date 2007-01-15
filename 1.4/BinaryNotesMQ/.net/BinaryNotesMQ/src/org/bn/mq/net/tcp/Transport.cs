@@ -434,5 +434,7 @@ namespace org.bn.mq.net.tcp
 			    readers.Remove(reader);
 			}
 		}
+
+        public abstract void start();
 	}
 }
