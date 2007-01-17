@@ -27,16 +27,14 @@ import org.bn.mq.protocol.MessageEnvelope;
 public interface ICallAsyncListener<T> {
     /**
      * The event invokes when result for call has been received
-     * @param queue Incoming queue 
      * @param request Source user request (handback)
      * @param result Result from consumer
      */
-    void onCallResult(IMessageQueue queue, T request, T result);
+    void onCallResult(T request, T result);
     
     /**
      * The event invokes when timeout for call is expired
-     * @param queue Incoming queue 
      * @param request Source user request (handback)
      */
-    void onCallTimeout(IMessageQueue queue, T request);
+    void onCallTimeout(T request);
 }

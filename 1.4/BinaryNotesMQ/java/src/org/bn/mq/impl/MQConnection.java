@@ -28,6 +28,7 @@ import java.util.Map;
 
 import org.bn.mq.IMQConnection;
 import org.bn.mq.IMQConnectionListener;
+import org.bn.mq.IPTPSession;
 import org.bn.mq.IRemoteSupplier;
 import org.bn.mq.ISupplier;
 import org.bn.mq.net.ITransport;
@@ -151,5 +152,9 @@ public class MQConnection implements IMQConnection, ITransportConnectionListener
         synchronized(listeners) {
             listeners.remove(listener);
         }    
+    }
+
+    public <T> IPTPSession<T> createPTPSession(String pointName, String sessionName, Class<T> messageClass) {
+        return new PTPSession<T>(pointName, sessionName, this.transport, messageClass);
     }
 }

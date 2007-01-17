@@ -33,6 +33,8 @@ import org.bn.mq.IMQConnectionListener;
 import org.bn.mq.IMessage;
 import org.bn.mq.IMessageQueue;
 import org.bn.mq.IMessagingBus;
+import org.bn.mq.IPTPSession;
+import org.bn.mq.IPTPSessionListener;
 import org.bn.mq.IPersistenceQueueStorage;
 import org.bn.mq.IPersistenceStorage;
 import org.bn.mq.IRemoteMessageQueue;
@@ -223,6 +225,56 @@ public class MQFactoryTest extends TestCase {
         }        
     }
     
+    public void testPTPSession() throws Exception {
+        IMessagingBus bus = MQFactory.getInstance().createMessagingBus();
+        IMQConnection serverConnection  = null;
+        IMQConnection clientConnection  = null;
+        IPTPSession<String> ptpClientSession = null;
+        IPTPSession<String> ptpServerSession = null;
+        try {
+            serverConnection  = bus.create(new URI("bnmq://127.0.0.1:3333"));
+            ptpServerSession = serverConnection.createPTPSession("serverPTP","ptpSimpleSession",String.class);
+            ptpServerSession.addListener(new TestPTPSessionListener());
+            serverConnection.start();
+            
+            clientConnection  = bus.connect(new URI("bnmq://127.0.0.1:3333"));
+            ptpClientSession = clientConnection.createPTPSession("clientPTP","ptpSimpleSession",String.class);
+            ptpClientSession.addListener(new TestPTPSessionListener());            
+            clientConnection.start();
+
+            String result = ptpClientSession.call("Hello from PTP Client",20);
+            assertEquals(result,"Hello from RPC/PTP");            
+            ptpClientSession.callAsync("Hello from Server 2",new TestRPCAsyncCallBack(),20);
+                        
+            Thread.sleep(2000);
+            
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+        finally {
+            if(ptpClientSession!=null) {
+                ptpClientSession.close();
+            }
+            if(ptpServerSession!=null) {
+                ptpServerSession.close();
+            }
+            
+            if(clientConnection!=null)
+                clientConnection.close();        
+            if(serverConnection!=null)
+                serverConnection.close();
+            if(bus!=null) {
+                try {
+                    bus.close();
+                }
+                catch (Throwable e) {e = null; }
+            }
+        }
+    }
+    
+    
     
     protected class TestMQConnectionListener implements IMQConnectionListener {
 
@@ -260,11 +312,11 @@ public class MQFactoryTest extends TestCase {
     
     protected class TestRPCAsyncCallBack implements ICallAsyncListener<String> {
 
-        public void onCallResult(IMessageQueue queue, String request,String result) {
+        public void onCallResult(String request,String result) {
             System.out.println("Received call result: "+result);
         }
 
-        public void onCallTimeout(IMessageQueue queue, String request) {
+        public void onCallTimeout(String request) {
             System.out.println("!!! Received call timeout for request: "+request);
         }
     }
@@ -277,6 +329,15 @@ public class MQFactoryTest extends TestCase {
         public String onMessage(IMessage<String> message) {
             System.out.println("Persistence consumer received : "+message.getBody());
             return null;
+        }
+    }
+    
+    protected class TestPTPSessionListener implements IPTPSessionListener<String> {
+
+        public String onMessage(IPTPSession session, ITransport transport, 
+                                IMessage<String> message) {
+            System.out.println("Received PTP session call: "+message.getBody());
+            return "Hello from RPC/PTP";
         }
     }
 

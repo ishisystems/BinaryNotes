@@ -52,6 +52,14 @@ public interface IMQConnection {
     ISupplier createSupplier(String supplierName);
     
     /**
+     * Create/register supplier on connection with specified name
+     * @param sessionName PTP session Id
+     * @param pointName PTP endpoint Id
+     * @return PTP session instance
+     */
+    <T> IPTPSession<T> createPTPSession(String pointName, String sessionName, Class<T> messageClass);
+    
+    /**
      * Remove registered supplier
      * @param supplier supplier instance
      */

@@ -147,7 +147,7 @@ public class MessageQueue<T> implements IMessageQueue<T>, Runnable, ITransportCo
         }
         if(consumer instanceof IRemoteConsumer) {
             ITransport consTransport = ((IRemoteConsumer<T>)consumer).getNetworkTransport();
-            consTransport.callAsync(argsEnv, new ProxyCallAsyncListener<T>(this, listener,messageClass),timeout );
+            consTransport.callAsync(argsEnv, new ProxyCallAsyncListener<T>(listener,messageClass),timeout );
         }
         else
             throw new Exception("Call enabled only for remote consumer !");

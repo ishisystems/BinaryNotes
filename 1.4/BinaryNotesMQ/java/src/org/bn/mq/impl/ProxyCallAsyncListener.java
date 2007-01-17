@@ -27,11 +27,11 @@ import org.bn.mq.protocol.MessageEnvelope;
 public class ProxyCallAsyncListener<T> implements ITransportCallListener {
     private ICallAsyncListener<T> listener;
     private Class<T> messageClass;
-    private IMessageQueue queue;
+    //private IMessageQueue queue;
     
-    public ProxyCallAsyncListener(IMessageQueue queue, ICallAsyncListener<T> listener, Class<T> messageClass) {
+    public ProxyCallAsyncListener(ICallAsyncListener<T> listener, Class<T> messageClass) {
         this.listener = listener;
-        this.queue = queue;
+        //this.queue = queue;
         this.messageClass = messageClass;
     }
 
@@ -42,7 +42,7 @@ public class ProxyCallAsyncListener<T> implements ITransportCallListener {
             try {
                 request.fillFromEnvelope(requestEnv);
                 result.fillFromEnvelope(resultEnv);
-                listener.onCallResult(queue, request.getBody(),result.getBody());
+                listener.onCallResult(request.getBody(),result.getBody());
             }
             catch (Exception e) {
                 e.printStackTrace();
@@ -55,7 +55,7 @@ public class ProxyCallAsyncListener<T> implements ITransportCallListener {
             Message<T> request = new Message<T>(messageClass);
             try {
                 request.fillFromEnvelope(requestEnv);
-                listener.onCallTimeout(queue, request.getBody());
+                listener.onCallTimeout(request.getBody());
             }
             catch (Exception e) {
                 e.printStackTrace();
