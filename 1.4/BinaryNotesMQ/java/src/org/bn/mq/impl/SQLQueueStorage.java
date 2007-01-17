@@ -111,10 +111,10 @@ public class SQLQueueStorage<T> implements IPersistenceQueueStorage<T> {
         }            
     }
 
-    public void removeDeliveredMessage(IConsumer<T> consumer, IMessage<T> message) throws SQLException {
+    public void removeDeliveredMessage(String consumerId, String messageId) throws SQLException {
         synchronized(connection) {
-            this.removeMessageCmd.setString(1,message.getId());
-            this.removeMessageCmd.setString(2,consumer.getId());
+            this.removeMessageCmd.setString(1,messageId);
+            this.removeMessageCmd.setString(2,consumerId);
             this.removeMessageCmd.execute();
         }        
     }

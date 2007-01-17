@@ -153,6 +153,7 @@ namespace org.bn.mq.impl
 			Id = messageEnvelope.Id;
 			SenderId = messageEnvelope.Body.MessageUserBody.SenderId;
 			QueuePath = messageEnvelope.Body.MessageUserBody.QueuePath;
+            Mandatory = messageEnvelope.DeliveryReportReq;
 		}
 		
 		public virtual MessageEnvelope createEnvelope()
@@ -168,6 +169,7 @@ namespace org.bn.mq.impl
 			messageBody.selectMessageUserBody(userBody);
 			result.Body = messageBody;
 			result.Id = this.Id;
+            result.DeliveryReportReq = true;
 			
 			return result;
 		}

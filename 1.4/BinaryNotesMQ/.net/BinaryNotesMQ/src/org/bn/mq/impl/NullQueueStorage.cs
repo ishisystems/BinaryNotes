@@ -45,7 +45,7 @@ namespace org.bn.mq.impl
         {
         }
 
-        public void removeDeliveredMessage(IConsumer<T> consumer, IMessage<T> message)
+        public void removeDeliveredMessage(string consumerId, string messageId)
         {
         }
 

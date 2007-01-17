@@ -5,6 +5,8 @@ ChangeLog
 							[!] 		- Important warning or note
 							{<component>}	- Component/Group that changed
 
+1.4.0	{lib}		[+] BNMQ now a guaranteed message delivering supported for mandatory messages (using DeliveryReport messages)
+1.4.0	{lib}		[*] BNMQ big packet incorrect reading from socket fixed
 1.4.0	{lib}		[+] BNMQ API changes: added start() method for IMQConnection
 1.4.0	{lib}		[+] Added supports for .NET CF 2 for BNMQ (without support for SQLStorage)
 1.4.0	{lib}		[+] Added library supports for .NET Compact Framework 2.0

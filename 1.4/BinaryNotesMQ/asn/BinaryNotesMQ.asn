@@ -72,9 +72,10 @@ DEFINITIONS IMPLICIT TAGS ::= BEGIN
 
 
 	DeliveryReport ::= SEQUENCE {
-		messageId	PrintableString(SIZE(0 .. 10)),
-		status		DeliveredStatus,
-		deliveredCount	INTEGER (0 .. 65535)
+		messageId	[0] PrintableString(SIZE(0 .. 255)),
+		status		[1] DeliveredStatus,
+		consumerId	[2] UTF8String,
+		queuePath	[3] UTF8String
 	}
 
 	DeliveredStatus ::= ENUMERATED {

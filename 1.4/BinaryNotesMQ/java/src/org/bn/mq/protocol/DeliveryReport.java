@@ -23,25 +23,32 @@ import org.bn.types.*;
         stringType =  UniversalTag.PrintableString , isUCS = false )
     @ASN1ValueRangeConstraint ( 
 		min = 0L, 
-		max = 10L ) 
+		max = 255L ) 
 	   
-        @ASN1Element ( name = "messageId", isOptional =  false , hasTag =  false  , hasDefaultValue =  false  )
+        @ASN1Element ( name = "messageId", isOptional =  false , hasTag =  true, tag = 0 , hasDefaultValue =  false  )
     
 	private String messageId = null;
                 
   
-        @ASN1Element ( name = "status", isOptional =  false , hasTag =  false  , hasDefaultValue =  false  )
+        @ASN1Element ( name = "status", isOptional =  false , hasTag =  true, tag = 1 , hasDefaultValue =  false  )
     
 	private DeliveredStatus status = null;
                 
-  @ASN1Integer( name = "" )
-    @ASN1ValueRangeConstraint ( 
-		min = 0L, 
-		max = 65535L ) 
-	   
-        @ASN1Element ( name = "deliveredCount", isOptional =  false , hasTag =  false  , hasDefaultValue =  false  )
+  
+    @ASN1String( name = "", 
+        stringType = UniversalTag.UTF8String , isUCS = false )
     
-	private Integer deliveredCount = null;
+        @ASN1Element ( name = "consumerId", isOptional =  false , hasTag =  true, tag = 2 , hasDefaultValue =  false  )
+    
+	private String consumerId = null;
+                
+  
+    @ASN1String( name = "", 
+        stringType = UniversalTag.UTF8String , isUCS = false )
+    
+        @ASN1Element ( name = "queuePath", isOptional =  false , hasTag =  true, tag = 3 , hasDefaultValue =  false  )
+    
+	private String queuePath = null;
                 
   
         
@@ -69,14 +76,26 @@ import org.bn.types.*;
         
   
         
-        public Integer getDeliveredCount () {
-            return this.deliveredCount;
+        public String getConsumerId () {
+            return this.consumerId;
         }
 
         
 
-        public void setDeliveredCount (Integer value) {
-            this.deliveredCount = value;
+        public void setConsumerId (String value) {
+            this.consumerId = value;
+        }
+        
+  
+        
+        public String getQueuePath () {
+            return this.queuePath;
+        }
+
+        
+
+        public void setQueuePath (String value) {
+            this.queuePath = value;
         }
         
   

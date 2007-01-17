@@ -42,6 +42,7 @@ import org.bn.mq.net.ITransport;
 import org.bn.mq.net.ITransportConnectionListener;
 import org.bn.mq.net.ITransportReader;
 import org.bn.mq.net.tcp.TransportPacket;
+import org.bn.mq.protocol.DeliveredStatus;
 import org.bn.mq.protocol.MessageBody;
 import org.bn.mq.protocol.MessageEnvelope;
 import org.bn.mq.protocol.SubscribeRequest;
@@ -220,14 +221,6 @@ public class MessageQueue<T> implements IMessageQueue<T>, Runnable, ITransportCo
                 synchronized(consumers) {
                     for(Map.Entry<String, IConsumer<T> > entry: consumers.entrySet()) {
                         entry.getValue().onMessage(message);
-                        if(message.isMandatory()) {
-                            try {
-                                persistStorage.removeDeliveredMessage(entry.getValue(),message);
-                            }
-                            catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
                     }
                 }
             }
@@ -278,15 +271,6 @@ public class MessageQueue<T> implements IMessageQueue<T>, Runnable, ITransportCo
         try {                
             addConsumer(remoteConsumer,message.getBody().getSubscribeRequest().getPersistence(),message.getBody().getSubscribeRequest().getFilter());
             subscribeResultCode.setValue(SubscribeResultCode.EnumType.success);
-            if(message.getBody().getSubscribeRequest().getPersistence()) {
-                List<IMessage<T>> messages =  persistStorage.getMessagesToSend(remoteConsumer);
-                awaitMessageLock.lock();
-                synchronized(queue) {
-                    queue.push(messages);
-                }        
-                awaitMessageEvent.signal();
-                awaitMessageLock.unlock();
-            }
         }
         catch (Exception e) {
             subscribeResultCode.setValue(SubscribeResultCode.EnumType.alreadySubscription);
@@ -295,6 +279,17 @@ public class MessageQueue<T> implements IMessageQueue<T>, Runnable, ITransportCo
         subscribeResult.setCode(subscribeResultCode);
         try {
             transport.sendAsync(resultMsg);
+            if(subscribeResultCode.getValue() == SubscribeResultCode.EnumType.success 
+            && message.getBody().getSubscribeRequest().getPersistence()) {
+                List<IMessage<T>> messages =  persistStorage.getMessagesToSend(remoteConsumer);
+                awaitMessageLock.lock();
+                synchronized(queue) {
+                    queue.push(messages);
+                }        
+                awaitMessageEvent.signal();
+                awaitMessageLock.unlock();
+            }
+            
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -334,6 +329,21 @@ public class MessageQueue<T> implements IMessageQueue<T>, Runnable, ITransportCo
             e.printStackTrace();
         }    
     }
+    
+    private void onReceivedDeliveryReport(MessageEnvelope message, ITransport transport) {
+        try {
+            if(message.getBody().getDeliveryReport().getStatus().getValue() == DeliveredStatus.EnumType.delivered ) {
+                persistStorage.removeDeliveredMessage(
+                    message.getBody().getDeliveryReport().getConsumerId(),
+                    message.getBody().getDeliveryReport().getMessageId()
+                );
+            }            
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }        
+    }
+    
 
     public boolean onReceive(MessageEnvelope message, ITransport transport) {
         if(message.getBody().isSubscribeRequestSelected() && message.getBody().getSubscribeRequest().getQueuePath().equalsIgnoreCase(queuePath) ) {
@@ -344,6 +354,10 @@ public class MessageQueue<T> implements IMessageQueue<T>, Runnable, ITransportCo
         if(message.getBody().isUnsubscribeRequestSelected() && message.getBody().getUnsubscribeRequest().getQueuePath().equalsIgnoreCase(queuePath) ) {
             onReceiveUnsubscribeRequest(message,transport);
             return true;
+        }
+        else
+        if(message.getBody().isDeliveryReportSelected() && message.getBody().getDeliveryReport().getQueuePath().equalsIgnoreCase(queuePath) ) {
+            onReceivedDeliveryReport(message,transport);
         }
         return false;
     }

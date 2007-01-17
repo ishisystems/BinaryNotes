@@ -88,7 +88,7 @@ public class BNMQSupplier {
                     messageBody.setField2(0xffffL);                    
                     System.out.println("Queue: Trying to send message #"+message.getId());
                     message.setBody(messageBody);
-                    //message.setMandatory(true);
+                    message.setMandatory(true);
                     queue.sendMessage(message);
                 }
                 catch (Exception e) {

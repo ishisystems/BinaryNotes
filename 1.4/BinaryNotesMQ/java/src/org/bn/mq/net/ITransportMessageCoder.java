@@ -19,13 +19,14 @@
 
 package org.bn.mq.net;
 
-import java.io.Serializable;
-
 import java.nio.ByteBuffer;
+
+import java.util.List;
+
 import org.bn.mq.protocol.MessageEnvelope;
 
 
 public interface ITransportMessageCoder {
     ByteBuffer encode(MessageEnvelope message) throws Exception;
-    MessageEnvelope decode(ByteBuffer buffer) throws Exception;
+    List<MessageEnvelope> decode(ByteBuffer buffer) throws Exception;
 }

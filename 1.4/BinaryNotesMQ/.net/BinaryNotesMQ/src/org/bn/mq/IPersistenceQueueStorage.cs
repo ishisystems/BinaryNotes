@@ -28,7 +28,7 @@ namespace org.bn.mq
 		void  persistenceSubscribe(IConsumer<T> consumer);
 		void  persistenceUnsubscribe(IConsumer<T> consumer);
 		void  registerPersistenceMessage(IMessage<T> message);
-		void  removeDeliveredMessage(IConsumer<T> consumer, IMessage<T> message);
+        void removeDeliveredMessage(string consumerId, string messageId);
 		void  close();
 	}
 }

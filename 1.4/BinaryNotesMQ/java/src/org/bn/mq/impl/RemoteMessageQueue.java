@@ -31,6 +31,8 @@ import org.bn.mq.IRemoteSupplier;
 import org.bn.mq.net.ITransport;
 import org.bn.mq.net.ITransportConnectionListener;
 import org.bn.mq.net.ITransportReader;
+import org.bn.mq.protocol.DeliveredStatus;
+import org.bn.mq.protocol.DeliveryReport;
 import org.bn.mq.protocol.LookupRequest;
 import org.bn.mq.protocol.LookupResultCode;
 import org.bn.mq.protocol.MessageBody;
@@ -124,6 +126,27 @@ public class RemoteMessageQueue<T> implements IRemoteMessageQueue<T>, ITransport
                     }
                     
                     T result = consumer.onMessage( msg );
+                    if(msg.isMandatory()) {
+                        MessageEnvelope deliveryReportMessage = new MessageEnvelope();
+                        MessageBody deliveryReportBody = new MessageBody();
+                        DeliveryReport deliveryReportData = new DeliveryReport();
+                        deliveryReportMessage.setBody(deliveryReportBody);
+                        deliveryReportMessage.setId("/report-for/"+msg.getId());                        
+                        deliveryReportBody.selectDeliveryReport(deliveryReportData);
+                        deliveryReportData.setConsumerId(consumer.getId());
+                        deliveryReportData.setMessageId(msg.getId());
+                        deliveryReportData.setQueuePath(this.queuePath);                                                                        
+                        DeliveredStatus status = new DeliveredStatus();
+                        status.setValue(DeliveredStatus.EnumType.delivered);
+                        deliveryReportData.setStatus(status);
+                        
+                        try {
+                            transport.sendAsync(deliveryReportMessage);
+                        }
+                        catch (Exception e) {
+                            e.printStackTrace();
+                        }                        
+                    }
                     if(result!=null) {
                         Message<T> resultMsg = new Message<T>(this.messageClass);
                         resultMsg.setId(msg.getId());

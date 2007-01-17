@@ -273,17 +273,6 @@ namespace org.bn.mq.impl
 						foreach(IConsumer<T> entry in consumers.Values)
 						{
 							entry.onMessage(message);
-							if (message.Mandatory)
-							{
-								try
-								{
-									persistStorage.removeDeliveredMessage(entry, message);
-								}
-								catch (Exception e)
-								{
-									Console.WriteLine(e);
-								}
-							}
 						}
 					}
 				}
@@ -348,16 +337,6 @@ namespace org.bn.mq.impl
 			{
 				addConsumer(remoteConsumer, message.Body.SubscribeRequest.Persistence, message.Body.SubscribeRequest.Filter);
 				subscribeResultCode.Value = SubscribeResultCode.EnumType.success;
-
-				if (message.Body.SubscribeRequest.Persistence)
-				{
-					IList<IMessage<T>> messages = persistStorage.getMessagesToSend(remoteConsumer);
-					lock (queue)
-					{
-						queue.push(messages);
-					}
-					awaitMessageEvent.Set();
-				}
 			}
 			catch (System.Exception e)
 			{
@@ -368,6 +347,18 @@ namespace org.bn.mq.impl
 			try
 			{
 				transport.sendAsync(resultMsg);
+
+                if (subscribeResult.Code.Value == SubscribeResultCode.EnumType.success 
+                    && message.Body.SubscribeRequest.Persistence)
+                {
+                    IList<IMessage<T>> messages = persistStorage.getMessagesToSend(remoteConsumer);
+                    lock (queue)
+                    {
+                        queue.push(messages);
+                    }
+                    awaitMessageEvent.Set();
+                }
+
 			}
 			catch (System.Exception e)
 			{
@@ -418,7 +409,25 @@ namespace org.bn.mq.impl
 				Console.WriteLine(e);
 			}
 		}
-		
+
+        private void onReceiveDeliveryReport(MessageEnvelope message, ITransport transport)
+        {
+            try
+            {
+                if (message.Body.DeliveryReport.Status.Value == DeliveredStatus.EnumType.delivered)
+                {
+                    persistStorage.removeDeliveredMessage(
+                        message.Body.DeliveryReport.ConsumerId,
+                        message.Body.DeliveryReport.MessageId
+                    );
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }        
+        }
+
 		public virtual bool onReceive(MessageEnvelope message, ITransport transport)
 		{
 			if (message.Body.isSubscribeRequestSelected() && message.Body.SubscribeRequest.QueuePath.ToUpper().Equals(queuePath.ToUpper()))
@@ -432,6 +441,12 @@ namespace org.bn.mq.impl
 				onReceiveUnsubscribeRequest(message, transport);
 				return true;
 			}
+            else
+            if (message.Body.isDeliveryReportSelected() && message.Body.DeliveryReport.QueuePath.ToUpper().Equals(queuePath.ToUpper()))
+            {
+                onReceiveDeliveryReport(message, transport);
+                return true;
+            }
 			return false;
 		}
 		

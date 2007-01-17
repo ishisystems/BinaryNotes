@@ -135,6 +135,31 @@ namespace org.bn.mq.impl
 						}
 						
 						T result = consumer.onMessage(msg);
+                        if (msg.Mandatory)
+                        {
+                            MessageEnvelope deliveryReportMessage = new MessageEnvelope();
+                            MessageBody deliveryReportBody = new MessageBody();
+                            DeliveryReport deliveryReportData = new DeliveryReport();
+                            deliveryReportMessage.Body = (deliveryReportBody);
+                            deliveryReportMessage.Id = ("/report-for/" + msg.Id);
+                            deliveryReportBody.selectDeliveryReport(deliveryReportData);
+                            deliveryReportData.ConsumerId = (consumer.Id);
+                            deliveryReportData.MessageId = (msg.Id);
+                            deliveryReportData.QueuePath = (this.queuePath);
+                            DeliveredStatus status = new DeliveredStatus();
+                            status.Value = DeliveredStatus.EnumType.delivered;
+                            deliveryReportData.Status = status;
+
+                            try
+                            {
+                                transport.sendAsync(deliveryReportMessage);
+                            }
+                            catch (Exception e)
+                            {
+                                Console.WriteLine(e.ToString());
+                            }
+                        }
+
 						if (result != null)
 						{
                             Message<T> resultMsg = new Message<T>();

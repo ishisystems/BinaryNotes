@@ -49,16 +49,16 @@ namespace org.bn.mq.impl
 			return result;
 		}
 
-        public virtual void removeDeliveredMessage(IConsumer<T> consumer, IMessage<T> message)
+        public void removeDeliveredMessage(string consumerId, string messageId)
 		{
 			lock (storage)
 			{
-                if (storage.ContainsKey(consumer.Id))
+                if (storage.ContainsKey(consumerId))
                 {
-				    IList<IMessage<T>> messages = storage[consumer.Id];
+				    IList<IMessage<T>> messages = storage[consumerId];
 					foreach(IMessage<T> item in messages)
 					{
-						if (item.Id.Equals(message.Id))
+						if (item.Id.Equals(messageId))
 						{
 							messages.Remove(item);
 							break;

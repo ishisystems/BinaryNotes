@@ -125,6 +125,7 @@ public class Message<T> implements IMessage<T>, Serializable {
         setId(messageEnvelope.getId());
         setSenderId(messageEnvelope.getBody().getMessageUserBody().getSenderId());
         setQueuePath(messageEnvelope.getBody().getMessageUserBody().getQueuePath());
+        setMandatory(messageEnvelope.getDeliveryReportReq());
     }
 
     public MessageEnvelope createEnvelope() throws Exception {
@@ -139,6 +140,7 @@ public class Message<T> implements IMessage<T>, Serializable {
         messageBody.selectMessageUserBody(userBody);        
         result.setBody(messageBody);
         result.setId(this.getId());
+        result.setDeliveryReportReq( this.isMandatory());
         
         return result;
     }

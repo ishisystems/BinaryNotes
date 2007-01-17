@@ -43,8 +43,7 @@ public class NullQueueStorage<T> implements IPersistenceQueueStorage<T> {
     public void registerPersistenceMessage(IMessage<T> message) {
     }
 
-    public void removeDeliveredMessage(IConsumer<T> consumer, 
-                                       IMessage<T> message) {
+    public void removeDeliveredMessage(String consumerId, String messageId) {
     }
 
     public void close() {

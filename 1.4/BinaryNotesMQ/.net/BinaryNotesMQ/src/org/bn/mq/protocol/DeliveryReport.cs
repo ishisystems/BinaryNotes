@@ -23,9 +23,9 @@ namespace org.bn.mq.protocol {
 	[ASN1String( Name = "", 
         StringType =  UniversalTags.PrintableString , IsUCS = false )][ASN1ValueRangeConstraint ( 
 		Min = 0L, 
-		Max = 10L ) ]
+		Max = 255L ) ]
 	    
-        [ASN1Element ( Name = "messageId", IsOptional =  false , HasTag =  false  , HasDefaultValue =  false )  ]
+        [ASN1Element ( Name = "messageId", IsOptional =  false , HasTag =  true, Tag = 0 , HasDefaultValue =  false )  ]
     
         public string MessageId
         {
@@ -38,7 +38,7 @@ namespace org.bn.mq.protocol {
         
 	private DeliveredStatus status_ ;
 	
-        [ASN1Element ( Name = "status", IsOptional =  false , HasTag =  false  , HasDefaultValue =  false )  ]
+        [ASN1Element ( Name = "status", IsOptional =  false , HasTag =  true, Tag = 1 , HasDefaultValue =  false )  ]
     
         public DeliveredStatus Status
         {
@@ -49,18 +49,29 @@ namespace org.bn.mq.protocol {
                 
   
         
-	private int deliveredCount_ ;
-	[ASN1Integer( Name = "" )]
-    [ASN1ValueRangeConstraint ( 
-		Min = 0L, 
-		Max = 65535L ) ]
-	    
-        [ASN1Element ( Name = "deliveredCount", IsOptional =  false , HasTag =  false  , HasDefaultValue =  false )  ]
+	private string consumerId_ ;
+	[ASN1String( Name = "", 
+        StringType =  UniversalTags.UTF8String , IsUCS = false )]
+        [ASN1Element ( Name = "consumerId", IsOptional =  false , HasTag =  true, Tag = 2 , HasDefaultValue =  false )  ]
     
-        public int DeliveredCount
+        public string ConsumerId
         {
-            get { return deliveredCount_; }
-            set { deliveredCount_ = value;  }
+            get { return consumerId_; }
+            set { consumerId_ = value;  }
+        }
+        
+                
+  
+        
+	private string queuePath_ ;
+	[ASN1String( Name = "", 
+        StringType =  UniversalTags.UTF8String , IsUCS = false )]
+        [ASN1Element ( Name = "queuePath", IsOptional =  false , HasTag =  true, Tag = 3 , HasDefaultValue =  false )  ]
+    
+        public string QueuePath
+        {
+            get { return queuePath_; }
+            set { queuePath_ = value;  }
         }
         
                 

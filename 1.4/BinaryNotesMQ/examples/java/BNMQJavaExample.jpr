@@ -98,6 +98,7 @@
          <hash n="Default">
             <value n="custom" v="false"/>
             <value n="name" v="Default"/>
+            <url n="targetURL" path="src/org/bn/mq/examples/BNMQConsumer.java"/>
          </hash>
       </hash>
       <list n="runConfigurationList">

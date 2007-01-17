@@ -41,9 +41,15 @@ namespace org.bn.mq.net.tcp
 		{
 			try
 			{
-				MessageEnvelope message = messageCoder.decode(packet);
-				if (message != null)
-					serverTransport.fireReceivedData(message, this);
+                IList<MessageEnvelope> messages = messageCoder.decode(packet);
+                if (messages != null)
+                {
+                    foreach (MessageEnvelope message in messages)
+                    {
+                       serverTransport.fireReceivedData(message, this);
+                    }
+                }
+
 			}
 			catch (System.Exception ex)
 			{

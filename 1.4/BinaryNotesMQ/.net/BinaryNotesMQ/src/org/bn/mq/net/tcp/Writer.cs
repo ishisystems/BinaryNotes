@@ -39,8 +39,10 @@ namespace org.bn.mq.net.tcp
 				try
 				{
 					packet = storage.waitPacket();
-					if (packet != null)
-						packet.Transport.send(packet.Data);
+                    if (packet != null)
+                    {
+                        packet.Transport.send(packet.Data);
+                    }
 				}
 				catch (System.IO.IOException ex)
 				{					

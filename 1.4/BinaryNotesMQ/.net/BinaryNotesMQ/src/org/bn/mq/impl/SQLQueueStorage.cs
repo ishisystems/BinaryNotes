@@ -242,16 +242,16 @@ namespace org.bn.mq.impl
 
 			}
 		}
-		
-		public virtual void  removeDeliveredMessage(IConsumer<T> consumer, IMessage<T> message)
+
+        public void removeDeliveredMessage(string consumerId, string messageId)
 		{
 			lock (connection)
 			{
                 DbTransaction trans =  connection.BeginTransaction();
                 try
                 {
-                    this.removeMessageCmd.Parameters["@messageId"].Value = message.Id;
-                    this.removeMessageCmd.Parameters["@consumerId"].Value = consumer.Id;
+                    this.removeMessageCmd.Parameters["@messageId"].Value = messageId;
+                    this.removeMessageCmd.Parameters["@consumerId"].Value = consumerId;
 				    this.removeMessageCmd.ExecuteNonQuery();
                     trans.Commit();
                 }

@@ -71,7 +71,7 @@ namespace org.bn.mq.examples
                         messageBody.Field2 = (0xffffL);
                         Console.WriteLine("Queue: Trying to send message #"+message.Id);
                         message.Body = (messageBody);
-                        //message.Mandatory = true;
+                        message.Mandatory = true;
                         queue.sendMessage(message);
                     }
                     catch (Exception e) {

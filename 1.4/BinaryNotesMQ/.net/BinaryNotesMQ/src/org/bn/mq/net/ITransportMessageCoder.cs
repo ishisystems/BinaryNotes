@@ -17,6 +17,7 @@
 * or blog at http://abdulla-a.blogspot.com.
 */
 using System;
+using System.Collections.Generic;
 using org.bn.mq.protocol;
 
 namespace org.bn.mq.net
@@ -24,6 +25,6 @@ namespace org.bn.mq.net
 	public interface ITransportMessageCoder
 	{
 		ByteBuffer encode(MessageEnvelope message);
-		MessageEnvelope decode(ByteBuffer buffer);
+		IList<MessageEnvelope> decode(ByteBuffer buffer);
 	}
 }

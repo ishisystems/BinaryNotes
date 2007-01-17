@@ -22,6 +22,9 @@ package org.bn.mq.net.tcp;
 import java.net.URI;
 
 import java.nio.ByteBuffer;
+
+import java.util.List;
+
 import org.bn.mq.net.*;
 import org.bn.mq.protocol.MessageEnvelope;
 
@@ -41,9 +44,12 @@ public class ServerClientTransport extends Transport {
     
     protected void fireReceivedData(ByteBuffer packet) throws Exception {
         try {
-            MessageEnvelope message = messageCoder.decode(packet);        
-            if(message!=null)    
-                serverTransport.fireReceivedData(message,this);            
+            List<MessageEnvelope> messages =  messageCoder.decode(packet);
+            if(messages!=null) {
+                for(MessageEnvelope message: messages) {
+                    serverTransport.fireReceivedData(message,this);                    
+                }
+            }
         }
         catch(Exception ex) {
             System.err.println("Pkt: "+packet);

@@ -58,7 +58,7 @@ public interface IPersistenceQueueStorage<T> {
      * @param consumer consumer instance
      * @param message message instance
      */
-    void removeDeliveredMessage(IConsumer<T> consumer, IMessage<T> message) throws Exception ;
+    void removeDeliveredMessage(String consumerId, String messageId) throws Exception ;
     
     /**
      * Close & finalize storage

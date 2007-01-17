@@ -190,17 +190,20 @@ namespace org.bn.mq.net.tcp
 			if (isAvailable())
 			{
 				ByteBuffer buffer = messageCoder.encode(message);
-				send(buffer);
+				send(buffer);                
 			}
 			else
 				throw new System.IO.IOException("Transport is not connected!");
 		}
+
 		
 		public virtual void  sendAsync(MessageEnvelope message)
-		{
+		{            
 			if (isAvailable())
 			{
 				ByteBuffer buffer = messageCoder.encode(message);
+                buffer.id = message.Id;
+                //Console.WriteLine("--- Send + [" + message.Id + "] \nBID:@" + byteArrayToHexString(buffer.Value));
 				sendAsync(buffer);
 			}
 			else
@@ -218,7 +221,8 @@ namespace org.bn.mq.net.tcp
                         Socket channel = getSocket();
                         if (channel != null)
                         {
-                            channel.Send(buffer.Value);
+                            int sentBytes = channel.Send(buffer.Value);
+                            //Console.WriteLine("+++ Ok. Sended "+sentBytes+" \nBID["+buffer.id+"]:@" + byteArrayToHexString(buffer.Value) + "\n+++");
                         }
 
 					    /*SocketChannel channel = Socket;
@@ -319,6 +323,7 @@ namespace org.bn.mq.net.tcp
 		
 		protected internal virtual void  doProcessReceivedData(MessageEnvelope message, Transport forTransport)
 		{
+            //Console.WriteLine("!!! Received + " + message.Id + " Body: " + message.Body);
 			if (message.Body.isAliveRequestSelected())
 				return ;
 			bool doProcessListeners = !forTransport.processReceivedCallMessage(message);
@@ -340,9 +345,14 @@ namespace org.bn.mq.net.tcp
 		
 		protected internal virtual void  doProcessReceivedData(ByteBuffer packet, Transport forTransport)
 		{
-			MessageEnvelope message = messageCoder.decode(packet);
-            if(message!=null)
-			    doProcessReceivedData(message, forTransport);
+			IList<MessageEnvelope> messages = messageCoder.decode(packet);
+            if (messages != null)
+            {
+                foreach (MessageEnvelope message in messages)
+                {
+                    doProcessReceivedData(message, forTransport);
+                }
+            }
 		}
 		
 		protected internal virtual void  fireReceivedData(ByteBuffer packet)

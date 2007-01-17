@@ -25,6 +25,8 @@ import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.bn.CoderFactory;
@@ -43,20 +45,26 @@ public class ASN1TransportMessageCoder implements ITransportMessageCoder {
     
     protected ByteArrayOutputStream outputByteStream = new ByteArrayOutputStream();
     
-    protected ByteBuffer currentDecoded = ByteBuffer.allocate(65535);
+    protected ByteBuffer currentDecoded = null;
+    
     protected boolean headerIsReaded = false;
     protected int crDecodedSchema = 0;
     protected byte crDecodedVersion = 0;
     protected int crDecodedLen = 0;
+    protected int currentBufferIdx = 0;
+    protected ByteBuffer bufferOne =  ByteBuffer.allocate(65535);
+    protected ByteBuffer bufferTwo =  ByteBuffer.allocate(65535);
     
     
     public ASN1TransportMessageCoder() {
         try {
+            switchStaticBuffer();
             coderSchemaMap.put(0x0000, CoderFactory.getInstance().newDecoder("BER"));
             coderSchemaMap.put(0x0100, CoderFactory.getInstance().newDecoder("PER"));
             coderSchemaMap.put(0x0101, CoderFactory.getInstance().newDecoder("PER/U"));
             IEncoder<MessageEnvelope> defEnc =  CoderFactory.getInstance().newEncoder("PER/U");
             setDefaultEncoder(coderSchemeDefVal,defEnc);
+            
         }
         catch (Exception e) {
             // TODO
@@ -81,37 +89,73 @@ public class ASN1TransportMessageCoder implements ITransportMessageCoder {
         return buffer;
     }
 
-    public MessageEnvelope decode(ByteBuffer buffer)  throws Exception {
-        MessageEnvelope result = null;
+    public List<MessageEnvelope> decode(ByteBuffer buffer)  throws Exception {
+        List<MessageEnvelope> result = new LinkedList<MessageEnvelope>();
         int readedBytes = buffer.limit();
         if(currentDecoded.remaining()<readedBytes) {
             byte[] data = currentDecoded.array();
-            currentDecoded = ByteBuffer.allocate(data.length+65535);
+            currentDecoded = ByteBuffer.allocate(data.length+65535 + readedBytes);
             currentDecoded.put(data);
         }
         currentDecoded.put(buffer.array(),currentDecoded.position(),buffer.limit());
-        // if header presents
-        if(currentDecoded.position() > headerSize && !headerIsReaded) {
-            int savePos = currentDecoded.position();
-            currentDecoded.position(0);
-            crDecodedSchema = currentDecoded.getShort();
-            crDecodedVersion = currentDecoded.get();
-            crDecodedLen = currentDecoded.getInt();
-            headerIsReaded = true;
-            currentDecoded.position(savePos);
-        }
+        int lastCurrentDecodedPost = currentDecoded.position();
         
-        if(headerIsReaded) {
-            IDecoder decoder = coderSchemaMap.get(crDecodedSchema);
-            if(crDecodedLen <= currentDecoded.position() - headerSize ) {
-                currentDecoded.position(headerSize);
-                byte[] content = new byte[crDecodedLen];
-                currentDecoded.get(content);
-                currentDecoded = currentDecoded.slice();
-                result= decoder.decode(new ByteArrayInputStream(content),MessageEnvelope.class);       
-                headerIsReaded = false;
+        boolean decodedMessage = false;
+        do
+        {
+            decodedMessage = false;
+            // if header presents
+            if(lastCurrentDecodedPost > headerSize && !headerIsReaded) {
+                currentDecoded.position(0);
+                crDecodedSchema = currentDecoded.getShort();
+                crDecodedVersion = currentDecoded.get();
+                crDecodedLen = currentDecoded.getInt();
+                headerIsReaded = true;
             }
+            
+            if(headerIsReaded) {
+                IDecoder decoder = coderSchemaMap.get(crDecodedSchema);
+                if(crDecodedLen <= lastCurrentDecodedPost - headerSize ) {
+                    currentDecoded.position(headerSize);
+                    byte[] content = new byte[crDecodedLen];
+                    currentDecoded.get(content);
+                    //currentDecoded = 
+                    MessageEnvelope decodedObj = decoder.decode(new ByteArrayInputStream(content),MessageEnvelope.class);       
+                    if(decodedObj!=null)
+                        result.add(decodedObj);
+                    headerIsReaded = false;
+                    
+                    if(lastCurrentDecodedPost > currentDecoded.position() ) {
+                        byte[] data = currentDecoded.array();
+                        int currentPosition = currentDecoded.position();
+                        switchStaticBuffer();// ByteBuffer.allocate(data.length);
+                        currentDecoded.put(data,currentPosition,lastCurrentDecodedPost - currentPosition);
+                        lastCurrentDecodedPost = currentDecoded.position();
+                        currentDecoded.position(0);
+                        
+                        if(decodedObj!=null)
+                            decodedMessage = true;
+                    }
+                    else {
+                        currentDecoded.clear();
+                    }
+                }
+            }            
         }
+        while(decodedMessage);
         return result;
+    }
+    
+    private void switchStaticBuffer() {
+        if(currentBufferIdx == 0 ) {
+            currentBufferIdx++;
+            bufferTwo.clear();            
+            currentDecoded =  bufferTwo;
+        }
+        else {
+            currentBufferIdx = 0;
+            bufferOne.clear();            
+            currentDecoded = bufferOne;            
+        }
     }
 }

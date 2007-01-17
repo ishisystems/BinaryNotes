@@ -50,13 +50,13 @@ public class InMemoryQueueStorage<T> implements IPersistenceQueueStorage<T> {
         return result;
     }
     
-    public void removeDeliveredMessage(IConsumer<T> consumer, IMessage<T> message) {
+    public void removeDeliveredMessage(String consumerId, String messageId) {
         synchronized(storage) {
-            List< IMessage<T> > messages = storage.get(consumer.getId());
+            List< IMessage<T> > messages = storage.get(consumerId);
             if(messages!=null) {
                 Iterator<IMessage<T>> iterator =  messages.iterator();
                 for(IMessage<T> item: messages) {
-                    if(item.getId().equals(message.getId())) {
+                    if(item.getId().equals(messageId)) {
                         messages.remove(item);
                         break;
                     }

@@ -6,6 +6,7 @@ namespace org.bn.mq.net
 {
     public class ByteBuffer
     {
+        public string id;
         private byte[] buffer;
         public byte[] Value
         {
@@ -42,12 +43,16 @@ namespace org.bn.mq.net
             return result;
         }
 
-        public ByteBuffer slice()
+        public void slice()
         {
-            ByteBuffer result = new ByteBuffer();
-            result.Value = new byte[limit];
-            result.put(buffer, 0, limit);            
-            return result;
+            //ByteBuffer result = new ByteBuffer();
+            //result.Value = new byte[buffer.Length];
+            //result.put(buffer, position, limit-position);
+            //result.put(buffer, position, limit - position);
+            int oldLimit = limit;
+            int oldPosition = position;
+            clear();
+            put(buffer, oldPosition, oldLimit - oldPosition);
         }
 
 
@@ -65,8 +70,8 @@ namespace org.bn.mq.net
         public void put(byte[] value, int offset, int len)
         {
             Buffer.BlockCopy(value, offset, buffer, position, len);
-            position += len - offset;
-            limit += len - offset;
+            position += len;// - offset;
+            limit += len;// - offset;
         }
 
 
@@ -138,6 +143,13 @@ namespace org.bn.mq.net
         {
             limit = position;
             position = 0;            
+        }
+
+        internal void growTo(int addBytesCnt)
+        {
+            byte[] newArray = new byte[buffer.Length + addBytesCnt];
+            Buffer.BlockCopy(buffer, 0, newArray, 0, buffer.Length);
+            buffer = newArray;
         }
 
         internal static ByteBuffer wrap(byte[] buffer)

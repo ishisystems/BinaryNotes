@@ -96,23 +96,23 @@ public abstract class Transport implements ITransport {
     public ByteBuffer receiveAsync() throws IOException {        
         ByteBuffer result = null;
         if(isAvailable()) {
-            result = ByteBuffer.allocate(4096);                
+            //result = ByteBuffer.allocate(4096);                
             int readedBytes = -1;
-            do {
+            //do {
                 socketLock.readLock().lock();
                 try {
                     tempReceiveBuffer.clear();
                     SocketChannel channel = getSocket();
                     if(channel!=null)
                         readedBytes = channel.read(tempReceiveBuffer);
-                    if(readedBytes>0) {
+                    /*if(readedBytes>0) {
                         if(result.remaining()<readedBytes) {
-                            byte[] data = result.array();
-                            result = ByteBuffer.allocate(data.length+4096);
-                            result.put(data);
+                           byte[] data = result.array();
+                           result = ByteBuffer.allocate(data.length+4096 + readedBytes);
+                           result.put(data);
                         }
                         result.put(tempReceiveBuffer.array(),result.position(),tempReceiveBuffer.position());
-                    }
+                    }*/
                 }
                 finally {
                     socketLock.readLock().unlock();
@@ -120,9 +120,11 @@ public abstract class Transport implements ITransport {
                 if(readedBytes==-1) {
                     onTransportClosed();
                 }                    
-            }                
-            while(readedBytes>0);
-            result.flip();
+            //}                
+            //while(readedBytes>0);
+            //result.flip();
+            tempReceiveBuffer.flip();
+            result = tempReceiveBuffer;
         }
         else {
             throw new IOException("Not connected");
@@ -277,9 +279,12 @@ public abstract class Transport implements ITransport {
     }
     
     protected void doProcessReceivedData(ByteBuffer packet, Transport forTransport) throws Exception {
-        MessageEnvelope message = messageCoder.decode(packet);
-        if(message!=null)
-            doProcessReceivedData(message,forTransport);
+        List<MessageEnvelope> messages =  messageCoder.decode(packet);
+        if(messages!=null) {
+            for(MessageEnvelope message: messages) {
+                doProcessReceivedData(message,forTransport);
+            }
+        }
     }
     
     protected void fireReceivedData(ByteBuffer packet) throws Exception {

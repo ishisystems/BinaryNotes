@@ -71,7 +71,8 @@ namespace org.bn.mq.examples
             IRemoteSupplier remSupplier =  clientConnection.lookup("ExampleSupplier");
             queue = remSupplier.lookupQueue<ExampleMessage>("myqueues/queue");            
             Console.WriteLine("Trying to lookup & persistence subscribe consumer");
-            queue.addConsumer(new ExampleConsumer(),true);        
+            queue.addConsumer(new ExampleConsumer(),true);
+            Console.WriteLine("Subscribed procedure finished");
         }
 
         public void start() {
