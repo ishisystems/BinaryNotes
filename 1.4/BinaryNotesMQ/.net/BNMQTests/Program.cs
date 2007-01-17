@@ -47,6 +47,7 @@ namespace test.org.bn.mq
             new MQFactoryTest().testCreatingObjects();
             new MQFactoryTest().testRPCStyle();
             new MQFactoryTest().testPersistence();
+            new MQFactoryTest().testPTPSession();
         }
 
         private void startMessageDecoderTests()

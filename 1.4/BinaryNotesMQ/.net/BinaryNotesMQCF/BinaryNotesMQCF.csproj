@@ -95,6 +95,9 @@
     <Compile Include="..\BinaryNotesMQ\src\org\bn\mq\impl\ProxyCallAsyncListener.cs">
       <Link>src\ProxyCallAsyncListener.cs</Link>
     </Compile>
+    <Compile Include="..\BinaryNotesMQ\src\org\bn\mq\impl\PTPSession.cs">
+      <Link>src\PTPSession.cs</Link>
+    </Compile>
     <Compile Include="..\BinaryNotesMQ\src\org\bn\mq\impl\Queue.cs">
       <Link>src\Queue.cs</Link>
     </Compile>
@@ -127,6 +130,12 @@
     </Compile>
     <Compile Include="..\BinaryNotesMQ\src\org\bn\mq\IPersistenceStorage.cs">
       <Link>src\IPersistenceStorage.cs</Link>
+    </Compile>
+    <Compile Include="..\BinaryNotesMQ\src\org\bn\mq\IPTPSession.cs">
+      <Link>src\IPTPSession.cs</Link>
+    </Compile>
+    <Compile Include="..\BinaryNotesMQ\src\org\bn\mq\IPTPSessionListener.cs">
+      <Link>src\IPTPSessionListener.cs</Link>
     </Compile>
     <Compile Include="..\BinaryNotesMQ\src\org\bn\mq\IQueue.cs">
       <Link>src\IQueue.cs</Link>

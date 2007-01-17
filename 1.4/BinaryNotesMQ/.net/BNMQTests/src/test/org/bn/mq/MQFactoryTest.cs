@@ -194,6 +194,52 @@ namespace test.org.bn.mq
                 }
             }        
         }
+
+        public void testPTPSession() {
+            IMessagingBus bus = MQFactory.Instance.createMessagingBus();
+            IMQConnection serverConnection  = null;
+            IMQConnection clientConnection  = null;
+            IPTPSession<String> ptpClientSession = null;
+            IPTPSession<String> ptpServerSession = null;
+            try {
+                serverConnection  = bus.create(new Uri("bnmq://127.0.0.1:3333"));
+                ptpServerSession = serverConnection.createPTPSession<String>("serverPTP","ptpSimpleSession");
+                ptpServerSession.addListener(new TestPTPSessionListener());
+                serverConnection.start();
+
+                clientConnection = bus.connect(new Uri("bnmq://127.0.0.1:3333"));
+                ptpClientSession = clientConnection.createPTPSession<String>("clientPTP","ptpSimpleSession");
+                ptpClientSession.addListener(new TestPTPSessionListener());            
+                clientConnection.start();
+
+                string result = ptpClientSession.call("Hello from PTP Client",20);
+                Assert.Equals(result,"Hello from RPC/PTP");            
+                ptpClientSession.callAsync("Hello from Server 2",new TestRPCAsyncCallBack(),20);
+                            
+                Thread.Sleep(2000);
+                
+            }
+            catch (Exception e) {
+                Console.WriteLine(e.ToString());
+                throw e;
+            }
+            finally {
+                if(ptpClientSession!=null) {
+                    ptpClientSession.close();
+                }
+                if(ptpServerSession!=null) {
+                    ptpServerSession.close();
+                }
+                
+                if(clientConnection!=null)
+                    clientConnection.close();        
+                if(serverConnection!=null)
+                    serverConnection.close();
+                if(bus!=null) {
+                   bus.close();
+                }
+            }
+        }
         
         
         protected class TestMQConnectionListener : IMQConnectionListener {
@@ -236,12 +282,12 @@ namespace test.org.bn.mq
         
         protected class TestRPCAsyncCallBack : ICallAsyncListener<String> {
 
-            public void onCallResult(IMessageQueue<String> queue, String request,String result) 
+            public void onCallResult(String request,String result) 
             {
                 Console.WriteLine("Received call result: "+result);
             }
 
-            public void onCallTimeout(IMessageQueue<String> queue, String request)
+            public void onCallTimeout(String request)
             {
                 Console.WriteLine("!!! Received call timeout for request: "+request);
             }
@@ -260,6 +306,15 @@ namespace test.org.bn.mq
                 return null;
             }
         }
+
+        protected class TestPTPSessionListener : IPTPSessionListener<String> {
+
+            public String onMessage(IPTPSession<String> session, ITransport transport, IMessage<String> message) {
+                Console.WriteLine ("Received PTP session call: "+message.Body);
+                return "Hello from RPC/PTP";
+            }
+        }
+
 
     }
 }

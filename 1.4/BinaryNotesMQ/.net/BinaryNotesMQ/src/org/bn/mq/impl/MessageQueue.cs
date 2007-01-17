@@ -163,7 +163,7 @@ namespace org.bn.mq.impl
             if (consumer is IRemoteConsumer<T>)
 			{
 				ITransport consTransport = ((IRemoteConsumer<T>)consumer).NetworkTransport;
-				consTransport.callAsync(argsEnv, new ProxyCallAsyncListener<T>(this, listener), timeout);
+				consTransport.callAsync(argsEnv, new ProxyCallAsyncListener<T>( listener), timeout);
 			}
 			else
 				throw new System.Exception("Call enabled only for remote consumer !");
@@ -203,7 +203,7 @@ namespace org.bn.mq.impl
             if (consumer is IRemoteConsumer<T>)
             {
                 ITransport consTransport = ((IRemoteConsumer<T>)consumer).NetworkTransport;
-                consTransport.callAsync(argsEnv, new ProxyCallAsyncListener<T>(this, resultDelegate, timeoutDelegate), timeout);
+                consTransport.callAsync(argsEnv, new ProxyCallAsyncListener<T>(resultDelegate, timeoutDelegate), timeout);
             }
             else
                 throw new System.Exception("Call enabled only for remote consumer !");

@@ -334,7 +334,7 @@ public class MQFactoryTest extends TestCase {
     
     protected class TestPTPSessionListener implements IPTPSessionListener<String> {
 
-        public String onMessage(IPTPSession session, ITransport transport, 
+        public String onMessage(IPTPSession<String> session, ITransport transport, 
                                 IMessage<String> message) {
             System.out.println("Received PTP session call: "+message.getBody());
             return "Hello from RPC/PTP";

@@ -33,6 +33,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="src\org\bn\mq\impl\PTPSession.cs" />
+    <Compile Include="src\org\bn\mq\IPTPSessionListener.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="src\org\bn\mq\ICallAsyncListener.cs" />
     <Compile Include="src\org\bn\mq\IConsumer.cs" />
@@ -94,6 +96,7 @@
     <Compile Include="src\org\bn\mq\IMQConnectionListener.cs" />
     <Compile Include="src\org\bn\mq\IPersistenceQueueStorage.cs" />
     <Compile Include="src\org\bn\mq\IPersistenceStorage.cs" />
+    <Compile Include="src\org\bn\mq\IPTPSession.cs" />
     <Compile Include="src\org\bn\mq\IQueue.cs" />
     <Compile Include="src\org\bn\mq\IRemoteConsumer.cs" />
     <Compile Include="src\org\bn\mq\IRemoteMessageQueue.cs" />

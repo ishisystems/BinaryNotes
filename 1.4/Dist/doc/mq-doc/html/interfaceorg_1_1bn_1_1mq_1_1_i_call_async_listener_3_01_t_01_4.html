@@ -27,12 +27,12 @@
 <a href="interfaceorg_1_1bn_1_1mq_1_1_i_call_async_listener_3_01_t_01_4-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfaceorg_1_1bn_1_1mq_1_1_i_call_async_listener_3_01_t_01_4.html#1b6248180a7435e4559d3d20dce1ecdc">onCallResult</a> (IMessageQueue queue, T request, T result)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfaceorg_1_1bn_1_1mq_1_1_i_call_async_listener_3_01_t_01_4.html#866d6bef8aab53edc6fe84bff8f81a83">onCallResult</a> (T request, T result)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The event invokes when result for call has been received.  <a href="#1b6248180a7435e4559d3d20dce1ecdc"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfaceorg_1_1bn_1_1mq_1_1_i_call_async_listener_3_01_t_01_4.html#b3d2f58fbc7240cc52b8c022f3c22693">onCallTimeout</a> (IMessageQueue queue, T request)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The event invokes when result for call has been received.  <a href="#866d6bef8aab53edc6fe84bff8f81a83"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfaceorg_1_1bn_1_1mq_1_1_i_call_async_listener_3_01_t_01_4.html#30140daab7a0c033c373fa4a654d82ce">onCallTimeout</a> (T request)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The event invokes when timeout for call is expired.  <a href="#b3d2f58fbc7240cc52b8c022f3c22693"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The event invokes when timeout for call is expired.  <a href="#30140daab7a0c033c373fa4a654d82ce"></a><br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 Interface for implementation listener for handling async calls. 
@@ -40,19 +40,13 @@ Interface for implementation listener for handling async calls.
 
 <p>
 Definition at line <a class="el" href="_i_call_async_listener_8java-source.html#l00027">27</a> of file <a class="el" href="_i_call_async_listener_8java-source.html">ICallAsyncListener.java</a>.<hr><h2>Member Function Documentation</h2>
-<a class="anchor" name="1b6248180a7435e4559d3d20dce1ecdc"></a><!-- doxytag: member="org::bn::mq::ICallAsyncListener&lt; T &gt;::onCallResult" ref="1b6248180a7435e4559d3d20dce1ecdc" args="(IMessageQueue queue, T request, T result)" -->
+<a class="anchor" name="866d6bef8aab53edc6fe84bff8f81a83"></a><!-- doxytag: member="org::bn::mq::ICallAsyncListener&lt; T &gt;::onCallResult" ref="866d6bef8aab53edc6fe84bff8f81a83" args="(T request, T result)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void org.bn.mq.ICallAsyncListener&lt; T &gt;.onCallResult           </td>
           <td>(</td>
-          <td class="paramtype">IMessageQueue&nbsp;</td>
-          <td class="paramname"> <em>queue</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
           <td class="paramtype">T&nbsp;</td>
           <td class="paramname"> <em>request</em>, </td>
         </tr>
@@ -76,7 +70,6 @@ The event invokes when result for call has been received.
 <p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>queue</em>&nbsp;</td><td>Incoming queue </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>request</em>&nbsp;</td><td>Source user request (handback) </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>result</em>&nbsp;</td><td>Result from consumer </td></tr>
   </table>
@@ -84,26 +77,17 @@ The event invokes when result for call has been received.
 
 </div>
 </div><p>
-<a class="anchor" name="b3d2f58fbc7240cc52b8c022f3c22693"></a><!-- doxytag: member="org::bn::mq::ICallAsyncListener&lt; T &gt;::onCallTimeout" ref="b3d2f58fbc7240cc52b8c022f3c22693" args="(IMessageQueue queue, T request)" -->
+<a class="anchor" name="30140daab7a0c033c373fa4a654d82ce"></a><!-- doxytag: member="org::bn::mq::ICallAsyncListener&lt; T &gt;::onCallTimeout" ref="30140daab7a0c033c373fa4a654d82ce" args="(T request)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void org.bn.mq.ICallAsyncListener&lt; T &gt;.onCallTimeout           </td>
           <td>(</td>
-          <td class="paramtype">IMessageQueue&nbsp;</td>
-          <td class="paramname"> <em>queue</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
           <td class="paramtype">T&nbsp;</td>
-          <td class="paramname"> <em>request</em></td><td>&nbsp;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td><td width="100%"></td>
+          <td class="paramname"> <em>request</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
         </tr>
       </table>
 </div>
@@ -114,7 +98,6 @@ The event invokes when timeout for call is expired.
 <p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>queue</em>&nbsp;</td><td>Incoming queue </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>request</em>&nbsp;</td><td>Source user request (handback) </td></tr>
   </table>
 </dl>
@@ -123,7 +106,7 @@ The event invokes when timeout for call is expired.
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li><a class="el" href="_i_call_async_listener_8java-source.html">ICallAsyncListener.java</a></ul>
-<hr size="1"><address style="align: right;"><small>Generated on Tue Jan 9 00:49:29 2007 for BinaryNotes Message Queues API by&nbsp;
+<hr size="1"><address style="align: right;"><small>Generated on Thu Jan 18 00:25:39 2007 for BinaryNotes Message Queues API by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.0 </small></address>
 </body>

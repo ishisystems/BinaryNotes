@@ -39,9 +39,9 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfaceorg_1_1bn_1_1mq_1_1_i_persistence_queue_storage_3_01_t_01_4.html#365ffde18008ffcae495ee2b8f71423e">registerPersistenceMessage</a> (IMessage&lt; T &gt; message)  throws Exception</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Register persistence message for all consumers subscriptions.  <a href="#365ffde18008ffcae495ee2b8f71423e"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfaceorg_1_1bn_1_1mq_1_1_i_persistence_queue_storage_3_01_t_01_4.html#44d8ddd5ac3723c30bb67acfd46e96d3">removeDeliveredMessage</a> (IConsumer&lt; T &gt; consumer, IMessage&lt; T &gt; message)  throws Exception </td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfaceorg_1_1bn_1_1mq_1_1_i_persistence_queue_storage_3_01_t_01_4.html#29d5d85575b72ef611bdc472a9e50121">removeDeliveredMessage</a> (String consumerId, String messageId)  throws Exception </td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Remove registered message for specified consumer.  <a href="#44d8ddd5ac3723c30bb67acfd46e96d3"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Remove registered message for specified consumer.  <a href="#29d5d85575b72ef611bdc472a9e50121"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="ff750c84b45bd37edb1d9b25e8c1b7eb"></a><!-- doxytag: member="org::bn::mq::IPersistenceQueueStorage&lt; T &gt;::close" ref="ff750c84b45bd37edb1d9b25e8c1b7eb" args="()" -->
 void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfaceorg_1_1bn_1_1mq_1_1_i_persistence_queue_storage_3_01_t_01_4.html#ff750c84b45bd37edb1d9b25e8c1b7eb">close</a> ()</td></tr>
 
@@ -162,21 +162,21 @@ Register persistence message for all consumers subscriptions.
 
 </div>
 </div><p>
-<a class="anchor" name="44d8ddd5ac3723c30bb67acfd46e96d3"></a><!-- doxytag: member="org::bn::mq::IPersistenceQueueStorage&lt; T &gt;::removeDeliveredMessage" ref="44d8ddd5ac3723c30bb67acfd46e96d3" args="(IConsumer&lt; T &gt; consumer, IMessage&lt; T &gt; message)" -->
+<a class="anchor" name="29d5d85575b72ef611bdc472a9e50121"></a><!-- doxytag: member="org::bn::mq::IPersistenceQueueStorage&lt; T &gt;::removeDeliveredMessage" ref="29d5d85575b72ef611bdc472a9e50121" args="(String consumerId, String messageId)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void org.bn.mq.IPersistenceQueueStorage&lt; T &gt;.removeDeliveredMessage           </td>
           <td>(</td>
-          <td class="paramtype">IConsumer&lt; T &gt;&nbsp;</td>
-          <td class="paramname"> <em>consumer</em>, </td>
+          <td class="paramtype">String&nbsp;</td>
+          <td class="paramname"> <em>consumerId</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">IMessage&lt; T &gt;&nbsp;</td>
-          <td class="paramname"> <em>message</em></td><td>&nbsp;</td>
+          <td class="paramtype">String&nbsp;</td>
+          <td class="paramname"> <em>messageId</em></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -201,7 +201,7 @@ Remove registered message for specified consumer.
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li><a class="el" href="_i_persistence_queue_storage_8java-source.html">IPersistenceQueueStorage.java</a></ul>
-<hr size="1"><address style="align: right;"><small>Generated on Tue Jan 9 00:49:29 2007 for BinaryNotes Message Queues API by&nbsp;
+<hr size="1"><address style="align: right;"><small>Generated on Thu Jan 18 00:25:39 2007 for BinaryNotes Message Queues API by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.0 </small></address>
 </body>

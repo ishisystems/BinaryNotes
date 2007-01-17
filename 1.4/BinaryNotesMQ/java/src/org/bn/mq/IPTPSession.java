@@ -19,6 +19,7 @@
 
 package org.bn.mq;
 
+import org.bn.mq.impl.PTPSession;
 import org.bn.mq.net.ITransport;
 
 public interface IPTPSession<T> {
@@ -36,10 +37,17 @@ public interface IPTPSession<T> {
     IMessage<T> createMessage();
     
     /**
-     * Send message to queue consumers
+     * Send message to remote object
      * @param message message to send
      */
     void sendMessage(IMessage<T> message) throws Exception;    
+
+    /**
+     * Send message to remote object
+     * @param forTransport client transport instance (for MQ server listener)
+     * @param message message to send
+     */    
+    void sendMessage(IMessage<T> message, ITransport forTransport) throws Exception;
     
     /**
      * Synchronized RPC-style call 

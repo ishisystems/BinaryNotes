@@ -37,11 +37,11 @@
 <a name="l00022"></a>00022 <span class="keyword">import</span> org.bn.mq.protocol.MessageEnvelope;
 <a name="l00023"></a>00023 
 <a name="l00027"></a><a class="code" href="interfaceorg_1_1bn_1_1mq_1_1_i_call_async_listener_3_01_t_01_4.html">00027</a> <span class="keyword">public</span> interface ICallAsyncListener&lt;T&gt; {
-<a name="l00034"></a>00034     <span class="keywordtype">void</span> onCallResult(IMessageQueue queue, T request, T result);
-<a name="l00035"></a>00035     
-<a name="l00041"></a>00041     <span class="keywordtype">void</span> onCallTimeout(IMessageQueue queue, T request);
-<a name="l00042"></a>00042 }
-</pre></div><hr size="1"><address style="align: right;"><small>Generated on Tue Jan 9 00:49:29 2007 for BinaryNotes Message Queues API by&nbsp;
+<a name="l00033"></a>00033     <span class="keywordtype">void</span> onCallResult(T request, T result);
+<a name="l00034"></a>00034     
+<a name="l00039"></a>00039     <span class="keywordtype">void</span> onCallTimeout(T request);
+<a name="l00040"></a>00040 }
+</pre></div><hr size="1"><address style="align: right;"><small>Generated on Thu Jan 18 00:25:38 2007 for BinaryNotes Message Queues API by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.0 </small></address>
 </body>

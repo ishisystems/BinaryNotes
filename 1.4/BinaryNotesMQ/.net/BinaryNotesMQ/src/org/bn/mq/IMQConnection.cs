@@ -32,6 +32,8 @@ namespace org.bn.mq
 
 		IRemoteSupplier lookup(string supplierName);		
 		ISupplier createSupplier(string supplierName);
+        
+        IPTPSession<T> createPTPSession<T>(String pointName, String sessionName);
 		void  removeSupplier(ISupplier supplier);
         void start();
 		void close();

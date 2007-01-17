@@ -39,12 +39,19 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="interfaceorg_1_1bn_1_1mq_1_1_i_supplier.html">ISupplier</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfaceorg_1_1bn_1_1mq_1_1_i_m_q_connection.html#432aff2022a536c25440a713b5030cbd">createSupplier</a> (String supplierName)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Create/register supplier on connection with specified name.  <a href="#432aff2022a536c25440a713b5030cbd"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">&lt; T &gt; IPTPSession&lt; T &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfaceorg_1_1bn_1_1mq_1_1_i_m_q_connection.html#29f39d018bb15a216d6f9e86fd3b9597">createPTPSession</a> (String pointName, String sessionName, Class&lt; T &gt; messageClass)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Create/register supplier on connection with specified name.  <a href="#29f39d018bb15a216d6f9e86fd3b9597"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfaceorg_1_1bn_1_1mq_1_1_i_m_q_connection.html#ee3a1613ee66014993c793ada676aeaa">removeSupplier</a> (<a class="el" href="interfaceorg_1_1bn_1_1mq_1_1_i_supplier.html">ISupplier</a> supplier)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Remove registered supplier.  <a href="#ee3a1613ee66014993c793ada676aeaa"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">URI&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfaceorg_1_1bn_1_1mq_1_1_i_m_q_connection.html#953bf7a93b65f21f2678800c670fe5dc">getAddr</a> ()</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get connection addr.  <a href="#953bf7a93b65f21f2678800c670fe5dc"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="590d8d144802aecced4d95abc33b4a98"></a><!-- doxytag: member="org::bn::mq::IMQConnection::start" ref="590d8d144802aecced4d95abc33b4a98" args="()" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfaceorg_1_1bn_1_1mq_1_1_i_m_q_connection.html#590d8d144802aecced4d95abc33b4a98">start</a> ()  throws Exception</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Start connection. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="0c7424fe7e8f86f8200316ac168d31a4"></a><!-- doxytag: member="org::bn::mq::IMQConnection::close" ref="0c7424fe7e8f86f8200316ac168d31a4" args="()" -->
 void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfaceorg_1_1bn_1_1mq_1_1_i_m_q_connection.html#0c7424fe7e8f86f8200316ac168d31a4">close</a> ()</td></tr>
 
@@ -166,6 +173,50 @@ Create/register supplier on connection with specified name.
 
 </div>
 </div><p>
+<a class="anchor" name="29f39d018bb15a216d6f9e86fd3b9597"></a><!-- doxytag: member="org::bn::mq::IMQConnection::createPTPSession" ref="29f39d018bb15a216d6f9e86fd3b9597" args="(String pointName, String sessionName, Class&lt; T &gt; messageClass)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">&lt;T&gt; IPTPSession&lt;T&gt; org.bn.mq.IMQConnection.createPTPSession           </td>
+          <td>(</td>
+          <td class="paramtype">String&nbsp;</td>
+          <td class="paramname"> <em>pointName</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">String&nbsp;</td>
+          <td class="paramname"> <em>sessionName</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Class&lt; T &gt;&nbsp;</td>
+          <td class="paramname"> <em>messageClass</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Create/register supplier on connection with specified name. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>sessionName</em>&nbsp;</td><td>PTP session Id </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>pointName</em>&nbsp;</td><td>PTP endpoint Id </td></tr>
+  </table>
+</dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>PTP session instance </dd></dl>
+
+</div>
+</div><p>
 <a class="anchor" name="ee3a1613ee66014993c793ada676aeaa"></a><!-- doxytag: member="org::bn::mq::IMQConnection::removeSupplier" ref="ee3a1613ee66014993c793ada676aeaa" args="(ISupplier supplier)" -->
 <div class="memitem">
 <div class="memproto">
@@ -217,7 +268,7 @@ Get connection addr.
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li><a class="el" href="_i_m_q_connection_8java-source.html">IMQConnection.java</a></ul>
-<hr size="1"><address style="align: right;"><small>Generated on Tue Jan 9 00:49:29 2007 for BinaryNotes Message Queues API by&nbsp;
+<hr size="1"><address style="align: right;"><small>Generated on Thu Jan 18 00:25:39 2007 for BinaryNotes Message Queues API by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.0 </small></address>
 </body>

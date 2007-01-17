@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using org.bn.mq.protocol;
 using org.bn.mq.net;
+using org.bn.mq;
 
 namespace org.bn.mq.impl
 {
@@ -171,5 +172,10 @@ namespace org.bn.mq.impl
 				listeners.Remove(listener);
 			}
 		}
+
+        public IPTPSession<T> createPTPSession<T>(String pointName, String sessionName)
+        {
+            return new PTPSession<T>(pointName,sessionName, transport);
+        }
 	}
 }

@@ -21,7 +21,7 @@ namespace org.bn.mq
 {	
 	public interface ICallAsyncListener<T>
 	{
-		void onCallResult(IMessageQueue<T> queue, T request, T result);
-        void onCallTimeout(IMessageQueue<T> queue, T request);
+		void onCallResult(T request, T result);
+        void onCallTimeout(T request);
 	}
 }

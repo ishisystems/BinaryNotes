@@ -150,21 +150,21 @@ public class PTPSession<T> implements IPTPSession<T>, ITransportReader {
             synchronized(listeners) {
                 for(IPTPSessionListener<T> listener: listeners) {
                     T result = listener.onMessage(this,forTransport,message);
-                    
-                    Message<T> resultMsg = new Message<T>(this.messageClass);
-                    resultMsg.setId(message.getId());
-                    resultMsg.setBody(result);
-                    resultMsg.setQueuePath(message.getQueuePath());                        
-                    MessageEnvelope resultMsgEnv;
-                    try {
-                        resultMsgEnv = resultMsg.createEnvelope();
-                        resultMsgEnv.getBody().getMessageUserBody().setConsumerId(this.pointName);
-                        forTransport.sendAsync(resultMsgEnv);
+                    if(result!=null) {                    
+                        Message<T> resultMsg = new Message<T>(this.messageClass);
+                        resultMsg.setId(message.getId());
+                        resultMsg.setBody(result);
+                        resultMsg.setQueuePath(message.getQueuePath());                        
+                        MessageEnvelope resultMsgEnv;
+                        try {
+                            resultMsgEnv = resultMsg.createEnvelope();
+                            resultMsgEnv.getBody().getMessageUserBody().setConsumerId(this.pointName);
+                            forTransport.sendAsync(resultMsgEnv);
+                        }
+                        catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
-                    catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    
                 }
             }
         }

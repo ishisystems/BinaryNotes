@@ -27,5 +27,5 @@ public interface IPTPSessionListener<T> {
      * @param message result message for RPC style
      * @return
      */
-    T onMessage(IPTPSession session, ITransport transport, IMessage<T> message);
+    T onMessage(IPTPSession<T> session, ITransport transport, IMessage<T> message);
 }
