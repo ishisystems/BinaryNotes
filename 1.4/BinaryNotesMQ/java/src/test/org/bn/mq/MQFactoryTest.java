@@ -21,6 +21,8 @@ package test.org.bn.mq;
 
 import java.net.URI;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,6 +44,9 @@ import org.bn.mq.IRemoteSupplier;
 import org.bn.mq.ISupplier;
 import org.bn.mq.MQFactory;
 import org.bn.mq.net.ITransport;
+
+import test.org.bn.coders.test_asn.TestSimpleSequence;
+
 
 public class MQFactoryTest extends TestCase {
     public MQFactoryTest(String sTestName) {
@@ -275,6 +280,70 @@ public class MQFactoryTest extends TestCase {
     }
     
     
+    /*public void testPTPSessionPerf() throws Exception {
+        IMessagingBus bus = MQFactory.getInstance().createMessagingBus();
+        IMQConnection serverConnection  = null;
+        IMQConnection clientConnection  = null;
+        IPTPSession<TestSimpleSequence> ptpClientSession = null;
+        IPTPSession<TestSimpleSequence> ptpServerSession = null;
+        try {
+            serverConnection  = bus.create(new URI("bnmq://127.0.0.1:3333"));
+            
+            ptpServerSession = serverConnection.createPTPSession("serverPTP","ptpSimpleSession",TestSimpleSequence.class);
+            ptpServerSession.addListener(new TestPTPSessionPerfServerListener());
+            serverConnection.start();
+            
+            clientConnection  = bus.connect(new URI("bnmq://127.0.0.1:3333"));
+            ptpClientSession = clientConnection.createPTPSession("clientPTP","ptpSimpleSession",TestSimpleSequence.class);
+            clientConnection.start();
+
+            int currentSec = Calendar.getInstance().get(Calendar.SECOND);            
+            int msgPerSec = 0;
+            TestSimpleSequence sequence = new TestSimpleSequence();            
+            sequence.setField2("2Hello!");
+            sequence.setField3("3Hello!");
+            TestPTPPerfRPCAsyncCallBack callBack = new TestPTPPerfRPCAsyncCallBack();
+            for(int i=0;i<100000;i++) {
+                sequence.setField1((long)i);
+                ptpClientSession.callAsync(sequence , callBack ,20);
+                int nowSec = Calendar.getInstance().get(Calendar.SECOND);
+                if(nowSec!=currentSec) {
+                    System.out.println("Send msg per sec: "+msgPerSec);
+                    msgPerSec= 0;                    
+                    currentSec = nowSec;
+                }
+                else
+                    msgPerSec++;
+            }
+                        
+            Thread.sleep(1000);
+            
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+        finally {
+            if(ptpClientSession!=null) {
+                ptpClientSession.close();
+            }
+            if(ptpServerSession!=null) {
+                ptpServerSession.close();
+            }
+            
+            if(clientConnection!=null)
+                clientConnection.close();        
+            if(serverConnection!=null)
+                serverConnection.close();
+            if(bus!=null) {
+                try {
+                    bus.close();
+                }
+                catch (Throwable e) {e = null; }
+            }
+        }
+    }*/
+    
     
     protected class TestMQConnectionListener implements IMQConnectionListener {
 
@@ -341,4 +410,36 @@ public class MQFactoryTest extends TestCase {
         }
     }
 
+    protected class TestPTPSessionPerfServerListener implements IPTPSessionListener<TestSimpleSequence> {
+        private TestSimpleSequence sequence = new TestSimpleSequence();
+
+        public TestSimpleSequence onMessage(IPTPSession<TestSimpleSequence> session, 
+                                            ITransport transport, 
+                                            IMessage<TestSimpleSequence> message) {
+            sequence.setField1((long)1);
+            sequence.setField2("2Hello!");
+            sequence.setField3("3Hello!");
+            return sequence;
+        }
+    }
+    
+    protected class TestPTPPerfRPCAsyncCallBack implements ICallAsyncListener<TestSimpleSequence> {
+        int currentSec = Calendar.getInstance().get(Calendar.SECOND);            
+        int msgPerSec = 0;
+
+        public void onCallResult(TestSimpleSequence request, TestSimpleSequence result) {
+            int nowSec = Calendar.getInstance().get(Calendar.SECOND);
+            if(nowSec!=currentSec) {
+                System.out.println("Recv msg per sec: "+msgPerSec);
+                msgPerSec= 0;
+                currentSec = nowSec;
+            }
+            else
+                msgPerSec++;        
+        }
+
+        public void onCallTimeout(TestSimpleSequence request) {
+            System.out.println("Call timeout!!! ");
+        }
+    }
 }

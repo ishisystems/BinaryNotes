@@ -271,4 +271,11 @@ EXPORTS TestOCT,TestPRN,TestI32,TestI16,TestI8,ContentType,ValueWithParams,Param
 	}
 
 	TestLongTag ::= [APPLICATION 15123] INTEGER
+
+	TestSimpleSequence ::= SEQUENCE
+	{
+		field1 [0] INTEGER,
+		field2 [1] UTF8String,
+		field3 [2] UTF8String
+	}
 END

@@ -221,27 +221,28 @@ EXPORTS TestOCT,TestPRN,TestI32,TestI16,TestI8,ContentType,ValueWithParams,Param
 		attrStrict	[7] OCTET STRING(SIZE(4))
 	}
 
-	BugPrimitive ::= CHOICE
-	{
-		bugBoolean [0] BOOLEAN,
-		bugInteger [1] INTEGER
-	}
+    	BugPrimitive ::= CHOICE
+    	{
+      		bugBoolean [0] BOOLEAN,
+      		bugInteger [1] INTEGER
+    	}
 
-	BugEnum ::= INTEGER
-
-	BugValueType ::= CHOICE
-	{
-		bugPrimitive [0] BugPrimitive,
-		bugEnum      [1] BugEnum
-	}
-
-	BugList ::= SEQUENCE OF BugValueType
+    	BugEnum ::= INTEGER
 
     	BugSequenceType ::= SEQUENCE
     	{
       		booleanField [0] BOOLEAN,
       		integerField [0] INTEGER
     	}
+
+    	BugValueType ::= CHOICE
+    	{
+      		bugPrimitive [0] BugPrimitive,
+      		bugEnum      [1] BugEnum,
+      		bugSequence  [2] BugSequenceType
+    	}
+
+    	BugList ::= SEQUENCE OF BugValueType
 
 	TaggedSeqInSeq ::= [APPLICATION 4] SEQUENCE 
 	{
@@ -267,5 +268,14 @@ EXPORTS TestOCT,TestPRN,TestI32,TestI16,TestI8,ContentType,ValueWithParams,Param
 		field5 GeneralizedTime,
 		field6 UTCTime,
 		field7 TestLong
+	}
+
+	TestLongTag ::= [APPLICATION 15123] INTEGER
+
+	TestSimpleSequence ::= SEQUENCE
+	{
+		field1 [0] INTEGER,
+		field2 [1] UTF8String,
+		field3 [2] UTF8String
 	}
 END
