@@ -50,7 +50,7 @@
 
                 
        }
-       private static IASN1PreparedElementData preparedData_<xsl:value-of select='$sequenceName'/> = new ASN1PreparedElementData(<xsl:value-of select='$sequenceName'/>.class);
+       private static IASN1PreparedElementData preparedData_<xsl:value-of select='$sequenceName'/> = CoderFactory.getInstance().newPreparedElementData(<xsl:value-of select='$sequenceName'/>.class);
 
        
                 </xsl:for-each>

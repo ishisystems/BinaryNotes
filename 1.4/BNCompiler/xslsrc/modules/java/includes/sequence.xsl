@@ -53,7 +53,7 @@
             <xsl:call-template name="elementDefaults"/>
         }
 
-        private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(<xsl:value-of select='$sequenceName'/>.class);
+        private static IASN1PreparedElementData preparedData = CoderFactory.getInstance().newPreparedElementData(<xsl:value-of select='$sequenceName'/>.class);
         public IASN1PreparedElementData getPreparedData() {
             return preparedData;
         }

@@ -52,7 +52,7 @@
             }
 
 
-            private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(typeof(<xsl:value-of select='$sequenceName'/>));
+            private static IASN1PreparedElementData preparedData = CoderFactory.getInstance().newPreparedElementData(typeof(<xsl:value-of select='$sequenceName'/>));
             public IASN1PreparedElementData PreparedData {
             	get { return preparedData; }
             }

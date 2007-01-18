@@ -70,7 +70,7 @@ import org.bn.types.*;
             
         }
 
-        private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(UnsubscribeRequest.class);
+        private static IASN1PreparedElementData preparedData = CoderFactory.getInstance().newPreparedElementData(UnsubscribeRequest.class);
         public IASN1PreparedElementData getPreparedData() {
             return preparedData;
         }

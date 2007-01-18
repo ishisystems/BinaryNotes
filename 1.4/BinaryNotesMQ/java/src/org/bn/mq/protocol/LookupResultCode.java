@@ -54,7 +54,7 @@ import org.bn.types.*;
 	    public void initWithDefaults() {
 	    }
 
-        private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(LookupResultCode.class);
+        private static IASN1PreparedElementData preparedData = CoderFactory.getInstance().newPreparedElementData(LookupResultCode.class);
         public IASN1PreparedElementData getPreparedData() {
             return preparedData;
         }

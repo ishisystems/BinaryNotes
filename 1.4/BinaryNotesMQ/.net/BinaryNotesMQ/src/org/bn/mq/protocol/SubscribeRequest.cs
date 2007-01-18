@@ -89,7 +89,7 @@ namespace org.bn.mq.protocol {
             }
 
 
-            private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(typeof(SubscribeRequest));
+            private static IASN1PreparedElementData preparedData = CoderFactory.getInstance().newPreparedElementData(typeof(SubscribeRequest));
             public IASN1PreparedElementData PreparedData {
             	get { return preparedData; }
             }

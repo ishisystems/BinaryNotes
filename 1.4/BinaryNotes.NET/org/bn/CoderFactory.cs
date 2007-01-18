@@ -89,5 +89,11 @@ namespace org.bn
             else
                 return null;
         }
+
+        public IASN1PreparedElementData newPreparedElementData(Type typeInfo)
+        {
+            return new ASN1PreparedElementData(typeInfo);
+        }
+
 	}
 }

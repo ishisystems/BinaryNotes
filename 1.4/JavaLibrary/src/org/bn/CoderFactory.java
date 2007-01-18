@@ -32,8 +32,8 @@ package org.bn;
 * The flexible opensource ASN.1 framework for Java and C# (.NET)
 * @section Features
 *   - Encoding/decoding library.
-*   - The library support BER (Basic Encoding Rules) and PER (Packed Encoding Rules) implementation. (Other encoding such as DER,XER and Extended XER is planned in future releases). 
-*   - BNCompiler is the ASN.1 compiler which is able to generate Java or C# code for the specified ASN.1 input file. The generated code has annotations/metadata that uses the compiler in runtime. 
+*   - The library support BER (Basic Encoding Rules) and PER (Packed Encoding Rules) implementation. (Other encoding such as DER,XER and Extended XER is planned in future releases).
+*   - BNCompiler is the ASN.1 compiler which is able to generate Java or C# code for the specified ASN.1 input file. The generated code has annotations/metadata that uses the compiler in runtime.
 *   - The library use only plain Java classes (POJO) and annotation without any special code
 * @section GlobalNotes Notes
 *  <i>This documentation describe only API of library, without any internal implementation notes.</i>
@@ -42,8 +42,8 @@ package org.bn;
 * @code
 * 	...
 *       DataSeq   ::= SEQUENCE {
-*           plain 		[0] TestPRN, 
-*           unicode		[1] TestOCT OPTIONAL, 
+*           plain 		[0] TestPRN,
+*           unicode		[1] TestOCT OPTIONAL,
 *           binary		[2] TestOCT,
 *           simpleType	[3] PrintableString,
 *           simpleOctType   OCTET STRING,
@@ -61,10 +61,10 @@ package org.bn;
 *   ...
 *   @ASN1Sequence ( name = "DataSeq" )
 *   public class DataSeq {
-*   
+*
 *       @ASN1Element ( name = "plain", isOptional =  false , hasTag =  true, tag = 0 )
 *       private TestPRN plain = null;
-*       
+*
 *       @ASN1Element ( name = "unicode", isOptional =  true , hasTag =  true, tag = 1 )
 *       private TestOCT unicode = null;
 *       ...
@@ -75,7 +75,7 @@ package org.bn;
 *       public TestPRN getPlain () {
 *           return this.plain;
 *       }
-*       
+*
 *       public void setPlain (TestPRN value) {
 *           this.plain = value;
 *       }
@@ -83,41 +83,37 @@ package org.bn;
 *       public Boolean getBooleanType () {
 *           return this.booleanType;
 *       }
-*       
+*
 *       public void setBooleanType (Boolean value) {
 *           this.booleanType = value;
 *       }
 *       ...
-*   }        
+*   }
 * @endcode
-* 
+*
 * <i> The encoding/decoding procedure in your prorram: </i>
-* 
+*
 * @code
-*   
+*
 *   ...
 *   // Encoding for Java
 *   DataSeq seq = new DataSeq();
 *   IEncoder<DataSeq> encoder = CoderFactory.getInstance().newEncoder("BER");
 *   ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 *   encoder.encode(seq, outputStream);
-*   
+*
 *   // Decoding for Java
 *   IDecoder decoder = CoderFactory.getInstance().newDecoder("BER");
 *   DataSeq seq = decoder.decode(stream,DataSeq.class);
-*   ...                    
+*   ...
 * @endcode
 */
 
 
-import org.bn.coders.ber.BERDecoder;
-import org.bn.coders.ber.BEREncoder;
-import org.bn.coders.der.DERDecoder;
-import org.bn.coders.der.DEREncoder;
-import org.bn.coders.per.PERAlignedDecoder;
-import org.bn.coders.per.PERAlignedEncoder;
-import org.bn.coders.per.PERUnalignedDecoder;
-import org.bn.coders.per.PERUnalignedEncoder;
+import org.bn.coders.*;
+import org.bn.coders.ber.*;
+import org.bn.coders.der.*;
+import org.bn.coders.per.*;
 
 /**
  * The CoderFactory class is factory for creating ASN.1 encoding/decoding implementations
@@ -200,6 +196,10 @@ public class CoderFactory {
         }
         else        
             return null;
+    }
+    
+    public IASN1PreparedElementData newPreparedElementData(Class typeInfo) {
+        return new ASN1PreparedElementData(typeInfo);
     }
     
 }
