@@ -611,15 +611,16 @@ public class PERAlignedDecoder extends Decoder {
         if(countOfElements > 0) {
             ParameterizedType tp = (ParameterizedType)elementInfo.getGenericInfo();
             Class paramType = (Class)tp.getActualTypeArguments()[0];
-            ElementInfo info = new ElementInfo();
-            info.setAnnotatedClass(paramType);
-            info.setParentAnnotated(elementInfo.getAnnotatedClass());
-            if(elementInfo.hasPreparedInfo()) {
-                ASN1SequenceOfMetadata seqOfMeta = (ASN1SequenceOfMetadata)elementInfo.getPreparedInfo().getTypeMetadata();
-                info.setPreparedInfo( seqOfMeta.getItemClassMetadata() );
-            }
             
             for(int i=0;i<countOfElements;i++) {
+                ElementInfo info = new ElementInfo();
+                info.setAnnotatedClass(paramType);
+                info.setParentAnnotated(elementInfo.getAnnotatedClass());
+                if(elementInfo.hasPreparedInfo()) {
+                    ASN1SequenceOfMetadata seqOfMeta = (ASN1SequenceOfMetadata)elementInfo.getPreparedInfo().getTypeMetadata();
+                    info.setPreparedInfo( seqOfMeta.getItemClassMetadata() );
+                }
+            
                 DecodedObject item=decodeClassType(null,paramType,info,stream);
                 if(item!=null) {
                     result.add(item.getValue());

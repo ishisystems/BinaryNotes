@@ -630,20 +630,21 @@ namespace org.bn.coders.per
             Object param = Activator.CreateInstance(genCollectionType);
 
             int countOfElements = decodeLength(elementInfo,stream);
-            ElementInfo elementItemInfo = new ElementInfo();
-            elementItemInfo.ParentAnnotatedClass = elementInfo.AnnotatedClass;
-            elementItemInfo.AnnotatedClass = paramType;
-            if(elementInfo.hasPreparedInfo()) 
-            {
-                ASN1SequenceOfMetadata seqOfMeta = (ASN1SequenceOfMetadata)elementInfo.PreparedInfo.TypeMetadata;
-                elementItemInfo.PreparedInfo = seqOfMeta.getItemClassMetadata();
-            }
-            else
-                elementItemInfo.ASN1ElementInfo = null;
 
             MethodInfo method = param.GetType().GetMethod("Add");
             for (int i = 0; i < countOfElements;i ++ )
             {
+                ElementInfo elementItemInfo = new ElementInfo();
+                elementItemInfo.ParentAnnotatedClass = elementInfo.AnnotatedClass;
+                elementItemInfo.AnnotatedClass = paramType;
+                if (elementInfo.hasPreparedInfo())
+                {
+                    ASN1SequenceOfMetadata seqOfMeta = (ASN1SequenceOfMetadata)elementInfo.PreparedInfo.TypeMetadata;
+                    elementItemInfo.PreparedInfo = seqOfMeta.getItemClassMetadata();
+                }
+                else
+                    elementItemInfo.ASN1ElementInfo = null;
+
                 DecodedObject<object> item = decodeClassType(null, paramType, elementItemInfo, stream);
                 if (item != null)
                 {

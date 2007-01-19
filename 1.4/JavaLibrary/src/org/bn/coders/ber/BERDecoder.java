@@ -316,20 +316,16 @@ public class BERDecoder extends Decoder {
             int cntOfItems = 0;
             ParameterizedType tp = (ParameterizedType)elementInfo.getGenericInfo();
             Class paramType = (Class)tp.getActualTypeArguments()[0];
-            ElementInfo info = new ElementInfo();
-            info.setAnnotatedClass(paramType);
-            info.setParentAnnotated(elementInfo.getAnnotatedClass());
-            if(elementInfo.hasPreparedInfo()) {
-                ASN1SequenceOfMetadata seqOfMeta = (ASN1SequenceOfMetadata)elementInfo.getPreparedInfo().getTypeMetadata();
-                info.setPreparedInfo( seqOfMeta.getItemClassMetadata() );
-            }
-            
-            //elementInfo.setASN1ElementInfo(null);
-            //if(elementInfo.hasPreparedInfo()) {
-            //    elementInfo.getPreparedInfo().setASN1ElementInfo(null);
-            //    elementInfo.setPreparedInstance(null);
-            //}
+
             do {
+                ElementInfo info = new ElementInfo();
+                info.setAnnotatedClass(paramType);
+                info.setParentAnnotated(elementInfo.getAnnotatedClass());
+                if(elementInfo.hasPreparedInfo()) {
+                    ASN1SequenceOfMetadata seqOfMeta = (ASN1SequenceOfMetadata)elementInfo.getPreparedInfo().getTypeMetadata();
+                    info.setPreparedInfo( seqOfMeta.getItemClassMetadata() );
+                }
+            
                 DecodedObject itemTag = decodeTag(stream);
                 DecodedObject item=decodeClassType(itemTag,paramType,info,stream);
                 if(item!=null) {

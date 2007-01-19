@@ -5,6 +5,8 @@ ChangeLog
 							[!] 		- Important warning or note
 							{<component>}	- Component/Group that changed
 
+1.4.1	{lib}		[*] Fixed incorrect decoding (in some cases) sequence of choice. Thanks to John Finley.
+-
 1.4.0	{lib}		[+] Simple & lightweight Point-to-point messaging/RPC model for BNMQ 
 1.4.0	{lib}		[+] BNMQ now supported the guaranteed message delivering (for mandatory messages)
 1.4.0	{lib}		[*] BNMQ big packet incorrect reading from socket fixed

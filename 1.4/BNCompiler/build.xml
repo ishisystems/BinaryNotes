@@ -80,7 +80,7 @@
 		<attribute name="Implementation-URL" value="http://bnotes.sourceforge.net"/>
 		<attribute name="Implementation-Mail" value="abdulla.abdurakhmanov@gmail.com"/>
 		<attribute name="Implementation-Title" value="BinaryNotes Compiler"/>
-		<attribute name="Version" value="1.4.0"/>
+		<attribute name="Version" value="1.4.1"/>
 	    </manifest>
         </jar>  
   </target>

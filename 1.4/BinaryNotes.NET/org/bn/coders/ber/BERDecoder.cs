@@ -355,17 +355,18 @@ namespace org.bn.coders.ber
 			{
 				int lenOfItems = 0;
                 int itemsCnt = 0;
-                ElementInfo info = new ElementInfo();
-                info.ParentAnnotatedClass = elementInfo.AnnotatedClass;
-                info.AnnotatedClass = paramType;
-
-                if(elementInfo.hasPreparedInfo()) 
-                {
-                    ASN1SequenceOfMetadata seqOfMeta = (ASN1SequenceOfMetadata)elementInfo.PreparedInfo.TypeMetadata;
-                    info.PreparedInfo = ( seqOfMeta.getItemClassMetadata() );
-                }
 				do 
 				{
+                    ElementInfo info = new ElementInfo();
+                    info.ParentAnnotatedClass = elementInfo.AnnotatedClass;
+                    info.AnnotatedClass = paramType;
+
+                    if (elementInfo.hasPreparedInfo())
+                    {
+                        ASN1SequenceOfMetadata seqOfMeta = (ASN1SequenceOfMetadata)elementInfo.PreparedInfo.TypeMetadata;
+                        info.PreparedInfo = (seqOfMeta.getItemClassMetadata());
+                    }
+
 					DecodedObject<object> itemTag = decodeTag(stream);
 					DecodedObject<object> item = decodeClassType(itemTag, paramType, info, stream);
                     MethodInfo method = param.GetType().GetMethod("Add");
