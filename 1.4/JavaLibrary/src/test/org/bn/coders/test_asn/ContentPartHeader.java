@@ -66,7 +66,7 @@ import org.bn.types.*;
             
         }
 
-        private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(ContentPartHeader.class);
+        private static IASN1PreparedElementData preparedData = CoderFactory.getInstance().newPreparedElementData(ContentPartHeader.class);
         public IASN1PreparedElementData getPreparedData() {
             return preparedData;
         }

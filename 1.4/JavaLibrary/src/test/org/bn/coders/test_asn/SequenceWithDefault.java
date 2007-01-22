@@ -96,7 +96,7 @@ import org.bn.types.*;
 
                 
        }
-       private static IASN1PreparedElementData preparedData_WithSeqDefSequenceType = new ASN1PreparedElementData(WithSeqDefSequenceType.class);
+       private static IASN1PreparedElementData preparedData_WithSeqDefSequenceType = CoderFactory.getInstance().newPreparedElementData(WithSeqDefSequenceType.class);
 
        
                 
@@ -339,7 +339,7 @@ import org.bn.types.*;
     
         }
 
-        private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(SequenceWithDefault.class);
+        private static IASN1PreparedElementData preparedData = CoderFactory.getInstance().newPreparedElementData(SequenceWithDefault.class);
         public IASN1PreparedElementData getPreparedData() {
             return preparedData;
         }

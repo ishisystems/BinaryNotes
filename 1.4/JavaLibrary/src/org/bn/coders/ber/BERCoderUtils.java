@@ -20,13 +20,16 @@ package org.bn.coders.ber;
 
 import org.bn.annotations.ASN1Element;
 import org.bn.annotations.ASN1String;
+import org.bn.coders.DecodedObject;
 import org.bn.coders.ElementInfo;
 import org.bn.metadata.ASN1ElementMetadata;
 
 public class BERCoderUtils {
     
-    public static int getTagValueForElement(ElementInfo info, int tagClass, int elemenType, int universalTag) {        
-        int result = tagClass | elemenType | universalTag;
+    public static DecodedObject<Integer> getTagValueForElement(ElementInfo info, int tagClass, int elemenType, int universalTag) {
+        DecodedObject<Integer> result = new DecodedObject<Integer>();
+        result.setSize(1);
+        result.setValue(tagClass | elemenType | universalTag);
         if(info.hasPreparedInfo()) {
             ASN1ElementMetadata meta = info.getPreparedASN1ElementInfo();
             if(meta!=null && meta.hasTag()) {
@@ -55,17 +58,21 @@ public class BERCoderUtils {
         return result;
     }
     
-    public static int getTagValue(int tagClass, int elemenType, int universalTag, int userTag, int userTagClass) {
+    public static DecodedObject<Integer> getTagValue(int tagClass, int elemenType, int universalTag, int userTag, int userTagClass) {
+        DecodedObject<Integer> resultObj = new DecodedObject<Integer>();
         int result = tagClass | elemenType | universalTag;
+        
         tagClass = userTagClass;
-        if (userTag <= 0x30) {
+        if (userTag < 31) {
             result = tagClass | elemenType | userTag;
+            resultObj.setSize(1);
         }
         else {
             result = tagClass | elemenType | 0x1F;
             if (userTag < 0x80) {
                 result <<= 8;
                 result |= userTag & 0x7F;
+                resultObj.setSize(2);
             }
             else
             if (userTag < 0x3FFF)
@@ -73,6 +80,7 @@ public class BERCoderUtils {
                 result <<= 16;
                 result |= (((userTag & 0x3fff) >> 7) | 0x80) << 8;
                 result |= ((userTag & 0x3fff) & 0x7f);                
+                resultObj.setSize(3);
             }
             else
             if (userTag < 0x3FFFF)
@@ -81,8 +89,10 @@ public class BERCoderUtils {
                 result |= (((userTag & 0x3FFFF) >> 15) | 0x80) << 16;
                 result |= (((userTag & 0x3FFFF) >> 7) | 0x80) << 8;
                 result |= ((userTag & 0x3FFFF) & 0x3f);
+                resultObj.setSize(4);
             }        
         }
-        return result;
+        resultObj.setValue(result);
+        return resultObj;
     }
 }

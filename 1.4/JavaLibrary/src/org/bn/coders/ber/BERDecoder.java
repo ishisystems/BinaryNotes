@@ -402,7 +402,7 @@ public class BERDecoder extends Decoder {
 
     protected boolean checkTagForObject(DecodedObject decodedTag, int tagClass, int elementType, int universalTag, 
                                         ElementInfo elementInfo) {
-        int definedTag = BERCoderUtils.getTagValueForElement(elementInfo,tagClass,elementType,universalTag);
+        int definedTag = BERCoderUtils.getTagValueForElement(elementInfo,tagClass,elementType,universalTag).getValue();
         return definedTag == (Integer)decodedTag.getValue();
     }
 }

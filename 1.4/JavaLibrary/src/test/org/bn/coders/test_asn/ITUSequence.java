@@ -157,7 +157,7 @@ import org.bn.types.*;
             
         }
 
-        private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(ITUSequence.class);
+        private static IASN1PreparedElementData preparedData = CoderFactory.getInstance().newPreparedElementData(ITUSequence.class);
         public IASN1PreparedElementData getPreparedData() {
             return preparedData;
         }

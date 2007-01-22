@@ -49,7 +49,7 @@ import org.bn.types.*;
 	    public void initWithDefaults() {
 	    }
 
-        private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(BugList.class);
+        private static IASN1PreparedElementData preparedData = CoderFactory.getInstance().newPreparedElementData(BugList.class);
         public IASN1PreparedElementData getPreparedData() {
             return preparedData;
         }

@@ -58,7 +58,7 @@ import org.bn.types.*;
 
                 
        }
-       private static IASN1PreparedElementData preparedData_SeqSequenceType = new ASN1PreparedElementData(SeqSequenceType.class);
+       private static IASN1PreparedElementData preparedData_SeqSequenceType = CoderFactory.getInstance().newPreparedElementData(SeqSequenceType.class);
 
        
                 
@@ -136,7 +136,7 @@ import org.bn.types.*;
 
 
     }
-    private static IASN1PreparedElementData preparedData_ChChoiceType = new ASN1PreparedElementData(ChChoiceType.class);
+    private static IASN1PreparedElementData preparedData_ChChoiceType = CoderFactory.getInstance().newPreparedElementData(ChChoiceType.class);
 
                 
         @ASN1Element ( name = "ch", isOptional =  false , hasTag =  true, tag = 1 , hasDefaultValue =  false  )
@@ -183,7 +183,7 @@ import org.bn.types.*;
 
                 
        }
-       private static IASN1PreparedElementData preparedData_SequenceType = new ASN1PreparedElementData(SequenceType.class);
+       private static IASN1PreparedElementData preparedData_SequenceType = CoderFactory.getInstance().newPreparedElementData(SequenceType.class);
 
        
                 
@@ -238,7 +238,7 @@ import org.bn.types.*;
             
         }
 
-        private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(TestSequenceWithNonames.class);
+        private static IASN1PreparedElementData preparedData = CoderFactory.getInstance().newPreparedElementData(TestSequenceWithNonames.class);
         public IASN1PreparedElementData getPreparedData() {
             return preparedData;
         }

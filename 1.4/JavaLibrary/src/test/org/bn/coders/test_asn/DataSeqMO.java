@@ -497,7 +497,7 @@ import org.bn.types.*;
             
         }
 
-        private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(DataSeqMO.class);
+        private static IASN1PreparedElementData preparedData = CoderFactory.getInstance().newPreparedElementData(DataSeqMO.class);
         public IASN1PreparedElementData getPreparedData() {
             return preparedData;
         }

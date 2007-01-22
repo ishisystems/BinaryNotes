@@ -23,6 +23,7 @@ import java.io.OutputStream;
 import java.lang.reflect.Field;
 import org.bn.annotations.*;
 import org.bn.coders.CoderUtils;
+import org.bn.coders.DecodedObject;
 import org.bn.coders.ElementInfo;
 import org.bn.coders.ElementType;
 import org.bn.coders.Encoder;
@@ -280,21 +281,21 @@ public class BEREncoder<T> extends Encoder<T> {
         return resultSize;
     }
 
-    protected int encodeHeader(int tagValue, int contentLen, OutputStream stream) throws Exception {
+    protected int encodeHeader(DecodedObject<Integer> tagValue, int contentLen, OutputStream stream) throws Exception {
         int resultSize = encodeLength(contentLen, stream);
         resultSize += encodeTag(tagValue, stream);
         return resultSize;
     }
     
-    protected int encodeTag(int tagValue, OutputStream stream) throws Exception {
+    protected int encodeTag(DecodedObject<Integer> tagValue, OutputStream stream) throws Exception {
         int resultSize = 0;
-        if (tagValue < 0xFF)
+        if (tagValue.getSize() == 1)
         {
-            stream.write(tagValue);
+            stream.write(tagValue.getValue());
             resultSize++;
         }
         else
-            resultSize += encodeIntegerValue(tagValue, stream);
+            resultSize += encodeIntegerValue(tagValue.getValue(), stream);
         return resultSize;
     }
 

@@ -420,14 +420,6 @@ public abstract class DecoderTest extends TestCase {
         assertEquals(val.getValue().getField().getParam_name(), coderTestUtils.createTaggedSeqInSeq().getValue().getField().getParam_name());
         assertEquals(val.getValue().getField().getParam_value(), coderTestUtils.createTaggedSeqInSeq().getValue().getField().getParam_value());
     }
-
-    public void testDecodeLongTag() throws Exception {
-        IDecoder decoder = newDecoder();
-        ByteArrayInputStream stream = 
-            new ByteArrayInputStream(coderTestUtils.createTestLongTagBytes());
-        TestLongTag val = decoder.decode(stream, TestLongTag.class);
-        assertEquals(val.getValue(), coderTestUtils.createTestLongTag().getValue());    
-    }
     
     public void testSequenceWithNullDecode() throws Exception {
         IDecoder decoder = newDecoder();
@@ -437,4 +429,11 @@ public abstract class DecoderTest extends TestCase {
         assertNotNull(seq);
     }
     
+    public void testDecodeLongTag2() throws Exception {
+        IDecoder decoder = newDecoder();
+        ByteArrayInputStream stream = 
+            new ByteArrayInputStream(coderTestUtils.createTestLongTag2Bytes());
+        TestLongTag2 val = decoder.decode(stream, TestLongTag2.class);
+        assertEquals(val.getValue(), coderTestUtils.createTestLongTag2().getValue());    
+    }
 }

@@ -80,7 +80,7 @@ import org.bn.types.*;
             
         }
 
-        private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(SequenceWithEnum.class);
+        private static IASN1PreparedElementData preparedData = CoderFactory.getInstance().newPreparedElementData(SequenceWithEnum.class);
         public IASN1PreparedElementData getPreparedData() {
             return preparedData;
         }

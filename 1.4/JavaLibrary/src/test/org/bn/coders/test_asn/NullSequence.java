@@ -21,7 +21,7 @@ import org.bn.types.*;
 	    public void initWithDefaults() {
 	    }
 
-        private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(NullSequence.class);
+        private static IASN1PreparedElementData preparedData = CoderFactory.getInstance().newPreparedElementData(NullSequence.class);
         public IASN1PreparedElementData getPreparedData() {
             return preparedData;
         }

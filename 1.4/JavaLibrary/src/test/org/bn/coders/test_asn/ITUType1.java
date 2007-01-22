@@ -42,7 +42,7 @@ import org.bn.types.*;
 	    public void initWithDefaults() {
 	    }
 
-        private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(ITUType1.class);
+        private static IASN1PreparedElementData preparedData = CoderFactory.getInstance().newPreparedElementData(ITUType1.class);
         public IASN1PreparedElementData getPreparedData() {
             return preparedData;
         }

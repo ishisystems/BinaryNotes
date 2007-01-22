@@ -77,7 +77,7 @@ import org.bn.types.*;
 	    public void initWithDefaults() {
 	    }
 
-        private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(BugPrimitive.class);
+        private static IASN1PreparedElementData preparedData = CoderFactory.getInstance().newPreparedElementData(BugPrimitive.class);
         public IASN1PreparedElementData getPreparedData() {
             return preparedData;
         }

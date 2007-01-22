@@ -290,6 +290,13 @@ public abstract class EncoderTest extends TestCase {
         
     }
     
+    public void testSequenceWithNull() throws Exception {
+        IEncoder<SequenceWithNull> encoder = newEncoder();
+        assertNotNull(encoder);
+        printEncoded("SequenceWithNull test",encoder, coderTestUtils.createSeqWithNull());
+        checkEncoded(encoder, coderTestUtils.createSeqWithNull(), coderTestUtils.createSeqWithNullBytes());
+    }
+    
     public void testEncodeLongTag() throws Exception {
         IEncoder encoder = newEncoder();
         assertNotNull(encoder);
@@ -297,11 +304,11 @@ public abstract class EncoderTest extends TestCase {
         checkEncoded(encoder, coderTestUtils.createTestLongTag(), coderTestUtils.createTestLongTagBytes());                
     }    
     
-    public void testSequenceWithNull() throws Exception {
-        IEncoder<SequenceWithNull> encoder = newEncoder();
+    public void testEncodeLongTag2() throws Exception {
+        IEncoder encoder = newEncoder();
         assertNotNull(encoder);
-        printEncoded("SequenceWithNull test",encoder, coderTestUtils.createSeqWithNull());
-        checkEncoded(encoder, coderTestUtils.createSeqWithNull(), coderTestUtils.createSeqWithNullBytes());
-    }
+        printEncoded("EncodeTestLongTag2: ",encoder, coderTestUtils.createTestLongTag2());
+        checkEncoded(encoder, coderTestUtils.createTestLongTag2(), coderTestUtils.createTestLongTag2Bytes());                
+    }        
     
 }
