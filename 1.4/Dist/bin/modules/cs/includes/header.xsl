@@ -40,6 +40,7 @@ using org.bn.attributes;
 using org.bn.attributes.constraints;
 using org.bn.coders;
 using org.bn.types;
+using org.bn;
 
 namespace <xsl:value-of select="$moduleName"/> {
 </xsl:template>

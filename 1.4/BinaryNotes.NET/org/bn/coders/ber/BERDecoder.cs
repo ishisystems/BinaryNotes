@@ -447,7 +447,7 @@ namespace org.bn.coders.ber
 		
 		protected bool checkTagForObject(DecodedObject<object> decodedTag, int tagClass, int elementType, int universalTag, ElementInfo elementInfo)
 		{
-			int definedTag = BERCoderUtils.getTagValueForElement(elementInfo, tagClass, elementType, universalTag);
+			int definedTag = BERCoderUtils.getTagValueForElement(elementInfo, tagClass, elementType, universalTag).Value;
 			return definedTag == (int) decodedTag.Value;
 		}
 	}

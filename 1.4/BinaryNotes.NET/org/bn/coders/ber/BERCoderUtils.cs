@@ -25,9 +25,10 @@ namespace org.bn.coders.ber
 {	
 	class BERCoderUtils
 	{
-		public static int getTagValueForElement(ElementInfo info, int tagClass, int elemenType, int universalTag)
+		public static DecodedObject<int> getTagValueForElement(ElementInfo info, int tagClass, int elemenType, int universalTag)
 		{
-			int result = tagClass | elemenType | universalTag;
+            DecodedObject<int> result = new DecodedObject<int>();
+			result.Value =  tagClass | elemenType | universalTag;
             if(info.hasPreparedInfo()) 
             {
                 ASN1ElementMetadata meta = info.PreparedASN1ElementInfo;
@@ -62,13 +63,15 @@ namespace org.bn.coders.ber
 			return result;
 		}
 
-        public static int getTagValue(int tagClass, int elemenType, int universalTag, int userTag, int userTagClass)
+        public static DecodedObject<int> getTagValue(int tagClass, int elemenType, int universalTag, int userTag, int userTagClass)
         {
+            DecodedObject<int> resultObj = new DecodedObject<int>();
             int result = tagClass | elemenType | universalTag;
             tagClass = userTagClass;
-            if (userTag <= 0x30)
+            if (userTag < 31)
             {
                 result = tagClass | elemenType | userTag;
+                resultObj.Size = 1;
             }
             else
             {
@@ -77,6 +80,7 @@ namespace org.bn.coders.ber
                 {
                     result <<= 8;
                     result |= userTag & 0x7F;
+                    resultObj.Size = 2;
                 }
                 else
                     if (userTag < 0x3FFF)
@@ -84,6 +88,7 @@ namespace org.bn.coders.ber
                         result <<= 16;
                         result |= (((userTag & 0x3FFF) >> 7) | 0x80) << 8;
                         result |= ((userTag & 0x3FFF) & 0x7f);
+                        resultObj.Size = 3;
                     }
                     else
                         if (userTag < 0x3FFFF)
@@ -92,9 +97,11 @@ namespace org.bn.coders.ber
                             result |= (((userTag & 0x3FFFF) >> 15) | 0x80) << 16;
                             result |= (((userTag & 0x3FFFF) >> 7) | 0x80) << 8;
                             result |= ((userTag & 0x3FFFF) & 0x3f);
+                            resultObj.Size = 4;
                         }
             }
-            return result;
+            resultObj.Value = result;
+            return resultObj;
         }
 
 	}

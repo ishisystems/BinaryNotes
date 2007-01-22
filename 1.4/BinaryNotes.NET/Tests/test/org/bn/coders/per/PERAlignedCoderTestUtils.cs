@@ -220,14 +220,20 @@ namespace test.org.bn.coders.per
             return new byte[] { 0x05, (byte)0x80, (byte)0xFD, 0x18, 0x6D, 0x21 };
         }
 
+ 
+        public override byte[] createTaggedSequenceBytes()
+        {
+            return new byte[] { 0x80, 0x03, 0x41, 0x41, 0x41 };
+        }
+
         public override byte[] createTestLongTagBytes()
         {
             return new byte[] { 0x02, 0x00, (byte)0xAA };
         }
 
-        public override byte[] createTaggedSequenceBytes()
+        public override byte[] createTestLongTag2Bytes()
         {
-            return new byte[] { 0x80, 0x03, 0x41, 0x41, 0x41 };
+            return new byte[] { 0x02, 0x00, (byte)0xAA };
         }
 
 

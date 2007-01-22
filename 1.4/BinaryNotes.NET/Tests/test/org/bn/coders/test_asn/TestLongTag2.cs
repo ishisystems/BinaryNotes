@@ -16,17 +16,18 @@ namespace test.org.bn.coders.test_asn {
 
 
     [ASN1PreparedElement]
-    [ASN1BoxedType ( Name = "ITUType6") ]
-    public class ITUType6: IASN1PreparedElement {
+    [ASN1BoxedType ( Name = "TestLongTag2") ]
+    public class TestLongTag2: IASN1PreparedElement {
             
            
-        private string  val;
+        private long  val;
 
-        [ASN1String( Name = "", 
-        StringType =  UniversalTags.VisibleString , IsUCS = false )]
-        [ASN1Element ( Name = "ITUType6", IsOptional =  false , HasTag =  true, Tag = 9 , HasDefaultValue =  false )  ]
+        [ASN1Integer( Name = "" )]
     
-        public string Value
+        [ASN1Element ( Name = "TestLongTag2", IsOptional =  false , HasTag =  true, Tag = 40, 
+        TagClass =  TagClasses.Application  , HasDefaultValue =  false )  ]
+    
+        public long Value
         {
                 get { return val; }        
                     
@@ -36,7 +37,7 @@ namespace test.org.bn.coders.test_asn {
 
                     
         
-        public ITUType6 ()
+        public TestLongTag2 ()
         {
         }
 
@@ -45,7 +46,7 @@ namespace test.org.bn.coders.test_asn {
 	    }
 
 
-            private static IASN1PreparedElementData preparedData = CoderFactory.getInstance().newPreparedElementData(typeof(ITUType6));
+            private static IASN1PreparedElementData preparedData = CoderFactory.getInstance().newPreparedElementData(typeof(TestLongTag2));
             public IASN1PreparedElementData PreparedData {
             	get { return preparedData; }
             }

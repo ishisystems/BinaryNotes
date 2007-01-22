@@ -288,12 +288,6 @@ namespace test.org.bn.coders
             checkEncoded(encoder, coderTestUtils.createTestRealBig(), coderTestUtils.createTestRealBigBytes());            
         }
 
-        public void testEncodeLongTag() {
-            IEncoder encoder = newEncoder();
-            Assert.NotNull(encoder);
-            printEncoded("EncodeTestLongTag: ",encoder, coderTestUtils.createTestLongTag());
-            checkEncoded(encoder, coderTestUtils.createTestLongTag(), coderTestUtils.createTestLongTagBytes());                
-        }
 
         public void testEncodeTaggedSequence()
         {
@@ -301,6 +295,22 @@ namespace test.org.bn.coders
             Assert.NotNull(encoder);
             printEncoded("EncodeTestTaggedSequence: ", encoder, coderTestUtils.createTaggedSequence());
             checkEncoded(encoder, coderTestUtils.createTaggedSequence(), coderTestUtils.createTaggedSequenceBytes());
+        }
+
+        public void testEncodeLongTag()
+        {
+            IEncoder encoder = newEncoder();
+            Assert.NotNull(encoder);
+            printEncoded("EncodeTestLongTag: ", encoder, coderTestUtils.createTestLongTag());
+            checkEncoded(encoder, coderTestUtils.createTestLongTag(), coderTestUtils.createTestLongTagBytes());
+        }
+
+        public void testEncodeLongTag2()
+        {
+            IEncoder encoder = newEncoder();
+            Assert.NotNull(encoder);
+            printEncoded("EncodeTestLongTag2: ", encoder, coderTestUtils.createTestLongTag2());
+            checkEncoded(encoder, coderTestUtils.createTestLongTag2(), coderTestUtils.createTestLongTag2Bytes());
         }
 
 

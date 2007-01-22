@@ -10,6 +10,7 @@ using org.bn.attributes;
 using org.bn.attributes.constraints;
 using org.bn.coders;
 using org.bn.types;
+using org.bn;
 
 namespace test.org.bn.coders.test_asn {
 
@@ -50,7 +51,7 @@ namespace test.org.bn.coders.test_asn {
                     
                 }
 
-            private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(typeof(SeqSequenceType));
+            private static IASN1PreparedElementData preparedData = CoderFactory.getInstance().newPreparedElementData(typeof(SeqSequenceType));
             public IASN1PreparedElementData PreparedData {
             	get { return preparedData; }
             }
@@ -145,7 +146,7 @@ namespace test.org.bn.coders.test_asn {
 	    {
 	    }
 
-            private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(typeof(ChChoiceType));
+            private static IASN1PreparedElementData preparedData = CoderFactory.getInstance().newPreparedElementData(typeof(ChChoiceType));
             public IASN1PreparedElementData PreparedData {
             	get { return preparedData; }
             }
@@ -194,7 +195,7 @@ namespace test.org.bn.coders.test_asn {
                     
                 }
 
-            private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(typeof(SequenceType));
+            private static IASN1PreparedElementData preparedData = CoderFactory.getInstance().newPreparedElementData(typeof(SequenceType));
             public IASN1PreparedElementData PreparedData {
             	get { return preparedData; }
             }
@@ -221,7 +222,7 @@ namespace test.org.bn.coders.test_asn {
             }
 
 
-            private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(typeof(TestSequenceWithNonames));
+            private static IASN1PreparedElementData preparedData = CoderFactory.getInstance().newPreparedElementData(typeof(TestSequenceWithNonames));
             public IASN1PreparedElementData PreparedData {
             	get { return preparedData; }
             }

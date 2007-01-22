@@ -277,23 +277,23 @@ namespace org.bn.coders.ber
 			return resultSize;
 		}
 		
-		protected internal int encodeHeader(int tagValue, int contentLen, System.IO.Stream stream)
+		protected internal int encodeHeader(DecodedObject<int> tagValue, int contentLen, System.IO.Stream stream)
 		{
 			int resultSize = encodeLength(contentLen, stream);
 			resultSize += encodeTag(tagValue, stream);
 			return resultSize;
 		}
-		
-		protected internal int encodeTag(int tagValue, System.IO.Stream stream)
+
+        protected internal int encodeTag(DecodedObject<int> tagValue, System.IO.Stream stream)
 		{
             int resultSize = 0;
-            if (tagValue < 0xFF)
+            if (tagValue.Size == 1)
             {
-                stream.WriteByte((byte)tagValue);
+                stream.WriteByte((byte)tagValue.Value);
                 resultSize++;
             }
             else
-                resultSize += encodeIntegerValue(tagValue, stream);
+                resultSize += encodeIntegerValue(tagValue.Value, stream);
             return resultSize;
 		}
 		

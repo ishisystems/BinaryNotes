@@ -237,15 +237,21 @@ namespace test.org.bn.coders.ber
             return new byte[] { 0x09, 0x05, (byte)0x80, (byte)0xFD, 0x18, 0x6D, 0x21 };
         }
 
+        public override byte[] createTaggedSequenceBytes()
+        {
+            return new byte[] { 0x68, 0x05, 0x87, 0x03, 0x41, 0x41, 0x41 };
+        }
+
         public override byte[] createTestLongTagBytes()
         {
             return new byte[] { 0x5F, (byte)0xF6, 0x13, 0x02, 0x00, (byte)0xAA };
         }
 
-        public override byte[] createTaggedSequenceBytes()
+        public override byte[] createTestLongTag2Bytes()
         {
-            return new byte[] { 0x68, 0x05, 0x87, 0x03, 0x41, 0x41, 0x41 };
+            return new byte[] { 0x5F, 0x28, 0x02, 0x00, (byte)0xAA };
         }
+
 
 
 	}

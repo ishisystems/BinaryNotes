@@ -381,6 +381,15 @@ namespace test.org.bn.coders
         }
         public abstract byte[] createTestRealBigBytes();
 
+        public TaggedSequence createTaggedSequence()
+        {
+            TaggedSequence result = new TaggedSequence();
+            result.Value = new TaggedSequence.TaggedSequenceSequenceType();
+            result.Value.Type1 = "AAA";
+            return result;
+        }
+        public abstract byte[] createTaggedSequenceBytes();
+
         public TestLongTag createTestLongTag()
         {
             TestLongTag result = new TestLongTag();
@@ -389,14 +398,14 @@ namespace test.org.bn.coders
         }
         public abstract byte[] createTestLongTagBytes();
 
-        public TaggedSequence createTaggedSequence()
+        public TestLongTag2 createTestLongTag2()
         {
-            TaggedSequence result = new TaggedSequence();
-            result.Value = new TaggedSequence.TaggedSequenceSequenceType();
-            result.Value.Type1 = "AAA";
+            TestLongTag2 result = new TestLongTag2();
+            result.Value = (0xAAL);
             return result;
         }
-        public abstract byte[] createTaggedSequenceBytes();    
+        public abstract byte[] createTestLongTag2Bytes();
+
 
 	}
 }

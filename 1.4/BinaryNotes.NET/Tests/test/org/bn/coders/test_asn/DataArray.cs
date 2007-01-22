@@ -10,6 +10,7 @@ using org.bn.attributes;
 using org.bn.attributes.constraints;
 using org.bn.coders;
 using org.bn.types;
+using org.bn;
 
 namespace test.org.bn.coders.test_asn {
 
@@ -41,7 +42,7 @@ namespace test.org.bn.coders.test_asn {
 	    }
 
 
-            private static IASN1PreparedElementData preparedData = new ASN1PreparedElementData(typeof(DataArray));
+            private static IASN1PreparedElementData preparedData = CoderFactory.getInstance().newPreparedElementData(typeof(DataArray));
             public IASN1PreparedElementData PreparedData {
             	get { return preparedData; }
             }
