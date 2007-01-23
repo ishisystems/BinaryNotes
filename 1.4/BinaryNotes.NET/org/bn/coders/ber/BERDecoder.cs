@@ -430,11 +430,11 @@ namespace org.bn.coders.ber
             result = bt;
             int len = 1;
             int tagValue = bt & 31;
-            bool isPrimitive = (bt & 0x20) == 0;
+            //bool isPrimitive = (bt & 0x20) == 0;
             if (tagValue == UniversalTags.LastUniversal)
             {
                 bt = 0x80;
-                while ((bt & 0x80) != 0)
+                while ((bt & 0x80) != 0 && len < 4)
                 {
                     result <<= 8;
                     bt = stream.ReadByte();
@@ -450,8 +450,6 @@ namespace org.bn.coders.ber
                     }
                 }
             }
-            else
-                result = bt;
 
             return new DecodedObject<object>(result, len);
 		}

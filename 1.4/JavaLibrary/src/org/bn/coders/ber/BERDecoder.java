@@ -383,7 +383,7 @@ public class BERDecoder extends Decoder {
         if (tagValue == UniversalTag.LastUniversal) 
         {
                 bt = 0x80;
-                while ((bt&0x80) != 0 && len < 5) {
+                while ((bt&0x80) != 0 && len < 4) {
                     result <<= 8;
                     bt = stream.read();
                      if (bt != -1)
