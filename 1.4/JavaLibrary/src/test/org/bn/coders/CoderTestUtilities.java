@@ -55,6 +55,7 @@ import test.org.bn.coders.test_asn.TestI8;
 import test.org.bn.coders.test_asn.TestIR;
 import test.org.bn.coders.test_asn.TestLongTag;
 import test.org.bn.coders.test_asn.TestLongTag2;
+import test.org.bn.coders.test_asn.TestLongTag2Choice;
 import test.org.bn.coders.test_asn.TestNI;
 import test.org.bn.coders.test_asn.TestNI2;
 import test.org.bn.coders.test_asn.TestOCT;
@@ -460,7 +461,9 @@ public abstract class CoderTestUtilities {
 
     public TestLongTag2 createTestLongTag2() {
         TestLongTag2 result = new TestLongTag2();
-        result.setValue(0xAAL);
+        TestLongTag2Choice resultChoice = new TestLongTag2Choice();        
+        resultChoice.setTestb(0xFEEDL);
+        result.selectTesta(resultChoice);
         return result;
     }
     public abstract byte[] createTestLongTag2Bytes();    

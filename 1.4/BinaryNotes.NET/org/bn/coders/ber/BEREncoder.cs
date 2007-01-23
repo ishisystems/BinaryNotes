@@ -286,7 +286,16 @@ namespace org.bn.coders.ber
 
         protected internal int encodeTag(DecodedObject<int> tagValue, System.IO.Stream stream)
 		{
-            int resultSize = 0;
+            int resultSize = tagValue.Size;
+            int value = tagValue.Value;
+            for (int i = 0; i < tagValue.Size; i++)
+            {
+                stream.WriteByte((byte)value);
+                value = value >> 8;
+            }
+            return resultSize;
+
+            /*int resultSize = 0;
             if (tagValue.Size == 1)
             {
                 stream.WriteByte((byte)tagValue.Value);
@@ -294,7 +303,7 @@ namespace org.bn.coders.ber
             }
             else
                 resultSize += encodeIntegerValue(tagValue.Value, stream);
-            return resultSize;
+            return resultSize;*/
 		}
 		
 		protected internal int encodeLength(int length, System.IO.Stream stream)

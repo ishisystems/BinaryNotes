@@ -288,14 +288,12 @@ public class BEREncoder<T> extends Encoder<T> {
     }
     
     protected int encodeTag(DecodedObject<Integer> tagValue, OutputStream stream) throws Exception {
-        int resultSize = 0;
-        if (tagValue.getSize() == 1)
-        {
-            stream.write(tagValue.getValue());
-            resultSize++;
+        int resultSize = tagValue.getSize();
+        int value = tagValue.getValue();
+        for (int i = 0 ; i < tagValue.getSize() ; i++) {
+            stream.write((byte)value);
+            value =  value >> 8 ;            
         }
-        else
-            resultSize += encodeIntegerValue(tagValue.getValue(), stream);
         return resultSize;
     }
 

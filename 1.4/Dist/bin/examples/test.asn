@@ -271,7 +271,6 @@ EXPORTS TestOCT,TestPRN,TestI32,TestI16,TestI8,ContentType,ValueWithParams,Param
 	}
 
 	TestLongTag ::= [APPLICATION 15123] INTEGER
-	TestLongTag2 ::= [APPLICATION 40] INTEGER
 
 	TestSimpleSequence ::= SEQUENCE
 	{
@@ -279,4 +278,13 @@ EXPORTS TestOCT,TestPRN,TestI32,TestI16,TestI8,ContentType,ValueWithParams,Param
 		field2 [1] UTF8String,
 		field3 [2] UTF8String
 	}
+
+	TestLongTag2 ::= CHOICE {
+		testa [33] TestLongTag2Choice
+	}
+
+	TestLongTag2Choice ::= SEQUENCE {
+		testb [0] INTEGER
+	}
+
 END

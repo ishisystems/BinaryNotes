@@ -16,42 +16,48 @@ namespace test.org.bn.coders.test_asn {
 
 
     [ASN1PreparedElement]
-    [ASN1BoxedType ( Name = "TestLongTag2") ]
-    public class TestLongTag2: IASN1PreparedElement {
+    [ASN1Choice ( Name = "TestLongTag2") ]
+    public class TestLongTag2 : IASN1PreparedElement {
             
-           
-        private long  val;
-
-        [ASN1Integer( Name = "" )]
-    
-        [ASN1Element ( Name = "TestLongTag2", IsOptional =  false , HasTag =  true, Tag = 40, 
-        TagClass =  TagClasses.Application  , HasDefaultValue =  false )  ]
-    
-        public long Value
-        {
-                get { return val; }        
-                    
-                set { val = value; }
-                        
-        }            
-
-                    
         
-        public TestLongTag2 ()
+	private TestLongTag2Choice testa_ ;
+        private bool  testa_selected = false ;
+        
+        
+        
+        [ASN1Element ( Name = "testa", IsOptional =  false , HasTag =  true, Tag = 33 , HasDefaultValue =  false )  ]
+    
+        public TestLongTag2Choice Testa
         {
+            get { return testa_; }
+            set { selectTesta(value); }
         }
+        
+                
+  
+        
+        public bool isTestaSelected () {
+            return this.testa_selected ;
+        }
+
+        public void selectTesta (TestLongTag2Choice val) {
+            this.testa_ = val;
+            this.testa_selected = true;
+            
+                        
+        }
+        
+  
 
             public void initWithDefaults()
 	    {
 	    }
-
 
             private static IASN1PreparedElementData preparedData = CoderFactory.getInstance().newPreparedElementData(typeof(TestLongTag2));
             public IASN1PreparedElementData PreparedData {
             	get { return preparedData; }
             }
 
-        
     }
             
 }

@@ -29,6 +29,7 @@ namespace org.bn.coders.ber
 		{
             DecodedObject<int> result = new DecodedObject<int>();
 			result.Value =  tagClass | elemenType | universalTag;
+            result.Size = 1;
             if(info.hasPreparedInfo()) 
             {
                 ASN1ElementMetadata meta = info.PreparedASN1ElementInfo;

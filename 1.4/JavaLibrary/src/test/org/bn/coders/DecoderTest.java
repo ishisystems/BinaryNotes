@@ -434,6 +434,7 @@ public abstract class DecoderTest extends TestCase {
         ByteArrayInputStream stream = 
             new ByteArrayInputStream(coderTestUtils.createTestLongTag2Bytes());
         TestLongTag2 val = decoder.decode(stream, TestLongTag2.class);
-        assertEquals(val.getValue(), coderTestUtils.createTestLongTag2().getValue());    
+        assertTrue(val.isTestaSelected());
+        assertEquals(val.getTesta().getTestb(), coderTestUtils.createTestLongTag2().getTesta().getTestb());    
     }
 }

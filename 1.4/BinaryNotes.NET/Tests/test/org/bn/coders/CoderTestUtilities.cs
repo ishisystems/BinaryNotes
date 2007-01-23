@@ -401,7 +401,9 @@ namespace test.org.bn.coders
         public TestLongTag2 createTestLongTag2()
         {
             TestLongTag2 result = new TestLongTag2();
-            result.Value = (0xAAL);
+            TestLongTag2Choice resultChoice = new TestLongTag2Choice();
+            resultChoice.Testb = (0xFEEDL);
+            result.selectTesta(resultChoice);
             return result;
         }
         public abstract byte[] createTestLongTag2Bytes();

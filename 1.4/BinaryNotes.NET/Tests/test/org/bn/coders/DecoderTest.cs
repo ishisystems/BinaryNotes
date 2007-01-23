@@ -407,7 +407,8 @@ namespace test.org.bn.coders
             System.IO.MemoryStream stream =
               new System.IO.MemoryStream(coderTestUtils.createTestLongTag2Bytes());
             TestLongTag2 val = decoder.decode<TestLongTag2>(stream);
-            Assert.Equals(val.Value, coderTestUtils.createTestLongTag2().Value);
+            Assert.True(val.isTestaSelected());
+            Assert.Equals(val.Testa.Testb, coderTestUtils.createTestLongTag2().Testa.Testb);    
         }
 
 	}

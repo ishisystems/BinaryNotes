@@ -212,7 +212,7 @@ public class PERUnalignedCoderTestUtils extends CoderTestUtilities {
     }
     
     public byte[] createTestLongTag2Bytes() {
-        return new byte[] { 0x02,0x00, (byte)0xAA };
+        return new byte[] { 0x03 ,0x00, (byte)0xFE, (byte)0xED };
     }
     
 }

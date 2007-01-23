@@ -16,33 +16,33 @@ import org.bn.types.*;
 
 
     @ASN1PreparedElement
-    @ASN1BoxedType ( name = "TestLongTag2" )
+    @ASN1Choice ( name = "TestLongTag2" )
     public class TestLongTag2 implements IASN1PreparedElement {
+            
+        @ASN1Element ( name = "testa", isOptional =  false , hasTag =  true, tag = 33 , hasDefaultValue =  false  )
+    
+	private TestLongTag2Choice testa = null;
                 
-        @ASN1Integer( name = "" )
-    
-        @ASN1Element ( name = "TestLongTag2", isOptional =  false , hasTag =  true, tag = 40, 
-        tagClass =  TagClass.Application  , hasDefaultValue =  false  )
-    
-        private Long  value;        
+  
+        
+        public TestLongTag2Choice getTesta () {
+            return this.testa;
+        }
 
-        
-        
-        public TestLongTag2 () {
+        public boolean isTestaSelected () {
+            return this.testa != null;
+        }
+
+        private void setTesta (TestLongTag2Choice value) {
+            this.testa = value;
+        }
+
+        public void selectTesta (TestLongTag2Choice value) {
+            this.testa = value;
+                        
         }
         
-        
-        
-        public void setValue(Long value) {
-            this.value = value;
-        }
-        
-        
-        
-        public Long getValue() {
-            return this.value;
-        }            
-        
+  
 
 	    public void initWithDefaults() {
 	    }
@@ -52,6 +52,6 @@ import org.bn.types.*;
             return preparedData;
         }
 
-            
+
     }
             

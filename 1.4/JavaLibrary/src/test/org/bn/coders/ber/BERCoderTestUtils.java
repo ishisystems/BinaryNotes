@@ -266,6 +266,6 @@ public class BERCoderTestUtils extends CoderTestUtilities {
     }
     
     public byte[] createTestLongTag2Bytes() {
-        return new byte[] { 0x5F, 0x28, 0x02, 0x00, (byte)0xAA };
+        return new byte[] { (byte)0xBF, 0x21, 0x05, (byte)0x80, 0x03, 0x00, (byte)0xFE, (byte)0xED };
     }    
 }
