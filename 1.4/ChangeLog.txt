@@ -5,6 +5,7 @@ ChangeLog
 							[!] 		- Important warning or note
 							{<component>}	- Component/Group that changed
 
+1.4.1	{lib}		[*] Fixed decoding ANY for BER. Thanks to John Finley.
 1.4.1	{comp}		[*] Fixed generated imported packages for .NET
 1.4.1	{lib}		[*] Fixed incorrect encoding TAG between in range: 31..255. Thanks to Jussi Vainionpaa. 
 			    Also added UnitTest for encoding tag in this range for avoiding problems in future releases.

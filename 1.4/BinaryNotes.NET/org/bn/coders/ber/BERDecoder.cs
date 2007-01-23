@@ -141,6 +141,14 @@ namespace org.bn.coders.ber
 		public override DecodedObject<object> decodeAny(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
 		{
 			System.IO.MemoryStream anyStream = new System.IO.MemoryStream(1024);
+            int tagValue = (int)decodedTag.Value;
+            for (int i = 0; i < decodedTag.Size; i++)
+            {
+                anyStream.WriteByte((byte)tagValue);
+                tagValue = tagValue >> 8;
+            }
+
+
 			byte[] buffer = new byte[1024];
 			int len = 0;
             int readed = stream.Read(buffer, 0, buffer.Length);
@@ -436,7 +444,10 @@ namespace org.bn.coders.ber
                         len++;
                     }
                     else
+                    {
+                        result >>= 8;
                         break;
+                    }
                 }
             }
             else

@@ -121,6 +121,12 @@ public class BERDecoder extends Decoder {
                                       ElementInfo elementInfo, 
                                InputStream stream) throws Exception {
         ByteArrayOutputStream anyStream = new ByteArrayOutputStream(1024);
+        int tagValue = (Integer)decodedTag.getValue();
+        for (int i = 0 ; i < decodedTag.getSize() ; i++) {
+            anyStream.write((byte)tagValue);
+            tagValue =  tagValue >> 8 ;            
+        }
+        
         byte[] buffer = new byte[1024];
         int len = 0;
         int readed = stream.read(buffer);
@@ -373,29 +379,24 @@ public class BERDecoder extends Decoder {
             return null;
         result = bt ;
         int len = 1;
-        //int tagClass = bt & 0xC0;
         int tagValue = bt & 31;
-        boolean isPrimitive = (bt & 0x20) == 0;
         if (tagValue == UniversalTag.LastUniversal) 
         {
                 bt = 0x80;
-                while ((bt&0x80) != 0) {
+                while ((bt&0x80) != 0 && len < 5) {
                     result <<= 8;
                     bt = stream.read();
-                    //tagValue = (tagValue << 7) | (bt & 0x7f);
-                     if (bt > 0)
+                     if (bt != -1)
                      {
                          result |= bt;
                          len++;
                      }
-                     else
+                     else {
+                        result >>= 8;
                         break;
-                };
-                //tagValue= tagClass | tagValue;
-                //result = tagValue;
+                     }                     
+                }
         }
-        else
-            result = bt;
         
         return new DecodedObject(result,len);
     }
