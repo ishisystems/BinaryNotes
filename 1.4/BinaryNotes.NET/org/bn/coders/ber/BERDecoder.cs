@@ -41,6 +41,9 @@ namespace org.bn.coders.ber
             else
                 return null;
 			DecodedObject<int> len = decodeLength(stream);
+            int saveMaxAvailableLen = elementInfo.MaxAvailableLen;
+            elementInfo.MaxAvailableLen = (len.Value);
+
             DecodedObject<object> result = null;
             if(!isSet)
 			    result =base.decodeSequence(decodedTag, objectClass, elementInfo, stream);
@@ -49,6 +52,7 @@ namespace org.bn.coders.ber
 			if (result.Size != len.Value)
 				throw new System.ArgumentException("Sequence '" + objectClass.ToString() + "' size is incorrect!");
 			result.Size = result.Size + len.Size;
+            elementInfo.MaxAvailableLen = (saveMaxAvailableLen);
 			return result;
 		}
 
@@ -62,6 +66,7 @@ namespace org.bn.coders.ber
                 sizeOfSequence += fieldTag.Size;
             PropertyInfo[] fields =
                 elementInfo.getProperties(objectClass);
+            int maxSeqLen = elementInfo.MaxAvailableLen;
 
             bool fieldEncoded = false;
             do
@@ -78,11 +83,26 @@ namespace org.bn.coders.ber
                         sizeOfSequence += obj.Size;
 
                         bool isAny = false;
-                        if(i!=fields.Length-1) 
+                        if (i + 1 == fields.Length - 1)
                         {
-                            isAny = CoderUtils.isAnyField(field, elementInfo);
+                            ElementInfo info = new ElementInfo();
+                            info.AnnotatedClass = (fields[i + 1]);
+                            info.MaxAvailableLen = (elementInfo.MaxAvailableLen);
+                            if (elementInfo.hasPreparedInfo())
+                            {
+                                info.PreparedInfo = (elementInfo.PreparedInfo.getPropertyMetadata(i + 1));
+                            }
+                            else
+                                info.ASN1ElementInfo = CoderUtils.getAttribute<ASN1Element>(fields[i + 1]);
+                            isAny = CoderUtils.isAnyField(fields[i + 1], info);
                         }
-                        if(!isAny)
+
+                        if (maxSeqLen != -1)
+                        {
+                            elementInfo.MaxAvailableLen = (maxSeqLen - sizeOfSequence);
+                        }
+
+                        if (!isAny)
                         {
                             fieldTag = decodeTag(stream);
                             if (fieldTag != null)
@@ -140,24 +160,33 @@ namespace org.bn.coders.ber
 		
 		public override DecodedObject<object> decodeAny(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
 		{
-			System.IO.MemoryStream anyStream = new System.IO.MemoryStream(1024);
-            int tagValue = (int)decodedTag.Value;
+            int bufSize = elementInfo.MaxAvailableLen;
+            if (bufSize == 0)
+                return null; 
+            System.IO.MemoryStream anyStream = new System.IO.MemoryStream(1024);
+            /*int tagValue = (int)decodedTag.Value;
             for (int i = 0; i < decodedTag.Size; i++)
             {
                 anyStream.WriteByte((byte)tagValue);
                 tagValue = tagValue >> 8;
+            }*/
+
+            if(bufSize<0)
+                bufSize = 1024;
+            int len = 0;
+            if (bufSize > 0)
+            {
+                byte[] buffer = new byte[bufSize];
+                int readed = stream.Read(buffer, 0, buffer.Length);
+                while (readed > 0)
+                {
+                    anyStream.Write(buffer, 0, readed);
+                    len += readed;
+                    if (elementInfo.MaxAvailableLen > 0)
+                        break;
+                    readed = stream.Read(buffer, 0, buffer.Length);
+                }
             }
-
-
-			byte[] buffer = new byte[1024];
-			int len = 0;
-            int readed = stream.Read(buffer, 0, buffer.Length);
-			while (readed > 0)
-			{
-				anyStream.Write(buffer,0,readed);
-				len += readed;
-                readed = stream.Read(buffer, 0, buffer.Length);
-			}
             CoderUtils.checkConstraints(len, elementInfo);
 			return new DecodedObject<object>(anyStream.ToArray(), len);
 		}

@@ -247,7 +247,7 @@ public abstract class Decoder implements IDecoder, IASN1TypesDecoder {
             sizeOfSequence+=fieldTag.getSize();
         
         Field[] fields = elementInfo.getFields(objectClass);
-        
+        int maxSeqLen = elementInfo.getMaxAvailableLen();
         for(int i=0; i<fields.length; i++) {
             Field field = fields[i];            
             DecodedObject obj = decodeSequenceField(fieldTag,sequence,i, field,stream,elementInfo, true);
@@ -255,9 +255,22 @@ public abstract class Decoder implements IDecoder, IASN1TypesDecoder {
                 sizeOfSequence+=obj.getSize();
                 
                 boolean isAny = false;
-                if(i!=fields.length-1) {
-                    isAny = CoderUtils.isAnyField(field, elementInfo);
+                if(i+1==fields.length-1) {
+                    ElementInfo info = new ElementInfo();
+                    info.setAnnotatedClass(fields[i+1]);        
+                    info.setMaxAvailableLen(elementInfo.getMaxAvailableLen());
+                    info.setGenericInfo(field.getGenericType());
+                    if(elementInfo.hasPreparedInfo()) {
+                        info.setPreparedInfo(elementInfo.getPreparedInfo().getFieldMetadata(i+1));
+                    }
+                    else
+                        info.setASN1ElementInfoForClass(fields[i+1]);                
+                    isAny = CoderUtils.isAnyField(fields[i+1], info);
                 }
+
+                if(maxSeqLen!=-1) {
+                    elementInfo.setMaxAvailableLen(maxSeqLen - sizeOfSequence);
+                }                
                 
                 if(!isAny) {
                     if(i<fields.length-1) {
@@ -269,6 +282,10 @@ public abstract class Decoder implements IDecoder, IASN1TypesDecoder {
                             break;
                     }
                 }
+                
+                
+
+                
             };
         }
         return new DecodedObject(sequence,sizeOfSequence);
@@ -278,7 +295,7 @@ public abstract class Decoder implements IDecoder, IASN1TypesDecoder {
     protected DecodedObject decodeSequenceField(DecodedObject fieldTag, Object sequenceObj, int fieldIdx, Field field, InputStream stream, ElementInfo elementInfo, boolean optionalCheck) throws  Exception {
         ElementInfo info = new ElementInfo();
         info.setAnnotatedClass(field);        
-        
+        info.setMaxAvailableLen(elementInfo.getMaxAvailableLen());
         info.setGenericInfo(field.getGenericType());
         if(elementInfo.hasPreparedInfo()) {
             info.setPreparedInfo(elementInfo.getPreparedInfo().getFieldMetadata(fieldIdx));

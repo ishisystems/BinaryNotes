@@ -43,14 +43,17 @@ public class BERDecoder extends Decoder {
             return null;
 
         DecodedObject<Integer> len = decodeLength(stream);
+        int saveMaxAvailableLen = elementInfo.getMaxAvailableLen();
+        elementInfo.setMaxAvailableLen(len.getValue());
         DecodedObject result = null;
         if(!isSet)
             result =  super.decodeSequence(decodedTag,objectClass,elementInfo,stream);
         else
             result =  decodeSet(decodedTag,objectClass,elementInfo,len.getValue(),stream);
         if(result.getSize()!= len.getValue())
-            throw new  IllegalArgumentException ("Sequence '" + objectClass.toString() + "' size is incorrect!");
+            throw new  IllegalArgumentException ("Sequence '" + objectClass.toString() + "' size is incorrect! Must be: "+len.getValue()+". Received: "+result.getSize());
         result.setSize(result.getSize() + len.getSize());
+        elementInfo.setMaxAvailableLen(saveMaxAvailableLen );
         return result;
     }
     
@@ -65,6 +68,7 @@ public class BERDecoder extends Decoder {
             sizeOfSet+=fieldTag.getSize();
 
         Field[] fields = elementInfo.getFields(objectClass);
+        int maxSeqLen = elementInfo.getMaxAvailableLen();
 
         boolean fieldEncoded = false; 
         do {
@@ -76,9 +80,22 @@ public class BERDecoder extends Decoder {
                     fieldEncoded = true;
                     sizeOfSet +=obj.getSize();                
                     boolean isAny = false;
-                    if(i!=fields.length-1) {
-                        isAny = CoderUtils.isAnyField(field, elementInfo);
+                    if(i+1==fields.length-1) {
+                        ElementInfo info = new ElementInfo();
+                        info.setAnnotatedClass(fields[i+1]);        
+                        info.setMaxAvailableLen(elementInfo.getMaxAvailableLen());
+                        info.setGenericInfo(field.getGenericType());
+                        if(elementInfo.hasPreparedInfo()) {
+                            info.setPreparedInfo(elementInfo.getPreparedInfo().getFieldMetadata(i+1));
+                        }
+                        else
+                            info.setASN1ElementInfoForClass(fields[i+1]);                
+                        isAny = CoderUtils.isAnyField(fields[i+1], info);
                     }
+
+                    if(maxSeqLen!=-1) {
+                        elementInfo.setMaxAvailableLen(maxSeqLen - sizeOfSet);
+                    }                
                     
                     if(!isAny) {
                         fieldTag = decodeTag(stream);
@@ -120,20 +137,24 @@ public class BERDecoder extends Decoder {
     public DecodedObject decodeAny(DecodedObject decodedTag, Class objectClass, 
                                       ElementInfo elementInfo, 
                                InputStream stream) throws Exception {
+        int bufSize = elementInfo.getMaxAvailableLen();
+        if(bufSize==0)
+            return null;
         ByteArrayOutputStream anyStream = new ByteArrayOutputStream(1024);
-        int tagValue = (Integer)decodedTag.getValue();
-        for (int i = 0 ; i < decodedTag.getSize() ; i++) {
-            anyStream.write((byte)tagValue);
-            tagValue =  tagValue >> 8 ;            
-        }
-        
-        byte[] buffer = new byte[1024];
+        if(bufSize<0)
+            bufSize = 1024;
         int len = 0;
-        int readed = stream.read(buffer);
-        while( readed > 0) {
-            anyStream.write(buffer,0,readed);
-            len+=readed;
-            readed = stream.read(buffer);            
+        if(bufSize>0) {
+            byte[] buffer = new byte[bufSize];
+            
+            int readed = stream.read(buffer);
+            while( readed > 0) {
+                anyStream.write(buffer,0,readed);
+                len+=readed;
+                if(elementInfo.getMaxAvailableLen()>0)
+                    break;
+                readed = stream.read(buffer);            
+            }
         }
         CoderUtils.checkConstraints(len,elementInfo);
         return new DecodedObject(anyStream.toByteArray(),len);

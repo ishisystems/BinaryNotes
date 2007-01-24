@@ -241,7 +241,7 @@ namespace org.bn.coders
 			if (fieldTag != null)
 				sizeOfSequence += fieldTag.Size;
 			PropertyInfo[] fields = elementInfo.getProperties(objectClass);
-
+            int maxSeqLen = elementInfo.MaxAvailableLen;
 			for (int i = 0; i < fields.Length; i++)
 			{
 				PropertyInfo field = fields[i];
@@ -253,9 +253,24 @@ namespace org.bn.coders
 					sizeOfSequence += obj.Size;
 					
                     bool isAny = false;
-                    if(i!=fields.Length-1) {
-                        isAny = CoderUtils.isAnyField(field, elementInfo);
+                    if (i + 1 == fields.Length - 1)
+                    {
+                        ElementInfo info = new ElementInfo();
+                        info.AnnotatedClass = (fields[i + 1]);
+                        info.MaxAvailableLen = (elementInfo.MaxAvailableLen);
+                        if (elementInfo.hasPreparedInfo())
+                        {
+                            info.PreparedInfo = (elementInfo.PreparedInfo.getPropertyMetadata(i + 1));
+                        }
+                        else
+                            info.ASN1ElementInfo = CoderUtils.getAttribute<ASN1Element>(fields[i+1]);
+                        isAny = CoderUtils.isAnyField(fields[i + 1], info);
                     }
+
+                    if (maxSeqLen != -1)
+                    {
+                        elementInfo.MaxAvailableLen = (maxSeqLen - sizeOfSequence);
+                    }                
 
                     if(!isAny)
 					{
@@ -280,6 +295,7 @@ namespace org.bn.coders
 		{
             ElementInfo info = new ElementInfo();
             info.AnnotatedClass = field;
+            info.MaxAvailableLen = elementInfo.MaxAvailableLen;
             if(elementInfo.hasPreparedInfo()) 
             {
                 info.PreparedInfo = elementInfo.PreparedInfo.getPropertyMetadata(fieldIdx);

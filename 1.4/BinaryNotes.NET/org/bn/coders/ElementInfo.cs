@@ -119,5 +119,14 @@ namespace org.bn.coders
             return CoderUtils.getAttribute<T>(parentAnnotatedClass);
         }
 
+        private int maxAvailableLen = -1;
+
+        public int MaxAvailableLen
+        {
+            get { return maxAvailableLen; }
+            set { maxAvailableLen = value; }
+        }
+        
+
 	}
 }

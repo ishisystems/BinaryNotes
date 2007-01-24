@@ -34,6 +34,7 @@ public final class ElementInfo {
     private IASN1PreparedElementData preparedInfo;
     private Object preparedInstance;
     private ASN1ElementMetadata preparedElementMetadata;
+    private int maxAvailableLen = -1;
 
     public ElementInfo() {            
     }
@@ -127,5 +128,13 @@ public final class ElementInfo {
     
     public boolean hasPreparedASN1ElementInfo() {
         return this.preparedElementMetadata != null;
+    }
+
+    public int getMaxAvailableLen() {
+        return maxAvailableLen;
+    }
+
+    public void setMaxAvailableLen(int maxAvailableLen) {
+        this.maxAvailableLen = maxAvailableLen;
     }
 }
