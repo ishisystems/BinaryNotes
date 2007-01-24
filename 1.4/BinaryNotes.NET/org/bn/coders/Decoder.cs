@@ -161,9 +161,22 @@ namespace org.bn.coders
             {
                 return decodeOctetString(decodedTag, objectClass, elementInfo, stream);
 			}
-			else
+            else if (objectClass.IsEnum)
+            {
+                return decodeCSEnum(decodedTag, objectClass, elementInfo, stream);
+            }
+            else
 				return null;
 		}
+
+        public virtual DecodedObject<object> decodeCSEnum(DecodedObject<object> decodedTag, System.Type objectClass, ElementInfo elementInfo, System.IO.Stream stream)
+        {
+            System.Type declaringType = System.Enum.GetUnderlyingType(objectClass);            
+            DecodedObject<object> result = decodeInteger(decodedTag, declaringType, elementInfo, stream);
+            Object enumObj = Enum.ToObject(objectClass, result.Value);
+            result.Value = enumObj;
+            return result;
+        }
 
         public DecodedObject<object> decodePreparedElement(DecodedObject<object> decodedTag, Type objectClass, ElementInfo elementInfo, Stream stream ) {    
             IASN1PreparedElementData saveInfo = elementInfo.PreparedInfo;        

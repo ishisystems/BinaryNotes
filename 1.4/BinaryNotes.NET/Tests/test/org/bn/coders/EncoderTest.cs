@@ -313,6 +313,14 @@ namespace test.org.bn.coders
             checkEncoded(encoder, coderTestUtils.createTestLongTag2(), coderTestUtils.createTestLongTag2Bytes());
         }
 
+        public void testEncodeCSEnum()
+        {
+            IEncoder encoder = newEncoder();
+            Assert.NotNull(encoder);
+            printEncoded("EncodeCSEnum: ", encoder, coderTestUtils.createCSEnum());
+            checkEncoded(encoder, coderTestUtils.createCSEnum(), coderTestUtils.createCSEnumBytes());
+        }
+
 
 	}
 }

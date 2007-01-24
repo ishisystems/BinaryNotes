@@ -251,5 +251,11 @@ namespace test.org.bn.coders.ber
         {
             return new byte[] { (byte)0xBF, 0x21, 0x05, (byte)0x80, 0x03, 0x00, (byte)0xFE, (byte)0xED };
         }
+
+        public override byte[] createCSEnumBytes()
+        {
+            return new byte[] { 0x02, 0x01, 0x01 };
+        }
+
 	}
 }

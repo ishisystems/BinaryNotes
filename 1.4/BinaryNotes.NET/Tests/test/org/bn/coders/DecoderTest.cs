@@ -411,5 +411,14 @@ namespace test.org.bn.coders
             Assert.Equals(val.Testa.Testb, coderTestUtils.createTestLongTag2().Testa.Testb);    
         }
 
+        public void testDecodeCSEnum()
+        {
+            IDecoder decoder = newDecoder();
+            System.IO.MemoryStream stream =
+              new System.IO.MemoryStream(coderTestUtils.createCSEnumBytes());
+            CoderTestUtilities.TestCSEnum val = decoder.decode<CoderTestUtilities.TestCSEnum>(stream);
+            Assert.Equals(val, coderTestUtils.createCSEnum());
+        }
+
 	}
 }

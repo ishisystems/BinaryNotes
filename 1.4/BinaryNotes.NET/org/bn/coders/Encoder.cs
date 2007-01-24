@@ -162,15 +162,41 @@ namespace org.bn.coders
 			{
 				return encodeBoolean(obj, stream, info);
 			}
-			else if (obj.GetType().IsArray)
+			else 
+            if (obj.GetType().IsArray)
 			{
 				return encodeOctetString(obj, stream, info);
 			}
+            else
+            if (obj.GetType().IsEnum)
+            {
+                return encodeCSEnum(obj, stream, info);
+            }
 			else
 				return 0;
 		}
 
-        public int encodePreparedElement(object obj , Stream stream, ElementInfo elementInfo) {
+        protected int encodeCSEnum(object obj, Stream stream, ElementInfo info)
+        {
+            System.Type declaringType = System.Enum.GetUnderlyingType(obj.GetType());
+            if (declaringType == typeof(long))
+            {
+                return encodeInteger((long)obj, stream, info);
+            }
+            else if (declaringType == typeof(int))
+            {
+                return encodeInteger((int)obj, stream, info);
+            }
+            else if (declaringType == typeof(byte))
+            {
+                return encodeInteger((byte)obj, stream, info);
+            }
+            else
+                return 0;
+        }
+
+        public int encodePreparedElement(object obj , Stream stream, ElementInfo elementInfo) 
+        {
             IASN1PreparedElement preparedInstance = (IASN1PreparedElement)obj;
             elementInfo.PreparedInstance = (preparedInstance);
             ASN1ElementMetadata elementDataSave = null;

@@ -408,6 +408,18 @@ namespace test.org.bn.coders
         }
         public abstract byte[] createTestLongTag2Bytes();
 
+        public enum TestCSEnum
+        {
+            OK=1,
+            CANCEL=2
+        }
+        public Object createCSEnum()
+        {
+            TestCSEnum item;
+            item = TestCSEnum.OK;
+            return item;
+        }
+        public abstract byte[] createCSEnumBytes();
 
 	}
 }
