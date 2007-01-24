@@ -5,6 +5,8 @@ ChangeLog
 							[!] 		- Important warning or note
 							{<component>}	- Component/Group that changed
 
+1.4.1	{dist}		[+] Added Java5 depend packages in distribution package 
+			    for developers which do not migrate to Java6 (MacOS, etc).
 1.4.1	{lib}		[*] Fixed decoding ANY for BER. Thanks to John Finley.
 1.4.1	{comp}		[*] Fixed generated imported packages for .NET
 1.4.1	{lib}		[*] Fixed incorrect encoding TAG between in range: 31..255. Thanks to Jussi Vainionpaa. 
