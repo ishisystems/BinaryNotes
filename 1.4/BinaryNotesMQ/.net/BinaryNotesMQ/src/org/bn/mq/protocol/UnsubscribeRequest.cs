@@ -18,8 +18,7 @@ namespace org.bn.mq.protocol {
     [ASN1PreparedElement]
     [ASN1Sequence ( Name = "UnsubscribeRequest", IsSet = false  )]
     public class UnsubscribeRequest : IASN1PreparedElement {
-            
-        
+                    
 	private string consumerId_ ;
 	[ASN1String( Name = "", 
         StringType =  UniversalTags.UTF8String , IsUCS = false )]
@@ -32,8 +31,7 @@ namespace org.bn.mq.protocol {
         }
         
                 
-  
-        
+          
 	private string queuePath_ ;
 	
         private bool  queuePath_present = false ;

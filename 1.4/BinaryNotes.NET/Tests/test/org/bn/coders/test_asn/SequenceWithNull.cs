@@ -18,8 +18,7 @@ namespace test.org.bn.coders.test_asn {
     [ASN1PreparedElement]
     [ASN1Sequence ( Name = "SequenceWithNull", IsSet = false  )]
     public class SequenceWithNull : IASN1PreparedElement {
-            
-        
+                    
 	private string test_ ;
 	[ASN1String( Name = "", 
         StringType =  UniversalTags.PrintableString , IsUCS = false )]
@@ -32,8 +31,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private object nullVal_ ;
 	
         [ASN1Null ( Name = "nullVal" )]
@@ -47,8 +45,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private string test2_ ;
 	[ASN1String( Name = "", 
         StringType =  UniversalTags.PrintableString , IsUCS = false )]

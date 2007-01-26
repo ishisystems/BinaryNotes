@@ -18,8 +18,7 @@ namespace test.org.bn.coders.test_asn {
     [ASN1PreparedElement]
     [ASN1Sequence ( Name = "ContentPartHeader", IsSet = false  )]
     public class ContentPartHeader : IASN1PreparedElement {
-            
-        
+                    
 	private string name_ ;
 	[ASN1String( Name = "", 
         StringType =  UniversalTags.PrintableString , IsUCS = false )]
@@ -32,8 +31,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private System.Collections.Generic.ICollection<ValueWithParams> values_ ;
 	
 [ASN1SequenceOf( Name = "", IsSetOf = false  )]

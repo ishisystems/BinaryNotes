@@ -18,8 +18,7 @@ namespace org.bn.mq.examples.protocol {
     [ASN1PreparedElement]
     [ASN1Sequence ( Name = "ExampleMessage", IsSet = false  )]
     public class ExampleMessage : IASN1PreparedElement {
-            
-        
+                    
 	private string field1_ ;
 	[ASN1String( Name = "", 
         StringType =  UniversalTags.PrintableString , IsUCS = false )]
@@ -32,8 +31,7 @@ namespace org.bn.mq.examples.protocol {
         }
         
                 
-  
-        
+          
 	private long field2_ ;
 	[ASN1Integer( Name = "" )]
     
@@ -46,8 +44,7 @@ namespace org.bn.mq.examples.protocol {
         }
         
                 
-  
-        
+          
 	private byte[] field3_ ;
 	
         private bool  field3_present = false ;
@@ -62,8 +59,7 @@ namespace org.bn.mq.examples.protocol {
         }
         
                 
-  
-        
+          
 	private string field4_ ;
 	[ASN1String( Name = "", 
         StringType =  UniversalTags.UTF8String , IsUCS = false )]

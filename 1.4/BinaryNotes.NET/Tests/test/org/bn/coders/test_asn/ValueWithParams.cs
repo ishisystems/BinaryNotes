@@ -18,8 +18,7 @@ namespace test.org.bn.coders.test_asn {
     [ASN1PreparedElement]
     [ASN1Sequence ( Name = "ValueWithParams", IsSet = false  )]
     public class ValueWithParams : IASN1PreparedElement {
-            
-        
+                    
 	private string value_ ;
 	[ASN1String( Name = "", 
         StringType =  UniversalTags.PrintableString , IsUCS = false )]
@@ -32,8 +31,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private System.Collections.Generic.ICollection<PlainParamsMap> params_ ;
 	
         private bool  params_present = false ;

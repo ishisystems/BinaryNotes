@@ -18,8 +18,7 @@ namespace org.bn.mq.protocol {
     [ASN1PreparedElement]
     [ASN1Sequence ( Name = "LookupRequest", IsSet = false  )]
     public class LookupRequest : IASN1PreparedElement {
-            
-        
+                    
 	private string supplierName_ ;
 	[ASN1String( Name = "", 
         StringType =  UniversalTags.PrintableString , IsUCS = false )][ASN1ValueRangeConstraint ( 

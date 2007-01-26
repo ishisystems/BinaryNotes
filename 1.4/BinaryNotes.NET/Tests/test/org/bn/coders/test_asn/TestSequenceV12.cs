@@ -18,8 +18,7 @@ namespace test.org.bn.coders.test_asn {
     [ASN1PreparedElement]
     [ASN1Sequence ( Name = "TestSequenceV12", IsSet = false  )]
     public class TestSequenceV12 : IASN1PreparedElement {
-            
-        
+                    
 	private string attrSimple_ ;
 	[ASN1String( Name = "", 
         StringType =  UniversalTags.PrintableString , IsUCS = false )]
@@ -32,8 +31,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private string attrStr_ ;
 	[ASN1String( Name = "", 
         StringType =  UniversalTags.PrintableString , IsUCS = false )][ASN1ValueRangeConstraint ( 
@@ -49,8 +47,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private TestPRN attrStr2_ ;
 	
         [ASN1Element ( Name = "attrStr2", IsOptional =  false , HasTag =  true, Tag = 2 , HasDefaultValue =  false )  ]
@@ -62,8 +59,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private System.Collections.Generic.ICollection<string> attrArr_ ;
 	[ASN1String( Name = "", 
         StringType =  UniversalTags.PrintableString , IsUCS = false )]
@@ -82,8 +78,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private BitString attrBitStr_ ;
 	
         private bool  attrBitStr_present = false ;
@@ -98,8 +93,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private BitString attrBitStrDef_ ;
 	[ASN1BitString( Name = "" )]
     
@@ -112,8 +106,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private BitString attrBitStrBnd_ ;
 	
         private bool  attrBitStrBnd_present = false ;
@@ -131,8 +124,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private TestBitStrBnd attrBoxBitStr_ ;
 	
         private bool  attrBoxBitStr_present = false ;
@@ -146,8 +138,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private byte[] attrStrict_ ;
 	[ASN1OctetString( Name = "" )]
     

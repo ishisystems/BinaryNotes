@@ -18,8 +18,7 @@ namespace test.org.bn.coders.test_asn {
     [ASN1PreparedElement]
     [ASN1Sequence ( Name = "SetWithDefault", IsSet = true  )]
     public class SetWithDefault : IASN1PreparedElement {
-            
-        
+                    
 	private long nodefault_ ;
 	[ASN1Integer( Name = "" )]
     
@@ -32,8 +31,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private TestPRN nodefault2_ ;
 	
         [ASN1Element ( Name = "nodefault2", IsOptional =  false , HasTag =  true, Tag = 1 , HasDefaultValue =  false )  ]
@@ -45,8 +43,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private string default3_ ;
 	[ASN1String( Name = "", 
         StringType =  UniversalTags.PrintableString , IsUCS = false )]

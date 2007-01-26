@@ -26,8 +26,7 @@ namespace test.org.bn.coders.test_asn {
        [ASN1PreparedElement]
        [ASN1Sequence ( Name = "TaggedSequence", IsSet = false  )]
        public class TaggedSequenceSequenceType : IASN1PreparedElement {
-                
-        
+                        
 	private string type1_ ;
 	
         private bool  type1_present = false ;

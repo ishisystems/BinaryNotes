@@ -34,7 +34,7 @@
     <xsl:variable name="outputDirectory"><xsl:value-of select="//outputDirectory"/></xsl:variable>
     
     <xsl:template name="enum">
-        <xsl:variable name="enumName"><xsl:value-of select="name"/></xsl:variable>        
+        <xsl:variable name="enumName"><xsl:call-template name="doMangleIdent"><xsl:with-param name='input' select="name"/></xsl:call-template></xsl:variable>
         <xsltc:output file="{$outputDirectory}/{$enumName}.cs">
             <xsl:call-template name="header"/>
 

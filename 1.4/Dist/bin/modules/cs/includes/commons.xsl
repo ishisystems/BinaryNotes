@@ -40,5 +40,40 @@
         <xsl:param name="input"/>
         <xsl:value-of select="concat ( translate( substring($input,1,1),'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'), substring($input,2) )"/>
     </xsl:template>
+
+    <xsl:template name="doMangleIdent">
+        <xsl:param name="input"/>
+	<xsl:variable name='linput'>
+	<xsl:call-template name="toLower">
+		<xsl:with-param name= "input" select="$input"/>
+	</xsl:call-template>	
+	</xsl:variable>
+	<xsl:variable name='loutput'>
+	<xsl:value-of select="$input"/>
+	<xsl:choose>		
+		<xsl:when test="$linput = 'class'">_</xsl:when>
+		<xsl:when test="$input = 'public'">_</xsl:when>
+		<xsl:when test="$input = 'protected'">_</xsl:when>
+		<xsl:when test="$input = 'private'">_</xsl:when>
+		<xsl:when test="$input = 'void'">_</xsl:when>
+		<xsl:when test="$input = 'null'">_</xsl:when>
+		<xsl:when test="$input = 'int'">_</xsl:when>
+		<xsl:when test="$input = 'long'">_</xsl:when>
+		<xsl:when test="$input = 'short'">_</xsl:when>
+		<xsl:when test="$input = 'double'">_</xsl:when>
+		<xsl:when test="$input = 'float'">_</xsl:when>
+		<xsl:when test="$input = 'byte'">_</xsl:when>
+		<xsl:when test="$input = 'String'">_</xsl:when>
+		<xsl:when test="$input = 'interface'">_</xsl:when>
+		<xsl:when test="$input = 'import'">_</xsl:when>
+		<xsl:when test="$input = 'package'">_</xsl:when>
+		<xsl:when test="$input = 'unit'">_</xsl:when>
+		<xsl:when test="$input = 'using'">_</xsl:when>
+		<xsl:when test="$input = 'static'">_</xsl:when>
+		<xsl:when test="$input = 'return'">_</xsl:when>
+	</xsl:choose>
+	</xsl:variable>
+	<xsl:value-of select="translate($loutput,'-[]','___')"/>
+    </xsl:template>
     
 </xsl:stylesheet>

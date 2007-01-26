@@ -32,7 +32,7 @@
     <xsl:output method="text" encoding="UTF-8" indent="no"/>
 
   <xsl:template name="element">
-        <xsl:variable name="elementName" select="name"/>
+        <xsl:variable name="elementName"> <xsl:call-template name="doMangleIdent"><xsl:with-param name='input' select="name"/></xsl:call-template></xsl:variable>
         
         <xsl:call-template name="typeDecl"/>        
         <xsl:call-template name="elementDecl"/>

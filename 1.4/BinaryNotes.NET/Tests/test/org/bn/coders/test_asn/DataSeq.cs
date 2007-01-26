@@ -18,8 +18,7 @@ namespace test.org.bn.coders.test_asn {
     [ASN1PreparedElement]
     [ASN1Sequence ( Name = "DataSeq", IsSet = false  )]
     public class DataSeq : IASN1PreparedElement {
-            
-        
+                    
 	private TestPRN plain_ ;
 	
         [ASN1Element ( Name = "plain", IsOptional =  false , HasTag =  true, Tag = 0 , HasDefaultValue =  false )  ]
@@ -31,8 +30,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private TestOCT unicode_ ;
 	
         private bool  unicode_present = false ;
@@ -46,8 +44,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private TestOCT binary_ ;
 	
         [ASN1Element ( Name = "binary", IsOptional =  false , HasTag =  true, Tag = 2 , HasDefaultValue =  false )  ]
@@ -59,8 +56,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private string simpleType_ ;
 	[ASN1String( Name = "", 
         StringType =  UniversalTags.PrintableString , IsUCS = false )]
@@ -73,8 +69,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private byte[] simpleOctType_ ;
 	[ASN1OctetString( Name = "" )]
     
@@ -87,8 +82,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private bool booleanType_ ;
 	[ASN1Boolean( Name = "" )]
     
@@ -101,8 +95,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private long intType_ ;
 	[ASN1Integer( Name = "" )]
     
@@ -115,8 +108,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private int intBndType_ ;
 	[ASN1Integer( Name = "" )]
     [ASN1ValueRangeConstraint ( 
@@ -132,8 +124,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private System.Collections.Generic.ICollection<string> stringArray_ ;
 	[ASN1String( Name = "", 
         StringType =  UniversalTags.PrintableString , IsUCS = false )]
@@ -149,8 +140,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private System.Collections.Generic.ICollection<Data> dataArray_ ;
 	
 [ASN1SequenceOf( Name = "", IsSetOf = false  )]
@@ -165,8 +155,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private byte[] extension_ ;
 	
         private bool  extension_present = false ;

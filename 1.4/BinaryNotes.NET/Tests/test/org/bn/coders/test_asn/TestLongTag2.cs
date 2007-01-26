@@ -18,7 +18,7 @@ namespace test.org.bn.coders.test_asn {
     [ASN1PreparedElement]
     [ASN1Choice ( Name = "TestLongTag2") ]
     public class TestLongTag2 : IASN1PreparedElement {
-            
+                    
         
 	private TestLongTag2Choice testa_ ;
         private bool  testa_selected = false ;
@@ -34,8 +34,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
         public bool isTestaSelected () {
             return this.testa_selected ;
         }

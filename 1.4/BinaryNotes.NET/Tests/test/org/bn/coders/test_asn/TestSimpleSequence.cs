@@ -18,8 +18,7 @@ namespace test.org.bn.coders.test_asn {
     [ASN1PreparedElement]
     [ASN1Sequence ( Name = "TestSimpleSequence", IsSet = false  )]
     public class TestSimpleSequence : IASN1PreparedElement {
-            
-        
+                    
 	private long field1_ ;
 	[ASN1Integer( Name = "" )]
     
@@ -32,8 +31,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private string field2_ ;
 	[ASN1String( Name = "", 
         StringType =  UniversalTags.UTF8String , IsUCS = false )]
@@ -46,8 +44,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private string field3_ ;
 	[ASN1String( Name = "", 
         StringType =  UniversalTags.UTF8String , IsUCS = false )]

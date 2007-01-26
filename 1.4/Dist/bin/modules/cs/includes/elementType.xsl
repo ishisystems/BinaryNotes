@@ -29,9 +29,9 @@
 
     <xsl:template name="elementType">
         <xsl:param name="instanceable" select="'no'"/>    
-        <xsl:variable name="elementName" select="name"/>    
+        <xsl:variable name="elementName"><xsl:call-template name="doMangleIdent"><xsl:with-param name='input' select="name"/></xsl:call-template></xsl:variable>
         <xsl:choose>
-            <xsl:when test="string-length(typeName) > 0"><xsl:value-of select="typeName"/></xsl:when>
+            <xsl:when test="string-length(typeName) > 0"><xsl:call-template name="doMangleIdent"><xsl:with-param name='input' select="typeName"/></xsl:call-template></xsl:when>
             <xsl:when test="typeReference"><xsl:call-template name="typeReference"><xsl:with-param name="elementName" select="$elementName"/><xsl:with-param name="instanceable" select="$instanceable"/></xsl:call-template></xsl:when>
         </xsl:choose>
     </xsl:template>

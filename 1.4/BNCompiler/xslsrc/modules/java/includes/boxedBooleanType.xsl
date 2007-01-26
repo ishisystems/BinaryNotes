@@ -30,7 +30,7 @@
     <xsl:output method="text" encoding="UTF-8" indent="no"/>
 
     <xsl:template name="boxedBooleanType">
-        <xsl:variable name="boxedName"><xsl:value-of select="name"/></xsl:variable>        
+        <xsl:variable name="boxedName"><xsl:call-template name="doMangleIdent"> <xsl:with-param name='input'><xsl:value-of select="name"/></xsl:with-param> </xsl:call-template></xsl:variable>
         <xsltc:output file="{$outputDirectory}/{$boxedName}.java">
             <xsl:call-template name="header"/>
 

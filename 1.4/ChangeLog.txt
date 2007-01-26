@@ -5,6 +5,7 @@ ChangeLog
 							[!] 		- Important warning or note
 							{<component>}	- Component/Group that changed
 
+1.4.1	{comp}		[+] Added the mangling procedure for decorate incompatible (or reserved) words for Java/.NET (class, private and etc)
 1.4.1	{lib}		[+] Added support for .NET Enum type mapping. Thanks to Chris Peterson.
 1.4.1	{dist}		[+] Added Java5 depend packages in distribution package 
 			    for developers which do not migrate to Java6 (MacOS, etc).

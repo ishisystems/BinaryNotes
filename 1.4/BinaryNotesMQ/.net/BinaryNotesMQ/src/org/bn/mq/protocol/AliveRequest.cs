@@ -18,8 +18,7 @@ namespace org.bn.mq.protocol {
     [ASN1PreparedElement]
     [ASN1Sequence ( Name = "AliveRequest", IsSet = false  )]
     public class AliveRequest : IASN1PreparedElement {
-            
-        
+                    
 	private long timestamp_ ;
 	[ASN1Integer( Name = "" )]
     

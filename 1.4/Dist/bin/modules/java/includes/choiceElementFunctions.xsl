@@ -31,7 +31,7 @@
     <xsl:output method="text" encoding="UTF-8" indent="no"/>
 
   <xsl:template name="choiceElementFunctions">
-        <xsl:variable name="elementName" select="name"/>
+        <xsl:variable name="elementName"><xsl:call-template name="doMangleIdent"><xsl:with-param name='input' select="name"/></xsl:call-template></xsl:variable>
         
         public <xsl:call-template name="elementType"/> get<xsl:call-template name="toUpperFirstLetter"><xsl:with-param name="input" select="$elementName"/></xsl:call-template> () {
             return this.<xsl:value-of select="$elementName"/>;

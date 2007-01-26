@@ -37,7 +37,7 @@
     <xsl:variable name="outputDirectory"><xsl:value-of select="//outputDirectory"/></xsl:variable>
     
     <xsl:template name="sequence">
-        <xsl:variable name="sequenceName"><xsl:value-of select="name"/></xsl:variable>        
+	<xsl:variable name="sequenceName"><xsl:call-template name="doMangleIdent"><xsl:with-param name='input' select="name"/></xsl:call-template></xsl:variable>
         <xsltc:output file="{$outputDirectory}/{$sequenceName}.cs">
             <xsl:call-template name="header"/>
 

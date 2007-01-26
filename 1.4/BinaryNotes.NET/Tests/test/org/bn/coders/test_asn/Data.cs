@@ -18,7 +18,7 @@ namespace test.org.bn.coders.test_asn {
     [ASN1PreparedElement]
     [ASN1Choice ( Name = "Data") ]
     public class Data : IASN1PreparedElement {
-            
+                    
         
 	private TestPRN plain_ ;
         private bool  plain_selected = false ;
@@ -34,7 +34,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
+          
         
 	private TestOCT unicode_ ;
         private bool  unicode_selected = false ;
@@ -50,7 +50,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
+          
         
 	private TestOCT binary_ ;
         private bool  binary_selected = false ;
@@ -66,7 +66,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
+          
         
 	private string simpleType_ ;
         private bool  simpleType_selected = false ;
@@ -83,7 +83,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
+          
         
 	private byte[] simpleOctType_ ;
         private bool  simpleOctType_selected = false ;
@@ -100,7 +100,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
+          
         
 	private bool booleanType_ ;
         private bool  booleanType_selected = false ;
@@ -117,7 +117,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
+          
         
 	private long intType_ ;
         private bool  intType_selected = false ;
@@ -134,7 +134,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
+          
         
 	private int intBndType_ ;
         private bool  intBndType_selected = false ;
@@ -154,8 +154,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
         public bool isPlainSelected () {
             return this.plain_selected ;
         }
@@ -181,8 +180,7 @@ namespace test.org.bn.coders.test_asn {
                             
         }
         
-  
-        
+          
         public bool isUnicodeSelected () {
             return this.unicode_selected ;
         }
@@ -208,8 +206,7 @@ namespace test.org.bn.coders.test_asn {
                             
         }
         
-  
-        
+          
         public bool isBinarySelected () {
             return this.binary_selected ;
         }
@@ -235,8 +232,7 @@ namespace test.org.bn.coders.test_asn {
                             
         }
         
-  
-        
+          
         public bool isSimpleTypeSelected () {
             return this.simpleType_selected ;
         }
@@ -262,8 +258,7 @@ namespace test.org.bn.coders.test_asn {
                             
         }
         
-  
-        
+          
         public bool isSimpleOctTypeSelected () {
             return this.simpleOctType_selected ;
         }
@@ -289,8 +284,7 @@ namespace test.org.bn.coders.test_asn {
                             
         }
         
-  
-        
+          
         public bool isBooleanTypeSelected () {
             return this.booleanType_selected ;
         }
@@ -316,8 +310,7 @@ namespace test.org.bn.coders.test_asn {
                             
         }
         
-  
-        
+          
         public bool isIntTypeSelected () {
             return this.intType_selected ;
         }
@@ -343,8 +336,7 @@ namespace test.org.bn.coders.test_asn {
                             
         }
         
-  
-        
+          
         public bool isIntBndTypeSelected () {
             return this.intBndType_selected ;
         }

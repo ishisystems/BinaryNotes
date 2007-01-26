@@ -18,7 +18,7 @@ namespace org.bn.mq.protocol {
     [ASN1PreparedElement]
     [ASN1Choice ( Name = "MessageBody") ]
     public class MessageBody : IASN1PreparedElement {
-            
+                    
         
 	private MessageUserBody messageUserBody_ ;
         private bool  messageUserBody_selected = false ;
@@ -34,7 +34,7 @@ namespace org.bn.mq.protocol {
         }
         
                 
-  
+          
         
 	private DeliveryReport deliveryReport_ ;
         private bool  deliveryReport_selected = false ;
@@ -50,7 +50,7 @@ namespace org.bn.mq.protocol {
         }
         
                 
-  
+          
         
 	private SubscribeRequest subscribeRequest_ ;
         private bool  subscribeRequest_selected = false ;
@@ -66,7 +66,7 @@ namespace org.bn.mq.protocol {
         }
         
                 
-  
+          
         
 	private SubscribeResult subscribeResult_ ;
         private bool  subscribeResult_selected = false ;
@@ -82,7 +82,7 @@ namespace org.bn.mq.protocol {
         }
         
                 
-  
+          
         
 	private UnsubscribeRequest unsubscribeRequest_ ;
         private bool  unsubscribeRequest_selected = false ;
@@ -98,7 +98,7 @@ namespace org.bn.mq.protocol {
         }
         
                 
-  
+          
         
 	private UnsubscribeResult unsubscribeResult_ ;
         private bool  unsubscribeResult_selected = false ;
@@ -114,7 +114,7 @@ namespace org.bn.mq.protocol {
         }
         
                 
-  
+          
         
 	private LookupRequest lookupRequest_ ;
         private bool  lookupRequest_selected = false ;
@@ -130,7 +130,7 @@ namespace org.bn.mq.protocol {
         }
         
                 
-  
+          
         
 	private LookupResult lookupResult_ ;
         private bool  lookupResult_selected = false ;
@@ -146,7 +146,7 @@ namespace org.bn.mq.protocol {
         }
         
                 
-  
+          
         
 	private AliveRequest aliveRequest_ ;
         private bool  aliveRequest_selected = false ;
@@ -162,8 +162,7 @@ namespace org.bn.mq.protocol {
         }
         
                 
-  
-        
+          
         public bool isMessageUserBodySelected () {
             return this.messageUserBody_selected ;
         }
@@ -191,8 +190,7 @@ namespace org.bn.mq.protocol {
                             
         }
         
-  
-        
+          
         public bool isDeliveryReportSelected () {
             return this.deliveryReport_selected ;
         }
@@ -220,8 +218,7 @@ namespace org.bn.mq.protocol {
                             
         }
         
-  
-        
+          
         public bool isSubscribeRequestSelected () {
             return this.subscribeRequest_selected ;
         }
@@ -249,8 +246,7 @@ namespace org.bn.mq.protocol {
                             
         }
         
-  
-        
+          
         public bool isSubscribeResultSelected () {
             return this.subscribeResult_selected ;
         }
@@ -278,8 +274,7 @@ namespace org.bn.mq.protocol {
                             
         }
         
-  
-        
+          
         public bool isUnsubscribeRequestSelected () {
             return this.unsubscribeRequest_selected ;
         }
@@ -307,8 +302,7 @@ namespace org.bn.mq.protocol {
                             
         }
         
-  
-        
+          
         public bool isUnsubscribeResultSelected () {
             return this.unsubscribeResult_selected ;
         }
@@ -336,8 +330,7 @@ namespace org.bn.mq.protocol {
                             
         }
         
-  
-        
+          
         public bool isLookupRequestSelected () {
             return this.lookupRequest_selected ;
         }
@@ -365,8 +358,7 @@ namespace org.bn.mq.protocol {
                             
         }
         
-  
-        
+          
         public bool isLookupResultSelected () {
             return this.lookupResult_selected ;
         }
@@ -394,8 +386,7 @@ namespace org.bn.mq.protocol {
                             
         }
         
-  
-        
+          
         public bool isAliveRequestSelected () {
             return this.aliveRequest_selected ;
         }

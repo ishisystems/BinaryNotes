@@ -26,8 +26,7 @@ namespace test.org.bn.coders.test_asn {
        [ASN1PreparedElement]
        [ASN1Sequence ( Name = "TaggedSeqInSeq", IsSet = false  )]
        public class TaggedSeqInSeqSequenceType : IASN1PreparedElement {
-                
-        
+                        
 	private PlainParamsMap field_ ;
 	
         [ASN1Element ( Name = "field", IsOptional =  false , HasTag =  true, Tag = 0 , HasDefaultValue =  false )  ]

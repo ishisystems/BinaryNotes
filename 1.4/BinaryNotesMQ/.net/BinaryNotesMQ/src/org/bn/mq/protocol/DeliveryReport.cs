@@ -18,8 +18,7 @@ namespace org.bn.mq.protocol {
     [ASN1PreparedElement]
     [ASN1Sequence ( Name = "DeliveryReport", IsSet = false  )]
     public class DeliveryReport : IASN1PreparedElement {
-            
-        
+                    
 	private string messageId_ ;
 	[ASN1String( Name = "", 
         StringType =  UniversalTags.PrintableString , IsUCS = false )][ASN1ValueRangeConstraint ( 
@@ -35,8 +34,7 @@ namespace org.bn.mq.protocol {
         }
         
                 
-  
-        
+          
 	private DeliveredStatus status_ ;
 	
         [ASN1Element ( Name = "status", IsOptional =  false , HasTag =  true, Tag = 1 , HasDefaultValue =  false )  ]
@@ -48,8 +46,7 @@ namespace org.bn.mq.protocol {
         }
         
                 
-  
-        
+          
 	private string consumerId_ ;
 	[ASN1String( Name = "", 
         StringType =  UniversalTags.UTF8String , IsUCS = false )]
@@ -62,8 +59,7 @@ namespace org.bn.mq.protocol {
         }
         
                 
-  
-        
+          
 	private string queuePath_ ;
 	[ASN1String( Name = "", 
         StringType =  UniversalTags.UTF8String , IsUCS = false )]

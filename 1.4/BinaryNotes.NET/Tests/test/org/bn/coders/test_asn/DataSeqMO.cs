@@ -18,8 +18,7 @@ namespace test.org.bn.coders.test_asn {
     [ASN1PreparedElement]
     [ASN1Sequence ( Name = "DataSeqMO", IsSet = false  )]
     public class DataSeqMO : IASN1PreparedElement {
-            
-        
+                    
 	private TestPRN plain_ ;
 	
         [ASN1Element ( Name = "plain", IsOptional =  false , HasTag =  true, Tag = 0 , HasDefaultValue =  false )  ]
@@ -31,8 +30,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private TestOCT unicode_ ;
 	
         private bool  unicode_present = false ;
@@ -46,8 +44,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private TestOCT binary_ ;
 	
         private bool  binary_present = false ;
@@ -61,8 +58,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private string simpleType_ ;
 	
         private bool  simpleType_present = false ;
@@ -77,8 +73,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private byte[] simpleOctType_ ;
 	[ASN1OctetString( Name = "" )]
     
@@ -91,8 +86,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private bool booleanType_ ;
 	
         private bool  booleanType_present = false ;
@@ -107,8 +101,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private long intType_ ;
 	
         private bool  intType_present = false ;
@@ -123,8 +116,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private int intBndType_ ;
 	
         private bool  intBndType_present = false ;
@@ -142,8 +134,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private System.Collections.Generic.ICollection<string> stringArray_ ;
 	
         private bool  stringArray_present = false ;
@@ -161,8 +152,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private System.Collections.Generic.ICollection<Data> dataArray_ ;
 	
         private bool  dataArray_present = false ;
@@ -179,8 +169,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private TestPRN plain2_ ;
 	
         private bool  plain2_present = false ;
@@ -194,8 +183,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private TestOCT unicode2_ ;
 	
         private bool  unicode2_present = false ;
@@ -209,8 +197,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private TestOCT binary2_ ;
 	
         private bool  binary2_present = false ;
@@ -224,8 +211,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private string simpleType2_ ;
 	
         private bool  simpleType2_present = false ;
@@ -240,8 +226,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private byte[] simpleOctType2_ ;
 	
         private bool  simpleOctType2_present = false ;
@@ -256,8 +241,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private bool booleanType2_ ;
 	
         private bool  booleanType2_present = false ;
@@ -272,8 +256,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private long intType2_ ;
 	
         private bool  intType2_present = false ;
@@ -288,8 +271,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private int intBndType2_ ;
 	
         private bool  intBndType2_present = false ;
@@ -307,8 +289,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private System.Collections.Generic.ICollection<string> stringArray2_ ;
 	
         private bool  stringArray2_present = false ;
@@ -326,8 +307,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private System.Collections.Generic.ICollection<Data> dataArray2_ ;
 	
         private bool  dataArray2_present = false ;
@@ -344,8 +324,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private TestPRN plain3_ ;
 	
         private bool  plain3_present = false ;

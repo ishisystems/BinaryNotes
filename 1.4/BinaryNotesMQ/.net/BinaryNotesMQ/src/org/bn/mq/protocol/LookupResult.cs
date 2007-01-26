@@ -18,8 +18,7 @@ namespace org.bn.mq.protocol {
     [ASN1PreparedElement]
     [ASN1Sequence ( Name = "LookupResult", IsSet = false  )]
     public class LookupResult : IASN1PreparedElement {
-            
-        
+                    
 	private LookupResultCode code_ ;
 	
         [ASN1Element ( Name = "code", IsOptional =  false , HasTag =  false  , HasDefaultValue =  false )  ]
@@ -31,8 +30,7 @@ namespace org.bn.mq.protocol {
         }
         
                 
-  
-        
+          
 	private string details_ ;
 	
         private bool  details_present = false ;

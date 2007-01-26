@@ -18,8 +18,7 @@ namespace test.org.bn.coders.test_asn {
     [ASN1PreparedElement]
     [ASN1Sequence ( Name = "TestLongTag2Choice", IsSet = false  )]
     public class TestLongTag2Choice : IASN1PreparedElement {
-            
-        
+                    
 	private long testb_ ;
 	[ASN1Integer( Name = "" )]
     

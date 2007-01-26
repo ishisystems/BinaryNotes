@@ -18,8 +18,7 @@ namespace test.org.bn.coders.test_asn {
     [ASN1PreparedElement]
     [ASN1Sequence ( Name = "SequenceWithEnum", IsSet = false  )]
     public class SequenceWithEnum : IASN1PreparedElement {
-            
-        
+                    
 	private string item_ ;
 	[ASN1String( Name = "", 
         StringType =  UniversalTags.PrintableString , IsUCS = false )]
@@ -32,8 +31,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private ContentSchema enval_ ;
 	
         [ASN1Element ( Name = "enval", IsOptional =  false , HasTag =  false  , HasDefaultValue =  false )  ]
@@ -45,8 +43,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private ContentSchema taggedEnval_ ;
 	
         [ASN1Element ( Name = "taggedEnval", IsOptional =  false , HasTag =  true, Tag = 1 , HasDefaultValue =  false )  ]

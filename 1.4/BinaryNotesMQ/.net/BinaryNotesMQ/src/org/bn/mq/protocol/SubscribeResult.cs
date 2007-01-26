@@ -18,8 +18,7 @@ namespace org.bn.mq.protocol {
     [ASN1PreparedElement]
     [ASN1Sequence ( Name = "SubscribeResult", IsSet = false  )]
     public class SubscribeResult : IASN1PreparedElement {
-            
-        
+                    
 	private SubscribeResultCode code_ ;
 	
         [ASN1Element ( Name = "code", IsOptional =  false , HasTag =  false  , HasDefaultValue =  false )  ]
@@ -31,8 +30,7 @@ namespace org.bn.mq.protocol {
         }
         
                 
-  
-        
+          
 	private string details_ ;
 	
         private bool  details_present = false ;

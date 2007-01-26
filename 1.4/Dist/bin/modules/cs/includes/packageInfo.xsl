@@ -37,7 +37,7 @@
     <xsl:variable name="tagDefault"><xsl:value-of select="//tagDefault"/></xsl:variable>
 
     <xsl:template name="packageInfo">
-        <xsl:variable name="ident" select="name"/>
+	<xsl:variable name="ident"><xsl:call-template name="doMangleIdent"><xsl:with-param name='input' select="name"/></xsl:call-template></xsl:variable>
         <!--<xsltc:output file="{$outputDirectory}/package-info.java"> -->
         <xsltc:output file="{$outputDirectory}/{$ident}.cs">
         <xsl:call-template name="header"/>

@@ -18,8 +18,7 @@ namespace org.bn.mq.protocol {
     [ASN1PreparedElement]
     [ASN1Sequence ( Name = "SubscribeRequest", IsSet = false  )]
     public class SubscribeRequest : IASN1PreparedElement {
-            
-        
+                    
 	private string consumerId_ ;
 	[ASN1String( Name = "", 
         StringType =  UniversalTags.UTF8String , IsUCS = false )]
@@ -32,8 +31,7 @@ namespace org.bn.mq.protocol {
         }
         
                 
-  
-        
+          
 	private string queuePath_ ;
 	[ASN1String( Name = "", 
         StringType =  UniversalTags.UTF8String , IsUCS = false )]
@@ -46,8 +44,7 @@ namespace org.bn.mq.protocol {
         }
         
                 
-  
-        
+          
 	private bool persistence_ ;
 	[ASN1Boolean( Name = "" )]
     
@@ -60,8 +57,7 @@ namespace org.bn.mq.protocol {
         }
         
                 
-  
-        
+          
 	private string filter_ ;
 	
         private bool  filter_present = false ;

@@ -18,7 +18,7 @@ namespace test.org.bn.coders.test_asn {
     [ASN1PreparedElement]
     [ASN1Choice ( Name = "BugValueType") ]
     public class BugValueType : IASN1PreparedElement {
-            
+                    
         
 	private BugPrimitive bugPrimitive_ ;
         private bool  bugPrimitive_selected = false ;
@@ -34,7 +34,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
+          
         
 	private BugEnum bugEnum_ ;
         private bool  bugEnum_selected = false ;
@@ -50,7 +50,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
+          
         
 	private BugSequenceType bugSequence_ ;
         private bool  bugSequence_selected = false ;
@@ -66,8 +66,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
         public bool isBugPrimitiveSelected () {
             return this.bugPrimitive_selected ;
         }
@@ -83,8 +82,7 @@ namespace test.org.bn.coders.test_asn {
                             
         }
         
-  
-        
+          
         public bool isBugEnumSelected () {
             return this.bugEnum_selected ;
         }
@@ -100,8 +98,7 @@ namespace test.org.bn.coders.test_asn {
                             
         }
         
-  
-        
+          
         public bool isBugSequenceSelected () {
             return this.bugSequence_selected ;
         }

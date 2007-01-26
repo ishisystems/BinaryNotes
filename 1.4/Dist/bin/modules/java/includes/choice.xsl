@@ -35,7 +35,8 @@
     <xsl:variable name="outputDirectory"><xsl:value-of select="//outputDirectory"/></xsl:variable>
     
     <xsl:template name="choice">
-        <xsl:variable name="choiceName"><xsl:value-of select="name"/></xsl:variable>        
+        <xsl:variable name="choiceName"><xsl:call-template name="doMangleIdent"> <xsl:with-param name='input'><xsl:value-of select="name"/></xsl:with-param> </xsl:call-template></xsl:variable>
+
         <xsltc:output file="{$outputDirectory}/{$choiceName}.java">
             <xsl:call-template name="header"/>
 

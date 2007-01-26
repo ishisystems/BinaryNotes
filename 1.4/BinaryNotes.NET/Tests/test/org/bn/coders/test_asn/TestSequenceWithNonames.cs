@@ -18,15 +18,13 @@ namespace test.org.bn.coders.test_asn {
     [ASN1PreparedElement]
     [ASN1Sequence ( Name = "TestSequenceWithNonames", IsSet = false  )]
     public class TestSequenceWithNonames : IASN1PreparedElement {
-            
-        
+                    
 	private SeqSequenceType seq_ ;
 	
        [ASN1PreparedElement]
        [ASN1Sequence ( Name = "seq", IsSet = false  )]
        public class SeqSequenceType : IASN1PreparedElement {
-                
-        
+                        
 	private long it1_ ;
 	
         private bool  it1_present = false ;
@@ -68,15 +66,14 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private ChChoiceType ch_ ;
 	
 
     [ASN1PreparedElement]    
     [ASN1Choice ( Name = "ch" )]
     public class ChChoiceType : IASN1PreparedElement  {
-            
+                    
         
 	private long it1_ ;
         private bool  it1_selected = false ;
@@ -93,7 +90,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
+          
         
 	private byte[] it2_ ;
         private bool  it2_selected = false ;
@@ -110,8 +107,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
         public bool isIt1Selected () {
             return this.it1_selected ;
         }
@@ -125,8 +121,7 @@ namespace test.org.bn.coders.test_asn {
                             
         }
         
-  
-        
+          
         public bool isIt2Selected () {
             return this.it2_selected ;
         }
@@ -162,15 +157,13 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private System.Collections.Generic.ICollection<SequenceType> seqf_ ;
 	
        [ASN1PreparedElement]
        [ASN1Sequence ( Name = "", IsSet = false  )]
        public class SequenceType : IASN1PreparedElement {
-                
-        
+                        
 	private long it1_ ;
 	
         private bool  it1_present = false ;

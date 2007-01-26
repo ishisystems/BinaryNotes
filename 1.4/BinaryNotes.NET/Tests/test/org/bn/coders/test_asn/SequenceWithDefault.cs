@@ -18,8 +18,7 @@ namespace test.org.bn.coders.test_asn {
     [ASN1PreparedElement]
     [ASN1Sequence ( Name = "SequenceWithDefault", IsSet = false  )]
     public class SequenceWithDefault : IASN1PreparedElement {
-            
-        
+                    
 	private long nodefault_ ;
 	[ASN1Integer( Name = "" )]
     
@@ -32,8 +31,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private string withDefault_ ;
 	[ASN1String( Name = "", 
         StringType =  UniversalTags.PrintableString , IsUCS = false )]
@@ -46,8 +44,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private long withIntDef_ ;
 	[ASN1Integer( Name = "" )]
     
@@ -60,15 +57,13 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private WithSeqDefSequenceType withSeqDef_ ;
 	
        [ASN1PreparedElement]
        [ASN1Sequence ( Name = "withSeqDef", IsSet = false  )]
        public class WithSeqDefSequenceType : IASN1PreparedElement {
-                
-        
+                        
 	private string name_ ;
 	[ASN1String( Name = "", 
         StringType =  UniversalTags.PrintableString , IsUCS = false )]
@@ -81,8 +76,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private string email_ ;
 	[ASN1String( Name = "", 
         StringType =  UniversalTags.PrintableString , IsUCS = false )]
@@ -118,8 +112,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private TestOCT withOctDef_ ;
 	
         [ASN1Element ( Name = "withOctDef", IsOptional =  false , HasTag =  true, Tag = 4 , HasDefaultValue =  true )  ]
@@ -131,8 +124,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private byte[] withOctDef2_ ;
 	[ASN1OctetString( Name = "" )]
     
@@ -145,8 +137,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private System.Collections.Generic.ICollection<string> withSeqOf_ ;
 	[ASN1String( Name = "", 
         StringType =  UniversalTags.PrintableString , IsUCS = false )]
@@ -162,8 +153,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private System.Collections.Generic.ICollection<TestPRN> withSeqOf2_ ;
 	
 [ASN1SequenceOf( Name = "", IsSetOf = false  )]
@@ -178,8 +168,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private StringArray withSeqOf3_ ;
 	
         [ASN1Element ( Name = "withSeqOf3", IsOptional =  false , HasTag =  true, Tag = 8 , HasDefaultValue =  true )  ]

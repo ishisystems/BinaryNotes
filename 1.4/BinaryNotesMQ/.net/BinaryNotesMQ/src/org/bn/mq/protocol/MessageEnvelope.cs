@@ -18,8 +18,7 @@ namespace org.bn.mq.protocol {
     [ASN1PreparedElement]
     [ASN1Sequence ( Name = "MessageEnvelope", IsSet = false  )]
     public class MessageEnvelope : IASN1PreparedElement {
-            
-        
+                    
 	private string id_ ;
 	[ASN1String( Name = "", 
         StringType =  UniversalTags.PrintableString , IsUCS = false )][ASN1ValueRangeConstraint ( 
@@ -35,8 +34,7 @@ namespace org.bn.mq.protocol {
         }
         
                 
-  
-        
+          
 	private bool deliveryReportReq_ ;
 	[ASN1Boolean( Name = "" )]
     
@@ -49,8 +47,7 @@ namespace org.bn.mq.protocol {
         }
         
                 
-  
-        
+          
 	private MessageBody body_ ;
 	
         [ASN1Element ( Name = "body", IsOptional =  false , HasTag =  false  , HasDefaultValue =  false )  ]

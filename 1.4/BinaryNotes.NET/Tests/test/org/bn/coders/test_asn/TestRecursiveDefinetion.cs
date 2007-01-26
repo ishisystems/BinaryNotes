@@ -18,8 +18,7 @@ namespace test.org.bn.coders.test_asn {
     [ASN1PreparedElement]
     [ASN1Sequence ( Name = "TestRecursiveDefinetion", IsSet = false  )]
     public class TestRecursiveDefinetion : IASN1PreparedElement {
-            
-        
+                    
 	private string name_ ;
 	[ASN1String( Name = "", 
         StringType =  UniversalTags.PrintableString , IsUCS = false )]
@@ -32,8 +31,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private TestRecursiveDefinetion value_ ;
 	
         private bool  value_present = false ;

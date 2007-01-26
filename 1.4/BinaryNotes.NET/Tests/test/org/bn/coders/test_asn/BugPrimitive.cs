@@ -18,7 +18,7 @@ namespace test.org.bn.coders.test_asn {
     [ASN1PreparedElement]
     [ASN1Choice ( Name = "BugPrimitive") ]
     public class BugPrimitive : IASN1PreparedElement {
-            
+                    
         
 	private bool bugBoolean_ ;
         private bool  bugBoolean_selected = false ;
@@ -35,7 +35,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
+          
         
 	private long bugInteger_ ;
         private bool  bugInteger_selected = false ;
@@ -52,8 +52,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
         public bool isBugBooleanSelected () {
             return this.bugBoolean_selected ;
         }
@@ -67,8 +66,7 @@ namespace test.org.bn.coders.test_asn {
                             
         }
         
-  
-        
+          
         public bool isBugIntegerSelected () {
             return this.bugInteger_selected ;
         }

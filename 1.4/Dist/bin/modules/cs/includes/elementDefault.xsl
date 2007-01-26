@@ -29,7 +29,7 @@
     <xsl:output method="text" encoding="UTF-8" indent="no"/>
 
     <xsl:template name="elementDefault">
-        <xsl:variable name="elementName"><xsl:call-template name="toUpperFirstLetter"><xsl:with-param name="input" select="name"/></xsl:call-template></xsl:variable>
+        <xsl:variable name="elementName"><xsl:call-template name="doMangleIdent"><xsl:with-param name='input'><xsl:call-template name="toUpperFirstLetter"><xsl:with-param name="input" select="name"/></xsl:call-template></xsl:with-param></xsl:call-template></xsl:variable>
         <xsl:variable name="elementType"><xsl:call-template name="elementType"/></xsl:variable>
         <xsl:variable name="instElementType"><xsl:call-template name="elementType"> <xsl:with-param name="instanceable" select="'yes'"/></xsl:call-template> </xsl:variable>
         <xsl:variable name="elementInfo" select="."/>

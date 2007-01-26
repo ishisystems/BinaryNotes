@@ -18,8 +18,7 @@ namespace test.org.bn.coders.test_asn {
     [ASN1PreparedElement]
     [ASN1Sequence ( Name = "ITUSequence", IsSet = false  )]
     public class ITUSequence : IASN1PreparedElement {
-            
-        
+                    
 	private string type1_ ;
 	[ASN1String( Name = "", 
         StringType =  UniversalTags.VisibleString , IsUCS = false )]
@@ -32,8 +31,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private ITUType1 type2_ ;
 	
         [ASN1Element ( Name = "type2", IsOptional =  false , HasTag =  true, Tag = 3, 
@@ -46,8 +44,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private ITUType2 type3_ ;
 	
         [ASN1Element ( Name = "type3", IsOptional =  false , HasTag =  true, Tag = 2 , HasDefaultValue =  false )  ]
@@ -59,8 +56,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private ITUType3 type4_ ;
 	
         [ASN1Element ( Name = "type4", IsOptional =  false , HasTag =  true, Tag = 7, 
@@ -73,8 +69,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private ITUType2 type5_ ;
 	
         private bool  type5_present = false ;
@@ -88,8 +83,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private string type6_ ;
 	[ASN1String( Name = "", 
         StringType =  UniversalTags.VisibleString , IsUCS = false )]
@@ -102,8 +96,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private ITUType6 type7_ ;
 	
         [ASN1Element ( Name = "type7", IsOptional =  false , HasTag =  true, Tag = 8 , HasDefaultValue =  false )  ]

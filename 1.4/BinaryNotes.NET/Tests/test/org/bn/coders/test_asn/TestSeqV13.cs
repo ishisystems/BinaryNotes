@@ -18,8 +18,7 @@ namespace test.org.bn.coders.test_asn {
     [ASN1PreparedElement]
     [ASN1Sequence ( Name = "TestSeqV13", IsSet = false  )]
     public class TestSeqV13 : IASN1PreparedElement {
-            
-        
+                    
 	private double field1_ ;
 	[ASN1Real( Name = "" )]
     
@@ -32,8 +31,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private long fieldI_ ;
 	[ASN1Integer( Name = "" )]
     
@@ -46,8 +44,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private TestReal field2_ ;
 	
         [ASN1Element ( Name = "field2", IsOptional =  false , HasTag =  false  , HasDefaultValue =  false )  ]
@@ -59,8 +56,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private double field3_ ;
 	
         private bool  field3_present = false ;
@@ -75,8 +71,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private double field4_ ;
 	[ASN1Real( Name = "" )]
     
@@ -89,8 +84,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private string field5_ ;
 	[ASN1String( Name = "", 
         StringType = UniversalTags.GeneralizedTime , IsUCS = false )]
@@ -103,8 +97,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private string field6_ ;
 	[ASN1String( Name = "", 
         StringType = UniversalTags.UTCTime , IsUCS = false )]
@@ -117,8 +110,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private TestLong field7_ ;
 	
         [ASN1Element ( Name = "field7", IsOptional =  false , HasTag =  false  , HasDefaultValue =  false )  ]

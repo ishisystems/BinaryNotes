@@ -18,8 +18,7 @@ namespace test.org.bn.coders.test_asn {
     [ASN1PreparedElement]
     [ASN1Sequence ( Name = "BugSequenceType", IsSet = false  )]
     public class BugSequenceType : IASN1PreparedElement {
-            
-        
+                    
 	private bool booleanField_ ;
 	[ASN1Boolean( Name = "" )]
     
@@ -32,8 +31,7 @@ namespace test.org.bn.coders.test_asn {
         }
         
                 
-  
-        
+          
 	private long integerField_ ;
 	[ASN1Integer( Name = "" )]
     
