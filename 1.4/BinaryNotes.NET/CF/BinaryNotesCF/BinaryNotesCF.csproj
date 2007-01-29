@@ -260,6 +260,9 @@
     <Compile Include="..\..\org\bn\types\BitString.cs">
       <Link>src\BitString.cs</Link>
     </Compile>
+    <Compile Include="..\..\org\bn\types\NullObject.cs">
+      <Link>src\NullObject.cs</Link>
+    </Compile>
     <Compile Include="..\..\org\bn\utils\BitArrayInputStream.cs">
       <Link>src\BitArrayInputStream.cs</Link>
     </Compile>

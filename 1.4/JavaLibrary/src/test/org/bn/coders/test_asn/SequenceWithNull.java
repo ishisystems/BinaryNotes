@@ -31,7 +31,7 @@ import org.bn.types.*;
     
         @ASN1Element ( name = "nullVal", isOptional =  false , hasTag =  false  , hasDefaultValue =  false  )
     
-	private Object nullVal = null;
+	private org.bn.types.NullObject nullVal = null;
                 
   
     @ASN1String( name = "", 

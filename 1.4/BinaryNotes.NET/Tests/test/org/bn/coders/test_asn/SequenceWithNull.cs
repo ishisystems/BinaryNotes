@@ -32,13 +32,13 @@ namespace test.org.bn.coders.test_asn {
         
                 
           
-	private object nullVal_ ;
+	private NullObject nullVal_ ;
 	
         [ASN1Null ( Name = "nullVal" )]
     
         [ASN1Element ( Name = "nullVal", IsOptional =  false , HasTag =  false  , HasDefaultValue =  false )  ]
     
-        public object NullVal
+        public NullObject NullVal
         {
             get { return nullVal_; }
             set { nullVal_ = value;  }

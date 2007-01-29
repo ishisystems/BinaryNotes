@@ -71,6 +71,9 @@ namespace test.org.bn.coders.test_asn {
             return this.bugPrimitive_selected ;
         }
 
+        
+
+
         public void selectBugPrimitive (BugPrimitive val) {
             this.bugPrimitive_ = val;
             this.bugPrimitive_selected = true;
@@ -87,6 +90,9 @@ namespace test.org.bn.coders.test_asn {
             return this.bugEnum_selected ;
         }
 
+        
+
+
         public void selectBugEnum (BugEnum val) {
             this.bugEnum_ = val;
             this.bugEnum_selected = true;
@@ -102,6 +108,9 @@ namespace test.org.bn.coders.test_asn {
         public bool isBugSequenceSelected () {
             return this.bugSequence_selected ;
         }
+
+        
+
 
         public void selectBugSequence (BugSequenceType val) {
             this.bugSequence_ = val;

@@ -167,6 +167,9 @@ namespace org.bn.mq.protocol {
             return this.messageUserBody_selected ;
         }
 
+        
+
+
         public void selectMessageUserBody (MessageUserBody val) {
             this.messageUserBody_ = val;
             this.messageUserBody_selected = true;
@@ -194,6 +197,9 @@ namespace org.bn.mq.protocol {
         public bool isDeliveryReportSelected () {
             return this.deliveryReport_selected ;
         }
+
+        
+
 
         public void selectDeliveryReport (DeliveryReport val) {
             this.deliveryReport_ = val;
@@ -223,6 +229,9 @@ namespace org.bn.mq.protocol {
             return this.subscribeRequest_selected ;
         }
 
+        
+
+
         public void selectSubscribeRequest (SubscribeRequest val) {
             this.subscribeRequest_ = val;
             this.subscribeRequest_selected = true;
@@ -250,6 +259,9 @@ namespace org.bn.mq.protocol {
         public bool isSubscribeResultSelected () {
             return this.subscribeResult_selected ;
         }
+
+        
+
 
         public void selectSubscribeResult (SubscribeResult val) {
             this.subscribeResult_ = val;
@@ -279,6 +291,9 @@ namespace org.bn.mq.protocol {
             return this.unsubscribeRequest_selected ;
         }
 
+        
+
+
         public void selectUnsubscribeRequest (UnsubscribeRequest val) {
             this.unsubscribeRequest_ = val;
             this.unsubscribeRequest_selected = true;
@@ -306,6 +321,9 @@ namespace org.bn.mq.protocol {
         public bool isUnsubscribeResultSelected () {
             return this.unsubscribeResult_selected ;
         }
+
+        
+
 
         public void selectUnsubscribeResult (UnsubscribeResult val) {
             this.unsubscribeResult_ = val;
@@ -335,6 +353,9 @@ namespace org.bn.mq.protocol {
             return this.lookupRequest_selected ;
         }
 
+        
+
+
         public void selectLookupRequest (LookupRequest val) {
             this.lookupRequest_ = val;
             this.lookupRequest_selected = true;
@@ -363,6 +384,9 @@ namespace org.bn.mq.protocol {
             return this.lookupResult_selected ;
         }
 
+        
+
+
         public void selectLookupResult (LookupResult val) {
             this.lookupResult_ = val;
             this.lookupResult_selected = true;
@@ -390,6 +414,9 @@ namespace org.bn.mq.protocol {
         public bool isAliveRequestSelected () {
             return this.aliveRequest_selected ;
         }
+
+        
+
 
         public void selectAliveRequest (AliveRequest val) {
             this.aliveRequest_ = val;

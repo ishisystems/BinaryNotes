@@ -112,6 +112,9 @@ namespace test.org.bn.coders.test_asn {
             return this.it1_selected ;
         }
 
+        
+
+
         public void selectIt1 (long val) {
             this.it1_ = val;
             this.it1_selected = true;
@@ -125,6 +128,9 @@ namespace test.org.bn.coders.test_asn {
         public bool isIt2Selected () {
             return this.it2_selected ;
         }
+
+        
+
 
         public void selectIt2 (byte[] val) {
             this.it2_ = val;

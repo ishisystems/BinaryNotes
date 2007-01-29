@@ -20,14 +20,14 @@ namespace test.org.bn.coders.test_asn {
     public class TaggedNullSequence: IASN1PreparedElement {
             
            
-        private object  val;
+        private NullObject  val;
 
         
         [ASN1Null ( Name = "TaggedNullSequence" )]
     
         [ASN1Element ( Name = "TaggedNullSequence", IsOptional =  false , HasTag =  true, Tag = 1 , HasDefaultValue =  false )  ]
     
-        public object Value
+        public NullObject Value
         {
                 get { return val; }        
                         

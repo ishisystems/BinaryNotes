@@ -97,12 +97,14 @@ import org.bn.types.*;
             this.it1 = value;
         }
 
+        
         public void selectIt1 (Long value) {
             this.it1 = value;
             
                     setIt2(null);
                             
         }
+
         
   
         
@@ -118,12 +120,14 @@ import org.bn.types.*;
             this.it2 = value;
         }
 
+        
         public void selectIt2 (byte[] value) {
             this.it2 = value;
             
                     setIt1(null);
                             
         }
+
         
   
 

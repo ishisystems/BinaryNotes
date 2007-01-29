@@ -47,6 +47,7 @@ import org.bn.types.*;
             this.bugPrimitive = value;
         }
 
+        
         public void selectBugPrimitive (BugPrimitive value) {
             this.bugPrimitive = value;
             
@@ -55,6 +56,7 @@ import org.bn.types.*;
                     setBugSequence(null);
                             
         }
+
         
   
         
@@ -70,6 +72,7 @@ import org.bn.types.*;
             this.bugEnum = value;
         }
 
+        
         public void selectBugEnum (BugEnum value) {
             this.bugEnum = value;
             
@@ -78,6 +81,7 @@ import org.bn.types.*;
                     setBugSequence(null);
                             
         }
+
         
   
         
@@ -93,6 +97,7 @@ import org.bn.types.*;
             this.bugSequence = value;
         }
 
+        
         public void selectBugSequence (BugSequenceType value) {
             this.bugSequence = value;
             
@@ -101,6 +106,7 @@ import org.bn.types.*;
                     setBugEnum(null);
                             
         }
+
         
   
 

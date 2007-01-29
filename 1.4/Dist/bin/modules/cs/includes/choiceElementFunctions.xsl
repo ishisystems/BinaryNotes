@@ -36,6 +36,15 @@
             return this.<xsl:value-of select="$elementName"/>_selected ;
         }
 
+        <xsl:choose>
+       	<xsl:when test="typeReference/isNull = 'true'">
+        public void select<xsl:call-template name="toUpperFirstLetter"><xsl:with-param name="input" select="$elementName"/></xsl:call-template> () {
+            select<xsl:call-template name="toUpperFirstLetter"><xsl:with-param name="input" select="$elementName"/></xsl:call-template> (new NullObject());
+	}
+	</xsl:when>
+	</xsl:choose>
+
+
         public void select<xsl:call-template name="toUpperFirstLetter"><xsl:with-param name="input" select="$elementName"/></xsl:call-template> (<xsl:call-template name="elementType"/> val) {
             this.<xsl:value-of select="$elementName"/>_ = val;
             this.<xsl:value-of select="$elementName"/>_selected = true;

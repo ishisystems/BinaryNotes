@@ -41,7 +41,7 @@
             <xsl:when test="typeReference/isSequenceOf = 'true'"><xsl:if test="$instanceable != 'yes'">java.util.Collection</xsl:if><xsl:if test="$instanceable = 'yes'">java.util.LinkedList</xsl:if>&lt;<xsl:for-each select="typeReference"><xsl:call-template name="elementType"/></xsl:for-each>&gt; </xsl:when>
             <xsl:when test="typeReference/isSequence = 'true'"><xsl:call-template name="toUpperFirstLetter"><xsl:with-param name="input" select="$elementName"/></xsl:call-template>SequenceType</xsl:when>
             <xsl:when test="typeReference/isChoice = 'true'"><xsl:call-template name="toUpperFirstLetter"><xsl:with-param name="input" select="$elementName"/></xsl:call-template>ChoiceType</xsl:when>
-            <xsl:when test="typeReference/isNull = 'true'">Object</xsl:when>
+            <xsl:when test="typeReference/isNull = 'true'">org.bn.types.NullObject</xsl:when>
             <xsl:otherwise>byte[]</xsl:otherwise>
         </xsl:choose>
     </xsl:template>

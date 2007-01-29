@@ -37,10 +37,12 @@ import org.bn.types.*;
             this.testa = value;
         }
 
+        
         public void selectTesta (TestLongTag2Choice value) {
             this.testa = value;
                         
         }
+
         
   
 

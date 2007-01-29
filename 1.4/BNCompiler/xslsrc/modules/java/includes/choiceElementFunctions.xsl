@@ -45,6 +45,13 @@
             this.<xsl:value-of select="$elementName"/> = value;
         }
 
+        <xsl:choose>
+       	<xsl:when test="typeReference/isNull = 'true'">
+        public void select<xsl:call-template name="toUpperFirstLetter"><xsl:with-param name="input" select="$elementName"/></xsl:call-template> () {
+            select<xsl:call-template name="toUpperFirstLetter"><xsl:with-param name="input" select="$elementName"/></xsl:call-template> (new org.bn.types.NullObject());
+	}
+	</xsl:when>
+	</xsl:choose>
         public void select<xsl:call-template name="toUpperFirstLetter"><xsl:with-param name="input" select="$elementName"/></xsl:call-template> (<xsl:call-template name="elementType"/> value) {
             this.<xsl:value-of select="$elementName"/> = value;
             <xsl:for-each select="parent::elementTypeList/elements">
@@ -53,6 +60,7 @@
                 </xsl:if>
             </xsl:for-each>            
         }
+
         
   </xsl:template>
   

@@ -44,12 +44,14 @@ import org.bn.types.*;
             this.bugBoolean = value;
         }
 
+        
         public void selectBugBoolean (Boolean value) {
             this.bugBoolean = value;
             
                     setBugInteger(null);
                             
         }
+
         
   
         
@@ -65,12 +67,14 @@ import org.bn.types.*;
             this.bugInteger = value;
         }
 
+        
         public void selectBugInteger (Long value) {
             this.bugInteger = value;
             
                     setBugBoolean(null);
                             
         }
+
         
   
 

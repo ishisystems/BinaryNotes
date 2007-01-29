@@ -57,6 +57,9 @@ namespace test.org.bn.coders.test_asn {
             return this.bugBoolean_selected ;
         }
 
+        
+
+
         public void selectBugBoolean (bool val) {
             this.bugBoolean_ = val;
             this.bugBoolean_selected = true;
@@ -70,6 +73,9 @@ namespace test.org.bn.coders.test_asn {
         public bool isBugIntegerSelected () {
             return this.bugInteger_selected ;
         }
+
+        
+
 
         public void selectBugInteger (long val) {
             this.bugInteger_ = val;

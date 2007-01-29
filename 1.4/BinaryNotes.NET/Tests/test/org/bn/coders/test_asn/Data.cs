@@ -159,6 +159,9 @@ namespace test.org.bn.coders.test_asn {
             return this.plain_selected ;
         }
 
+        
+
+
         public void selectPlain (TestPRN val) {
             this.plain_ = val;
             this.plain_selected = true;
@@ -184,6 +187,9 @@ namespace test.org.bn.coders.test_asn {
         public bool isUnicodeSelected () {
             return this.unicode_selected ;
         }
+
+        
+
 
         public void selectUnicode (TestOCT val) {
             this.unicode_ = val;
@@ -211,6 +217,9 @@ namespace test.org.bn.coders.test_asn {
             return this.binary_selected ;
         }
 
+        
+
+
         public void selectBinary (TestOCT val) {
             this.binary_ = val;
             this.binary_selected = true;
@@ -236,6 +245,9 @@ namespace test.org.bn.coders.test_asn {
         public bool isSimpleTypeSelected () {
             return this.simpleType_selected ;
         }
+
+        
+
 
         public void selectSimpleType (string val) {
             this.simpleType_ = val;
@@ -263,6 +275,9 @@ namespace test.org.bn.coders.test_asn {
             return this.simpleOctType_selected ;
         }
 
+        
+
+
         public void selectSimpleOctType (byte[] val) {
             this.simpleOctType_ = val;
             this.simpleOctType_selected = true;
@@ -288,6 +303,9 @@ namespace test.org.bn.coders.test_asn {
         public bool isBooleanTypeSelected () {
             return this.booleanType_selected ;
         }
+
+        
+
 
         public void selectBooleanType (bool val) {
             this.booleanType_ = val;
@@ -315,6 +333,9 @@ namespace test.org.bn.coders.test_asn {
             return this.intType_selected ;
         }
 
+        
+
+
         public void selectIntType (long val) {
             this.intType_ = val;
             this.intType_selected = true;
@@ -340,6 +361,9 @@ namespace test.org.bn.coders.test_asn {
         public bool isIntBndTypeSelected () {
             return this.intBndType_selected ;
         }
+
+        
+
 
         public void selectIntBndType (int val) {
             this.intBndType_ = val;

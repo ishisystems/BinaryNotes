@@ -82,6 +82,7 @@ import org.bn.types.*;
             this.plain = value;
         }
 
+        
         public void selectPlain (TestPRN value) {
             this.plain = value;
             
@@ -100,6 +101,7 @@ import org.bn.types.*;
                     setIntBndType(null);
                             
         }
+
         
   
         
@@ -115,6 +117,7 @@ import org.bn.types.*;
             this.unicode = value;
         }
 
+        
         public void selectUnicode (TestOCT value) {
             this.unicode = value;
             
@@ -133,6 +136,7 @@ import org.bn.types.*;
                     setIntBndType(null);
                             
         }
+
         
   
         
@@ -148,6 +152,7 @@ import org.bn.types.*;
             this.binary = value;
         }
 
+        
         public void selectBinary (TestOCT value) {
             this.binary = value;
             
@@ -166,6 +171,7 @@ import org.bn.types.*;
                     setIntBndType(null);
                             
         }
+
         
   
         
@@ -181,6 +187,7 @@ import org.bn.types.*;
             this.simpleType = value;
         }
 
+        
         public void selectSimpleType (String value) {
             this.simpleType = value;
             
@@ -199,6 +206,7 @@ import org.bn.types.*;
                     setIntBndType(null);
                             
         }
+
         
   
         
@@ -214,6 +222,7 @@ import org.bn.types.*;
             this.simpleOctType = value;
         }
 
+        
         public void selectSimpleOctType (byte[] value) {
             this.simpleOctType = value;
             
@@ -232,6 +241,7 @@ import org.bn.types.*;
                     setIntBndType(null);
                             
         }
+
         
   
         
@@ -247,6 +257,7 @@ import org.bn.types.*;
             this.booleanType = value;
         }
 
+        
         public void selectBooleanType (Boolean value) {
             this.booleanType = value;
             
@@ -265,6 +276,7 @@ import org.bn.types.*;
                     setIntBndType(null);
                             
         }
+
         
   
         
@@ -280,6 +292,7 @@ import org.bn.types.*;
             this.intType = value;
         }
 
+        
         public void selectIntType (Long value) {
             this.intType = value;
             
@@ -298,6 +311,7 @@ import org.bn.types.*;
                     setIntBndType(null);
                             
         }
+
         
   
         
@@ -313,6 +327,7 @@ import org.bn.types.*;
             this.intBndType = value;
         }
 
+        
         public void selectIntBndType (Integer value) {
             this.intBndType = value;
             
@@ -331,6 +346,7 @@ import org.bn.types.*;
                     setIntType(null);
                             
         }
+
         
   
 

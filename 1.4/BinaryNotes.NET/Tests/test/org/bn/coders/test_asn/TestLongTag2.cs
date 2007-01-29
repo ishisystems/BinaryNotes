@@ -39,6 +39,9 @@ namespace test.org.bn.coders.test_asn {
             return this.testa_selected ;
         }
 
+        
+
+
         public void selectTesta (TestLongTag2Choice val) {
             this.testa_ = val;
             this.testa_selected = true;

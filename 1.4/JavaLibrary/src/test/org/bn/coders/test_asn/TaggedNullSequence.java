@@ -24,7 +24,7 @@ import org.bn.types.*;
     
         @ASN1Element ( name = "TaggedNullSequence", isOptional =  false , hasTag =  true, tag = 1 , hasDefaultValue =  false  )
     
-        private Object  value;        
+        private org.bn.types.NullObject  value;        
 
         
 

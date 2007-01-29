@@ -221,6 +221,7 @@
     <Compile Include="org\bn\metadata\constraints\IASN1ConstraintMetadata.cs" />
     <Compile Include="org\bn\metadata\IASN1Metadata.cs" />
     <Compile Include="org\bn\types\BitString.cs" />
+    <Compile Include="org\bn\types\NullObject.cs" />
     <Compile Include="org\bn\utils\BitArrayInputStream.cs" />
     <Compile Include="org\bn\utils\BitArrayOutputStream.cs" />
     <Compile Include="org\bn\utils\ReverseByteArrayOutputStream.cs">
