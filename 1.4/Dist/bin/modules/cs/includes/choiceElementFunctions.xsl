@@ -51,7 +51,8 @@
             
             <xsl:for-each select="parent::elementTypeList/elements">
                 <xsl:if test="name != $elementName">
-                    this.<xsl:value-of select="name"/>_selected = false;
+		    <xsl:variable name="itemName"><xsl:call-template name="doMangleIdent"><xsl:with-param name='input' select="name"/></xsl:call-template></xsl:variable>
+                    this.<xsl:value-of select="$itemName"/>_selected = false;
                 </xsl:if>
             </xsl:for-each>            
         }

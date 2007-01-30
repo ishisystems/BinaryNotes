@@ -5,6 +5,7 @@ ChangeLog
 							[!] 		- Important warning or note
 							{<component>}	- Component/Group that changed
 
+1.4.2	{comp}		[*] Fixed incorrect generating choice functions for mangled words.
 1.4.2	{all}		[*] Fixed incorrect coding of ASN.1 NULL in CHOICE (BER). Thanks to John Finley
 -
 1.4.1	{comp}		[+] Added the mangling procedure for decorate incompatible (or reserved) words for Java/.NET (class, private and etc)
