@@ -38,11 +38,11 @@
     @ASN1BoxedType ( name = "<xsl:value-of select='$boxedName'/>" )
     public class <xsl:value-of select="$boxedName"/> implements IASN1PreparedElement {
                 
-            @ASN1SequenceOf( name = "<xsl:value-of select='name'/>" , isSetOf = <xsl:choose><xsl:when test="isSequenceOf = 'false'">true</xsl:when><xsl:otherwise>false</xsl:otherwise></xsl:choose>)
             <xsl:call-template name="typeDecl"/>
             <xsl:for-each select="constraint">
                 <xsl:call-template name="constraint"/>
             </xsl:for-each>
+            @ASN1SequenceOf( name = "<xsl:value-of select='name'/>" , isSetOf = <xsl:choose><xsl:when test="isSequenceOf = 'false'">true</xsl:when><xsl:otherwise>false</xsl:otherwise></xsl:choose>)
 	    private java.util.Collection&lt;<xsl:call-template name="elementType"/>&gt; value = null; 
     
             public <xsl:value-of select="$boxedName"/> () {

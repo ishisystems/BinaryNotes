@@ -71,6 +71,8 @@
 		<xsl:when test="$input = 'using'">_</xsl:when>
 		<xsl:when test="$input = 'static'">_</xsl:when>
 		<xsl:when test="$input = 'return'">_</xsl:when>
+		<xsl:when test="$input = 'final'">_</xsl:when>
+		<xsl:when test="$input = 'const'">_</xsl:when>
 	</xsl:choose>
 	</xsl:variable>
 	<xsl:value-of select="translate($loutput,'-[]','___')"/>

@@ -36,7 +36,7 @@
 
        @ASN1PreparedElement
        @ASN1Sequence ( name = "<xsl:value-of select='$elementName'/>" , isSet = <xsl:choose><xsl:when test="isSequence = 'false'">true</xsl:when><xsl:otherwise>false</xsl:otherwise></xsl:choose> )
-       public class <xsl:value-of select="$sequenceName"/> implements IASN1PreparedElement {
+       public static class <xsl:value-of select="$sequenceName"/> implements IASN1PreparedElement {
                 <xsl:call-template name="elements"/>
                 <xsl:call-template name="sequenceFunctions"/>
                 
@@ -49,9 +49,9 @@
             return preparedData_<xsl:value-of select='$sequenceName'/>;
         }
 
+       private static IASN1PreparedElementData preparedData_<xsl:value-of select='$sequenceName'/> = CoderFactory.getInstance().newPreparedElementData(<xsl:value-of select='$sequenceName'/>.class);
                 
        }
-       private static IASN1PreparedElementData preparedData_<xsl:value-of select='$sequenceName'/> = CoderFactory.getInstance().newPreparedElementData(<xsl:value-of select='$sequenceName'/>.class);
 
        
                 </xsl:for-each>
