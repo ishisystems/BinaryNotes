@@ -77,6 +77,7 @@ import org.bn.types.*;
             this.messageUserBody = value;
         }
 
+        
         public void selectMessageUserBody (MessageUserBody value) {
             this.messageUserBody = value;
             
@@ -97,6 +98,7 @@ import org.bn.types.*;
                     setAliveRequest(null);
                             
         }
+
         
   
         
@@ -112,6 +114,7 @@ import org.bn.types.*;
             this.deliveryReport = value;
         }
 
+        
         public void selectDeliveryReport (DeliveryReport value) {
             this.deliveryReport = value;
             
@@ -132,6 +135,7 @@ import org.bn.types.*;
                     setAliveRequest(null);
                             
         }
+
         
   
         
@@ -147,6 +151,7 @@ import org.bn.types.*;
             this.subscribeRequest = value;
         }
 
+        
         public void selectSubscribeRequest (SubscribeRequest value) {
             this.subscribeRequest = value;
             
@@ -167,6 +172,7 @@ import org.bn.types.*;
                     setAliveRequest(null);
                             
         }
+
         
   
         
@@ -182,6 +188,7 @@ import org.bn.types.*;
             this.subscribeResult = value;
         }
 
+        
         public void selectSubscribeResult (SubscribeResult value) {
             this.subscribeResult = value;
             
@@ -202,6 +209,7 @@ import org.bn.types.*;
                     setAliveRequest(null);
                             
         }
+
         
   
         
@@ -217,6 +225,7 @@ import org.bn.types.*;
             this.unsubscribeRequest = value;
         }
 
+        
         public void selectUnsubscribeRequest (UnsubscribeRequest value) {
             this.unsubscribeRequest = value;
             
@@ -237,6 +246,7 @@ import org.bn.types.*;
                     setAliveRequest(null);
                             
         }
+
         
   
         
@@ -252,6 +262,7 @@ import org.bn.types.*;
             this.unsubscribeResult = value;
         }
 
+        
         public void selectUnsubscribeResult (UnsubscribeResult value) {
             this.unsubscribeResult = value;
             
@@ -272,6 +283,7 @@ import org.bn.types.*;
                     setAliveRequest(null);
                             
         }
+
         
   
         
@@ -287,6 +299,7 @@ import org.bn.types.*;
             this.lookupRequest = value;
         }
 
+        
         public void selectLookupRequest (LookupRequest value) {
             this.lookupRequest = value;
             
@@ -307,6 +320,7 @@ import org.bn.types.*;
                     setAliveRequest(null);
                             
         }
+
         
   
         
@@ -322,6 +336,7 @@ import org.bn.types.*;
             this.lookupResult = value;
         }
 
+        
         public void selectLookupResult (LookupResult value) {
             this.lookupResult = value;
             
@@ -342,6 +357,7 @@ import org.bn.types.*;
                     setAliveRequest(null);
                             
         }
+
         
   
         
@@ -357,6 +373,7 @@ import org.bn.types.*;
             this.aliveRequest = value;
         }
 
+        
         public void selectAliveRequest (AliveRequest value) {
             this.aliveRequest = value;
             
@@ -377,6 +394,7 @@ import org.bn.types.*;
                     setLookupResult(null);
                             
         }
+
         
   
 

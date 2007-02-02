@@ -23,7 +23,7 @@ import org.bn.types.*;
 
        @ASN1PreparedElement
        @ASN1Sequence ( name = "TaggedSeqInSeq" , isSet = false )
-       public class TaggedSeqInSeqSequenceType implements IASN1PreparedElement {
+       public static class TaggedSeqInSeqSequenceType implements IASN1PreparedElement {
                 
         @ASN1Element ( name = "field", isOptional =  false , hasTag =  true, tag = 0 , hasDefaultValue =  false  )
     
@@ -52,9 +52,9 @@ import org.bn.types.*;
             return preparedData_TaggedSeqInSeqSequenceType;
         }
 
+       private static IASN1PreparedElementData preparedData_TaggedSeqInSeqSequenceType = CoderFactory.getInstance().newPreparedElementData(TaggedSeqInSeqSequenceType.class);
                 
        }
-       private static IASN1PreparedElementData preparedData_TaggedSeqInSeqSequenceType = CoderFactory.getInstance().newPreparedElementData(TaggedSeqInSeqSequenceType.class);
 
        
                 

@@ -23,7 +23,7 @@ import org.bn.types.*;
 
        @ASN1PreparedElement
        @ASN1Sequence ( name = "TaggedSequence" , isSet = false )
-       public class TaggedSequenceSequenceType implements IASN1PreparedElement {
+       public static class TaggedSequenceSequenceType implements IASN1PreparedElement {
                 
     @ASN1String( name = "", 
         stringType =  UniversalTag.VisibleString , isUCS = false )
@@ -59,9 +59,9 @@ import org.bn.types.*;
             return preparedData_TaggedSequenceSequenceType;
         }
 
+       private static IASN1PreparedElementData preparedData_TaggedSequenceSequenceType = CoderFactory.getInstance().newPreparedElementData(TaggedSequenceSequenceType.class);
                 
        }
-       private static IASN1PreparedElementData preparedData_TaggedSequenceSequenceType = CoderFactory.getInstance().newPreparedElementData(TaggedSequenceSequenceType.class);
 
        
                 

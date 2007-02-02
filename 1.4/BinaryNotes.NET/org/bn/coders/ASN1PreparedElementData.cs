@@ -118,7 +118,7 @@ namespace org.bn.coders
             setupAccessors(parentClass, field);
         }
 
-        public ASN1PreparedElementData(Type parentClass, String propertyName)
+        /*public ASN1PreparedElementData(Type parentClass, String propertyName)
         {
             try
             {
@@ -130,7 +130,7 @@ namespace org.bn.coders
             {
                 ex = null;
             }
-        }
+        }*/
 
 
         private void setupMetadata(ICustomAttributeProvider annotated, Type objectClass) {

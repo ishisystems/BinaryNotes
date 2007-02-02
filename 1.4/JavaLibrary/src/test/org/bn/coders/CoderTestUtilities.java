@@ -421,7 +421,7 @@ public abstract class CoderTestUtilities {
     
     public TaggedSeqInSeq createTaggedSeqInSeq() {
         TaggedSeqInSeq result = new TaggedSeqInSeq();
-        TaggedSeqInSeq.TaggedSeqInSeqSequenceType resSeq = result.new TaggedSeqInSeqSequenceType();
+        TaggedSeqInSeq.TaggedSeqInSeqSequenceType resSeq = new TaggedSeqInSeq.TaggedSeqInSeqSequenceType();
         PlainParamsMap field = new PlainParamsMap();
         field.setParam_name("aaaa");
         field.setParam_value("bbbb");

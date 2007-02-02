@@ -19,11 +19,11 @@ import org.bn.types.*;
     @ASN1BoxedType ( name = "StringArray" )
     public class StringArray implements IASN1PreparedElement {
                 
-            @ASN1SequenceOf( name = "StringArray" , isSetOf = false)
             
     @ASN1String( name = "", 
         stringType =  UniversalTag.PrintableString , isUCS = false )
     
+            @ASN1SequenceOf( name = "StringArray" , isSetOf = false)
 	    private java.util.Collection<String> value = null; 
     
             public StringArray () {

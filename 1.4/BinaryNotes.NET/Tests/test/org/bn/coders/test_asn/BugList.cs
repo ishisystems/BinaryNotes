@@ -21,8 +21,9 @@ namespace test.org.bn.coders.test_asn {
 
 	    private System.Collections.Generic.ICollection<BugValueType> val = null; 
             
-            [ASN1SequenceOf( Name = "BugList", IsSetOf = false) ]
             
+            [ASN1SequenceOf( Name = "BugList", IsSetOf = false) ]
+
             public System.Collections.Generic.ICollection<BugValueType> Value
             {
                 get { return val; }

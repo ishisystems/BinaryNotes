@@ -21,9 +21,10 @@ namespace test.org.bn.coders.test_asn {
 
 	    private System.Collections.Generic.ICollection<byte[]> val = null; 
             
-            [ASN1SequenceOf( Name = "OctetStringArray", IsSetOf = false) ]
             [ASN1OctetString( Name = "" )]
     
+            [ASN1SequenceOf( Name = "OctetStringArray", IsSetOf = false) ]
+
             public System.Collections.Generic.ICollection<byte[]> Value
             {
                 get { return val; }

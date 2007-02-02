@@ -21,9 +21,10 @@ namespace test.org.bn.coders.test_asn {
 
 	    private System.Collections.Generic.ICollection<string> val = null; 
             
-            [ASN1SequenceOf( Name = "StringArray", IsSetOf = false) ]
             [ASN1String( Name = "", 
         StringType =  UniversalTags.PrintableString , IsUCS = false )]
+            [ASN1SequenceOf( Name = "StringArray", IsSetOf = false) ]
+
             public System.Collections.Generic.ICollection<string> Value
             {
                 get { return val; }

@@ -19,9 +19,9 @@ import org.bn.types.*;
     @ASN1BoxedType ( name = "OctetStringArray" )
     public class OctetStringArray implements IASN1PreparedElement {
                 
-            @ASN1SequenceOf( name = "OctetStringArray" , isSetOf = false)
             @ASN1OctetString( name = "" )
     
+            @ASN1SequenceOf( name = "OctetStringArray" , isSetOf = false)
 	    private java.util.Collection<byte[]> value = null; 
     
             public OctetStringArray () {

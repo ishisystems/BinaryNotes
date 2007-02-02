@@ -19,8 +19,8 @@ import org.bn.types.*;
     @ASN1BoxedType ( name = "DataSeqArray" )
     public class DataSeqArray implements IASN1PreparedElement {
                 
-            @ASN1SequenceOf( name = "DataSeqArray" , isSetOf = false)
             
+            @ASN1SequenceOf( name = "DataSeqArray" , isSetOf = false)
 	    private java.util.Collection<DataSeq> value = null; 
     
             public DataSeqArray () {

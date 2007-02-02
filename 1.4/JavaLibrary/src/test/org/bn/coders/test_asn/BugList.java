@@ -19,8 +19,8 @@ import org.bn.types.*;
     @ASN1BoxedType ( name = "BugList" )
     public class BugList implements IASN1PreparedElement {
                 
-            @ASN1SequenceOf( name = "BugList" , isSetOf = false)
             
+            @ASN1SequenceOf( name = "BugList" , isSetOf = false)
 	    private java.util.Collection<BugValueType> value = null; 
     
             public BugList () {

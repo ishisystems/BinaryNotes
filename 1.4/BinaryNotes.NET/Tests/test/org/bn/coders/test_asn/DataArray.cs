@@ -21,8 +21,9 @@ namespace test.org.bn.coders.test_asn {
 
 	    private System.Collections.Generic.ICollection<Data> val = null; 
             
-            [ASN1SequenceOf( Name = "DataArray", IsSetOf = false) ]
             
+            [ASN1SequenceOf( Name = "DataArray", IsSetOf = false) ]
+
             public System.Collections.Generic.ICollection<Data> Value
             {
                 get { return val; }

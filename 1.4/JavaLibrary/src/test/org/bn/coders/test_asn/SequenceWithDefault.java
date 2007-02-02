@@ -42,7 +42,7 @@ import org.bn.types.*;
 
        @ASN1PreparedElement
        @ASN1Sequence ( name = "withSeqDef" , isSet = false )
-       public class WithSeqDefSequenceType implements IASN1PreparedElement {
+       public static class WithSeqDefSequenceType implements IASN1PreparedElement {
                 
     @ASN1String( name = "", 
         stringType =  UniversalTag.PrintableString , isUCS = false )
@@ -94,9 +94,9 @@ import org.bn.types.*;
             return preparedData_WithSeqDefSequenceType;
         }
 
+       private static IASN1PreparedElementData preparedData_WithSeqDefSequenceType = CoderFactory.getInstance().newPreparedElementData(WithSeqDefSequenceType.class);
                 
        }
-       private static IASN1PreparedElementData preparedData_WithSeqDefSequenceType = CoderFactory.getInstance().newPreparedElementData(WithSeqDefSequenceType.class);
 
        
                 

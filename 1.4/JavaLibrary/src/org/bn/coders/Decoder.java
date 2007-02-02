@@ -29,6 +29,7 @@ import java.lang.reflect.Field;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 
 import org.bn.annotations.*;
@@ -227,7 +228,7 @@ public abstract class Decoder implements IDecoder, IASN1TypesDecoder {
                 }
             }
             else
-            if(objectClass.isMemberClass() && elementInfo.getParentObject()!=null) {
+            if(objectClass.isMemberClass() && elementInfo.getParentObject()!=null && !Modifier.isStatic(objectClass.getModifiers())) {
                 Constructor decl = objectClass.getDeclaredConstructor(elementInfo.getParentObject().getClass());
                 result = decl.newInstance(elementInfo.getParentObject());
             }

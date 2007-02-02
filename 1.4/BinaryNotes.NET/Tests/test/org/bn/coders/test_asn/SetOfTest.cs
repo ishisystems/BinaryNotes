@@ -21,8 +21,9 @@ namespace test.org.bn.coders.test_asn {
 
 	    private System.Collections.Generic.ICollection<Data> val = null; 
             
-            [ASN1SequenceOf( Name = "SetOfTest", IsSetOf = true) ]
             
+            [ASN1SequenceOf( Name = "SetOfTest", IsSetOf = true) ]
+
             public System.Collections.Generic.ICollection<Data> Value
             {
                 get { return val; }

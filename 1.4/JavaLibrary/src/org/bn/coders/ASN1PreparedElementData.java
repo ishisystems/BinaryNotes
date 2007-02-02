@@ -23,6 +23,8 @@ import java.lang.reflect.Field;
 
 import java.lang.reflect.Method;
 
+import java.lang.reflect.Modifier;
+
 import java.util.SortedMap;
 
 import org.bn.annotations.*;
@@ -50,25 +52,15 @@ public final class ASN1PreparedElementData implements IASN1PreparedElementData {
     public ASN1PreparedElementData(Class objectClass) {
         setupMetadata(objectClass, objectClass);
         setupConstructed(objectClass);
-        memberClassFlag = objectClass.isMemberClass();
+        setupMemberFlag(objectClass);
+        //memberClassFlag = objectClass.isMemberClass();
     }
     
     public ASN1PreparedElementData(Class parentClass, Field field) {
         setupMetadata(field, field.getType());
         setupAccessors(parentClass, field);
-        memberClassFlag = field.getType().isMemberClass();
-    }
-
-    public ASN1PreparedElementData(Class parentClass, String fieldName) {
-        try {
-            Field field = parentClass.getDeclaredField(fieldName);
-            setupMetadata(field, field.getType());
-            setupAccessors(parentClass, field);
-            memberClassFlag = field.getType().isMemberClass();
-        }
-        catch(Exception ex) {
-            ex = null;
-        }
+        setupMemberFlag(field.getType());
+        //memberClassFlag = field.getType().isMemberClass();
     }
     
     private void setupMetadata(AnnotatedElement annotated, Class objectClass) {
@@ -128,27 +120,27 @@ public final class ASN1PreparedElementData implements IASN1PreparedElementData {
             typeMeta = new ASN1ElementMetadata( annotated.getAnnotation( ASN1Element.class) ) ;
         }
         else
-        if(annotated.equals(String.class)) {
+        if(objectClass.equals(String.class)) {
             typeMeta = new ASN1StringMetadata( ) ;
         }
         else
-        if(annotated.equals(Integer.class)) {
+        if(objectClass.equals(Integer.class)) {
             typeMeta = new ASN1IntegerMetadata( ) ;
         }
         else
-        if(annotated.equals(Long.class)) {
+        if(objectClass.equals(Long.class)) {
             typeMeta = new ASN1IntegerMetadata( ) ;
         }
         else
-        if(annotated.equals(Double.class)) {
+        if(objectClass.equals(Double.class)) {
             typeMeta = new ASN1RealMetadata( ) ;
         }
         else        
-        if(annotated.equals(Boolean.class)) {
+        if(objectClass.equals(Boolean.class)) {
             typeMeta = new ASN1BooleanMetadata( ) ;
         }        
         else
-        if(annotated.equals(byte[].class)) {
+        if(objectClass.equals(byte[].class)) {
             typeMeta = new ASN1OctetStringMetadata( ) ;
         }
         
@@ -293,5 +285,9 @@ public final class ASN1PreparedElementData implements IASN1PreparedElementData {
 
     public boolean isMemberClass() {
         return this.memberClassFlag;
+    }
+
+    protected void setupMemberFlag(Class cls) {
+        memberClassFlag = cls.isMemberClass() && !Modifier.isStatic(cls.getModifiers());
     }
 }

@@ -22,7 +22,7 @@ import org.bn.types.*;
 
        @ASN1PreparedElement
        @ASN1Sequence ( name = "seq" , isSet = false )
-       public class SeqSequenceType implements IASN1PreparedElement {
+       public static class SeqSequenceType implements IASN1PreparedElement {
                 @ASN1Integer( name = "" )
     
         @ASN1Element ( name = "it1", isOptional =  true , hasTag =  false  , hasDefaultValue =  false  )
@@ -56,9 +56,9 @@ import org.bn.types.*;
             return preparedData_SeqSequenceType;
         }
 
+       private static IASN1PreparedElementData preparedData_SeqSequenceType = CoderFactory.getInstance().newPreparedElementData(SeqSequenceType.class);
                 
        }
-       private static IASN1PreparedElementData preparedData_SeqSequenceType = CoderFactory.getInstance().newPreparedElementData(SeqSequenceType.class);
 
        
                 
@@ -70,7 +70,7 @@ import org.bn.types.*;
         
     @ASN1PreparedElement
     @ASN1Choice ( name = "ch" )
-    public class ChChoiceType implements IASN1PreparedElement {
+    public static class ChChoiceType implements IASN1PreparedElement {
             @ASN1Integer( name = "" )
     
         @ASN1Element ( name = "it1", isOptional =  false , hasTag =  true, tag = 0 , hasDefaultValue =  false  )
@@ -138,9 +138,9 @@ import org.bn.types.*;
             return preparedData_ChChoiceType;
         }
 
+        private static IASN1PreparedElementData preparedData_ChChoiceType = CoderFactory.getInstance().newPreparedElementData(ChChoiceType.class);
 
     }
-    private static IASN1PreparedElementData preparedData_ChChoiceType = CoderFactory.getInstance().newPreparedElementData(ChChoiceType.class);
 
                 
         @ASN1Element ( name = "ch", isOptional =  false , hasTag =  true, tag = 1 , hasDefaultValue =  false  )
@@ -151,7 +151,7 @@ import org.bn.types.*;
 
        @ASN1PreparedElement
        @ASN1Sequence ( name = "" , isSet = false )
-       public class SequenceType implements IASN1PreparedElement {
+       public static class SequenceType implements IASN1PreparedElement {
                 @ASN1Integer( name = "" )
     
         @ASN1Element ( name = "it1", isOptional =  true , hasTag =  false  , hasDefaultValue =  false  )
@@ -185,9 +185,9 @@ import org.bn.types.*;
             return preparedData_SequenceType;
         }
 
+       private static IASN1PreparedElementData preparedData_SequenceType = CoderFactory.getInstance().newPreparedElementData(SequenceType.class);
                 
        }
-       private static IASN1PreparedElementData preparedData_SequenceType = CoderFactory.getInstance().newPreparedElementData(SequenceType.class);
 
        
                 

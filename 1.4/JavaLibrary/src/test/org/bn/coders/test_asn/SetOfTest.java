@@ -19,8 +19,8 @@ import org.bn.types.*;
     @ASN1BoxedType ( name = "SetOfTest" )
     public class SetOfTest implements IASN1PreparedElement {
                 
-            @ASN1SequenceOf( name = "SetOfTest" , isSetOf = true)
             
+            @ASN1SequenceOf( name = "SetOfTest" , isSetOf = true)
 	    private java.util.Collection<Data> value = null; 
     
             public SetOfTest () {

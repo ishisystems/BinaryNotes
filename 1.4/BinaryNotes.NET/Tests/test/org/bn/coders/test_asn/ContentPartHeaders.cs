@@ -21,8 +21,9 @@ namespace test.org.bn.coders.test_asn {
 
 	    private System.Collections.Generic.ICollection<ContentPartHeader> val = null; 
             
-            [ASN1SequenceOf( Name = "ContentPartHeaders", IsSetOf = false) ]
             
+            [ASN1SequenceOf( Name = "ContentPartHeaders", IsSetOf = false) ]
+
             public System.Collections.Generic.ICollection<ContentPartHeader> Value
             {
                 get { return val; }
