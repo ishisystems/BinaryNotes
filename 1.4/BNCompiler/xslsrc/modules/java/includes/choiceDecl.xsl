@@ -35,7 +35,7 @@
         
     @ASN1PreparedElement
     @ASN1Choice ( name = "<xsl:value-of select='$elementName'/>" )
-    public class <xsl:value-of select="$choiceName"/> implements IASN1PreparedElement {
+    public static class <xsl:value-of select="$choiceName"/> implements IASN1PreparedElement {
             <xsl:call-template name="elements"/>
             <xsl:call-template name="choiceFunctions"/>
 
@@ -46,9 +46,9 @@
             return preparedData_<xsl:value-of select='$choiceName'/>;
         }
 
+        private static IASN1PreparedElementData preparedData_<xsl:value-of select='$choiceName'/> = CoderFactory.getInstance().newPreparedElementData(<xsl:value-of select='$choiceName'/>.class);
 
     }
-    private static IASN1PreparedElementData preparedData_<xsl:value-of select='$choiceName'/> = CoderFactory.getInstance().newPreparedElementData(<xsl:value-of select='$choiceName'/>.class);
 
                 </xsl:for-each>
             </xsl:if>

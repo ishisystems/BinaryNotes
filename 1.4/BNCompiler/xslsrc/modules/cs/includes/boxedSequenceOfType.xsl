@@ -40,11 +40,12 @@
 
 	    private System.Collections.Generic.ICollection&lt;<xsl:call-template name="elementType"/>&gt; val = null; 
             
-            [ASN1SequenceOf( Name = "<xsl:value-of select='name'/>", IsSetOf = <xsl:choose><xsl:when test="isSequenceOf = 'false'">true</xsl:when><xsl:otherwise>false</xsl:otherwise></xsl:choose>) ]
             <xsl:call-template name="typeDecl"/>
             <xsl:for-each select="constraint">
                 <xsl:call-template name="constraint"/>
             </xsl:for-each>
+            [ASN1SequenceOf( Name = "<xsl:value-of select='name'/>", IsSetOf = <xsl:choose><xsl:when test="isSequenceOf = 'false'">true</xsl:when><xsl:otherwise>false</xsl:otherwise></xsl:choose>) ]
+
             public System.Collections.Generic.ICollection&lt;<xsl:call-template name="elementType"/>&gt; Value
             {
                 get { return val; }
