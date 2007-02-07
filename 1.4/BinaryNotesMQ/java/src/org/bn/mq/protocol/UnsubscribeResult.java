@@ -51,7 +51,7 @@ import org.bn.types.*;
 
         
         public boolean isDetailsPresent () {
-            return this.details == null;
+            return this.details != null;
         }
         
 

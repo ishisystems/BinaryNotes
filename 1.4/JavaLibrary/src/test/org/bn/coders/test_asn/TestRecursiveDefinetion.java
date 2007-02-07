@@ -51,7 +51,7 @@ import org.bn.types.*;
 
         
         public boolean isValuePresent () {
-            return this.value == null;
+            return this.value != null;
         }
         
 

@@ -40,7 +40,7 @@ import org.bn.types.*;
 
         
         public boolean isType1Present () {
-            return this.type1 == null;
+            return this.type1 != null;
         }
         
 

@@ -54,7 +54,7 @@ import org.bn.types.*;
 
         
         public boolean isParamsPresent () {
-            return this.params == null;
+            return this.params != null;
         }
         
 

@@ -78,7 +78,7 @@ import org.bn.types.*;
 
         
         public boolean isField3Present () {
-            return this.field3 == null;
+            return this.field3 != null;
         }
         
 

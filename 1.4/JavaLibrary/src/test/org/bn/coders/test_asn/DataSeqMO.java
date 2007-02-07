@@ -181,7 +181,7 @@ import org.bn.types.*;
 
         
         public boolean isUnicodePresent () {
-            return this.unicode == null;
+            return this.unicode != null;
         }
         
 
@@ -197,7 +197,7 @@ import org.bn.types.*;
 
         
         public boolean isBinaryPresent () {
-            return this.binary == null;
+            return this.binary != null;
         }
         
 
@@ -213,7 +213,7 @@ import org.bn.types.*;
 
         
         public boolean isSimpleTypePresent () {
-            return this.simpleType == null;
+            return this.simpleType != null;
         }
         
 
@@ -241,7 +241,7 @@ import org.bn.types.*;
 
         
         public boolean isBooleanTypePresent () {
-            return this.booleanType == null;
+            return this.booleanType != null;
         }
         
 
@@ -257,7 +257,7 @@ import org.bn.types.*;
 
         
         public boolean isIntTypePresent () {
-            return this.intType == null;
+            return this.intType != null;
         }
         
 
@@ -273,7 +273,7 @@ import org.bn.types.*;
 
         
         public boolean isIntBndTypePresent () {
-            return this.intBndType == null;
+            return this.intBndType != null;
         }
         
 
@@ -289,7 +289,7 @@ import org.bn.types.*;
 
         
         public boolean isStringArrayPresent () {
-            return this.stringArray == null;
+            return this.stringArray != null;
         }
         
 
@@ -305,7 +305,7 @@ import org.bn.types.*;
 
         
         public boolean isDataArrayPresent () {
-            return this.dataArray == null;
+            return this.dataArray != null;
         }
         
 
@@ -321,7 +321,7 @@ import org.bn.types.*;
 
         
         public boolean isPlain2Present () {
-            return this.plain2 == null;
+            return this.plain2 != null;
         }
         
 
@@ -337,7 +337,7 @@ import org.bn.types.*;
 
         
         public boolean isUnicode2Present () {
-            return this.unicode2 == null;
+            return this.unicode2 != null;
         }
         
 
@@ -353,7 +353,7 @@ import org.bn.types.*;
 
         
         public boolean isBinary2Present () {
-            return this.binary2 == null;
+            return this.binary2 != null;
         }
         
 
@@ -369,7 +369,7 @@ import org.bn.types.*;
 
         
         public boolean isSimpleType2Present () {
-            return this.simpleType2 == null;
+            return this.simpleType2 != null;
         }
         
 
@@ -385,7 +385,7 @@ import org.bn.types.*;
 
         
         public boolean isSimpleOctType2Present () {
-            return this.simpleOctType2 == null;
+            return this.simpleOctType2 != null;
         }
         
 
@@ -401,7 +401,7 @@ import org.bn.types.*;
 
         
         public boolean isBooleanType2Present () {
-            return this.booleanType2 == null;
+            return this.booleanType2 != null;
         }
         
 
@@ -417,7 +417,7 @@ import org.bn.types.*;
 
         
         public boolean isIntType2Present () {
-            return this.intType2 == null;
+            return this.intType2 != null;
         }
         
 
@@ -433,7 +433,7 @@ import org.bn.types.*;
 
         
         public boolean isIntBndType2Present () {
-            return this.intBndType2 == null;
+            return this.intBndType2 != null;
         }
         
 
@@ -449,7 +449,7 @@ import org.bn.types.*;
 
         
         public boolean isStringArray2Present () {
-            return this.stringArray2 == null;
+            return this.stringArray2 != null;
         }
         
 
@@ -465,7 +465,7 @@ import org.bn.types.*;
 
         
         public boolean isDataArray2Present () {
-            return this.dataArray2 == null;
+            return this.dataArray2 != null;
         }
         
 
@@ -481,7 +481,7 @@ import org.bn.types.*;
 
         
         public boolean isPlain3Present () {
-            return this.plain3 == null;
+            return this.plain3 != null;
         }
         
 

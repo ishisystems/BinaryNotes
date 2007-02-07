@@ -113,7 +113,7 @@ import org.bn.types.*;
 
         
         public boolean isUnicodePresent () {
-            return this.unicode == null;
+            return this.unicode != null;
         }
         
 
@@ -225,7 +225,7 @@ import org.bn.types.*;
 
         
         public boolean isExtensionPresent () {
-            return this.extension == null;
+            return this.extension != null;
         }
         
 

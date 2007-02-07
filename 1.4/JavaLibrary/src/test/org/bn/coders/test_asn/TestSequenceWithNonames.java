@@ -37,7 +37,7 @@ import org.bn.types.*;
 
         
         public boolean isIt1Present () {
-            return this.it1 == null;
+            return this.it1 != null;
         }
         
 
@@ -166,7 +166,7 @@ import org.bn.types.*;
 
         
         public boolean isIt1Present () {
-            return this.it1 == null;
+            return this.it1 != null;
         }
         
 

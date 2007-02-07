@@ -146,7 +146,7 @@ import org.bn.types.*;
 
         
         public boolean isAttrBitStrPresent () {
-            return this.attrBitStr == null;
+            return this.attrBitStr != null;
         }
         
 
@@ -174,7 +174,7 @@ import org.bn.types.*;
 
         
         public boolean isAttrBitStrBndPresent () {
-            return this.attrBitStrBnd == null;
+            return this.attrBitStrBnd != null;
         }
         
 
@@ -190,7 +190,7 @@ import org.bn.types.*;
 
         
         public boolean isAttrBoxBitStrPresent () {
-            return this.attrBoxBitStr == null;
+            return this.attrBoxBitStr != null;
         }
         
 

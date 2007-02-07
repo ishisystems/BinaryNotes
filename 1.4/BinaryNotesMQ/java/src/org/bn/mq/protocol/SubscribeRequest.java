@@ -92,7 +92,7 @@ import org.bn.types.*;
 
         
         public boolean isFilterPresent () {
-            return this.filter == null;
+            return this.filter != null;
         }
         
 

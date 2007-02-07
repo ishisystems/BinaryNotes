@@ -92,7 +92,7 @@ import org.bn.types.*;
 
         
         public boolean isSenderIdPresent () {
-            return this.senderId == null;
+            return this.senderId != null;
         }
         
 

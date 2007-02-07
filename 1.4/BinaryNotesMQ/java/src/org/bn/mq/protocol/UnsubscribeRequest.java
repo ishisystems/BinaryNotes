@@ -54,7 +54,7 @@ import org.bn.types.*;
 
         
         public boolean isQueuePathPresent () {
-            return this.queuePath == null;
+            return this.queuePath != null;
         }
         
 

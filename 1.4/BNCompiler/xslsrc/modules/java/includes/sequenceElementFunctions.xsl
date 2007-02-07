@@ -40,7 +40,7 @@
 
         <xsl:if test="isOptional = 'true'">
         public boolean is<xsl:call-template name="toUpperFirstLetter"><xsl:with-param name="input" select="$elementName"/></xsl:call-template>Present () {
-            return this.<xsl:value-of select="$elementName"/> == null;
+            return this.<xsl:value-of select="$elementName"/> != null;
         }
         </xsl:if>
 

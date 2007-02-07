@@ -117,7 +117,7 @@ import org.bn.types.*;
 
         
         public boolean isType5Present () {
-            return this.type5 == null;
+            return this.type5 != null;
         }
         
 
