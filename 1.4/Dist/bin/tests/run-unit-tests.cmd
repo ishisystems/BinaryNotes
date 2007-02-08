@@ -1,0 +1,1 @@
+java -cp ../../lib/java/binarynotes.jar;../../depends/junit.jar test.org.bn.AllTests
