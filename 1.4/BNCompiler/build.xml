@@ -48,21 +48,9 @@
   <target name="copy" description="Copy files to output directory"
           depends="init">
     <patternset id="copy.patterns">
-      <include name="**/*.gif"/>
-      <include name="**/*.jpg"/>
-      <include name="**/*.jpeg"/>
-      <include name="**/*.png"/>
       <include name="**/*.properties"/>
       <include name="**/*.xml"/>
       <include name="**/*-apf.xml"/>
-      <include name="**/*.ejx"/>
-      <include name="**/*.xcfg"/>
-      <include name="**/*.cpx"/>
-      <include name="**/*.dcx"/>
-      <include name="**/*.wsdl"/>
-      <include name="**/*.ini"/>
-      <include name="**/*.tld"/>
-      <include name="**/*.tag"/>
       <include name="**/*.index"/>
     </patternset>
     <copy todir="${output.dir}">

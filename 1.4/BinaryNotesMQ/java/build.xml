@@ -7,19 +7,23 @@
   <path id="library.BN">
     <pathelement location="${dist.path.lib}/binarynotes.jar"/>
   </path>
+  <path id="library.BN-UT">
+    <pathelement location="${dist.path.lib}/unit-tests/binarynotes-ut.jar"/>
+  </path>
   <path id="classpath">
     <path refid="library.JUnit"/>
     <path refid="library.BN"/>
+    <path refid="library.BN-UT"/>
   </path>
   <path id="bndepends.path">
     <pathelement path="classes"/>
     <pathelement path="${depends.libs.path}/lineargs.jar"/>
     <pathelement path="${depends.libs.path}/antlr.jar"/>
     <pathelement path="${depends.libs.path}/activation.jar"/>
-    <pathelement path="${depends.libs.path}/jaxb-api.jar"/>
+    <!--<pathelement path="${depends.libs.path}/jaxb-api.jar"/>
     <pathelement path="${depends.libs.path}/jaxb-impl.jar"/>
     <pathelement path="${depends.libs.path}/jaxb1-impl.jar"/>
-    <pathelement path="${depends.libs.path}/jsr173_1.0_api.jar"/>
+    <pathelement path="${depends.libs.path}/jsr173_1.0_api.jar"/> Java5 depends is removed-->
     <pathelement path="${dist.path.lib}/java/binarynotes.jar"/>
     <pathelement path="${dist.path.bin}/bncompiler.jar"/>
   </path>
@@ -60,21 +64,9 @@
   <target name="copy" description="Copy files to output directory"
           depends="init">
     <patternset id="copy.patterns">
-      <include name="**/*.gif"/>
-      <include name="**/*.jpg"/>
-      <include name="**/*.jpeg"/>
-      <include name="**/*.png"/>
-      <include name="**/*.properties"/>
       <include name="**/*.xml"/>
-      <include name="**/*-apf.xml"/>
-      <include name="**/*.ejx"/>
-      <include name="**/*.xcfg"/>
-      <include name="**/*.cpx"/>
-      <include name="**/*.dcx"/>
       <include name="**/*.wsdl"/>
       <include name="**/*.ini"/>
-      <include name="**/*.tld"/>
-      <include name="**/*.tag"/>
     </patternset>
     <copy todir="${output.dir}">
       <fileset dir="src">
@@ -84,12 +76,26 @@
   </target>
   <target name="buildjar" description="Building jar file" depends="init">
         <jar destfile="${dist.path.lib}/binarynotes-mq.jar" compress="yes">
-            <fileset dir="${output.dir}"/>
+            <fileset dir="${output.dir}">
+		<exclude name="test/**"/>
+	    </fileset>
 	    <manifest>
 		<attribute name="Implementation-Vendor" value="Abdulla G. Abdurakhmanov"/>
 		<attribute name="Implementation-URL" value="http://bnotes.sourceforge.net"/>
 		<attribute name="Implementation-Mail" value="abdulla.abdurakhmanov@gmail.com"/>
 		<attribute name="Implementation-Title" value="BinaryNotes Message Queues"/>
+		<attribute name="Version" value="${version}"/>
+	    </manifest>
+        </jar>  
+        <jar destfile="${dist.path.lib}/unit-tests/binarynotes-mq-ut.jar" compress="yes">
+            <fileset dir="${output.dir}">
+		<exclude name="org/**"/>
+	    </fileset>
+	    <manifest>
+		<attribute name="Implementation-Vendor" value="Abdulla G. Abdurakhmanov"/>
+		<attribute name="Implementation-URL" value="http://bnotes.sourceforge.net"/>
+		<attribute name="Implementation-Mail" value="abdulla.abdurakhmanov@gmail.com"/>
+		<attribute name="Implementation-Title" value="BinaryNotes Message Queues UnitTests"/>
 		<attribute name="Version" value="${version}"/>
 	    </manifest>
         </jar>  

@@ -40,7 +40,7 @@ import org.bn.mq.MQFactory;
 import org.bn.mq.examples.protocol.ExampleMessage;
 import org.bn.mq.net.ITransport;
 
-import test.org.bn.mq.MQFactoryTest;
+//import test.org.bn.mq.MQFactoryTest;
 
 public class BNMQSupplier {
     public BNMQSupplier() {

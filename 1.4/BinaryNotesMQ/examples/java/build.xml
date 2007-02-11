@@ -86,7 +86,7 @@
     </copy>
   </target>
   <target name="buildjar" description="Building jar file" depends="init">
-        <jar destfile="${dist.path.lib}/binarynotes-mq-examples.jar" compress="yes">
+        <jar destfile="${dist.path.bin}/examples/mq/java/binarynotes-mq-examples.jar" compress="yes">
             <fileset dir="${output.dir}"/>
 	    <manifest>
 		<attribute name="Implementation-Vendor" value="Abdulla G. Abdurakhmanov"/>
